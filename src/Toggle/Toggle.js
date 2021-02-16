@@ -1,6 +1,7 @@
 import * as React from "react";
-import classnames from "classnames";
 import propTypes from "prop-types";
+import classnames from "classnames";
+
 import styles from "./style.scss";
 import {SWF_TOGGLE} from "./constants";
 
@@ -49,7 +50,7 @@ class Toggle extends React.Component {
 			<>
 				<style type="text/css">{styles}</style>
 				<label className={ classnames(
-					size,
+					`toggle-${size}`,
 					{
 						"switch": true,
 						"disabled": disable
