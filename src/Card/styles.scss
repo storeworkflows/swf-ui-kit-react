@@ -1,0 +1,49 @@
+$white-color: #fff;
+$card-background-color: #fff;
+
+.swf-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: -1px 1px 10px RGBA(var(--now-color--neutral-3,209,214,214));
+  box-sizing: border-box;
+  background:  $white-color;
+  margin: 1rem 1rem 1rem 3px;
+
+  &.vertical {
+    margin: 0;
+  }
+
+  &.--s {
+    max-width: 300px;
+    min-width: 300px;
+  }
+
+  &.--m {
+    max-width: 600px;
+    min-width: 600px;
+  }
+
+  &.--l {
+    max-width: 100%;
+    min-width: 100%;
+  }
+}
+
+:host(.dark) {
+  .swf-card {
+    background: $card-background-color;
+    box-shadow: 0 0.5rem 1rem rgba(117, 117, 117, 0.5);
+  }
+}
+
+:host(.light) {
+  .swf-card {
+    background: $white-color;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+}
