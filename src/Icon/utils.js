@@ -34,7 +34,6 @@ const  generateSvg = (props) => {
   if(color)
     svg.style.color = color;
 
-  console.log(svg.style);
   return svg.outerHTML;
 }
 
