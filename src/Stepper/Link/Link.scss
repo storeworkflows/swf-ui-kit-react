@@ -1,0 +1,36 @@
+.link {
+  &-container {
+    width: 100%;
+  }
+
+  &-wrapper {
+    //must be as in the .step-circle
+    width: 40%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:after {
+      content: "";
+      display: block;
+      padding-bottom: 100%;
+    }
+  }
+
+  &-strip {
+    width: 100%;
+
+    &:after {
+      content: "";
+      display: block;
+      background-color: rebeccapurple;
+      border-radius: 3px;
+      width: 280%;
+      height: 3px;
+      position: relative;
+      right: 95%;
+    }
+  }
+}
+
