@@ -22,16 +22,21 @@ class Button extends React.Component {
 			size,
 			variant,
 			customStyle,
-			dispatch
+			dispatch,
+			children
 		} = this.props;
+
+		console.log(this.props.children);
 
 		const additionalStyle = addStyles(customStyle);
 
 		const _hasIcon = icon.length>0;
 		const _hasLabel = label.length>0;
 		const _hasOnlyIcon = _hasIcon && !_hasLabel;
-		const _emptyElement = !_hasLabel && !_hasIcon;
+		const _slotElement = !_hasLabel && !_hasIcon && children!==undefined;
 		const _iconSize = getIconSize(customStyle, icon, size);
+
+		console.log("2:", children);
 
 		return (
 			<>
@@ -67,7 +72,7 @@ class Button extends React.Component {
 						}
 
 						{ _hasLabel && <label>{label}</label> }
-						{_emptyElement && <slot/> }
+						{/*{_slotElement && children}*/}
 
 					</div>
 				</button>
