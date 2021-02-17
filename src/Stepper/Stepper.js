@@ -1,14 +1,23 @@
 import styles from "./styles.scss";
+import Step from './Step/Step';
+import React from 'react';
 
-function Stepper () {
+class Stepper extends React.Component {
+    constructor(props) {
+        super(props);
+    }
 
-    return (
-        <>
-            <div>
-                the Stepper(c)
-            </div>
-        </>
-    )
+    render() {
+        return (
+            <>
+                <style type="text/css">{styles}</style>
+                <div>
+                    the Stepper(c)
+                </div>
+                <Step/>
+            </>
+        )
+    }
 }
 
 export default Stepper;
