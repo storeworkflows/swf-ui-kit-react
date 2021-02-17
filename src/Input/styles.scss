@@ -1,0 +1,10 @@
+.input-container{
+  //width: 100%;
+  padding: 3px;
+}
+
+
+.input-field{
+  //10px = 2 * 3px(padding) + 2 * 2px(input-border)
+  width: calc(100% - 10px);
+}

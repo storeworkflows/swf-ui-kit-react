@@ -5,9 +5,6 @@ import {generateSvg, setSize} from './utils'
 
 
 class Icon extends React.Component {
-  constructor(props) {
-    super(props);
-  };
 
   render () {
     const {size, customSize} = this.props;

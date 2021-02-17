@@ -4,9 +4,9 @@ import classnames from "classnames";
 
 import styles from "./style.scss";
 import {SWF_TOGGLE} from "./constants";
+import {dispatch} from "../utils/dispatchDecorator";
 
 const _addStyles = (customStyle) => {
-	//console.log(toggle);
 	let styles = {};
 	const hasStyles = customStyle !== null;
 	if(hasStyles)
@@ -18,10 +18,12 @@ const _addStyles = (customStyle) => {
 	return styles;
 }
 
+@dispatch()
 class Toggle extends React.Component {
 
 	constructor(props) {
 		super(props);
+		console.log(props);
 		this.state = {
 			checked: this.props.checked
 		}
@@ -29,10 +31,11 @@ class Toggle extends React.Component {
 
 	render() {
 		const {
-			disable,
+			disabled,
 			manageChecked,
 			size,
-			customStyle
+			customStyle,
+			dispatch
 		} = this.props;
 
 		const additionalStyle = _addStyles(customStyle);
@@ -43,7 +46,7 @@ class Toggle extends React.Component {
 				checked = !this.state.checked
 				this.setState({checked: checked})
 			}
-			//this.props.helpers.dispatch(SWF_TOGGLE.CLICKED, {value: checked});
+			dispatch(SWF_TOGGLE.CLICKED, {value: checked});
 		};
 
 		return (
@@ -53,13 +56,13 @@ class Toggle extends React.Component {
 					`toggle-${size}`,
 					{
 						"switch": true,
-						"disabled": disable
+						"disabled": disabled
 					})}
 					   style={additionalStyle}
 				>
 					<input type="checkbox"
 						   checked  = {this.state.checked}
-						   disabled = {disable}
+						   disabled = {disabled}
 						   onChange = {toggleClick}
 					/>
 						<span className="slider"/>
@@ -71,7 +74,7 @@ class Toggle extends React.Component {
 
 Toggle.defaultProps = {
 	checked: false,
-	disable: false,
+	disabled: false,
 	manageChecked: false,
 	size: "md",
 	customStyle: null
@@ -79,7 +82,7 @@ Toggle.defaultProps = {
 
 Toggle.propTypes = {
 	checked: propTypes.bool,
-	disable: propTypes.bool,
+	disabled: propTypes.bool,
 	manageChecked: propTypes.bool,
 	size: propTypes.oneOf(["sm", "md"]),
 	customStyle: propTypes.object
