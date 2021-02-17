@@ -98,6 +98,10 @@ input:checked + .slider:before {
 .disabled {
   opacity: 0.5;
 
+  .slider{
+    cursor: default;
+  }
+
   .slider:hover:before{
     background-color: white;
   }
