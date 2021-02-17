@@ -5,6 +5,7 @@ import classnames from "classnames";
 import styles from "./styles.scss";
 import {SWF_BUTTON} from "./constants";
 import {addStyles, getIconSize} from "./utils";
+import Icon from "../Icon/Icon";
 
 //import "../x-mobi-swf-icon"
 
@@ -40,29 +41,29 @@ class Button extends React.Component {
 		const _emptyElement = !_hasLabel && !_hasIcon;
 		const _iconSize = getIconSize(customStyle, icon, size);
 
-		const focus = () => {
-			this.setState({
-				focused: true,
-				iconColor: SWF_BUTTON.ACTIVE_TEXT_COLOR
-			})
-		};
-
-		const blur = () => {
-			this.setState({
-				focused: false,
-				iconColor: SWF_BUTTON.TEXT_COLOR
-			})
-		}
-
-		const mouseOver = () => {
-			if(!focused)
-				this.setState({iconColor: SWF_BUTTON.HOVER_TEXT_COLOR})
-		}
-
-		const mouseOut = () => {
-			if(!focused)
-				this.setState({iconColor: SWF_BUTTON.TEXT_COLOR})
-		}
+		// const focus = () => {
+		// 	this.setState({
+		// 		focused: true,
+		// 		iconColor: SWF_BUTTON.ACTIVE_TEXT_COLOR
+		// 	})
+		// };
+		//
+		// const blur = () => {
+		// 	this.setState({
+		// 		focused: false,
+		// 		iconColor: SWF_BUTTON.TEXT_COLOR
+		// 	})
+		// }
+		//
+		// const mouseOver = () => {
+		// 	if(!focused)
+		// 		this.setState({iconColor: SWF_BUTTON.HOVER_TEXT_COLOR})
+		// }
+		//
+		// const mouseOut = () => {
+		// 	if(!focused)
+		// 		this.setState({iconColor: SWF_BUTTON.TEXT_COLOR})
+		// }
 
 		return (
 			<>
@@ -81,26 +82,25 @@ class Button extends React.Component {
 					disabled = {disabled}
 					title = {tooltipContent}
 					style={additionalStyle}
-					onFocus={() => focus()}
-					onBlur={() => blur()}
-					onMouseOver={() => mouseOver()}
-					onMouseOut={() => mouseOut()}
+					// onFocus={() => focus()}
+					// onBlur={() => blur()}
+					// onMouseOver={() => mouseOver()}
+					// onMouseOut={() => mouseOut()}
 				>
 					<div className="content">
-						{/*{_hasIcon &&*/}
-						{/*	<x-mobi-swf-icon*/}
-						{/*		className={classnames(*/}
-						{/*			{*/}
-						{/*				"button-icon": true,*/}
-						{/*				"label-button-icon": !_hasOnlyIcon*/}
-						{/*			}*/}
-						{/*		)}*/}
-						{/*		slot="defaultSlot"*/}
-						{/*		icon={icon}*/}
-						{/*		color={iconColor}*/}
-						{/*		customSize={_iconSize}*/}
-						{/*	/>*/}
-						{/*}*/}
+						{_hasIcon &&
+							<Icon
+								className={classnames(
+									{
+										"button-icon": true,
+										"label-button-icon": !_hasOnlyIcon
+									}
+								)}
+								icon={icon}
+								// color={iconColor}
+								customSize={_iconSize}
+							/>
+						}
 
 						{ _hasLabel && <label>{label}</label> }
 
