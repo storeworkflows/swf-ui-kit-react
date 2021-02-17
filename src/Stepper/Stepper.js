@@ -7,6 +7,15 @@ import React from 'react';
 class Stepper extends React.Component {
     constructor(props) {
         super(props);
+        this.state = { selected: 0 }
+    }
+
+    selectStep(index) {
+        return () => {
+            this.setState({
+                selected: index
+            })
+        }
     }
 
     renderSteps(steps) {
@@ -16,6 +25,8 @@ class Stepper extends React.Component {
                     <Step
                         icon={step.icon}
                         label={step.label}
+                        selected={this.state.selected === index}
+                        onClick={this.selectStep(index)}
                     />
                     {(index !== steps.length - 1) &&
                         <Link />

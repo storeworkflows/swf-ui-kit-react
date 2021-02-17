@@ -27,7 +27,7 @@
     align-items: center;
     justify-content: center;
 
-    transition: background-color 200ms;
+    transition: background-color 300ms;
 
     &:after {
       content: "";
@@ -45,5 +45,9 @@
     max-width: 150%;
     text-align: center;
     padding-top: 8px;
+
+    &.--selected {
+      font-weight: bold;
+    }
   }
 }
