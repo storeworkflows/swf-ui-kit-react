@@ -26,6 +26,7 @@ class Stepper extends React.Component {
                         icon={step.icon}
                         label={step.label}
                         selected={this.state.selected === index}
+                        beforeSelected={this.state.selected > index}
                         onClick={this.selectStep(index)}
                     />
                     {(index !== steps.length - 1) &&

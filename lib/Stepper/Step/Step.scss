@@ -13,13 +13,13 @@
 
     &:hover {
       .step-circle {
-        background-color: plum;
+        background-color: #FFC75F;
       }
     }
   }
 
   &-circle {
-    background-color: rebeccapurple;
+    background-color: #F9F871;
     border-radius: 50%;
     width: 40%;
     margin: 0 auto;
@@ -27,12 +27,22 @@
     align-items: center;
     justify-content: center;
 
-    transition: background-color 300ms;
+    transition: background-color 300ms, box-shadow 400ms ease;
 
     &:after {
       content: "";
       display: block;
       padding-bottom: 100%;
+    }
+
+    &.--before-selected {
+      background-color: #FF6F91;
+    }
+
+    &.--selected {
+      background-color: #D65DB1 !important;
+      border: 2px solid white;
+      box-shadow: 0 0 0 2px darkseagreen;
     }
   }
 
