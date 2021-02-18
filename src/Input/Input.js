@@ -1,5 +1,6 @@
 import * as React from "react";
 import classnames from "classnames";
+import styles from "./styles.css";
 
 import {SWF_INPUT} from "./constants";
 import propTypes from "prop-types";
@@ -13,8 +14,6 @@ class Input extends React.Component {
 	};
 
 	render() {
-		const {dispatch, properties} = this.props;
-
 		const {
 			disabled,
 			label = "label",
@@ -34,38 +33,39 @@ class Input extends React.Component {
 			pattern,
 			multiple,
 			message
-		} = properties;
+		} = this.props;
 
 		const _hasLabel = label !== undefined;
 		const _hasMessages = message.length>0;
-		console.log("has", _hasMessages);
 		return (
-			<div  className="input-container">
-				{ _hasLabel &&
+			<>
+				<style>{styles}</style>
+				<div className="form-group">
+					{ _hasLabel &&
 					<span>{label}</span>
-				}
+					}
 
-				<input className="input-field"
-					   name={name}
-					   placeholder={placeholder}
-					   step={step}
-					   type={type}
-					   aria-required={required}
-					   aria-invalid={invalid}
-					   value={value}
-					   readOnly={readonly}
-					   required={required}
-					   autoFocus ={autofocus}
-					   max={max}
-					   min={min}
-					   maxLength={maxlength}
-					   minLength={minlength}
-					   pattern={pattern}
-					   disabled={disabled}
-					   multiple={multiple}
-					   onInput={()=> dispatch(SWF_INPUT.INPUT)}
-				/>
-				{ _hasMessages &&
+					<input className="form-control"
+						   name={name}
+						   placeholder={placeholder}
+						   step={step}
+						   type={type}
+						   aria-required={required}
+						   aria-invalid={invalid}
+						   value={value}
+						   readOnly={readonly}
+						   required={required}
+						   autoFocus ={autofocus}
+						   max={max}
+						   min={min}
+						   maxLength={maxlength}
+						   minLength={minlength}
+						   pattern={pattern}
+						   disabled={disabled}
+						   multiple={multiple}
+						   onInput={this.props.onInput}
+					/>
+					{ _hasMessages &&
 					message.map((el) => {
 						const _hasIcon = el.icon !== undefined && el.icon.length>0;
 						const _hasContent = el.content !==undefined && el.content.length>0;
@@ -79,15 +79,16 @@ class Input extends React.Component {
 										//<x-mobi-swf-icon icon={el.icon} size="sm"/>
 									}
 									{_hasContent &&
-										<span>{el.content}</span>
+									<span>{el.content}</span>
 									}
 								</div>
 								: null
 						)
 					})
 
-				}
-			</div>
+					}
+				</div>
+			</>
 		)
 	}
 }
@@ -133,7 +134,8 @@ Input.propTypes = {
 		propTypes.number,
 		propTypes.oneOf["any"]
 	]),
-	type: propTypes.oneOf(["email" , "ip" , "number" , "text"]),
+	onInput: propTypes.func,
+	type: propTypes.oneOf(["password", "email", "number", "url", "tel", "search", "date", "datetime", "datetime-local", "month", "week", "time"]),
 	value: propTypes.string
 }
 

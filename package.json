@@ -25,6 +25,7 @@
     "@babel/plugin-transform-react-jsx": "^7.12.16",
     "@babel/preset-env": "^7.12.16",
     "@babel/preset-react": "^7.12.13",
+    "cross-fetch": "^3.0.6",
     "cssnano": "^4.1.10"
   }
 }
