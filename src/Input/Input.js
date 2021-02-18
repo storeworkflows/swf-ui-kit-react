@@ -4,14 +4,42 @@ import styles from "./styles.css";
 
 import {SWF_INPUT} from "./constants";
 import propTypes from "prop-types";
+import findByType from "../utils/findByType";
+
+const Start = () => null;
+const End = () => null;
 
 class Input extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			checked: this.props.checked
+			checked: this.props.checked,
+			hasStart: false,
+			hasEnd: false
 		}
 	};
+
+	renderStart () {
+		const {children} = this.props;
+		const start = findByType(children, Start);
+
+		if (!start) return null;
+
+		!this.state.hasStart && this.setState({hasStart: true})
+
+		return <div className="form-control--start">{start.props.children}</div>
+	}
+
+	renderEnd () {
+		const {children} = this.props;
+		const end = findByType(children, End);
+
+		if (!end) return null;
+
+		!this.state.hasEnd && this.setState({hasEnd: true})
+
+		return <div className="form-control--end">{end.props.children}</div>
+	}
 
 	render() {
 		const {
@@ -42,28 +70,36 @@ class Input extends React.Component {
 				<style>{styles}</style>
 				<div className="form-group">
 					{ _hasLabel && <label htmlFor="name">{label}</label>}
-					<input className="form-control"
-						   id="name"
-						   name={name}
-						   placeholder={placeholder}
-						   step={step}
-						   type={type}
-						   aria-required={required}
-						   aria-invalid={invalid}
-						   value={value}
-						   readOnly={readonly}
-						   required={required}
-						   autoFocus ={autofocus}
-						   max={max}
-						   min={min}
-						   maxLength={maxlength}
-						   minLength={minlength}
-						   pattern={pattern}
-						   disabled={disabled}
-						   multiple={multiple}
-						   onInput={this.props.onInput}
-						   onChange={this.props.onChange}
-					/>
+					<div className="input-group">
+						{this.renderStart()}
+						<input className={classnames({
+							"form-control": true,
+							"no-start-border": this.state.hasStart,
+							"no-end-border": this.state.hasEnd
+						})}
+							   id="name"
+							   name={name}
+							   placeholder={placeholder}
+							   step={step}
+							   type={type}
+							   aria-required={required}
+							   aria-invalid={invalid}
+							   value={value}
+							   readOnly={readonly}
+							   required={required}
+							   autoFocus ={autofocus}
+							   max={max}
+							   min={min}
+							   maxLength={maxlength}
+							   minLength={minlength}
+							   pattern={pattern}
+							   disabled={disabled}
+							   multiple={multiple}
+							   onInput={this.props.onInput}
+							   onChange={this.props.onChange}
+						/>
+						{this.renderEnd()}
+					</div>
 					{ _hasMessages &&
 					message.map((el) => {
 						const _hasIcon = el.icon !== undefined && el.icon.length>0;
@@ -91,6 +127,9 @@ class Input extends React.Component {
 		)
 	}
 }
+
+Input.Start = Start;
+Input.End = End;
 
 Input.defaultProps = {
 	autofocus: false,
