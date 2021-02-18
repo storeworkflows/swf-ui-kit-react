@@ -2,27 +2,18 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 
+import Icon from "../Icon/Icon";
 import styles from "./styles.scss";
 import {SWF_BUTTON} from "./constants";
 import {addStyles, getIconSize} from "./utils";
-import Icon from "../Icon/Icon";
-
-//import "../x-mobi-swf-icon"
+import {dispatch} from "../utils/dispatchDecorator";
 
 
-
+@dispatch()
 class Button extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			iconColor: SWF_BUTTON.TEXT_COLOR,
-			focused: false
-		}
-	};
 
 	render() {
 
-		const {iconColor, focused} = this.state;
 		const {
 			disabled,
 			icon,
@@ -30,40 +21,22 @@ class Button extends React.Component {
 			tooltipContent,
 			size,
 			variant,
-			customStyle
+			customStyle,
+			dispatch,
+			children
 		} = this.props;
+
+		console.log(this.props.children);
 
 		const additionalStyle = addStyles(customStyle);
 
 		const _hasIcon = icon.length>0;
 		const _hasLabel = label.length>0;
 		const _hasOnlyIcon = _hasIcon && !_hasLabel;
-		const _emptyElement = !_hasLabel && !_hasIcon;
+		const _slotElement = !_hasLabel && !_hasIcon && children!==undefined;
 		const _iconSize = getIconSize(customStyle, icon, size);
 
-		// const focus = () => {
-		// 	this.setState({
-		// 		focused: true,
-		// 		iconColor: SWF_BUTTON.ACTIVE_TEXT_COLOR
-		// 	})
-		// };
-		//
-		// const blur = () => {
-		// 	this.setState({
-		// 		focused: false,
-		// 		iconColor: SWF_BUTTON.TEXT_COLOR
-		// 	})
-		// }
-		//
-		// const mouseOver = () => {
-		// 	if(!focused)
-		// 		this.setState({iconColor: SWF_BUTTON.HOVER_TEXT_COLOR})
-		// }
-		//
-		// const mouseOut = () => {
-		// 	if(!focused)
-		// 		this.setState({iconColor: SWF_BUTTON.TEXT_COLOR})
-		// }
+		console.log("2:", children);
 
 		return (
 			<>
@@ -78,33 +51,29 @@ class Button extends React.Component {
 							"has-icon": _hasIcon
 						}
 					)}
-					//onClick={() => dispatch(SWF_BUTTON.CLICKED)}
+					onClick={() => dispatch(SWF_BUTTON.CLICKED)}
 					disabled = {disabled}
 					title = {tooltipContent}
 					style={additionalStyle}
-					// onFocus={() => focus()}
-					// onBlur={() => blur()}
-					// onMouseOver={() => mouseOver()}
-					// onMouseOut={() => mouseOut()}
 				>
 					<div className="content">
 						{_hasIcon &&
-							<Icon
-								className={classnames(
-									{
-										"button-icon": true,
-										"label-button-icon": !_hasOnlyIcon
-									}
-								)}
-								icon={icon}
-								// color={iconColor}
-								customSize={_iconSize}
-							/>
+							<div className={classnames(
+								{
+									"button-icon": true,
+									"label-button-icon": !_hasOnlyIcon
+								}
+							)}>
+								<Icon
+									icon={icon}
+									customSize={_iconSize}
+								/>
+							</div>
 						}
 
 						{ _hasLabel && <label>{label}</label> }
+						{/*{_slotElement && children}*/}
 
-						{_emptyElement && <slot/> }
 					</div>
 				</button>
 			</>
