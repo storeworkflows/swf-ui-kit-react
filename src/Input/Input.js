@@ -70,7 +70,9 @@ class Input extends React.Component {
 				<style>{styles}</style>
 				<div className="form-group">
 					{ _hasLabel && <label htmlFor="name">{label}</label>}
-					<div className="input-group">
+					<div className={classnames({
+						"input-group": true
+					})}>
 						{this.renderStart()}
 						<input className={classnames({
 							"form-control": true,
@@ -150,7 +152,6 @@ Input.defaultProps = {
 Input.propTypes = {
 	autofocus: propTypes.bool,
 	disabled: propTypes.bool,
-	// helperContent: propTypes.string,
 	invalid: propTypes.bool,
 	label: propTypes.string,
 	manageInvalid: propTypes.bool,
@@ -174,9 +175,9 @@ Input.propTypes = {
 		propTypes.number,
 		propTypes.oneOf["any"]
 	]),
-	onInput: propTypes.func,
 	type: propTypes.oneOf(["password", "email", "number", "url", "tel", "search", "date", "datetime", "datetime-local", "month", "week", "time"]),
 	value: propTypes.string,
+	onInput: propTypes.func,
 	onChange: propTypes.func
 }
 

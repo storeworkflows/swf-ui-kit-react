@@ -8,19 +8,36 @@ label {
     font-weight: 300;
     color: #5a6169;
 }
-.form-control--start,
-.form-control--end,
+
 .input-group {
+    position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+
+.input-group > .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
 }
 
 .form-control--start,
 .form-control--end
 {
-    padding: 0.5rem 1rem;
     border: 1px solid #becad6;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    white-space: nowrap;
 }
 
 .form-control--start {
