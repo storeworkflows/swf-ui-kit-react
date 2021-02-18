@@ -12,7 +12,7 @@
 
     &:hover {
       .step-circle {
-        background-color: #FFC75F;
+        background-color: var(--circle-hover);
       }
     }
 
@@ -22,7 +22,7 @@
   }
 
   &-circle {
-    background-color: #F9F871;
+    background-color: var(--circle-unfinished);
     border-radius: 50%;
     width: 40%;
     margin: 0 auto;
@@ -39,18 +39,20 @@
     }
 
     &.--before-selected {
-      background-color: #FF6F91;
+      background-color: var(--circle-finished);
     }
 
     &.--selected {
-      background-color: #D65DB1 !important;
-      border: 2px solid white;
-      box-shadow: 0 0 0 2px #D65DB1;
+      background-color: var(--circle-current) !important;
+      border: 2px solid var(--circle-border-inner);
+      box-shadow: 0 0 0 2px var(--circle-border);
     }
   }
 
   &-icon {
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   &-label {
@@ -59,6 +61,8 @@
     text-align: center;
     font-size: smaller;
     padding-top: 8px;
+
+    color: var(--label);
 
     &.--selected {
       font-weight: bold;
