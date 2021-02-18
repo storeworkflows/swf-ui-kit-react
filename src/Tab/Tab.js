@@ -35,7 +35,7 @@ class Tab extends React.Component {
 
         const tabSelected = (id, disabled) => {
             if (!disabled) {
-                onClick(id);
+                onClick({id: id});
 
                 if(!manageSelectedItem)
                     this.setState({ currentSelectedItem: id })

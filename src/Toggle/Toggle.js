@@ -4,7 +4,6 @@ import classnames from "classnames";
 
 import styles from "./style.scss";
 import {SWF_TOGGLE} from "./constants";
-import {dispatch} from "../utils/dispatchDecorator";
 
 const _addStyles = (customStyle) => {
 	let styles = {};
@@ -18,7 +17,6 @@ const _addStyles = (customStyle) => {
 	return styles;
 }
 
-//@dispatch()
 class Toggle extends React.Component {
 
 	constructor(props) {
@@ -34,7 +32,6 @@ class Toggle extends React.Component {
 			manageChecked,
 			size,
 			customStyle,
-			dispatch,
 			onClick
 		} = this.props;
 
@@ -46,8 +43,7 @@ class Toggle extends React.Component {
 				checked = !this.state.checked
 				this.setState({checked: checked})
 			}
-			onClick(checked);
-			//dispatch(SWF_TOGGLE.CLICKED, {value: checked});
+			onClick({value: checked});
 		};
 
 		return (
