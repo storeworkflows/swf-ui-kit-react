@@ -3,11 +3,11 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classNames from 'classnames';
 
-import Icon from "../Icon/Icon";
+import TabItem from "./TabItem";
 import styles from "./styles.scss";
 import {ITEMS} from "../Toggle/mock";
-import {dispatch} from "../utils/dispatchDecorator";
 import {ALIGNMENT, SWF_TAB_SELECTED} from './constants'
+import {dispatch} from "../utils/dispatchDecorator";
 
 
 @dispatch()
@@ -38,36 +38,10 @@ class Tab extends React.Component {
         const tabSelected = (id, disabled) => {
             if (!disabled) {
                 dispatch(SWF_TAB_SELECTED, {id: id});
-                this.setState({
-                    currentSelectedItem: id
-                })
+
+                if(!manageSelectedItem)
+                    this.setState({ currentSelectedItem: id })
             }
-        }
-
-        const renderLabel = (label, hide) => {
-            if (!hide) return (
-                <div className="label">{label}</div>
-            )
-        }
-
-        const renderItem = (item, isSelected, hideLabel) => {
-            const {label, icon, id, disabled, style} = item
-            return (
-                <div
-                    key={id}
-                    className={classNames({
-                        "swf-tab": true,
-                        "active": isSelected && !disabled,
-                        "disabled": disabled
-                    })}
-                    disabled={disabled}
-                    on-click={() => tabSelected(item.id, disabled)}
-                    style={style || {}}
-                >
-                    <Icon icon={icon} size="sm"/>
-                    {renderLabel(label, hideLabel)}
-                </div>
-            )
         }
 
         return (
@@ -82,7 +56,13 @@ class Tab extends React.Component {
                 })}>
                     {
                         _.orderBy(items, ['count'], ['asc']).map(item =>
-                            renderItem(item, currentSelectedItem === item.id, hideLabel)
+                            <TabItem
+                                key = {item.id}
+                                item = {item}
+                                isSelected = {currentSelectedItem === item.id}
+                                hideLabel = {hideLabel}
+                                tabSelected = {tabSelected}
+                            />
                         )
                     }
                 </div>
