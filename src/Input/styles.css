@@ -92,6 +92,7 @@ label {
 .form-control.no-end-border:focus {
     box-shadow: none;
     border-color: #becad6;
+    outline: none;
 }
 
 .form-control:hover {
