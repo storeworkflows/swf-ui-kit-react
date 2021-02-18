@@ -1,8 +1,7 @@
-import propTypes from "prop-types";
 import * as React from "react";
+import propTypes from "prop-types";
 
 import {generateSvg, setSize} from './utils'
-
 
 class Icon extends React.Component {
 
