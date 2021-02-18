@@ -6,9 +6,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "autosize": "^4.0.2",
     "classnames": "^2.2.6",
-    "lodash": "^4.17.20",
-    "cross-fetch": "^3.0.6"
+    "cross-fetch": "^3.0.6",
+    "lodash": "^4.17.20"
   },
   "scripts": {
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",
