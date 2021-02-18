@@ -1,4 +1,3 @@
-
 import fetch from "cross-fetch";
 
 const DEFAULT_GQL_ENDPOINT = '/api/now/graphql';

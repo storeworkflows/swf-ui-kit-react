@@ -4,12 +4,8 @@ import classnames from "classnames";
 
 import Icon from "../Icon/Icon";
 import styles from "./styles.scss";
-import {SWF_BUTTON} from "./constants";
 import {addStyles, getIconSize} from "./utils";
-import {dispatch} from "../utils/dispatchDecorator";
 
-
-@dispatch()
 class Button extends React.Component {
 
 	render() {
@@ -22,11 +18,9 @@ class Button extends React.Component {
 			size,
 			variant,
 			customStyle,
-			dispatch,
-			children
+			children,
+			onClick
 		} = this.props;
-
-		console.log(this.props.children);
 
 		const additionalStyle = addStyles(customStyle);
 
@@ -35,8 +29,6 @@ class Button extends React.Component {
 		const _hasOnlyIcon = _hasIcon && !_hasLabel;
 		const _slotElement = !_hasLabel && !_hasIcon && children!==undefined;
 		const _iconSize = getIconSize(customStyle, icon, size);
-
-		console.log("2:", children);
 
 		return (
 			<>
@@ -51,7 +43,7 @@ class Button extends React.Component {
 							"has-icon": _hasIcon
 						}
 					)}
-					onClick={() => dispatch(SWF_BUTTON.CLICKED)}
+					onClick={onClick}
 					disabled = {disabled}
 					title = {tooltipContent}
 					style={additionalStyle}
@@ -72,7 +64,7 @@ class Button extends React.Component {
 						}
 
 						{ _hasLabel && <label>{label}</label> }
-						{/*{_slotElement && children}*/}
+						{_slotElement && children}
 
 					</div>
 				</button>
@@ -99,7 +91,8 @@ Button.propTypes = {
 	size: propTypes.oneOf(['sm', 'md', 'lg']),
 	variant:  propTypes.oneOf(["primary" , "primary-positive" , "primary-negative" , "secondary" ,
 				"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
-	customStyle: propTypes.object
+	customStyle: propTypes.object,
+	onClick: propTypes.func
 }
 
 export default Button

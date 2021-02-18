@@ -4,7 +4,6 @@ import classnames from "classnames";
 
 import styles from "./style.scss";
 import {SWF_TOGGLE} from "./constants";
-import {dispatch} from "../utils/dispatchDecorator";
 
 const _addStyles = (customStyle) => {
 	let styles = {};
@@ -18,12 +17,10 @@ const _addStyles = (customStyle) => {
 	return styles;
 }
 
-@dispatch()
 class Toggle extends React.Component {
 
 	constructor(props) {
 		super(props);
-		console.log(props);
 		this.state = {
 			checked: this.props.checked
 		}
@@ -35,7 +32,7 @@ class Toggle extends React.Component {
 			manageChecked,
 			size,
 			customStyle,
-			dispatch
+			onClick
 		} = this.props;
 
 		const additionalStyle = _addStyles(customStyle);
@@ -46,7 +43,7 @@ class Toggle extends React.Component {
 				checked = !this.state.checked
 				this.setState({checked: checked})
 			}
-			dispatch(SWF_TOGGLE.CLICKED, {value: checked});
+			onClick({value: checked});
 		};
 
 		return (
@@ -85,7 +82,8 @@ Toggle.propTypes = {
 	disabled: propTypes.bool,
 	manageChecked: propTypes.bool,
 	size: propTypes.oneOf(["sm", "md"]),
-	customStyle: propTypes.object
+	customStyle: propTypes.object,
+	onClick: propTypes.func
 }
 
 export default Toggle;

@@ -10,11 +10,17 @@ class Step extends React.Component {
     }
 
     render() {
-        const { icon, label, selected, onClick } = this.props;
+        const { icon, label, selected, beforeSelected } = this.props;
 
         return (
-            <div className="step step-container" onClick={onClick}>
-                <div className="step-circle">
+            <div className="step step-container">
+                <div
+                    className={classnames({
+                        'step-circle': true,
+                        '--selected': selected,
+                        '--before-selected': beforeSelected
+                    })}
+                >
                     <div className="step-icon">
                         <Icon
                             icon={icon}
@@ -40,7 +46,7 @@ Step.propTypes = {
     icon: PropTypes.string,
     label: PropTypes.string,
     selected: PropTypes.bool,
-    onClick: PropTypes.func
+    beforeSelected: PropTypes.bool
 }
 
 export default Step;
