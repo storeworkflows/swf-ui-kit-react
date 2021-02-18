@@ -10,6 +10,18 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 
+    &.--vertical {
+      flex-direction: row;
+
+      .step-circle {
+        width: auto;
+
+        &::after {
+          padding-bottom: 0;
+        }
+      }
+    }
+
     &:hover {
       .step-circle {
         background-color: var(--circle-hover);
@@ -32,7 +44,8 @@
 
     transition: background-color 300ms, box-shadow 400ms ease;
 
-    &:after {
+    //for rectangle proportions
+    &::after {
       content: "";
       display: block;
       padding-bottom: 100%;

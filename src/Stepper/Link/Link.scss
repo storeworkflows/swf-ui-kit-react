@@ -1,9 +1,5 @@
 .link {
   &-container {
-    width: 100%;
-  }
-
-  &-wrapper {
     //must be as in the .step-circle
     width: 40%;
     margin: 0 auto;
@@ -12,7 +8,6 @@
     justify-content: center;
     position: relative;
 
-    //for rectangle proportions
     &:after {
       content: "";
       display: block;

@@ -8,25 +8,34 @@ class Link extends React.Component {
     }
 
     render() {
-        const { beforeSelected } = this.props;
+        const { beforeSelected, vertical } = this.props;
 
         return (
-            <div className="link link-container">
-                <div className="link-wrapper">
-                    <div
-                        className={classnames({
-                            'link-strip': true,
-                            '--before-selected': beforeSelected
-                        })}
-                    />
-                </div>
+            <div className={classnames({
+                'link': true,
+                'link-container': true,
+                '--vertical': vertical
+            })}
+            >
+                <div
+                    className={classnames({
+                        'link-strip': true,
+                        '--before-selected': beforeSelected
+                    })}
+                />
             </div>
         );
     }
 }
 
 Link.propTypes = {
-    beforeSelected : PropTypes.bool
-}
+    beforeSelected : PropTypes.bool,
+    vertical: PropTypes.bool
+};
+
+Link.defaultProps = {
+    beforeSelected : false,
+    vertical: false
+};
 
 export default Link;

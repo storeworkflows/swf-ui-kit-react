@@ -3,6 +3,7 @@ import Step from './Step/Step';
 import Link from './Link/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
+import classnames from "classnames";
 import { createCssVariables } from "./utils";
 
 class Stepper extends React.Component {
@@ -20,6 +21,8 @@ class Stepper extends React.Component {
     }
 
     renderSteps(steps) {
+        const { hideLabels, vertical, palette: { icon } } = this.props;
+
         return (
             steps.map((step, index) => {
                 const isSelected = this.state.selected === index;
@@ -27,19 +30,27 @@ class Stepper extends React.Component {
 
                 return (
                     <React.Fragment key={'step' + index}>
-                        <div onClick={this.selectStep(index)}>
+                        <div
+                            className="stepper-item"
+                            onClick={this.selectStep(index)}
+                        >
                             <Step
                                 icon={step.icon}
-                                iconColor={this.props.palette.icon}
+                                iconColor={icon}
                                 label={step.label}
                                 selected={isSelected}
                                 beforeSelected={isBeforeSelected}
+                                hideLabel={hideLabels}
+                                vertical={vertical}
                             />
                         </div>
                         {(index !== steps.length - 1) &&
-                        <Link
-                            beforeSelected={isBeforeSelected}
-                        />
+                            <div className="stepper-item">
+                                <Link
+                                    beforeSelected={isBeforeSelected}
+                                    vertical={vertical}
+                                />
+                            </div>
                         }
                     </React.Fragment>
                 )
@@ -48,12 +59,18 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, steps } = this.props;
+        const { palette, steps, vertical } = this.props;
 
         return (
             <>
                 <style type="text/css">{createCssVariables(palette) + styles}</style>
-                <div className="stepper stepper-container">
+                <div
+                    className={classnames({
+                        'stepper': true,
+                        'stepper-container': true,
+                        '--vertical': vertical
+                    })}
+                >
                     {this.renderSteps(steps)}
                 </div>
             </>
@@ -63,10 +80,13 @@ class Stepper extends React.Component {
 
 Stepper.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object),
-    palette: PropTypes.object
+    palette: PropTypes.object,
+    hideLabels: PropTypes.bool,
+    vertical: PropTypes.bool
 }
 
 Stepper.defaultProps = {
+    steps: [],
     palette: {
         circle: {
             unfinished: '',
@@ -79,7 +99,9 @@ Stepper.defaultProps = {
         link: '',
         icon: '',
         label: ''
-    }
+    },
+    hideLabels: false,
+    vertical: false
 }
 
 export default Stepper;

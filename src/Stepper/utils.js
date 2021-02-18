@@ -13,16 +13,16 @@ export const createCssVariables = (palette) => {
         `}`
 }
 
-const aaronsExamplePalette = {
-    circle: {
-        unfinished: '#2AC195',
-        current: '#008A62',
-        currentBorder: '#008A62',
-        currentBorderInner: 'white',
-        finished: '#0069C8',
-        hover: '#70FACB'
-    },
-    link: '#0069C8',
-    icon: 'white',
-    label: 'black'
-}
+// const aaronsExamplePalette = {
+//     circle: {
+//         unfinished: '#2AC195',
+//         current: '#008A62',
+//         currentBorder: '#008A62',
+//         currentBorderInner: 'white',
+//         finished: '#0069C8',
+//         hover: '#70FACB'
+//     },
+//     link: '#0069C8',
+//     icon: 'white',
+//     label: 'black'
+// }

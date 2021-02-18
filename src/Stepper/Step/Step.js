@@ -10,10 +10,15 @@ class Step extends React.Component {
     }
 
     render() {
-        const { icon, iconColor, label, selected, beforeSelected } = this.props;
+        const { icon, iconColor, label, hideLabel, selected, beforeSelected, vertical } = this.props;
 
         return (
-            <div className="step step-container">
+            <div className={classnames({
+                    'step': true,
+                    'step-container': true,
+                    '--vertical': vertical
+                })}
+            >
                 <div
                     className={classnames({
                         'step-circle': true,
@@ -35,7 +40,7 @@ class Step extends React.Component {
                         '--selected': selected,
                     })}
                 >
-                    <span>{label}</span>
+                    <span>{!hideLabel && label}</span>
                 </div>
             </div>
         )
@@ -46,8 +51,20 @@ Step.propTypes = {
     icon: PropTypes.string,
     iconColor: PropTypes.string,
     label: PropTypes.string,
+    hideLabel: PropTypes.bool,
     selected: PropTypes.bool,
-    beforeSelected: PropTypes.bool
+    beforeSelected: PropTypes.bool,
+    vertical: PropTypes.bool
+};
+
+Step.defaultProps = {
+    icon: '',
+    iconColor: '',
+    label: '',
+    hideLabel: false,
+    selected: false,
+    beforeSelected: false,
+    vertical: false
 };
 
 export default Step;
