@@ -26,8 +26,6 @@ class Button extends React.Component {
 			children
 		} = this.props;
 
-		console.log(this.props.children);
-
 		const additionalStyle = addStyles(customStyle);
 
 		const _hasIcon = icon.length>0;
@@ -35,8 +33,6 @@ class Button extends React.Component {
 		const _hasOnlyIcon = _hasIcon && !_hasLabel;
 		const _slotElement = !_hasLabel && !_hasIcon && children!==undefined;
 		const _iconSize = getIconSize(customStyle, icon, size);
-
-		console.log("2:", children);
 
 		return (
 			<>
@@ -72,7 +68,7 @@ class Button extends React.Component {
 						}
 
 						{ _hasLabel && <label>{label}</label> }
-						{/*{_slotElement && children}*/}
+						{_slotElement && children}
 
 					</div>
 				</button>
