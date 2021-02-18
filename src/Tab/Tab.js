@@ -6,11 +6,9 @@ import classNames from 'classnames';
 import TabItem from "./TabItem";
 import styles from "./styles.scss";
 import {ITEMS} from "../Toggle/mock";
-import {ALIGNMENT, SWF_TAB_SELECTED} from './constants'
-import {dispatch} from "../utils/dispatchDecorator";
+import {ALIGNMENT} from './constants'
 
 
-@dispatch()
 class Tab extends React.Component {
 
     constructor(props) {
@@ -30,14 +28,14 @@ class Tab extends React.Component {
             maxWidth,
             manageSelectedItem,
             tabsAlignment,
-            dispatch
+            onClick
         } = this.props
 
         const {currentSelectedItem} = this.state;
 
         const tabSelected = (id, disabled) => {
             if (!disabled) {
-                dispatch(SWF_TAB_SELECTED, {id: id});
+                onClick(id);
 
                 if(!manageSelectedItem)
                     this.setState({ currentSelectedItem: id })
@@ -96,7 +94,8 @@ Tab.propTypes = {
     manageSelectedItem: propTypes.bool,
     maxWidth: propTypes.number,
     selectedItem: propTypes.string,
-    tabsAlignment: propTypes.oneOf(Object.values(ALIGNMENT))
+    tabsAlignment: propTypes.oneOf(Object.values(ALIGNMENT)),
+    onClick: propTypes.func
 }
 
 export default Tab;

@@ -18,7 +18,7 @@ const _addStyles = (customStyle) => {
 	return styles;
 }
 
-@dispatch()
+//@dispatch()
 class Toggle extends React.Component {
 
 	constructor(props) {
@@ -34,7 +34,8 @@ class Toggle extends React.Component {
 			manageChecked,
 			size,
 			customStyle,
-			dispatch
+			dispatch,
+			onClick
 		} = this.props;
 
 		const additionalStyle = _addStyles(customStyle);
@@ -45,7 +46,8 @@ class Toggle extends React.Component {
 				checked = !this.state.checked
 				this.setState({checked: checked})
 			}
-			dispatch(SWF_TOGGLE.CLICKED, {value: checked});
+			onClick(checked);
+			//dispatch(SWF_TOGGLE.CLICKED, {value: checked});
 		};
 
 		return (
@@ -84,7 +86,8 @@ Toggle.propTypes = {
 	disabled: propTypes.bool,
 	manageChecked: propTypes.bool,
 	size: propTypes.oneOf(["sm", "md"]),
-	customStyle: propTypes.object
+	customStyle: propTypes.object,
+	onClick: propTypes.func
 }
 
 export default Toggle;

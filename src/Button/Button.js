@@ -4,12 +4,8 @@ import classnames from "classnames";
 
 import Icon from "../Icon/Icon";
 import styles from "./styles.scss";
-import {SWF_BUTTON} from "./constants";
 import {addStyles, getIconSize} from "./utils";
-import {dispatch} from "../utils/dispatchDecorator";
 
-
-@dispatch()
 class Button extends React.Component {
 
 	render() {
@@ -22,8 +18,8 @@ class Button extends React.Component {
 			size,
 			variant,
 			customStyle,
-			dispatch,
-			children
+			children,
+			onClick
 		} = this.props;
 
 		const additionalStyle = addStyles(customStyle);
@@ -47,7 +43,7 @@ class Button extends React.Component {
 							"has-icon": _hasIcon
 						}
 					)}
-					onClick={() => dispatch(SWF_BUTTON.CLICKED)}
+					onClick={onClick}
 					disabled = {disabled}
 					title = {tooltipContent}
 					style={additionalStyle}
@@ -95,7 +91,8 @@ Button.propTypes = {
 	size: propTypes.oneOf(['sm', 'md', 'lg']),
 	variant:  propTypes.oneOf(["primary" , "primary-positive" , "primary-negative" , "secondary" ,
 				"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
-	customStyle: propTypes.object
+	customStyle: propTypes.object,
+	onClick: propTypes.func
 }
 
 export default Button
