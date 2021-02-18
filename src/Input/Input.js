@@ -77,7 +77,8 @@ class Input extends React.Component {
 						<input className={classnames({
 							"form-control": true,
 							"no-start-border": this.state.hasStart,
-							"no-end-border": this.state.hasEnd
+							"no-end-border": this.state.hasEnd,
+							[this.props.className]: true
 						})}
 							   id="name"
 							   name={name}
@@ -169,6 +170,7 @@ Input.propTypes = {
 	name: propTypes.string.required,
 	pattern: propTypes.string,
 	placeholder: propTypes.string,
+	className: propTypes.string,
 	readonly: propTypes.bool,
 	required: propTypes.bool,
 	step: propTypes.oneOfType([
