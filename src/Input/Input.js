@@ -70,7 +70,9 @@ class Input extends React.Component {
 				<style>{styles}</style>
 				<div className="form-group">
 					{ _hasLabel && <label htmlFor="name">{label}</label>}
-					<div className="input-group">
+					<div className={classnames({
+						"input-group": true
+					})}>
 						{this.renderStart()}
 						<input className={classnames({
 							"form-control": true,

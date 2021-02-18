@@ -8,21 +8,36 @@ label {
     font-weight: 300;
     color: #5a6169;
 }
-.form-control--start,
-.form-control--end,
+
 .input-group {
-    display: grid;
-    grid-template-columns: 5rem 1fr 5rem;
-    align-items: center;
-    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+}
+
+
+.input-group > .form-control {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
 }
 
 .form-control--start,
 .form-control--end
 {
-    height: 100%;
     border: 1px solid #becad6;
     text-align: center;
+    display: flex;
+    align-items: center;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    white-space: nowrap;
 }
 
 .form-control--start {
