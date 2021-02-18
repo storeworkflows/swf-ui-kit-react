@@ -7,7 +7,7 @@ import React from 'react';
 class Stepper extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { selected: 0 }
+        this.state = {selected: 0}
     }
 
     selectStep(index) {
@@ -20,20 +20,28 @@ class Stepper extends React.Component {
 
     renderSteps(steps) {
         return (
-            steps.map((step, index) => (
-                <React.Fragment key={'step' + index}>
-                    <Step
-                        icon={step.icon}
-                        label={step.label}
-                        selected={this.state.selected === index}
-                        beforeSelected={this.state.selected > index}
-                        onClick={this.selectStep(index)}
-                    />
-                    {(index !== steps.length - 1) &&
-                        <Link />
-                    }
-                </React.Fragment>
-            ))
+            steps.map((step, index) => {
+                const isSelected = this.state.selected === index;
+                const isBeforeSelected = this.state.selected > index;
+
+                return (
+                    <React.Fragment key={'step' + index}>
+                        <div onClick={this.selectStep(index)}>
+                            <Step
+                                icon={step.icon}
+                                label={step.label}
+                                selected={isSelected}
+                                beforeSelected={isBeforeSelected}
+                            />
+                        </div>
+                        {(index !== steps.length - 1) &&
+                        <Link
+                            beforeSelected={isBeforeSelected}
+                        />
+                        }
+                    </React.Fragment>
+                )
+            })
         )
     }
 
