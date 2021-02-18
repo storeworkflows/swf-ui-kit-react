@@ -16,7 +16,7 @@ class Input extends React.Component {
 	render() {
 		const {
 			disabled,
-			label = "label",
+			label,
 			name= "name",
 			placeholder,
 			readonly,
@@ -36,16 +36,14 @@ class Input extends React.Component {
 		} = this.props;
 
 		const _hasLabel = label !== undefined;
-		const _hasMessages = message.length>0;
+		const _hasMessages = message.length > 0;
 		return (
 			<>
 				<style>{styles}</style>
 				<div className="form-group">
-					{ _hasLabel &&
-					<span>{label}</span>
-					}
-
+					{ _hasLabel && <label htmlFor="name">{label}</label>}
 					<input className="form-control"
+						   id="name"
 						   name={name}
 						   placeholder={placeholder}
 						   step={step}
@@ -64,6 +62,7 @@ class Input extends React.Component {
 						   disabled={disabled}
 						   multiple={multiple}
 						   onInput={this.props.onInput}
+						   onChange={this.props.onChange}
 					/>
 					{ _hasMessages &&
 					message.map((el) => {
@@ -104,7 +103,9 @@ Input.defaultProps = {
 	readonly: false,
 	required: false,
 	step: "any",
-	type: "text"
+	type: "text",
+	onInput: () => void 0,
+	onChange: () => void 0
 }
 
 Input.propTypes = {
@@ -125,7 +126,7 @@ Input.propTypes = {
 		icon: propTypes.string
 	})),
 	multiple: propTypes.bool,
-	name: propTypes.string,
+	name: propTypes.string.required,
 	pattern: propTypes.string,
 	placeholder: propTypes.string,
 	readonly: propTypes.bool,
@@ -136,7 +137,8 @@ Input.propTypes = {
 	]),
 	onInput: propTypes.func,
 	type: propTypes.oneOf(["password", "email", "number", "url", "tel", "search", "date", "datetime", "datetime-local", "month", "week", "time"]),
-	value: propTypes.string
+	value: propTypes.string,
+	onChange: propTypes.func
 }
 
 export default Input;
