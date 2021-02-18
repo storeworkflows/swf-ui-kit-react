@@ -3,6 +3,7 @@ import propTypes from "prop-types";
 import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
 import {query} from "./datasource";
 import _ from "lodash";
+import {Input} from "../index";
 
 class Reference extends React.Component {
     constructor(props) {
@@ -40,9 +41,7 @@ class Reference extends React.Component {
         console.log(this.state.records)
         return (
             <div className="swf-reference">
-                <input list="records" className="swf-reference--input" onChange={this.onChange}/>
-                <datalist id="records">
-                </datalist>
+                <Input className="swf-reference--input" onInput={this.onChange}/>
             </div>
         )
     }
