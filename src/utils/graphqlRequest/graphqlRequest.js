@@ -1,5 +1,4 @@
-import {makePromise, execute} from "apollo-link";
-import batchHttpLink from "./batchHttpLink";
+
 import fetch from "cross-fetch";
 
 const DEFAULT_GQL_ENDPOINT = '/api/now/graphql';
