@@ -54,7 +54,15 @@
     font-size: smaller;
     padding-top: 8px;
 
+    display: flex;
+    flex-direction: column;
+
     color: var(--label);
+  }
+
+  .sublabel {
+    font-size: x-small;
+    font-weight: lighter;
   }
 }
 
