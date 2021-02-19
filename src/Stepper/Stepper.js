@@ -20,8 +20,8 @@ class Stepper extends React.Component {
         }
     }
 
-    renderSteps(steps) {
-        const { hideLabels, vertical, palette: { icon } } = this.props;
+    renderSteps() {
+        const { steps, hideLabels, palette: { icon } } = this.props;
 
         return (
             steps.map((step, index) => {
@@ -31,25 +31,28 @@ class Stepper extends React.Component {
                 return (
                     <React.Fragment key={'step' + index}>
                         <div
-                            className="stepper-item"
+                            className={classnames({
+                                'stepper-item': true,
+                                '--selected': isSelected,
+                                '--before-selected': isBeforeSelected
+                            })}
                             onClick={this.selectStep(index)}
                         >
                             <Step
                                 icon={step.icon}
                                 iconColor={icon}
                                 label={step.label}
-                                selected={isSelected}
-                                beforeSelected={isBeforeSelected}
                                 hideLabel={hideLabels}
-                                vertical={vertical}
                             />
                         </div>
                         {(index !== steps.length - 1) &&
-                            <div className="stepper-item">
-                                <Link
-                                    beforeSelected={isBeforeSelected}
-                                    vertical={vertical}
-                                />
+                            <div
+                                className={classnames({
+                                    'stepper-item': true,
+                                    '--before-selected': isBeforeSelected
+                                })}
+                            >
+                                <Link />
                             </div>
                         }
                     </React.Fragment>
@@ -59,7 +62,7 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, steps, vertical } = this.props;
+        const { palette, vertical } = this.props;
 
         return (
             <>
@@ -71,7 +74,7 @@ class Stepper extends React.Component {
                         '--vertical': vertical
                     })}
                 >
-                    {this.renderSteps(steps)}
+                    {this.renderSteps()}
                 </div>
             </>
         )

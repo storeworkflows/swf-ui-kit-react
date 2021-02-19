@@ -1,6 +1,4 @@
 import React from 'react';
-import PropTypes from "prop-types";
-import classnames from "classnames";
 
 class Link extends React.Component {
     constructor(props) {
@@ -8,34 +6,13 @@ class Link extends React.Component {
     }
 
     render() {
-        const { beforeSelected, vertical } = this.props;
-
         return (
-            <div className={classnames({
-                'link': true,
-                'link-container': true,
-                '--vertical': vertical
-            })}
+            <div className="link link-container"
             >
-                <div
-                    className={classnames({
-                        'link-strip': true,
-                        '--before-selected': beforeSelected
-                    })}
-                />
+                <div className="link-strip"/>
             </div>
         );
     }
 }
-
-Link.propTypes = {
-    beforeSelected : PropTypes.bool,
-    vertical: PropTypes.bool
-};
-
-Link.defaultProps = {
-    beforeSelected : false,
-    vertical: false
-};
 
 export default Link;

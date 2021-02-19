@@ -8,11 +8,17 @@
     padding: 5px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
+  }
+}
 
-    &.--vertical {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
+.--vertical {
+  &.stepper-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .stepper-item {
+    height: 100%;
   }
 }

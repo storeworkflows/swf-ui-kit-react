@@ -6,21 +6,10 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    position: relative;
 
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-
-    &.--vertical {
-      flex-direction: row;
-
-      .step-circle {
-        width: auto;
-
-        &::after {
-          padding-bottom: 0;
-        }
-      }
-    }
 
     &:hover {
       .step-circle {
@@ -50,16 +39,6 @@
       display: block;
       padding-bottom: 100%;
     }
-
-    &.--before-selected {
-      background-color: var(--circle-finished);
-    }
-
-    &.--selected {
-      background-color: var(--circle-current) !important;
-      border: 2px solid var(--circle-border-inner);
-      box-shadow: 0 0 0 2px var(--circle-border);
-    }
   }
 
   &-icon {
@@ -76,9 +55,41 @@
     padding-top: 8px;
 
     color: var(--label);
+  }
+}
 
-    &.--selected {
-      font-weight: bold;
+.--selected {
+  .step-circle {
+    background-color: var(--circle-current) !important;
+    border: 2px solid var(--circle-border-inner);
+    box-shadow: 0 0 0 2px var(--circle-border);
+  }
+
+  .step-label {
+    font-weight: bold;
+  }
+}
+
+.--before-selected {
+  .step-circle {
+    background-color: var(--circle-finished);
+  }
+}
+
+.--vertical {
+  .step-container {
+    flex-direction: row;
+  }
+
+  .step-circle {
+    width: auto;
+
+    &::after {
+      padding-bottom: 0;
     }
+  }
+
+  .step-label {
+    position: absolute;
   }
 }
