@@ -79,17 +79,26 @@
 .--vertical {
   .step-container {
     flex-direction: row;
+    width: 50%;
+    margin: 0 auto;
   }
 
   .step-circle {
-    width: auto;
+    width: 80%;
+    //height: 80%;
 
     &::after {
-      padding-bottom: 0;
+      //padding-bottom: 0;
+      //padding-right: 100%;
     }
   }
 
   .step-label {
     position: absolute;
+    left: calc(100% + 15px);
+    //bottom: 0;
+    padding-top: 0;
+    max-width: 400%;
+    text-align: left;
   }
 }
