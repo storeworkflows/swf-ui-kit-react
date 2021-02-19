@@ -94,7 +94,7 @@ class Input extends React.Component {
                     {_hasLabel && <label htmlFor="name" className={classnames({
                         "inp-label": true,
                         "--moved": _moved,
-                        "--focused": this.state.focused
+                        "--focused": this.state?.focused
                     })}>{label}</label>}
                     <div className={classnames({
                         "input-group": true
@@ -102,8 +102,8 @@ class Input extends React.Component {
                         {this.renderStart()}
                         <input className={classnames({
                             "form-control": true,
-                            "no-start-border": this.state.hasStart,
-                            "no-end-border": this.state.hasEnd,
+                            "no-start-border": this.state?.hasStart,
+                            "no-end-border": this.state?.hasEnd,
                             [this.props.className]: true
                         })}
                                id="name"
