@@ -6,7 +6,7 @@ export const createCssVariables = (palette) => {
         `--circle-hover:${hover || '#abdebc'};` +
         `--circle-finished:${finished || '#3C6841'};` +
         `--circle-current:${current || '#39A450'};` +
-        `--circle-border:${currentBorder || '#39A450'};` +
+        `--circle-border:${currentBorder || current || '#39A450'};` +
         `--circle-border-inner:${currentBorderInner || '#FFFFFF'};` +
         `--link:${link || '#39A450'};` +
         `--label:${label || '#000000'}` +

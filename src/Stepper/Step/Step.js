@@ -1,5 +1,6 @@
 import './Step.scss';
 import React from 'react';
+import classnames from 'classnames';
 import PropTypes from "prop-types";
 import Icon from '../../Icon/Icon';
 
@@ -9,11 +10,16 @@ class Step extends React.Component {
     }
 
     render() {
-        const { icon, iconColor, label, sublabel, hideLabel } = this.props;
+        const { icon, iconColor, label, sublabel, progress, hideLabel } = this.props;
 
         return (
             <div className='step step-container'>
-                <div className="step-circle">
+                <div
+                    className={classnames({
+                        'step-circle': true,
+                        [`--${progress}`]: progress
+                    })}
+                >
                     <div className="step-icon">
                         {icon &&
                             <Icon
@@ -38,6 +44,7 @@ Step.propTypes = {
     iconColor: PropTypes.string,
     label: PropTypes.string,
     sublabel: PropTypes.string,
+    progress: PropTypes.string,
     hideLabel: PropTypes.bool
 };
 
@@ -46,6 +53,7 @@ Step.defaultProps = {
     iconColor: '',
     label: '',
     sublabel: '',
+    progress: '',
     hideLabel: false
 };
 

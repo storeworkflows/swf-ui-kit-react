@@ -43,6 +43,7 @@ class Stepper extends React.Component {
                                 iconColor={icon}
                                 label={step.label}
                                 sublabel={step.sublabel}
+                                progress={step.progress}
                                 hideLabel={hideLabels}
                             />
                         </div>

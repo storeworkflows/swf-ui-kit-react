@@ -24,7 +24,9 @@
 
   &-circle {
     background-color: var(--circle-unfinished);
+    opacity: 0.25;
     border-radius: 50%;
+
     width: 40%;
     margin: 0 auto;
     display: flex;
@@ -71,6 +73,7 @@
     background-color: var(--circle-current) !important;
     border: 2px solid var(--circle-border-inner);
     box-shadow: 0 0 0 2px var(--circle-border);
+    opacity: 1;
   }
 
   .step-label {
@@ -81,6 +84,7 @@
 .--before-selected {
   .step-circle {
     background-color: var(--circle-finished);
+    opacity: 1;
   }
 }
 
@@ -108,5 +112,20 @@
     padding-top: 0;
     max-width: 400%;
     text-align: left;
+  }
+}
+
+.step-circle {
+  &.--none {
+    background-color: var(--circle-unfinished);
+    opacity: 0.25;
+  }
+
+  &.--partial {
+    border: 2px dashed var(--circle-border-inner);
+  }
+
+  &.--done {
+
   }
 }
