@@ -11,7 +11,7 @@ const _addStyles = (customStyle) => {
 	if(hasStyles)
 		SWF_TOGGLE.AVAILABLE_CUSTOM_STYLES.forEach((styleName)=>{
 			if(customStyle[styleName]!==undefined)
-				styles[styleName] = customStyle[styleName];
+				styles[`--${styleName}`]  = customStyle[styleName];
 		})
 
 	return styles;

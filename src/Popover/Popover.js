@@ -3,6 +3,8 @@ import propTypes from "prop-types";
 
 import styles from "./styles.scss";
 
+const Content = () => null;
+const Target = () => null;
 
 
 const getChild = (children, slotValue) => {
@@ -71,6 +73,9 @@ class Popover extends React.Component {
         );
     }
 }
+
+Popover.Content = Content;
+Popover.Target = Target;
 
 Popover.defaultProps = {
     hideTail: false,
