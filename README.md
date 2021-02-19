@@ -34,17 +34,17 @@ onClick | func
   
 #### available fields for button customStyle object:  
 
-    //style for button background 
+    //button background colors
     "base-color",
     "hover-base-color",   
     "active-base-color",
 		
-    //style for border color 
+    //border colors
     "border-color", 
     "hover-border-color", 
     "active-border-color", 
 		
-    //style border style 
+    //border styles 
     "border-radius", 
     "border-width", 
     "border-style",
