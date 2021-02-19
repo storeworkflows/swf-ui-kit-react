@@ -10,7 +10,7 @@ class Step extends React.Component {
     }
 
     render() {
-        const { icon, label, selected, beforeSelected } = this.props;
+        const { icon, iconColor, label, selected, beforeSelected } = this.props;
 
         return (
             <div className="step step-container">
@@ -24,7 +24,7 @@ class Step extends React.Component {
                     <div className="step-icon">
                         <Icon
                             icon={icon}
-                            color="white"
+                            color={iconColor || 'white'}
                             size="xl"
                         />
                     </div>
@@ -44,9 +44,10 @@ class Step extends React.Component {
 
 Step.propTypes = {
     icon: PropTypes.string,
+    iconColor: PropTypes.string,
     label: PropTypes.string,
     selected: PropTypes.bool,
     beforeSelected: PropTypes.bool
-}
+};
 
 export default Step;

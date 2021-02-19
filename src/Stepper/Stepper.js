@@ -3,11 +3,12 @@ import Step from './Step/Step';
 import Link from './Link/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { createCssVariables } from "./utils";
 
 class Stepper extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {selected: 0}
+        this.state = {selected: 0};
     }
 
     selectStep(index) {
@@ -29,6 +30,7 @@ class Stepper extends React.Component {
                         <div onClick={this.selectStep(index)}>
                             <Step
                                 icon={step.icon}
+                                iconColor={this.props.palette.icon}
                                 label={step.label}
                                 selected={isSelected}
                                 beforeSelected={isBeforeSelected}
@@ -46,11 +48,13 @@ class Stepper extends React.Component {
     }
 
     render() {
+        const { palette, steps } = this.props;
+
         return (
             <>
-                <style type="text/css">{styles}</style>
+                <style type="text/css">{createCssVariables(palette) + styles}</style>
                 <div className="stepper stepper-container">
-                    {this.renderSteps(this.props.steps)}
+                    {this.renderSteps(steps)}
                 </div>
             </>
         )
@@ -58,7 +62,24 @@ class Stepper extends React.Component {
 }
 
 Stepper.propTypes = {
-    steps: PropTypes.arrayOf(PropTypes.object)
+    steps: PropTypes.arrayOf(PropTypes.object),
+    palette: PropTypes.object
+}
+
+Stepper.defaultProps = {
+    palette: {
+        circle: {
+            unfinished: '',
+            current: '',
+            currentBorder: '',
+            currentBorderInner: '',
+            finished: '',
+            hover: ''
+        },
+        link: '',
+        icon: '',
+        label: ''
+    }
 }
 
 export default Stepper;

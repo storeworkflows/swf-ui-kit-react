@@ -20,7 +20,6 @@ class Icon extends React.Component {
 Icon.defaultProps = {
   icon: "",
   size: 'md',
-  customSize: 16,
   color: ""
 }
 
