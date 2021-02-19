@@ -10,3 +10,4 @@ export {default as Stepper} from "./Stepper/Stepper";
 export {default as Reference} from "./Reference/Reference";
 export {default as Input} from "./Input/Input";
 export {default as TextArea} from "./TextArea/TextArea";
+export {default as Pill} from "./Pill/Pill";

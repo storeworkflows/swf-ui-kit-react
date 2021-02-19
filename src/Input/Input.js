@@ -2,9 +2,9 @@ import * as React from "react";
 import classnames from "classnames";
 import styles from "./styles.css";
 
-import {SWF_INPUT} from "./constants";
-import propTypes from "prop-types";
+import PropTypes from "prop-types";
 import findByType from "../utils/findByType";
+import {noop} from "../utils";
 
 const Start = () => null;
 const End = () => null;
@@ -46,12 +46,14 @@ class Input extends React.Component {
         return <div className="form-control--end">{end.props.children}</div>
     }
 
-    onBlur() {
+    onBlur(event) {
         this.setState({focused: false})
+        this.props.onBlur(event);
     }
 
-    onFocus() {
+    onFocus(event) {
         this.setState({focused: true})
+        this.props.onFocus(event);
     }
 
     onInput(event) {
@@ -81,16 +83,17 @@ class Input extends React.Component {
             message
         } = this.props;
 
-        console.log(value)
-
         const _hasLabel = label !== undefined;
         const _hasMessages = message.length > 0;
+        const _moved = this.state.focused || value || this.state.hasStart;
+
         return (
             <>
                 <style>{styles}</style>
                 <div className="form-group">
                     {_hasLabel && <label htmlFor="name" className={classnames({
-                        "--moved": this.state.focused || value,
+                        "inp-label": true,
+                        "--moved": _moved,
                         "--focused": this.state.focused
                     })}>{label}</label>}
                     <div className={classnames({
@@ -123,8 +126,13 @@ class Input extends React.Component {
                                multiple={multiple}
                                onInput={this.onInput}
                                onChange={this.props.onChange}
-                               onFocus={this.onFocus}
-                               onBlur={this.onBlur}
+                               onFocus={(event) => {
+                                   this.onFocus(event)
+                               }
+                               }
+                               onBlur={(event) => {
+                                   this.onBlur(event)
+                               }}
                         />
                         {this.renderEnd()}
                     </div>
@@ -171,41 +179,45 @@ Input.defaultProps = {
     required: false,
     step: "any",
     type: "text",
-    onInput: () => void 0,
-    onChange: () => void 0
+    onInput: noop,
+    onChange: noop,
+    onBlur: noop,
+    onFocus: noop
 }
 
 Input.propTypes = {
-    autofocus: propTypes.bool,
-    disabled: propTypes.bool,
-    invalid: propTypes.bool,
-    label: propTypes.string,
-    manageInvalid: propTypes.bool,
-    manageValue: propTypes.bool,
-    max: propTypes.number,
-    min: propTypes.number,
-    maxlength: propTypes.number,
-    minlength: propTypes.number,
-    message: propTypes.arrayOf(propTypes.shape({
-        status: propTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
-        content: propTypes.string,
-        icon: propTypes.string
+    autofocus: PropTypes.bool,
+    disabled: PropTypes.bool,
+    invalid: PropTypes.bool,
+    label: PropTypes.string,
+    manageInvalid: PropTypes.bool,
+    manageValue: PropTypes.bool,
+    max: PropTypes.number,
+    min: PropTypes.number,
+    maxlength: PropTypes.number,
+    minlength: PropTypes.number,
+    message: PropTypes.arrayOf(PropTypes.shape({
+        status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        content: PropTypes.string,
+        icon: PropTypes.string
     })),
-    multiple: propTypes.bool,
-    name: propTypes.string.required,
-    pattern: propTypes.string,
-    placeholder: propTypes.string,
-    className: propTypes.string,
-    readonly: propTypes.bool,
-    required: propTypes.bool,
-    step: propTypes.oneOfType([
-        propTypes.number,
-        propTypes.oneOf["any"]
+    multiple: PropTypes.bool,
+    name: PropTypes.string.required,
+    pattern: PropTypes.string,
+    placeholder: PropTypes.string,
+    className: PropTypes.string,
+    readonly: PropTypes.bool,
+    required: PropTypes.bool,
+    step: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.oneOf["any"]
     ]),
-    type: propTypes.oneOf(["text", "password", "email", "number", "url", "tel", "search", "date", "datetime", "datetime-local", "month", "week", "time"]),
-    value: propTypes.string,
-    onInput: propTypes.func,
-    onChange: propTypes.func
+    type: PropTypes.oneOf(["text", "password", "email", "number", "url", "tel", "search", "date", "datetime", "datetime-local", "month", "week", "time"]),
+    value: PropTypes.string,
+    onInput: PropTypes.func,
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func,
+    onBlur: PropTypes.func
 }
 
 export default Input;
