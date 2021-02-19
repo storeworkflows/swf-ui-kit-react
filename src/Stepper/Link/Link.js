@@ -25,7 +25,7 @@ class Link extends React.Component {
     }
 }
 
-Link.PropTypes = {
+Link.propTypes = {
     beforeSelected : PropTypes.bool
 }
 

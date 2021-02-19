@@ -21,16 +21,16 @@
   }
 
   &-strip {
-    background-color: rgba(214,93,177,0.2);
+    background-color: var(--link);
+    opacity: 0.2;
     border-radius: 3px;
     height: 1.5px;
     width: 280%;
-    transition: background-color 400ms ease;
+    transition: opacity 500ms ease;
     position: absolute;
 
     &.--before-selected {
-      background-color: rgba(214,93,177,1);
-
+      opacity: 1;
     }
   }
 }
