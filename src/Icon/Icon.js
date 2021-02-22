@@ -10,6 +10,7 @@ class Icon extends React.Component {
 
     return (
         <span
+            className={this.props.className}
             dangerouslySetInnerHTML={{__html: generateSvg(this.props) }}
             style={setSize(size, customSize)}
         />
@@ -20,14 +21,16 @@ class Icon extends React.Component {
 Icon.defaultProps = {
   icon: "",
   size: 'md',
-  color: ""
+  color: "",
+  className: ""
 }
 
 Icon.propTypes = {
   icon: propTypes.string.isRequired,
   size: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
   customSize: propTypes.number,
-  color: propTypes.string
+  color: propTypes.string,
+  className: propTypes.string
 }
 
 export default Icon
