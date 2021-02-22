@@ -8,6 +8,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
   }
+
+  &-counter {
+    width: max-content;
+    margin: 0 auto;
+
+    font-size: x-small;
+  }
 }
 
 .--vertical {

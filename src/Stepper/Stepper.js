@@ -68,7 +68,7 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, vertical } = this.props;
+        const { palette, vertical, showCompletedCount, steps } = this.props;
 
         return (
             <>
@@ -82,6 +82,11 @@ class Stepper extends React.Component {
                 >
                     {this.renderSteps()}
                 </div>
+                <div className="stepper-counter">
+                    {showCompletedCount &&
+                        `${this.state.selected + 1}/${steps.length} Completed`
+                    }
+                </div>
             </>
         )
     }
@@ -91,7 +96,8 @@ Stepper.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object),
     palette: PropTypes.object,
     hideLabels: PropTypes.bool,
-    vertical: PropTypes.bool
+    vertical: PropTypes.bool,
+    showCompletedCount: PropTypes.bool
 }
 
 Stepper.defaultProps = {
@@ -106,7 +112,8 @@ Stepper.defaultProps = {
         label: ''
     },
     hideLabels: false,
-    vertical: false
+    vertical: false,
+    showCompletedCount: false
 }
 
 export default Stepper;
