@@ -245,3 +245,37 @@ clickable| bool
 color| "default", "primary", "negative"
 deleteIcon | string
 onDelete | func
+
+#Stepper
+
+
+Name | Type | Default
+------------ | ------------- | -------------
+steps |  [{ [StepObject](#stepobject) }]
+palette |  [{ [PaletteObject](#paletteobject) }]
+iconSize | "xs", "sm", "md", "lg", "xl", "xxl" | "sm"
+hideLabels | boolean | false
+vertical | boolean | false
+showCompletedCount | boolean | false
+selectedItem | number (from 1) | 1
+onStepClick | func | ({ index, id }) => { } 
+
+#### StepObject
+
+ Name | Type
+------------ | -------------
+id | string
+label | string
+icon | string
+sublabel | string
+progress | "none", "partial", "done"
+disabled | bool
+
+#### PaletteObject
+
+ Name | Type
+------------ | -------------
+icon | { "finished": string, "unfinished" : string}
+circle | string
+link | string
+label | string
