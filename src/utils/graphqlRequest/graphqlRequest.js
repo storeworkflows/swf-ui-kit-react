@@ -13,7 +13,7 @@ export default function graphqlRequest({operationName = '', query = {}, variable
             'X-UserToken': "d15ef583dbd660103d9aca32399619b50309720d3377c41e9c8a03ec0b50a52dcaec2dab" //window.g_ck
         },
         body: JSON.stringify([{
-            operationName: "",
+            operationName,
             query,
             variables
         }])
