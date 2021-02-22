@@ -32,7 +32,7 @@ class Step extends React.Component {
                 </div>
                 <div className="step-label">
                     <span>{!hideLabel && label}</span>
-                    <span className="sublabel">{!hideLabel && sublabel}</span>
+                    <span className="step-sublabel">{!hideLabel && sublabel}</span>
                 </div>
             </div>
         )

@@ -13,7 +13,7 @@
 
     &:hover {
       .step-circle {
-        background-color: var(--circle-hover);
+        box-shadow: 0 0 0 2px var(--circle);
       }
     }
 
@@ -23,9 +23,10 @@
   }
 
   &-circle {
-    background-color: var(--circle-unfinished);
+    background-color: transparent;
     opacity: 0.25;
     border-radius: 50%;
+    border: 2px solid var(--circle);
 
     width: 40%;
     margin: 0 auto;
@@ -33,7 +34,7 @@
     align-items: center;
     justify-content: center;
 
-    transition: background-color 300ms, box-shadow 400ms ease;
+    transition: background-color 200ms ease, box-shadow 400ms ease, opacity 400ms ease;
 
     //for rectangle proportions
     &::after {
@@ -62,7 +63,7 @@
     color: var(--label);
   }
 
-  .sublabel {
+  &-sublabel {
     font-size: x-small;
     font-weight: lighter;
   }
@@ -70,21 +71,30 @@
 
 .--selected {
   .step-circle {
-    background-color: var(--circle-current) !important;
-    border: 2px solid var(--circle-border-inner);
-    box-shadow: 0 0 0 2px var(--circle-border);
     opacity: 1;
+    box-shadow: 0 0 0 2px var(--circle);
+  }
+
+  .step-circle:not(.--none):not(.--partial) {
+    background-color: var(--circle);
   }
 
   .step-label {
     font-weight: bold;
   }
+
+  .step-sublabel {
+    font-weight: bolder;
+  }
 }
 
 .--before-selected {
   .step-circle {
-    background-color: var(--circle-finished);
     opacity: 1;
+  }
+
+  .step-circle:not(.--none):not(.--partial) {
+    background-color: var(--circle);
   }
 }
 
@@ -116,16 +126,11 @@
 }
 
 .step-circle {
-  &.--none {
-    background-color: var(--circle-unfinished);
-    opacity: 0.25;
-  }
-
   &.--partial {
-    border: 2px dashed var(--circle-border-inner);
+    border: 2px dashed var(--circle);
   }
 
   &.--done {
-
+    background-color: var(--circle);
   }
 }

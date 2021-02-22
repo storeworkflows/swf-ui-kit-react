@@ -27,7 +27,9 @@ class Stepper extends React.Component {
             steps.map((step, index) => {
                 const isSelected = this.state.selected === index;
                 const isBeforeSelected = this.state.selected > index;
-                const iconColor = (!step.progress || step.progress === 'done') && (isSelected || isBeforeSelected)
+                const iconColor = (isSelected || isBeforeSelected)
+                    && (step.progress !== 'none' && step.progress !== 'partial')
+                    || step.progress === 'done'
                     ? (icon.finished || 'white') : (icon.unfinished || 'black');
 
                 return (
@@ -95,18 +97,11 @@ Stepper.propTypes = {
 Stepper.defaultProps = {
     steps: [],
     palette: {
-        circle: {
-            unfinished: '',
-            current: '',
-            currentBorder: '',
-            currentBorderInner: '',
-            finished: '',
-            hover: ''
-        },
         icon: {
             finished: '',
             unfinished: ''
         },
+        circle: '',
         link: '',
         label: ''
     },
