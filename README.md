@@ -9,6 +9,8 @@
 [Toggle, ](#Toggle)
 [Avatar, ](#Avatar)
 [AvatarGroup, ](#AvatarGroup)
+[Pill, ](#Pill)
+
 
 
 # Icon
@@ -216,11 +218,30 @@ onClick | func
 
 Name | Type
 ------------ | -------------
-clickable| bool,
-max| number,
+clickable| bool
+max| number
 size| "xs", "md", "lg"
-members| array,
-canRemove| bool,
-canAdd| bool,
-onAdd| func,
-onRemove| func,
+members| array
+canRemove| bool
+canAdd| bool
+onAdd| func
+onRemove| func
+
+# Pill
+
+**Props**
+
+Name | Type
+------------ | -------------
+canDismiss| PropTypes.bool,
+icon| PropTypes.string,
+member| <pre lang="json">{<br> name: PropTypes.string.required,<br> title: PropTypes.string,<br> avatar: PropTypes.string,<br> id: PropTypes.string.required<br>}</pre>
+disabled| bool
+label| string
+outline| bool
+size| "sm", "md", "xl"
+classNames| string
+clickable| bool
+color| "default", "primary", "negative"
+deleteIcon | string
+onDelete | func
