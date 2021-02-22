@@ -25,7 +25,7 @@ class Stepper extends React.Component {
     }
 
     renderSteps() {
-        const { steps, hideLabels, palette: { icon } } = this.props;
+        const { steps, hideLabels, palette: { icon }, iconSize } = this.props;
 
         return (
             steps.map((step, index) => {
@@ -50,6 +50,7 @@ class Stepper extends React.Component {
                             <Step
                                 icon={step.icon}
                                 iconColor={iconColor}
+                                iconSize={iconSize}
                                 label={step.label}
                                 sublabel={step.sublabel}
                                 progress={step.progress}
@@ -100,6 +101,7 @@ class Stepper extends React.Component {
 Stepper.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object),
     palette: PropTypes.object,
+    iconSize: PropTypes.string,
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
     showCompletedCount: PropTypes.bool,
@@ -118,6 +120,7 @@ Stepper.defaultProps = {
         link: '',
         label: ''
     },
+    iconSize: 'sm',
     hideLabels: false,
     vertical: false,
     showCompletedCount: false,

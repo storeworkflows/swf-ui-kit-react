@@ -10,7 +10,7 @@ class Step extends React.Component {
     }
 
     render() {
-        const { icon, iconColor, label, sublabel, progress, hideLabel } = this.props;
+        const { icon, iconColor, iconSize, label, sublabel, progress, hideLabel } = this.props;
 
         return (
             <div className='step step-container'>
@@ -25,7 +25,7 @@ class Step extends React.Component {
                             <Icon
                                 icon={icon}
                                 color={iconColor || 'white'}
-                                size="xl"
+                                size={iconSize}
                             />
                         }
                     </div>
@@ -42,6 +42,7 @@ class Step extends React.Component {
 Step.propTypes = {
     icon: PropTypes.string,
     iconColor: PropTypes.string,
+    iconSize: PropTypes.string,
     label: PropTypes.string,
     sublabel: PropTypes.string,
     progress: PropTypes.string,
@@ -50,7 +51,8 @@ Step.propTypes = {
 
 Step.defaultProps = {
     icon: '',
-    iconColor: '',
+    iconColor: 'white',
+    iconSize: 'sm',
     label: '',
     sublabel: '',
     progress: '',
