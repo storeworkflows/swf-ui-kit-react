@@ -38,9 +38,10 @@ class Stepper extends React.Component {
                             className={classnames({
                                 'stepper-item': true,
                                 '--selected': isSelected,
-                                '--before-selected': isBeforeSelected
+                                '--before-selected': isBeforeSelected,
+                                '--disabled': step.disabled
                             })}
-                            onClick={this.selectStep(index)}
+                            onClick={!step.disabled && this.selectStep(index)}
                         >
                             <Step
                                 icon={step.icon}
