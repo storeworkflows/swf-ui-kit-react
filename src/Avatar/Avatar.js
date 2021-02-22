@@ -36,6 +36,7 @@ class Avatar extends React.Component {
 
     onClick() {
         this.setState({open: !this.state?.open})
+        this.props.onClick();
     }
 
     getInitials(name) {
@@ -71,6 +72,7 @@ class Avatar extends React.Component {
             avatarVisible,
             open,
             color,
+            manageOpened,
             member: {
                 avatar,
                 name,
@@ -78,12 +80,14 @@ class Avatar extends React.Component {
                 id
             },
             size,
-            removable,
+            canRemove,
             clickable
         } = this.props;
 
         const hasAvatar = Boolean(avatar);
         const avatarIsVisible = !hasAvatar && avatarVisible;
+
+        const openState = manageOpened ? open : this.state?.open;
 
         return (
             <>
@@ -93,7 +97,7 @@ class Avatar extends React.Component {
                         "avatar": true,
                         [`--${size}`]: true,
                         [`--${color}`]: true,
-                        "--selected": this.state?.open,
+                        "--selected": openState,
                     })}
                     onClick={this.onClick}
                 >
@@ -115,19 +119,19 @@ class Avatar extends React.Component {
                     <div className={classnames(
                         {
                             "member-info": true,
-                            "visible": this.state?.open
+                            "visible": openState
                         })}>
                         <p className="name">{name}</p>
                         <p className="title">{title}</p>
                     </div>
                     <Icon
                         onClick={(e) => {
-                            this.props.onDelete({id})
+                            this.props.onRemove({id})
                             e.stopPropagation();
                         }}
                         className={classnames({
                             "remove":true,
-                            "visible": removable && this.state?.open
+                            "visible": canRemove && openState
                         })}
                         icon="x"
                         size="md"
@@ -141,17 +145,20 @@ class Avatar extends React.Component {
 Avatar.defaultProps = {
     clickable: true,
     open: false,
+    manageOpened: false,
     size: "xs",
-    removable: false,
+    canRemove: false,
     avatarVisible: true,
     color: "default",
-    onDelete: noop
+    onRemove: noop,
+    onClick: noop
 }
 
 Avatar.propTypes = {
     avatarVisible: PropTypes.bool,
-    removable: PropTypes.bool,
+    canRemove: PropTypes.bool,
     clickable: PropTypes.bool,
+    manageOpened: PropTypes.bool,
     open: PropTypes.bool,
     size: PropTypes.oneOf(["xs", "md", "lg"]),
     member: PropTypes.shape({
@@ -160,8 +167,9 @@ Avatar.propTypes = {
         avatar: PropTypes.string,
         id: PropTypes.string.required
     }),
-    onDelete: PropTypes.func,
-    color: PropTypes.oneOf(["default", "primary", "negative"])
+    onRemove: PropTypes.func,
+    color: PropTypes.oneOf(["default", "primary", "negative"]),
+    onClick: PropTypes.func
 }
 
 export default Avatar
