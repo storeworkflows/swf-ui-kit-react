@@ -12,7 +12,11 @@ class Stepper extends React.Component {
         this.state = { selected: Math.min(props.steps.length - 1, props.selectedItem - 1) };
     }
 
-    selectStep(index) {
+    selectStep(index, id) {
+        if (this.props.onStepClick) {
+            this.props.onStepClick({ index, id });
+        }
+
         return () => {
             this.setState({
                 selected: index
@@ -41,7 +45,7 @@ class Stepper extends React.Component {
                                 '--before-selected': isBeforeSelected,
                                 '--disabled': step.disabled
                             })}
-                            onClick={!step.disabled && this.selectStep(index)}
+                            onClick={!step.disabled && this.selectStep(index, step.id)}
                         >
                             <Step
                                 icon={step.icon}
@@ -99,7 +103,8 @@ Stepper.propTypes = {
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
     showCompletedCount: PropTypes.bool,
-    selectedItem: PropTypes.number
+    selectedItem: PropTypes.number,
+    onStepClick: PropTypes.func
 }
 
 Stepper.defaultProps = {
