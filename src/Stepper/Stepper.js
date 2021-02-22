@@ -9,7 +9,7 @@ import { createCssVariables } from "./utils";
 class Stepper extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { selected: 0 };
+        this.state = { selected: Math.min(props.steps.length - 1, props.selectedItem - 1) };
     }
 
     selectStep(index) {
@@ -98,7 +98,8 @@ Stepper.propTypes = {
     palette: PropTypes.object,
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
-    showCompletedCount: PropTypes.bool
+    showCompletedCount: PropTypes.bool,
+    selectedItem: PropTypes.number
 }
 
 Stepper.defaultProps = {
@@ -114,7 +115,8 @@ Stepper.defaultProps = {
     },
     hideLabels: false,
     vertical: false,
-    showCompletedCount: false
+    showCompletedCount: false,
+    selectedItem: 1
 }
 
 export default Stepper;
