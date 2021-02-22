@@ -9,7 +9,7 @@ import { createCssVariables } from "./utils";
 class Stepper extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {selected: 0};
+        this.state = { selected: 0 };
     }
 
     selectStep(index) {
@@ -27,6 +27,8 @@ class Stepper extends React.Component {
             steps.map((step, index) => {
                 const isSelected = this.state.selected === index;
                 const isBeforeSelected = this.state.selected > index;
+                const iconColor = (!step.progress || step.progress === 'done') && (isSelected || isBeforeSelected)
+                    ? (icon.finished || 'white') : (icon.unfinished || 'black');
 
                 return (
                     <React.Fragment key={'step' + index}>
@@ -40,7 +42,7 @@ class Stepper extends React.Component {
                         >
                             <Step
                                 icon={step.icon}
-                                iconColor={icon}
+                                iconColor={iconColor}
                                 label={step.label}
                                 sublabel={step.sublabel}
                                 progress={step.progress}
@@ -48,14 +50,14 @@ class Stepper extends React.Component {
                             />
                         </div>
                         {(index !== steps.length - 1) &&
-                            <div
-                                className={classnames({
-                                    'stepper-item': true,
-                                    '--before-selected': isBeforeSelected
-                                })}
-                            >
-                                <Link />
-                            </div>
+                        <div
+                            className={classnames({
+                                'stepper-item': true,
+                                '--before-selected': isBeforeSelected
+                            })}
+                        >
+                            <Link/>
+                        </div>
                         }
                     </React.Fragment>
                 )
@@ -101,8 +103,11 @@ Stepper.defaultProps = {
             finished: '',
             hover: ''
         },
+        icon: {
+            finished: '',
+            unfinished: ''
+        },
         link: '',
-        icon: '',
         label: ''
     },
     hideLabels: false,
