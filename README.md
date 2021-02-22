@@ -7,32 +7,53 @@
 [Input, ](#Input)
 [Tab, ](#Tab)
 [Toggle, ](#Toggle)
+[Avatar, ](#Avatar)
+[AvatarGroup, ](#AvatarGroup)
+
 
 # Icon
+
  **props:** 
  	
 Name | Type
 ------------ | -------------
 icon | string
 size | "xs", "sm", "md", "lg", "xl", "xxl"
+customSize | number
+color | string
+
+
+# Button
+
+**props:**
+
+Name | Type
+------------ | -------------
+disabled | bool
+icon | string
+label | string
 customSize | number 
 color | string
 
 	
 # Button 
+
  **props:** 
+ 
  Name | Type
 ------------ | -------------
 disabled | bool
 icon | string
 label | string 
+>>>>>>> main
 tooltipContent | string
 size | 'sm', 'md', 'lg'
 variant |  "primary" , "primary-positive" , "primary-negative" , "secondary" , "secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""
 customStyle | [object](#available-fields-for-button-customStyle-object)
 onClick | func
-  
-#### available fields for button customStyle object:  
+
+#### available fields for button customStyle object:
+
 
     //button background colors
     "base-color",
@@ -59,7 +80,9 @@ onClick | func
     "font-size"
 
 # Card
- **props:** 
+
+**props:**
+
 Name | Type
 ------------ | -------------
 vertical | bool
@@ -69,7 +92,9 @@ size | "s", "m", "l"
 dispatch | func
 
 # Input
- **props:** 
+
+**props:**
+
 Name | Type
 ------------ | -------------
 autofocus | bool
@@ -97,14 +122,16 @@ onInput | func
 onChange | func
 
 #### MessageObject
- Name | Type
+Name | Type
 ------------ | -------------
- status | "critical", "warning", "positive", "info", "suggestion"
- content | string
- icon | string
+status | "critical", "warning", "positive", "info", "suggestion"
+content | string
+icon | string
 
 # Tab
+
  **props:** 
+ 
 Name | Type
 ------------ | -------------
 items | [{ [ItemObject](#itemobject) }]
@@ -117,6 +144,7 @@ tabsAlignment | 'left', 'right', 'center', 'stretch'
 onClick | func
 
 #### ItemObject
+
  Name | Type
 ------------ | -------------
 id | string
@@ -125,6 +153,7 @@ icon | string
 count | number
 presence | string
 disabled | bool
+
 
 # Toggle 
 **props:** 
@@ -159,3 +188,39 @@ Name | Type
     "circle-border-size",
     "border-size",
     "circle-gap"
+
+#Avatar
+
+**Props**
+
+Name | Type
+------------ | -------------
+avatarVisible | bool|
+canRemove | bool,|
+clickable | bool,|
+manageOpened | bool,|
+open   | bool,|
+size   | "xs", "md", "lg",|
+member |<pre lang="json">{ <br> name: string.required, <br/> title: string, <br> avatar: string, <br> id: string.required<br>}</pre>
+name | string.required,|
+title | string,|
+avatar | string,|
+id | string.required|
+onRemove | func,
+color | "default", "primary", "negative",
+onClick | func
+
+#AvatarGroup
+
+**Props**
+
+Name | Type
+------------ | -------------
+clickable| bool,
+max| number,
+size| "xs", "md", "lg"
+members| array,
+canRemove| bool,
+canAdd| bool,
+onAdd| func,
+onRemove| func,
