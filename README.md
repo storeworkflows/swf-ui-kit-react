@@ -189,7 +189,7 @@ Name | Type
     "border-size",
     "circle-gap"
 
-#Avatar
+# Avatar
 
 **Props**
 
@@ -210,7 +210,7 @@ onRemove | func,
 color | "default", "primary", "negative",
 onClick | func
 
-#AvatarGroup
+# AvatarGroup
 
 **Props**
 
