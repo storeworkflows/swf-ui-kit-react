@@ -11,7 +11,7 @@
 [AvatarGroup, ](#AvatarGroup)
 [Pill, ](#Pill)
 [Stepper, ](#Stepper)
-[Lookup Field, ](#Lookup Field)
+[Lookup Field, ](#LookupField)
 
 
 
@@ -283,7 +283,7 @@ link | string
 label | string
 
 
-# Lookup Field
+# LookupField
 
 **Props**
 
