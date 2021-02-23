@@ -1,13 +1,20 @@
 @import "Step/Step";
 @import "Link/Link";
+@import "Arrows/Arrows";
 
 .stepper {
+  position: relative;
+  overflow: hidden;
+
   &-container {
     width: 100%;
     max-height: 100%;
-    padding: 5px;
+    padding: 5px 20px;
     display: grid;
+    position: relative;
     grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
+
+    transition: right 200ms ease;
   }
 
   &-counter {
@@ -15,6 +22,10 @@
     margin: 0 auto;
 
     font-size: x-small;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
 }
 
