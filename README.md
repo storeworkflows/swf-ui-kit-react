@@ -11,6 +11,7 @@
 [AvatarGroup, ](#AvatarGroup)
 [Pill, ](#Pill)
 [Stepper, ](#Stepper)
+[Lookup Field, ](#LookupField)
 
 
 
@@ -280,3 +281,21 @@ icon | { "finished": string, "unfinished" : string}
 circle | string
 link | string
 label | string
+
+
+# Lookup Field
+
+**Props**
+
+ Name | Type
+------------ | -------------
+onValueChange | func,
+value | string,
+declarativeUiActions | object,
+label | string,
+name | string,
+type | "reference", "list",
+table | string,
+tableRecordSysId | string
+
+
