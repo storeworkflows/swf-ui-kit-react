@@ -60,13 +60,13 @@ class LookupField extends React.Component {
                 variables: {
                     chars: value,
                     encodedRecord: "",
-                    field: "watch_list",
+                    field: this.props.name,
                     ignoreRefQual: false,
                     paginationLimit: 25,
                     serializedChanges: "",
                     sortBy: "",
-                    sys_id: "1ca56c38db1624103d9aca3239961996",
-                    table: "x_mobi_swf_item"
+                    sys_id: this.props.tableRecordSysId,
+                    table: this.props.table
                 },
                 params: {
                     signal: this.controllerRef.current.signal
@@ -216,7 +216,9 @@ LookupField.propTypes = {
     declarativeUiActions: propTypes.object,
     label: propTypes.string,
     name: propTypes.string,
-    type: propTypes.oneOfType(["reference", "list"])
+    type: propTypes.oneOfType(["reference", "list"]),
+    table: propTypes.string,
+    tableRecordSysId: propTypes.string
 }
 
 export default LookupField
