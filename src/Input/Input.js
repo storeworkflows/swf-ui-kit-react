@@ -87,25 +87,33 @@ class Input extends React.Component {
         const _hasMessages = message.length > 0;
         const _moved = this.state.focused || value || this.state.hasStart;
 
+        const containerClasses = classnames({
+            "form-group": true,
+            [this.props.containerClass]: true
+        })
+
+        const labelClasses = classnames({
+            "inp-label": true,
+            "--moved": _moved,
+            "--focused": this.state?.focused
+        });
+
+        const inputClasses = classnames({
+            "form-control": true,
+            "no-start-border": this.state?.hasStart,
+            "no-end-border": this.state?.hasEnd,
+            [this.props.inputClass]: true
+        })
+
         return (
             <>
                 <style>{styles}</style>
-                <div className="form-group">
-                    {_hasLabel && <label htmlFor="name" className={classnames({
-                        "inp-label": true,
-                        "--moved": _moved,
-                        "--focused": this.state?.focused
-                    })}>{label}</label>}
-                    <div className={classnames({
-                        "input-group": true
-                    })}>
+                <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
+                    {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
+                    <div className="input-group">
                         {this.renderStart()}
-                        <input className={classnames({
-                            "form-control": true,
-                            "no-start-border": this.state?.hasStart,
-                            "no-end-border": this.state?.hasEnd,
-                            [this.props.className]: true
-                        })}
+                        <input
+                            className={inputClasses}
                                id="name"
                                name={name}
                                placeholder={placeholder}
@@ -156,7 +164,6 @@ class Input extends React.Component {
                                 : null
                         )
                     })
-
                     }
                 </div>
             </>
@@ -177,8 +184,11 @@ Input.defaultProps = {
     multiple: false,
     readonly: false,
     required: false,
+    inputClass: "",
+    containerClass: "",
     step: "any",
     type: "text",
+    internalRef: React.createRef(),
     onInput: noop,
     onChange: noop,
     onBlur: noop,
@@ -205,7 +215,8 @@ Input.propTypes = {
     name: PropTypes.string.required,
     pattern: PropTypes.string,
     placeholder: PropTypes.string,
-    className: PropTypes.string,
+    inputClass: PropTypes.string,
+    containerClass: PropTypes.string,
     readonly: PropTypes.bool,
     required: PropTypes.bool,
     step: PropTypes.oneOfType([
@@ -217,7 +228,8 @@ Input.propTypes = {
     onInput: PropTypes.func,
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
-    onBlur: PropTypes.func
+    onBlur: PropTypes.func,
+    internalRef: PropTypes.element
 }
 
 export default Input;

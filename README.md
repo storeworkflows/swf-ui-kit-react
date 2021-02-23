@@ -165,7 +165,7 @@ onClick | func
 
 #Avatar
 
-**Props**
+**props**
 
 Name | Type
 ------------ | -------------
@@ -186,15 +186,4 @@ onClick | func
 
 #AvatarGroup
 
-**Props**
-
-Name | Type
------------- | -------------
-clickable| bool,
-max| number,
-size| "xs", "md", "lg"
-members| array,
-canRemove| bool,
-canAdd| bool,
-onAdd| func,
-onRemove| func,
+**props**

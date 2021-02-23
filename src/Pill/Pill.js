@@ -1,11 +1,23 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
+import Avatar from "../Avatar/Avatar";
+import Icon from "../Icon/Icon";
 import styles from "./styles.scss";
+import {noop} from "../utils";
 
 class Pill extends React.Component {
     constructor(props) {
         super(props);
+        this.removePill = this.removePill.bind(this);
+        this.pillRef = React.createRef();
+    }
+
+    removePill() {
+        if (this.props.onDelete === noop) {
+            this.pillRef?.current?.remove()
+        }
+        this.props.onDelete()
     }
 
     render() {
@@ -13,7 +25,7 @@ class Pill extends React.Component {
             canDismiss,
             icon,
             classNames,
-            imageSrc,
+            member,
             label,
             outline,
             size,
@@ -24,22 +36,36 @@ class Pill extends React.Component {
             disabled
         } = this.props;
 
+        const hasMember = member;
+
+        const hasIcon = !hasMember && icon;
+
 
         return (
             <>
                 <style type="text/css">{styles}</style>
-                <div className={classnames({
-                    "pill": true,
-                    "--disabled": disabled,
-                    "--clickable": clickable && !disabled,
-                    "--outlined": outline,
-                    [`--${size}`]: true,
-                    [`--${color}`]: true
-                })}>
+                <div
+                    ref={elm => this.pillRef.current = elm}
+                    className={classnames({
+                        "pill": true,
+                        "--disabled": disabled,
+                        "--clickable": clickable && !disabled,
+                        "--outlined": outline,
+                        [`--${size}`]: true,
+                        [`--${color}`]: true,
+                        [classNames]: true
+                    })}>
+                    <div className="pill-icon">
+                        {hasMember && <Avatar member={member} clickable={false}/>}
+                        {hasIcon && <Icon icon={icon} size="sm"/>}
+                    </div>
                     <span className={classnames({
                         "pill-label": true,
                         [`--${size}`]: true
                     })}>{label}</span>
+                    {canDismiss && <div className="pill-icon --delete" onClick={this.removePill}>
+                        <Icon icon={deleteIcon || "x"} size="sm"/>
+                    </div>}
                 </div>
             </>
 
@@ -51,7 +77,7 @@ Pill.defaultProps = {
     canDismiss: false,
     disabled: false,
     icon: null,
-    imageSrc: null,
+    member: null,
     label: "Test",
     outline: false,
     size: "md",
@@ -59,13 +85,18 @@ Pill.defaultProps = {
     clickable: false,
     color: "default",
     deleteIcon: null,
-    onDelete: () => void 0
+    onDelete: noop
 }
 
 Pill.propTypes = {
     canDismiss: PropTypes.bool,
     icon: PropTypes.string,
-    imageSrc: PropTypes.string,
+    member: PropTypes.shape({
+        name: PropTypes.string.required,
+        title: PropTypes.string,
+        avatar: PropTypes.string,
+        id: PropTypes.string.required
+    }),
     disabled: PropTypes.bool,
     label: PropTypes.string,
     outline: PropTypes.bool,
