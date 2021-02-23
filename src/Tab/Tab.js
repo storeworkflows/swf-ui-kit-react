@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import TabItem from "./TabItem";
 import styles from "./styles.scss";
-import {ITEMS} from "../Toggle/mock";
+import {ITEMS} from "./mock";
 import {ALIGNMENT} from './constants'
 
 

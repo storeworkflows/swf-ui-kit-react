@@ -5,7 +5,7 @@ import {dispatch} from "../utils/dispatchDecorator"
 import {Component} from "react";
 import CardPreloader from "./Preloader";
 
-@dispatch()
+
 class Card extends Component {
 	constructor(props) {
 		super(props);

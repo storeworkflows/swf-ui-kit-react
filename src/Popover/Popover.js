@@ -2,80 +2,132 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import styles from "./styles.scss";
+import findByType from "../utils/findByType";
+import {getPopoverStyle} from "./utils";
+
+const Content = () => null;
+const Target = () => null;
 
 
-
-const getChild = (children, slotValue) => {
-    let result = null;
-    children.forEach( child => {
-        if(child.props.slot === slotValue)
-            result = child;
-    })
-    return result;
-}
 class Popover extends React.Component {
     constructor(props) {
         super(props);
+        this.targetClicked = this.targetClicked.bind(this)
+
         this.state = {
-            opened: props.opened
+            opened: false,
+            height: 0,
+            width: 0
+        }
+
+        this.targetRef = React.createRef();
+        this.contentRef = React.createRef();
+    }
+
+    renderContent() {
+        const {children, hideTail} = this.props;
+        const content = findByType(children, Content);
+
+        if (!content)
+            return null;
+
+        return <div className="popover-content arrow arrow-up"
+                    ref={this.contentRef}>
+                {content.props.children} </div>
+    }
+
+    renderTarget() {
+        const {children, positionTarget} = this.props;
+        const target = findByType(children, Target);
+
+        let targetContent = (!target) ? positionTarget : target.props.children ;
+
+        if (!targetContent)
+            return null;
+
+        return <div id ="popover-target"
+                    ref={this.targetRef}
+                    onClick={ this.targetClicked }>
+                {targetContent} </div>
+    }
+
+    targetClicked (){
+        const {manageOpened, onClick} = this.props;
+        let currentState = this.state.opened;
+
+        if(!manageOpened) {
+            currentState = !currentState
+            this.setState({
+                opened: currentState
+            });
+        }
+
+        if(onClick!==undefined && onClick!==null)
+            onClick({value: currentState})
+    }
+
+    componentDidMount() {
+        this.setState({
+            opened: this.props.opened
+        })
+    }
+
+    componentDidUpdate(){
+        if(this.contentRef.current)
+        {
+            let targetDimensions = this.targetRef.current.getBoundingClientRect();
+            let contentDimensions = this.contentRef.current.getBoundingClientRect();
+            let position = this.props.positions;
+
+            let stylesInfo =  getPopoverStyle(position, targetDimensions, contentDimensions, window.innerWidth);
+            let styles = stylesInfo.style;
+            this.contentRef.current.style.transform = styles.transform;
+            this.contentRef.current.style.left = styles.left;
+            this.contentRef.current.style.top = styles.top;
+
+            if(!this.props.hideTail && stylesInfo.hasArrow){
+                stylesInfo.arrowStyle.forEach((style)=> {
+                    console.log(style);
+                   // this.contentRef.current.style[style] =
+                })
+            }
+            //console.log("styles", this.contentRef.current.style[]);
         }
     }
 
+
     render() {
-
-        const {
-            hideTail,
-            manageOpened,
-            positionTarget,
-            positions,
-            children,
-            onClick
-        } = this.props
-
         const {opened} = this.state;
-
-        console.log(positionTarget);
-        console.log(children);
-        console.log(children[2]);
-
-        const _hasPositionTarget = (positionTarget !== undefined);
-        const _target = _hasPositionTarget ? positionTarget : getChild(children, "target");
-        const _content = getChild(children, "content");
-        const _isManagedByUser = manageOpened && onClick !== undefined;
-
-        console.log("target", _target);
-        console.log("content", _content);
-
-        const targetClicked = () => {
-            console.log("oldState", opened);
-            this.setState((oldState) => ({
-                opened: !oldState.opened
-            }));
-        }
 
         return (
             <>
                 <style type="text/css">{styles}</style>
-                <div
-                    className="popover-target"
-                    onClick={ _isManagedByUser ? onClick({opened: opened}) : targetClicked }
-                >
-                    {_target}
+                <div className={"popover-element"}>
+                    {this.renderTarget()}
+                    {opened && this.renderContent()}
                 </div>
-                {opened &&
-                    <div className="popover-content">
-                        {_content}
-                    </div>
-                }
             </>
         );
     }
-}
+};
+
+Popover.Content = Content;
+Popover.Target = Target;
 
 Popover.defaultProps = {
     hideTail: false,
     manageOpened: false,
-    opened: false
+    opened: false,
+    positions: [
+        { target: 'bottom-start', content: 'top-start' },
+        { target: 'bottom-end', content: 'top-end' },
+        { target: 'top-start', content: 'bottom-start' },
+        { target: 'top-end', content: 'bottom-end' },
+        { target: 'top-end', content: 'top-start' },
+        { target: 'bottom-end', content: 'bottom-start' },
+        { target: 'top-start', content: 'top-end' },
+        { target: 'bottom-start', content: 'bottom-end' }
+    ]
 }
 
 Popover.propTypes = {

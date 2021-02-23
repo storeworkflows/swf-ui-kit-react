@@ -9,6 +9,7 @@ class TabItem extends React.Component {
         const {item, isSelected, hideLabel, tabSelected} = this.props;
         const {label, icon, id, disabled, style} = this.props.item;
 
+        const hasIcon = icon !== undefined && icon.length > 0;
         return (
             <div
                 key={id}
@@ -21,7 +22,7 @@ class TabItem extends React.Component {
                 onClick={() => tabSelected(item.id, disabled)}
                 style={style || {}}
             >
-                <Icon icon={icon} size="sm"/>
+                { hasIcon && <Icon icon={icon} size="sm"/> }
                 { !hideLabel && <div className="label">{label}</div> }
             </div>
         )

@@ -2,7 +2,7 @@ export const ITEMS = [
   {
     id: '1',
     label: 'Label One',
-    icon: 'app-indicator',
+   // icon: 'app-indicator',
     count: 3,
     presence: '',
     disabled: false
@@ -10,7 +10,7 @@ export const ITEMS = [
   {
     id: '2',
     label: 'Label tWO',
-    icon: 'arrow-down-left-circle-fill',
+    //icon: 'arrow-down-left-circle-fill',
     count: 2,
     presence: '',
     disabled: false

@@ -7,7 +7,7 @@ const addStyles = (customStyle) => {
     if (hasStyles)
         SWF_BUTTON.AVAILABLE_CUSTOM_STYLES.forEach((styleName) => {
             if (customStyle[styleName] !== undefined)
-                styles[styleName] = customStyle[styleName];
+               styles[`--${styleName}`] = customStyle[styleName];
         })
 
     return styles;

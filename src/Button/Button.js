@@ -34,6 +34,7 @@ class Button extends React.Component {
 			<>
 				<style type="text/css">{styles}</style>
 				<button
+					//ref={elm => this.props.innerRef(elm)}
 					className={classnames(
 						variant,
 						`button-${size}`,
@@ -92,7 +93,8 @@ Button.propTypes = {
 	variant:  propTypes.oneOf(["primary" , "primary-positive" , "primary-negative" , "secondary" ,
 				"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
 	customStyle: propTypes.object,
-	onClick: propTypes.func
+	onClick: propTypes.func,
+	//innerRef: propTypes.func
 }
 
 export default Button
