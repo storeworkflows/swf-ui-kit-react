@@ -11,7 +11,7 @@
 [AvatarGroup, ](#AvatarGroup)
 [Pill, ](#Pill)
 [Stepper, ](#Stepper)
-[Lookup Field, ](#LookupField)
+[Lookup Field, ](#Lookup Field)
 
 
 
