@@ -11,6 +11,11 @@
   position: absolute;
   top: 0;
   left: 0;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  padding: 3px;
+  background: white;
+  z-index: 100;
+
   --popover-arrow-top: 0;
   --popover-arrow-left: 0;
   --popover-arrow-size: 16px;
@@ -21,8 +26,6 @@
   --popover-arrow-border-left: none;
   --popover-arrow-border-right: none;
 
-  --popover-arrow-size-with-border: calc(var(--popover-arrow-size) + 2 * var(--popover-border-width));
- // --translate-param: calc( 1.41 * var(--popover-arrow-size-with-border)  /2);
 }
 
 .arrow::before{
@@ -37,7 +40,7 @@
   height: var(--popover-arrow-size);
   width: var(--popover-arrow-size);
 
-  top: var(--popover-arrow-top);
+  top: var(--popover-arrow-top, 12px);
   left: var(--popover-arrow-left);
 
   border-left: var(--popover-arrow-border-left);

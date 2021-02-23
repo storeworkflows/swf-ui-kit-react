@@ -79,19 +79,18 @@ class Popover extends React.Component {
             let contentDimensions = this.contentRef.current.getBoundingClientRect();
             let position = this.props.positions;
 
-            let stylesInfo =  getPopoverStyle(position, targetDimensions, contentDimensions, window.innerWidth);
+            let stylesInfo =  getPopoverStyle(position, targetDimensions, contentDimensions, window.innerWidth, this.props.hideTail);
             let styles = stylesInfo.style;
             this.contentRef.current.style.transform = styles.transform;
             this.contentRef.current.style.left = styles.left;
             this.contentRef.current.style.top = styles.top;
 
             if(!this.props.hideTail && stylesInfo.hasArrow){
-                stylesInfo.arrowStyle.forEach((style)=> {
-                    console.log(style);
-                   // this.contentRef.current.style[style] =
-                })
-            }
-            //console.log("styles", this.contentRef.current.style[]);
+                for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
+                     this.contentRef.current.style.setProperty(key, value);
+            } else
+                 this.contentRef.current.style.setProperty("--popover-arrow-size", 0);
+
         }
     }
 
