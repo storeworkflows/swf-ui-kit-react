@@ -3,15 +3,20 @@ import Step from './Step/Step';
 import Link from './Link/Link';
 import PropTypes from 'prop-types';
 import React from 'react';
+import classnames from "classnames";
 import { createCssVariables } from "./utils";
 
 class Stepper extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {selected: 0};
+        this.state = { selected: Math.min(props.steps.length - 1, props.selectedItem - 1) };
     }
 
-    selectStep(index) {
+    selectStep(index, id) {
+        if (this.props.onStepClick) {
+            this.props.onStepClick({ index, id });
+        }
+
         return () => {
             this.setState({
                 selected: index
@@ -19,27 +24,48 @@ class Stepper extends React.Component {
         }
     }
 
-    renderSteps(steps) {
+    renderSteps() {
+        const { steps, hideLabels, palette: { icon }, iconSize } = this.props;
+
         return (
             steps.map((step, index) => {
                 const isSelected = this.state.selected === index;
                 const isBeforeSelected = this.state.selected > index;
+                const iconColor = (isSelected || isBeforeSelected)
+                    && (step.progress !== 'none' && step.progress !== 'partial')
+                    || step.progress === 'done'
+                    ? (icon.finished || 'white') : (icon.unfinished || 'black');
 
                 return (
                     <React.Fragment key={'step' + index}>
-                        <div onClick={this.selectStep(index)}>
+                        <div
+                            className={classnames({
+                                'stepper-item': true,
+                                '--selected': isSelected,
+                                '--before-selected': isBeforeSelected,
+                                '--disabled': step.disabled
+                            })}
+                            onClick={!step.disabled && this.selectStep(index, step.id)}
+                        >
                             <Step
                                 icon={step.icon}
-                                iconColor={this.props.palette.icon}
+                                iconColor={iconColor}
+                                iconSize={iconSize}
                                 label={step.label}
-                                selected={isSelected}
-                                beforeSelected={isBeforeSelected}
+                                sublabel={step.sublabel}
+                                progress={step.progress}
+                                hideLabel={hideLabels}
                             />
                         </div>
                         {(index !== steps.length - 1) &&
-                        <Link
-                            beforeSelected={isBeforeSelected}
-                        />
+                        <div
+                            className={classnames({
+                                'stepper-item': true,
+                                '--before-selected': isBeforeSelected
+                            })}
+                        >
+                            <Link/>
+                        </div>
                         }
                     </React.Fragment>
                 )
@@ -48,13 +74,24 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, steps } = this.props;
+        const { palette, vertical, showCompletedCount, steps } = this.props;
 
         return (
             <>
                 <style type="text/css">{createCssVariables(palette) + styles}</style>
-                <div className="stepper stepper-container">
-                    {this.renderSteps(steps)}
+                <div
+                    className={classnames({
+                        'stepper': true,
+                        'stepper-container': true,
+                        '--vertical': vertical
+                    })}
+                >
+                    {this.renderSteps()}
+                </div>
+                <div className="stepper-counter">
+                    {showCompletedCount &&
+                        `${this.state.selected + 1}/${steps.length} Completed`
+                    }
                 </div>
             </>
         )
@@ -63,23 +100,31 @@ class Stepper extends React.Component {
 
 Stepper.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object),
-    palette: PropTypes.object
+    palette: PropTypes.object,
+    iconSize: PropTypes.string,
+    hideLabels: PropTypes.bool,
+    vertical: PropTypes.bool,
+    showCompletedCount: PropTypes.bool,
+    selectedItem: PropTypes.number,
+    onStepClick: PropTypes.func
 }
 
 Stepper.defaultProps = {
+    steps: [],
     palette: {
-        circle: {
-            unfinished: '',
-            current: '',
-            currentBorder: '',
-            currentBorderInner: '',
+        icon: {
             finished: '',
-            hover: ''
+            unfinished: ''
         },
+        circle: '',
         link: '',
-        icon: '',
         label: ''
-    }
+    },
+    iconSize: 'sm',
+    hideLabels: false,
+    vertical: false,
+    showCompletedCount: false,
+    selectedItem: 1
 }
 
 export default Stepper;

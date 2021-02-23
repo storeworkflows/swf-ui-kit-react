@@ -4,9 +4,32 @@
 .stepper {
   &-container {
     width: 100%;
-    height: 100%;
+    max-height: 100%;
     padding: 5px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(1px, 1fr));
+  }
+
+  &-counter {
+    width: max-content;
+    margin: 0 auto;
+
+    font-size: x-small;
+  }
+}
+
+.--vertical {
+  &.stepper-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .stepper-item {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    height: max-content;
   }
 }
