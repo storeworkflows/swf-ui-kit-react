@@ -10,6 +10,7 @@
 [Avatar, ](#Avatar)
 [AvatarGroup, ](#AvatarGroup)
 [Pill, ](#Pill)
+[Stepper, ](#Stepper)
 
 
 
@@ -246,7 +247,7 @@ color| "default", "primary", "negative"
 deleteIcon | string
 onDelete | func
 
-#Stepper
+# Stepper
 
 
 Name | Type | Default
