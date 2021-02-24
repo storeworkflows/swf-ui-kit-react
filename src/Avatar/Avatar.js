@@ -35,8 +35,10 @@ class Avatar extends React.Component {
     }
 
     onClick() {
-        this.setState({open: !this.state?.open})
-        this.props.onClick();
+        if (this.props.clickable) {
+            this.setState({open: !this.state?.open})
+            this.props.onClick();
+        }
     }
 
     getInitials(name) {
@@ -97,6 +99,7 @@ class Avatar extends React.Component {
                         "avatar": true,
                         [`--${size}`]: true,
                         [`--${color}`]: true,
+                        "--clickable": clickable,
                         "--selected": openState,
                     })}
                     onClick={this.onClick}

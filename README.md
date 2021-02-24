@@ -10,6 +10,8 @@
 [Avatar, ](#Avatar)
 [AvatarGroup, ](#AvatarGroup)
 [Pill, ](#Pill)
+[Stepper, ](#Stepper)
+[Lookup Field, ](#LookupField)
 
 
 
@@ -246,7 +248,7 @@ color| "default", "primary", "negative"
 deleteIcon | string
 onDelete | func
 
-#Stepper
+# Stepper
 
 
 Name | Type | Default
@@ -279,3 +281,21 @@ icon | { "finished": string, "unfinished" : string}
 circle | string
 link | string
 label | string
+
+
+# LookupField
+
+**Props**
+
+ Name | Type
+------------ | -------------
+onValueChange | func,
+value | string,
+declarativeUiActions | object,
+label | string,
+name | string,
+type | "reference", "list",
+table | string,
+tableRecordSysId | string
+
+
