@@ -6,8 +6,6 @@ import {ModalStore} from "./ModalStore";
 const ModalDesktopButtons = (props) => {
     const {modalStore} = props;
 
-    console.log(props)
-
     return ( <>
         <Button icon="x"
                 variant="tertiary"
@@ -15,7 +13,7 @@ const ModalDesktopButtons = (props) => {
                 size="md"
                 configAria={{"button": {"aria-label": "Collapse"}}}
                 tooltipContent="Collapse"
-                onClick={() => modalStore.openModal(true)}
+                onClick={() => modalStore.setModalOpened(true)}
         />
         <Button icon={modalStore.isFullSize ? "x" : "x"}
                 variant="tertiary"
@@ -23,7 +21,7 @@ const ModalDesktopButtons = (props) => {
                 size="md"
                 configAria={{"button": {"aria-label": "Expand"}}}
                 tooltipContent={modalStore.isFullSize ? "Collapse" : "Expand"}
-                onClick={() => modalStore.currentStatus(SWF_MODAL.MODAL_SIZE.FULL)}
+                onClick={() => modalStore.setCurrentStatus(SWF_MODAL.MODAL_SIZE.FULL)}
         />
     </>)
 }
