@@ -50,13 +50,13 @@ class Modal extends React.Component {
                         }
                     ]}
                 >
-                    <now-button-iconic icon="close-fill"
-                                       variant="tertiary"
-                                       bare={true}
-                                       size="md"
-                                       slot="trigger"
-                                       configAria={{"button": {"aria-label": "Close"}}}
-                                       tooltipContent="Close"
+                    <Button icon="x"
+                            variant="tertiary"
+                            bare={true}
+                            size="md"
+                            slot="trigger"
+                            configAria={{"button": {"aria-label": "Close"}}}
+                            tooltipContent="Close"
                     />
                     <now-template-card-omnichannel
                         slot="content"
@@ -69,14 +69,14 @@ class Modal extends React.Component {
         }
 
         return (
-            <now-button-iconic icon="close-fill"
-                               variant="tertiary"
-                               bare={true}
-                               size="md"
-                               slot="trigger"
-                               configAria={{"button": {"aria-label": "Close"}}}
-                               tooltipContent="Close"
-                               on-click={_closeModal}
+            <Button icon="x"
+                    variant="tertiary"
+                    bare={true}
+                    size="md"
+                    slot="trigger"
+                    configAria={{"button": {"aria-label": "Close"}}}
+                    tooltipContent="Close"
+                    onClick={() => void 0}
             />
         )
     }
@@ -95,12 +95,12 @@ class Modal extends React.Component {
                         onClick={() => this.setState({modalOpened: true})}
                 />
                 <Button icon={isFullSize ? "collapse-fill" : "arrows-angle-expand"}
-                                   variant="tertiary"
-                                   bare={true}
-                                   size="md"
-                                   configAria={{"button": {"aria-label": "Expand"}}}
-                                   tooltipContent={isFullSize ? "Collapse" : "Expand"}
-                                   onClick={() => this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.FULL})}
+                        variant="tertiary"
+                        bare={true}
+                        size="md"
+                        configAria={{"button": {"aria-label": "Expand"}}}
+                        tooltipContent={isFullSize ? "Collapse" : "Expand"}
+                        onClick={() => this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.FULL})}
                 />
                 {this.renderPopover()}
             </>
@@ -110,7 +110,7 @@ class Modal extends React.Component {
     mobileButtons() {
         return (
             <>
-                <now-button-iconic
+                <Button
                     icon="arrow-left-fill"
                     variant="tertiary"
                     bare={true}
