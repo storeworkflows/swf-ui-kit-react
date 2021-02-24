@@ -34,7 +34,7 @@ class AvatarGroup extends React.Component {
         const copyMembers = members.slice();
 
         const viewers = hasAdditionalMembers ? copyMembers.reverse() : copyMembers.slice(0, max).reverse();
-        console.log({props: this.props, viewers})
+        console.log({hasAdditionalMembers, viewers})
 
 
         return (
