@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import {Avatar} from "../index";
 import styles from "./styles.scss";
+import {noop} from "../utils";
 
 class AvatarGroup extends React.Component {
     constructor(props) {
@@ -27,7 +28,7 @@ class AvatarGroup extends React.Component {
     }
 
     render() {
-        const {size, max, canAdd, clickable, members, canRemove, onRemove} = this.props;
+        const {size, max, canAdd, clickable, manageOpened, members, canRemove, onRemove} = this.props;
         const hasAdditionalMembers = members.length > max;
         const maxViewers = hasAdditionalMembers ? max : members.length;
         const additionalMembers = members.length - max;
@@ -71,7 +72,7 @@ class AvatarGroup extends React.Component {
                                 canRemove={canRemove}
                                 onRemove={onRemove}
                                 member={viewer}
-                                manageOpened={true}
+                                manageOpened={manageOpened}
                                 open={this.state?.openedAvatar === index}
                             />
                         </div>
@@ -90,16 +91,20 @@ AvatarGroup.defaultProps = {
     members: [],
     canRemove: true,
     canAdd: true,
-    onAdd: () => void 0,
-    onRemove: () => void 0,
+    onAdd: noop,
+    onRemove: noop,
+    onClick: noop,
+    manageOpened: false
 }
 
 AvatarGroup.propTypes = {
     clickable: PropTypes.bool,
     max: PropTypes.number,
     size: PropTypes.oneOf(["xs", "md", "lg"]),
+    manageOpened: PropTypes.bool,
     members: PropTypes.array,
     canRemove: PropTypes.bool,
+    onClick: PropTypes.func,
     canAdd: PropTypes.bool,
     onAdd: PropTypes.func,
     onRemove: PropTypes.func,
