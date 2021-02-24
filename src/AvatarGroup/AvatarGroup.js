@@ -34,8 +34,6 @@ class AvatarGroup extends React.Component {
         const additionalMembers = members.length - max;
 
         const viewers = members.slice(0, maxViewers).reverse();
-        console.log({hasAdditionalMembers, viewers})
-
 
         return (
             <>
