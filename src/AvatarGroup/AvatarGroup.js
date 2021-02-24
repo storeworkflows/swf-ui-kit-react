@@ -29,7 +29,7 @@ class AvatarGroup extends React.Component {
     render() {
         const {size, max, canAdd, clickable, members, canRemove, onRemove} = this.props;
         const hasAdditionalMembers = members.length > max;
-        const additionalMembers = max - members.length;
+        const additionalMembers = members.length - max;
 
         const copyMembers = members.slice();
 
