@@ -3,7 +3,9 @@ import {SWF_MODAL} from "./constants";
 import PropTypes from "prop-types";
 import {ModalStore} from "./ModalStore";
 
-const ModalDesktopButtons = (modalStore) => {
+const ModalDesktopButtons = (props) => {
+    const {modalStore} = props;
+
     return ( <>
         <Button icon="x"
                 variant="tertiary"
