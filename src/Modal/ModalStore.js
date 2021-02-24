@@ -17,7 +17,7 @@ export class ModalStore {
         })
 
         this.currentStatus = currentStatus;
-        this.openModal = modalOpened;
+        this.openModal = openModal;
         this.mobileFooterOpened = mobileFooterOpened;
     }
 
