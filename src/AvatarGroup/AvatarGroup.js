@@ -29,11 +29,10 @@ class AvatarGroup extends React.Component {
     render() {
         const {size, max, canAdd, clickable, members, canRemove, onRemove} = this.props;
         const hasAdditionalMembers = members.length > max;
+        const maxViewers = hasAdditionalMembers ? max : members.length;
         const additionalMembers = members.length - max;
 
-        const copyMembers = members.slice();
-
-        const viewers = hasAdditionalMembers ? copyMembers.reverse() : copyMembers.slice(0, max).reverse();
+        const viewers = members.slice(0, maxViewers).reverse();
         console.log({hasAdditionalMembers, viewers})
 
 
