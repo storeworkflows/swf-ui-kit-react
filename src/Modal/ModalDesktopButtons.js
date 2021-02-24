@@ -1,23 +1,31 @@
 import Button from "../Button/Button";
 import {SWF_MODAL} from "./constants";
+import PropTypes from "prop-types";
+import {ModalStore} from "./ModalStore";
 
-function ModalDesktopButtons (props) {
+const ModalDesktopButtons = (modalStore) => {
     return ( <>
-        <Button icon="arrows-angle-expand"
+        <Button icon="x"
                 variant="tertiary"
                 bare={true}
                 size="md"
                 configAria={{"button": {"aria-label": "Collapse"}}}
                 tooltipContent="Collapse"
-                onClick={() => this.setState({modalOpened: true})}
+                onClick={() => modalStore.setModalOpened(true)}
         />
-        <Button icon={isFullSize ? "collapse-fill" : "arrows-angle-expand"}
+        <Button icon={modalStore.isFullSize ? "x" : "x"}
                 variant="tertiary"
                 bare={true}
                 size="md"
                 configAria={{"button": {"aria-label": "Expand"}}}
-                tooltipContent={isFullSize ? "Collapse" : "Expand"}
-                onClick={() => this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.FULL})}
+                tooltipContent={modalStore.isFullSize ? "Collapse" : "Expand"}
+                onClick={() => modalStore.setCurrentStatus(SWF_MODAL.MODAL_SIZE.FULL)}
         />
     </>)
 }
+
+ModalDesktopButtons.propTypes = {
+    modalStore: PropTypes.instanceOf(ModalStore)
+}
+
+export default ModalDesktopButtons

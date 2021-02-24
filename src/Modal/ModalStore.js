@@ -1,5 +1,5 @@
 import {SWF_MODAL} from "./constants";
-import {action, makeObservable, observable} from "mobx"
+import {action, computed, makeObservable, observable} from "mobx"
 
 export class ModalStore {
     currentStatus;
@@ -13,7 +13,8 @@ export class ModalStore {
             mobileFooterOpened: observable,
             setCurrentStatus: action,
             setModalOpened: action,
-            setMobileFooterOpened: action
+            setMobileFooterOpened: action,
+            isFullSize: computed
         })
 
         this.currentStatus = currentStatus;
@@ -21,12 +22,16 @@ export class ModalStore {
         this.mobileFooterOpened = mobileFooterOpened;
     }
 
+    get isFullSize () {
+        return this.currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+    }
+
     setCurrentStatus (status) {
         this.currentStatus = status;
     }
 
     setModalOpened (status) {
-        this.modalOpened = status;
+        this.openModal = status;
     }
 
     setMobileFooterOpened (status) {

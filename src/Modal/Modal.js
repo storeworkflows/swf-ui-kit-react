@@ -7,6 +7,7 @@ import {useState, useRef} from "react";
 
 import {observer} from "mobx-react-lite";
 import {ModalStore} from "./ModalStore";
+import ModalDesktopButtons from "./ModalDesktopButtons";
 
 const Modal = observer((props) => {
     const modalRef = useRef(null);
@@ -15,7 +16,7 @@ const Modal = observer((props) => {
     const {display, headerElements} = props;
     const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
-    console.log(currentStatus, openModal, mobileFooterOpened)
+    console.log({currentStatus, openModal, mobileFooterOpened})
 
     return (<>
             <style type="text/css">{styles}</style>
@@ -35,6 +36,7 @@ const Modal = observer((props) => {
                             "--desktop": !isMobile && headerElements === 3
                         })}>
                             <div className="main-buttons">
+                                <ModalDesktopButtons modalStore={modalStore} />
                                 {/*{isMobile ? this.mobileButtons() : this.desktopButtons()}*/}
                             </div>
                             <div className="header-content">
