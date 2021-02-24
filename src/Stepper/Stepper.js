@@ -46,12 +46,16 @@ class Stepper extends React.Component {
         }
     }
 
-    onArrowClick(containerRightPos, itemWidth, stepsAmount, stepperWidth) {
+    onArrowClick() {
+        const { containerRightPos, itemWidth } = this.state;
+        const { steps } = this.props;
+
         return (direction) => {
             const newContainerRightValue = containerRightPos + (itemWidth * 2 * direction);
+            const maxRightPos = (itemWidth * (steps.length * 2 - 1) - this.stepperRef.clientWidth + 40);
 
             this.setState({
-                containerRightPos: Math.min(Math.max(newContainerRightValue, 0), (itemWidth * (stepsAmount * 2 - 1) - stepperWidth + 40))
+                containerRightPos: Math.min(Math.max(newContainerRightValue, 0), maxRightPos)
             })
         }
     }
@@ -109,12 +113,7 @@ class Stepper extends React.Component {
 
     render() {
         const { palette, vertical, showCompletedCount, steps, stepsPerPage } = this.props;
-        const { selected, containerWidth, containerRightPos, itemWidth } = this.state;
-
-        const containerStyle = {
-            width: containerWidth,
-            right: containerRightPos
-        };
+        const { selected, containerWidth, containerRightPos } = this.state;
 
         return (
             <div
@@ -127,13 +126,16 @@ class Stepper extends React.Component {
                         'stepper-container': true,
                         '--vertical': vertical
                     })}
-                    style={containerStyle}
+                    style={{
+                        width: containerWidth,
+                        right: containerRightPos
+                    }}
                 >
                     {this.renderSteps()}
                 </div>
                 {stepsPerPage &&
                 <Arrows
-                    onArrowClick={this.onArrowClick(containerRightPos, itemWidth, steps.length, this.stepperRef.clientWidth)}
+                    onArrowClick={this.onArrowClick()}
                 />
                 }
                 <div className="stepper-counter">
