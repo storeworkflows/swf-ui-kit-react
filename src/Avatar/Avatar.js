@@ -5,12 +5,18 @@ import {noop, normalizeURL} from "../utils";
 import styles from "./styles.scss";
 import {Icon} from "../index";
 
-console.shallowCloneLog = function(){
+console.shallowCloneLog = function () {
     var typeString = Function.prototype.call.bind(Object.prototype.toString)
-    console.log.apply(console, Array.prototype.map.call(arguments, function(x){
+    console.log.apply(console, Array.prototype.map.call(arguments, function (x) {
         switch (typeString(x).slice(8, -1)) {
-            case 'Number': case 'String': case 'Undefined': case 'Null': case 'Boolean': return x;
-            case 'Array': return x.slice();
+            case 'Number':
+            case 'String':
+            case 'Undefined':
+            case 'Null':
+            case 'Boolean':
+                return x;
+            case 'Array':
+                return x.slice();
             default:
                 var out = Object.create(Object.getPrototypeOf(x));
                 out.constructor = x.constructor;
@@ -51,10 +57,10 @@ class Avatar extends React.Component {
 
     fixPhotoSize(event) {
         const {nativeEvent} = event;
-        const { path = nativeEvent.composedPath() } = nativeEvent;
+        const {path = nativeEvent.composedPath()} = nativeEvent;
 
         const image = path[0];
-        const { naturalWidth, naturalHeight } = image;
+        const {naturalWidth, naturalHeight} = image;
 
         const sizes = {
             "xs": "1.5rem",
@@ -127,19 +133,23 @@ class Avatar extends React.Component {
                         <p className="name">{name}</p>
                         <p className="title">{title}</p>
                     </div>
-                    <Icon
+                    <div>
                         onClick={(e) => {
                             e.stopPropagation();
                             console.log("Remove clicked", id)
                             this.props.onRemove({id});
                         }}
-                        className={classnames({
-                            "remove":true,
-                            "visible": canRemove && openState
-                        })}
-                        icon="x"
-                        size="md"
-                    />
+                        <Icon
+
+                            className={classnames({
+                                "remove": true,
+                                "visible": canRemove && openState
+                            })}
+                            icon="x"
+                            size="md"
+                        />
+                    </div>
+
                 </div>
             </>
         )
