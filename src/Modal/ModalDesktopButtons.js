@@ -6,6 +6,8 @@ import {ModalStore} from "./ModalStore";
 const ModalDesktopButtons = (props) => {
     const {modalStore} = props;
 
+    console.log(props)
+
     return ( <>
         <Button icon="x"
                 variant="tertiary"
