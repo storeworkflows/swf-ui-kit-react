@@ -129,7 +129,7 @@ class Avatar extends React.Component {
                     </div>
                     <Icon
                         onClick={(e) => {
-                            this.props.onRemove({id})
+                            this.props.onRemove({id});
                             e.stopPropagation();
                         }}
                         className={classnames({
