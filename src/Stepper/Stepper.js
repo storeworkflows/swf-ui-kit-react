@@ -51,7 +51,7 @@ class Stepper extends React.Component {
             const newContainerRightValue = containerRightPos + (itemWidth * 2 * direction);
 
             this.setState({
-                containerRightPos: Math.min(Math.max(newContainerRightValue, 0), (itemWidth * stepsAmount * 2 - stepperWidth - 40))
+                containerRightPos: Math.min(Math.max(newContainerRightValue, 0), (itemWidth * (stepsAmount * 2 - 1) - stepperWidth + 40))
             })
         }
     }
