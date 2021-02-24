@@ -11,11 +11,11 @@ import {ModalStore} from "./ModalStore";
 const Modal = observer((props) => {
     const modalRef = useRef(null);
     const [modalStore] = useState(() => new ModalStore({...props}))
-    const {modalStatus, openModal, mobileFooterOpened} = modalStore;
+    const {currentStatus, openModal, mobileFooterOpened} = modalStore;
     const {display, headerElements} = props;
     const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
-    console.log(modalStatus, openModal, mobileFooterOpened)
+    console.log(currentStatus, openModal, mobileFooterOpened)
 
     return (<>
             <style type="text/css">{styles}</style>
