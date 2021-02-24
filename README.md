@@ -10,6 +10,8 @@
 [Avatar, ](#Avatar)
 [AvatarGroup, ](#AvatarGroup)
 [Pill, ](#Pill)
+[Stepper, ](#Stepper)
+[Lookup Field, ](#LookupField)
 
 
 
@@ -246,7 +248,7 @@ color| "default", "primary", "negative"
 deleteIcon | string
 onDelete | func
 
-#Stepper
+# Stepper
 
 
 Name | Type | Default
@@ -259,6 +261,9 @@ vertical | boolean | false
 showCompletedCount | boolean | false
 selectedItem | number (from 1) | 1
 onStepClick | func | ({ index, id }) => { } 
+stepsPerPage | number | If set, will add arrows for horizontal navigation
+arrows | { color: <string>, size: <string> |
+
 
 #### StepObject
 
@@ -279,3 +284,21 @@ icon | { "finished": string, "unfinished" : string}
 circle | string
 link | string
 label | string
+
+
+# LookupField
+
+**Props**
+
+ Name | Type
+------------ | -------------
+onValueChange | func,
+value | string,
+declarativeUiActions | object,
+label | string,
+name | string,
+type | "reference", "list",
+table | string,
+tableRecordSysId | string
+
+

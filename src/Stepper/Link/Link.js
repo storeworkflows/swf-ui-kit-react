@@ -7,8 +7,7 @@ class Link extends React.Component {
 
     render() {
         return (
-            <div className="link link-container"
-            >
+            <div className="link link-container">
                 <div className="link-strip"/>
             </div>
         );

@@ -9,7 +9,6 @@
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  cursor: pointer;
   box-shadow: 0 0 0 2pt var(--color-for-border);
   font-size: .7rem;
 
@@ -33,7 +32,8 @@
     background-color: rgb(220, 0, 78);
   }
 
-  &:hover {
+  &.--clickable:hover {
+    cursor: pointer;
     transform: scale(1.2);
   }
 
