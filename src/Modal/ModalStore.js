@@ -1,7 +1,7 @@
 import {SWF_MODAL} from "./constants";
 import {makeObservable} from "mobx"
 
-class ModalStore {
+export class ModalStore {
     currentStatus =  SWF_MODAL.MODAL_SIZE.DEFAULT;
     modalOpened =  false;
     mobileFooterOpened = false;
@@ -18,7 +18,7 @@ class ModalStore {
         this.modalOpened = status;
     }
 
-    mobileFooterOpened (status) {
+    setMobileFooterOpened (status) {
         this.mobileFooterOpened = status
     }
 }

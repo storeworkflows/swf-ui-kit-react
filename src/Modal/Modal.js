@@ -5,15 +5,17 @@ import PropTypes from "prop-types";
 import Button from "../Button/Button";
 import {useState, useRef} from "react";
 
-function Modal (props) {
+import {observer} from "mobx-react-lite";
+import {ModalStore} from "./ModalStore";
+
+const Modal = observer((props) => {
     const modalRef = useRef(null);
-    const [status, setStatus] = useState(SWF_MODAL.MODAL_SIZE.DEFAULT);
-    const [modalOpened, setModalOpened] = useState(false);
-    const [mobileFooterOpened, setMobileFooterOpened] = useState(false);
-
+    const [modalStore] = useState(() => new ModalStore())
+    const {status, modalOpened, mobileFooterOpened} = modalStore;
     const {display, headerElements} = props;
-
     const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
+
+    console.log(status, modalOpened, mobileFooterOpened)
 
     return (<>
             <style type="text/css">{styles}</style>
@@ -33,7 +35,7 @@ function Modal (props) {
                             "--desktop": !isMobile && headerElements === 3
                         })}>
                             <div className="main-buttons">
-                                {isMobile ? this.mobileButtons() : this.desktopButtons()}
+                                {/*{isMobile ? this.mobileButtons() : this.desktopButtons()}*/}
                             </div>
                             <div className="header-content">
                                 <slot name="header"/>
@@ -41,8 +43,8 @@ function Modal (props) {
                             {
                                 headerElements === 3 ? <div className="additional-buttons">
                                     {isMobile ?
-                                        <now-button-iconic
-                                            icon="ellipsis-h-fill"
+                                        <Button
+                                            icon="x"
                                             variant="primary"
                                             bare={true}
                                             size="md"
@@ -90,8 +92,7 @@ function Modal (props) {
             </div>
         </>
     )
-
-}
+});
 
 // class Modal extends React.Component {
 //     constructor(props) {
