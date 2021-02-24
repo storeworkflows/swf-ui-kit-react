@@ -3,13 +3,13 @@ import {action, makeObservable, observable} from "mobx"
 
 export class ModalStore {
     currentStatus;
-    modalOpened;
+    openModal;
     mobileFooterOpened;
 
-    constructor({currentStatus = SWF_MODAL.MODAL_SIZE.DEFAULT, modalOpened = false, mobileFooterOpened = false}) {
+    constructor({currentStatus = SWF_MODAL.MODAL_SIZE.DEFAULT, openModal = false, mobileFooterOpened = false}) {
         makeObservable(this, {
             currentStatus: observable,
-            modalOpened: observable,
+            openModal: observable,
             mobileFooterOpened: observable,
             setCurrentStatus: action,
             setModalOpened: action,
@@ -17,7 +17,7 @@ export class ModalStore {
         })
 
         this.currentStatus = currentStatus;
-        this.modalOpened = modalOpened;
+        this.openModal = modalOpened;
         this.mobileFooterOpened = mobileFooterOpened;
     }
 
