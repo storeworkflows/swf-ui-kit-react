@@ -261,6 +261,9 @@ vertical | boolean | false
 showCompletedCount | boolean | false
 selectedItem | number (from 1) | 1
 onStepClick | func | ({ index, id }) => { } 
+stepsPerPage | number | If set, will add arrows for horizontal navigation
+arrows | { color: <string>, size: <string> |
+
 
 #### StepObject
 
