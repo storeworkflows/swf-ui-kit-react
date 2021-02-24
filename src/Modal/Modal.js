@@ -16,8 +16,6 @@ const Modal = observer((props) => {
     const {display, headerElements} = props;
     const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
-    console.log({currentStatus, openModal, mobileFooterOpened, modalStore})
-
     return (<>
             <style type="text/css">{styles}</style>
             <div className="modal-overlay"

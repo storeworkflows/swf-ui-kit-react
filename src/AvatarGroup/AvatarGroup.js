@@ -16,7 +16,6 @@ class AvatarGroup extends React.Component {
     }
 
     openAvatar(index) {
-        //console.log(...arguments)
         console.log(index)
         this.setState({openedAvatar: index})
     }
