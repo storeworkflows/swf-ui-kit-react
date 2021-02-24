@@ -50,7 +50,6 @@ color | string
 disabled | bool
 icon | string
 label | string 
->>>>>>> main
 tooltipContent | string
 size | 'sm', 'md', 'lg'
 variant |  "primary" , "primary-positive" , "primary-negative" , "secondary" , "secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""
