@@ -133,14 +133,13 @@ class Avatar extends React.Component {
                         <p className="name">{name}</p>
                         <p className="title">{title}</p>
                     </div>
-                    <div>
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            console.log("Remove clicked", id)
-                            this.props.onRemove({id});
-                        }}
-                        <Icon
+                    <div onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Remove clicked", id)
+                        this.props.onRemove({id});
+                    }}>
 
+                        <Icon
                             className={classnames({
                                 "remove": true,
                                 "visible": canRemove && openState
