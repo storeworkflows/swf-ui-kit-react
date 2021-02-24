@@ -1,26 +1,27 @@
 export const POPOVER = {
-    alignment: {
+    ALIGNMENT: {
         TOP: "top",
         CENTER: "center",
         BOTTOM: "bottom",
         START: "start",
         END: "end"
     },
-    noArrow: [{target: "top-start", content: "bottom-end"},
+    NO_ARROW_POSITIONS:
+        [{target: "top-start", content: "bottom-end"},
         {target: "top-end", content: "bottom-start"},
         {target: "bottom-end", content: "top-start"},
         {target: "bottom-start", content: "top-end"}
     ],
-    arrowBorder: {
-        RIGHT: '--popover-arrow-border-right',
-        LEFT: '--popover-arrow-border-left',
-        BOTTOM: '--popover-arrow-border-bottom',
-        TOP: '--popover-arrow-border-top',
-    },
-    arrowAlign : {
+    ARROW_ALIGN: {
         TOP: '--popover-arrow-top',
-        LEFT: '--popover-arrow-left',
+        LEFT: '--popover-arrow-left'
     },
-    arrowSize: 16,
-    arrowBorderWidth: 1
+    ARROW_SIDES: {
+        RIGHT: "right",
+        LEFT: "left",
+        BOTTOM: "bottom",
+        TOP: "top"
+    },
+    ARROW_SIZE: 9,
+    ARROW_SPACE: 3
 }

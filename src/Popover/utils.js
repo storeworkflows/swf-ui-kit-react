@@ -1,18 +1,29 @@
 import {POPOVER} from "./constants";
-const {alignment, arrowSize, arrowAlign, arrowBorder, arrowBorderWidth, noArrow} = POPOVER
+const {ALIGNMENT, ARROW_SIZE, ARROW_ALIGN, NO_ARROW_POSITIONS, ARROW_SIDES, ARROW_SPACE} = POPOVER
 
-const verticalAlignment = [alignment.TOP, alignment.CENTER, alignment.BOTTOM];
-const horizontalAlignment = [alignment.START, alignment.CENTER, alignment.END];
+const verticalAlignment = [ALIGNMENT.TOP, ALIGNMENT.CENTER, ALIGNMENT.BOTTOM];
+const horizontalAlignment = [ALIGNMENT.START, ALIGNMENT.CENTER, ALIGNMENT.END];
 
-const diagonal = (arrowSize + 2 * arrowBorderWidth) * Math.sqrt(2);
-const halfDiagonal = diagonal/2;
+const setArrowColor = (align) => {
+    return `--arrow-${align}-color`;
+}
+const setMargin = (align) => {
+    return `margin-${align}`;
+}
+const setArrowSize = (align) => {
+    return `--arrow-${align}-size`;
+}
+
+const hasArrowByPosition = (position, roundBorder) =>{
+    return !(isOneOfNoArrow(position) || (roundBorder && !isCenterArrow(position)));
+}
 
 const isOneOfNoArrow = (position) => {
     let targetPosition = position.target.split('-');
     let contentPosition = position.content.split('-');
 
     let result = false;
-    noArrow.forEach( ({content, target}) => {
+    NO_ARROW_POSITIONS.forEach( ({content, target}) => {
         let elTargetPosition = target.split('-');
         let elContentPosition = content.split('-');
         let isSameTargetParams = targetPosition[0] === elTargetPosition[0] && targetPosition[1] === elTargetPosition[1];
@@ -24,81 +35,98 @@ const isOneOfNoArrow = (position) => {
     return result;
 }
 
+const isCenterArrow = (position) => {
+    let contentPosition = position.content.split('-');
+    return contentPosition[0] === ALIGNMENT.CENTER || contentPosition[1] === ALIGNMENT.CENTER;
+}
+
 const calculatePosition = (alignType, arrayType, startPosition, addPx = 0) => {
     let result = `${addPx}px`;
     if(alignType === arrayType[1])
-        result = `${startPosition/2 + addPx}px`;
+        result = `${Math.round(startPosition/2) + addPx}px`;
     else if(alignType === arrayType[2])
         result= `${startPosition + addPx}px`;
 
     return result;
 }
 
-const calculateArrowPosition = (alignType, arrayType, startPosition, additionalParam = 0) => {
-    let result = `${additionalParam + 8}px `;
-    if(alignType === arrayType[1])
-        result = `${startPosition/2 - halfDiagonal + additionalParam +2}px`;
-    else if(alignType === arrayType[2])
-        result= `${startPosition - diagonal + additionalParam - 5}px`;
 
-    return result;
+const getArrowAlignment = (arrayType, align, parentSize, size) => {
+    if(align === arrayType[1])
+        return Math.round(parentSize/2) - size;
+    else if ( align === arrayType[2])
+        return parentSize - size*2;
+    else
+        return 0;
 }
 
 const getArrowStyles = (position, contentDimensions) => {
     let style = {};
-    let borderStyle = `${arrowBorderWidth}px solid rgba(0, 0, 0, 0.3)`;
     let targetPosition = position.target.split('-');
     let contentPosition = position.content.split('-');
+    let margin = `${ARROW_SIZE + ARROW_SPACE}px`
+
+    let isDown = targetPosition[0] === ALIGNMENT.TOP && contentPosition[0] === ALIGNMENT.BOTTOM;
+    let isLeft = targetPosition[1] === ALIGNMENT.END && contentPosition[1] === ALIGNMENT.START;
+    let isRight = targetPosition[1] === ALIGNMENT.START && contentPosition[1] === ALIGNMENT.END;
+    let isUp = targetPosition[0] === ALIGNMENT.BOTTOM && contentPosition[0] === ALIGNMENT.TOP;
 
     let hasArrow = true;
-    let margin = `${halfDiagonal}px`
-    if(isOneOfNoArrow(position))
-        hasArrow = false;
-    else if(targetPosition[0] === alignment.TOP && contentPosition[0] === alignment.BOTTOM){
-        //down
-        style[arrowBorder.BOTTOM] = borderStyle;
-        style[arrowBorder.RIGHT] = borderStyle;
+    let sideToZero = null;
+    let colorSide = null;
+    let top = 0;
+    let left = 0;
 
-        style[arrowAlign.TOP] = contentDimensions.height+"px";
-        style[arrowAlign.LEFT] = calculateArrowPosition(contentPosition[1], horizontalAlignment, contentDimensions.width);
-        style['margin-bottom'] = margin;
+    switch(true){
+        case isDown :
+            sideToZero = ARROW_SIDES.BOTTOM;
+            colorSide = ARROW_SIDES.TOP;
 
-    } else if(targetPosition[1] === alignment.START && contentPosition[1] === alignment.END){
-        //right
-        style[arrowBorder.RIGHT] = borderStyle;
-        style[arrowBorder.TOP] = borderStyle;
+            top = contentDimensions.height;
+            left = getArrowAlignment(horizontalAlignment, contentPosition[1], contentDimensions.width, ARROW_SIZE);
 
-        style[arrowAlign.TOP] = calculateArrowPosition(contentPosition[0], verticalAlignment, contentDimensions.height, halfDiagonal);
-        style[arrowAlign.LEFT] = `${contentDimensions.width - halfDiagonal + 2}px`;
+            break;
+        case isRight :
+            sideToZero = ARROW_SIDES.RIGHT;
+            colorSide = ARROW_SIDES.LEFT;
 
-        style['margin-right'] = margin;
+            top = getArrowAlignment(verticalAlignment, contentPosition[0], contentDimensions.height, ARROW_SIZE);
+            left = contentDimensions.width;
 
-    } else if(targetPosition[1] === alignment.END && contentPosition[1] === alignment.START){
-        //left
-        style[arrowBorder.LEFT] = borderStyle;
-        style[arrowBorder.BOTTOM] = borderStyle
+            break;
+        case isLeft:
+            sideToZero = ARROW_SIDES.LEFT;
+            colorSide = ARROW_SIDES.RIGHT;
 
-        style[arrowAlign.TOP] = `${calculateArrowPosition(contentPosition[0], verticalAlignment, contentDimensions.height, halfDiagonal)}`;
-        style[arrowAlign.LEFT] = `${- halfDiagonal + 2}px`;
+            top = getArrowAlignment(verticalAlignment, contentPosition[0], contentDimensions.height, ARROW_SIZE);
+            left = -ARROW_SIZE;
 
-        style['margin-left'] = margin;
+            break;
+        case isUp:
+            sideToZero = ARROW_SIDES.TOP;
+            colorSide = ARROW_SIDES.BOTTOM;
 
-    }  else if(targetPosition[0] === alignment.BOTTOM && contentPosition[0] === alignment.TOP){
-        //up
-        style[arrowBorder.LEFT] = borderStyle;
-        style[arrowBorder.TOP] = borderStyle
+            top = -ARROW_SIZE;
+            left = getArrowAlignment(horizontalAlignment, contentPosition[1], contentDimensions.width, ARROW_SIZE);
 
-        style[arrowAlign.TOP] = 0;
-        style[arrowAlign.LEFT] = calculateArrowPosition(contentPosition[1], horizontalAlignment, contentDimensions.width);
+            break;
+        default:
+            hasArrow = false;
+            break;
+    }
 
-        style['margin-top'] = margin;
-    } else
-        hasArrow = false;
+    if(hasArrow){
+        style[ARROW_ALIGN.TOP] = `${top}px`;
+        style[ARROW_ALIGN.LEFT] = `${left}px`;
 
+        style[setArrowColor(colorSide)] = 'var(--popover-background)';
+        style[setArrowSize(sideToZero)] = 0;
+        style[setMargin(sideToZero)] = margin;
+    }
     return {hasArrow: hasArrow, style: style};
 }
 
-const getStyleByPosition = (position, targetDimensions, contentDimensions, windowWidth, hideTail) => {
+const getStyleByPosition = (position, targetDimensions, contentDimensions, windowWidth, hasArrow) => {
     let style = {};
     let targetPosition = position.target.split('-');
     let contentPosition = position.content.split('-');
@@ -112,13 +140,15 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
 
         let addPx = 0;
         let addPxY = 0
-        let needMoveContent = verticalAlign === alignment.TOP && contentPosition[0] === alignment.BOTTOM;
-        let needMoveContentY = horizontalAlign === alignment.START && contentPosition[1] === alignment.END;
-        if(needMoveContent && !hideTail && !isOneOfNoArrow(position))
-            addPx = -halfDiagonal;
 
-        if(needMoveContentY && !hideTail && !isOneOfNoArrow(position))
-            addPxY = -halfDiagonal;
+        let needMoveContent = verticalAlign === ALIGNMENT.TOP && contentPosition[0] === ALIGNMENT.BOTTOM;
+        let needMoveContentY = horizontalAlign === ALIGNMENT.START && contentPosition[1] === ALIGNMENT.END;
+
+        if(needMoveContent && hasArrow)
+            addPx = -ARROW_SIZE - ARROW_SPACE;
+
+        if(needMoveContentY && hasArrow)
+            addPxY = -ARROW_SIZE - ARROW_SPACE;
 
         style.top = calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
         style.left = calculatePosition(horizontalAlign, horizontalAlignment, targetWidth, addPxY);
@@ -152,32 +182,30 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
 
     let isVisible = isXVisible && isYVisible;
 
-    console.log("visibility", isVisible);
     return {style: style, isVisible: isVisible};
 }
 
-
-export const getPopoverStyle = (positions, targetDimensions, contentDimensions, windowWidth, hideTail) => {
-    let style = {};
-
-    let result;
+const getAllStyles = (position, targetDimensions, contentDimensions, windowWidth, hasArrow) => {
     let arrowStyles = { hasArrow: false, style:{}};
+    let popoverStyles = getStyleByPosition(position, targetDimensions, contentDimensions, windowWidth, hasArrow);
+    if(hasArrow && popoverStyles.isVisible)
+        arrowStyles = getArrowStyles(position, contentDimensions);
+
+    return {isVisible: popoverStyles.isVisible, style: popoverStyles.style, hasArrow: arrowStyles.hasArrow, arrowStyle: arrowStyles.style};
+}
+
+
+export const getPopoverStyle = (positions, targetDimensions, contentDimensions, windowWidth, hideTail, roundBorder) => {
+    let result = {};
+
     for(let i = 0; i<positions.length; i++){
-        result = getStyleByPosition(positions[i], targetDimensions, contentDimensions, windowWidth, hideTail);
+        let hasArrow = !hideTail && hasArrowByPosition(positions[i], roundBorder);
+        result = getAllStyles(positions[i], targetDimensions, contentDimensions, windowWidth, hasArrow);
         if(result.isVisible)
-        {
-            style = result.style;
-            if(!hideTail)
-                arrowStyles = getArrowStyles (positions[i], contentDimensions);
             break;
-        }else if(i === positions.length -1)
-        {
-            style = getStyleByPosition(positions[0], targetDimensions, contentDimensions, windowWidth, hideTail).style;
-            if(!hideTail)
-                arrowStyles = getArrowStyles (positions[0], contentDimensions);
-        }
+        else if(i === positions.length -1)
+            result = getAllStyles(positions[0], targetDimensions, contentDimensions, windowWidth, hasArrow);
     }
 
-
-    return {style: style, hasArrow: arrowStyles.hasArrow, arrowStyle: arrowStyles.style};
+    return result;
 }
