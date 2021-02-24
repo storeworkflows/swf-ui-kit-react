@@ -12,6 +12,7 @@
 [Pill, ](#Pill)
 [Stepper, ](#Stepper)
 [Lookup Field, ](#LookupField)
+[Popover, ](#Popover)
 
 
 
@@ -300,5 +301,32 @@ name | string,
 type | "reference", "list",
 table | string,
 tableRecordSysId | string
+
+# Popover
+
+**Props**
+
+ Name | Type
+------------ | -------------
+hideTail | bool,
+manageOpened | bool,
+opened | bool,
+positionTarget | element,
+positions | [{ [PositionObject](#positionobject) }],
+onClick | func,
+roundBorder | bool
+
+#### PositionObject
+
+ Name | Type
+------------ | -------------
+target | "{[horizontalAlignment](#horizontalalignment)}-{[verticalAlignment](#verticalalignment)}": string
+content | "{[horizontalAlignment](#horizontalalignment)}-{[verticalAlignment](#verticalalignment)}": string
+
+#### horizontalAlignment
+Posible values: "top", "center", "bottom"
+
+#### verticalAlignment
+Posible values: "start", "center", "end"
 
 
