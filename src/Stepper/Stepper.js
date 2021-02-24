@@ -1,6 +1,5 @@
 import styles from "./Stepper.scss";
 import Step from './Step/Step';
-import Link from './Link/Link';
 import Arrows from "./Arrows/Arrows";
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -52,7 +51,7 @@ class Stepper extends React.Component {
 
         return (direction) => {
             const newContainerRightValue = containerRightPos + (itemWidth * 2 * direction);
-            const maxRightPos = (itemWidth * (steps.length * 2 - 1) - this.stepperRef.clientWidth + 40);
+            const maxRightPos = (itemWidth * (steps.length) - this.stepperRef.clientWidth);
 
             this.setState({
                 containerRightPos: Math.min(Math.max(newContainerRightValue, 0), maxRightPos)
@@ -95,16 +94,6 @@ class Stepper extends React.Component {
                                 hideLabel={hideLabels}
                             />
                         </div>
-                        {(index !== steps.length - 1) &&
-                        <div
-                            className={classnames({
-                                'stepper-item': true,
-                                '--before-selected': isBeforeSelected
-                            })}
-                        >
-                            <Link/>
-                        </div>
-                        }
                     </React.Fragment>
                 )
             })
