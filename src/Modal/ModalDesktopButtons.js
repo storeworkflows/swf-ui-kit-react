@@ -11,7 +11,7 @@ const ModalDesktopButtons = (modalStore) => {
                 size="md"
                 configAria={{"button": {"aria-label": "Collapse"}}}
                 tooltipContent="Collapse"
-                onClick={() => modalStore.setModalOpened(true)}
+                onClick={() => modalStore.openModal(true)}
         />
         <Button icon={modalStore.isFullSize ? "x" : "x"}
                 variant="tertiary"
@@ -19,7 +19,7 @@ const ModalDesktopButtons = (modalStore) => {
                 size="md"
                 configAria={{"button": {"aria-label": "Expand"}}}
                 tooltipContent={modalStore.isFullSize ? "Collapse" : "Expand"}
-                onClick={() => modalStore.setCurrentStatus(SWF_MODAL.MODAL_SIZE.FULL)}
+                onClick={() => modalStore.currentStatus(SWF_MODAL.MODAL_SIZE.FULL)}
         />
     </>)
 }
