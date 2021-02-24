@@ -1,16 +1,19 @@
 import {SWF_MODAL} from "./constants";
-import {makeObservable} from "mobx"
+import {action, makeObservable, observable} from "mobx"
 
 export class ModalStore {
     currentStatus;
     modalOpened;
     mobileFooterOpened;
 
-    constructor({currentStatus, modalOpened, mobileFooterOpened}) {
+    constructor({currentStatus = SWF_MODAL.MODAL_SIZE.DEFAULT, modalOpened = false, mobileFooterOpened = false}) {
         makeObservable(this, {
-            currentStatus:  SWF_MODAL.MODAL_SIZE.DEFAULT,
-            modalOpened: false,
-            mobileFooterOpened: false,
+            currentStatus: observable,
+            modalOpened: observable,
+            mobileFooterOpened: observable,
+            setCurrentStatus: action,
+            setModalOpened: action,
+            setMobileFooterOpened: action
         })
 
         this.currentStatus = currentStatus;
