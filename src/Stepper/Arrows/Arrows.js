@@ -8,7 +8,7 @@ class Arrows extends React.Component {
     }
 
     render() {
-        const { onArrowClick } = this.props;
+        const { onArrowClick, arrowsSize, arrowsColor } = this.props;
 
         return (
             <>
@@ -19,8 +19,8 @@ class Arrows extends React.Component {
                     <div className="arrow-icon">
                         <Icon
                             icon="chevron-left"
-                            color="black"
-                            size="lg"
+                            color={arrowsColor}
+                            size={arrowsSize}
                         />
                     </div>
                 </div>
@@ -31,8 +31,8 @@ class Arrows extends React.Component {
                     <div className="arrow-icon">
                         <Icon
                             icon="chevron-right"
-                            color="black"
-                            size="lg"
+                            color={arrowsColor}
+                            size={arrowsSize}
                         />
                     </div>
                 </div>
@@ -42,7 +42,15 @@ class Arrows extends React.Component {
 }
 
 Arrows.propTypes = {
-    onArrowClick: PropTypes.func
+    onArrowClick: PropTypes.func,
+    arrowsSize: PropTypes.string,
+    arrowsColor: PropTypes.string
+}
+
+Arrows.defaultProps = {
+    onArrowClick: () => {},
+    arrowsSize: 'md',
+    arrowsColor: 'black'
 }
 
 export default Arrows;

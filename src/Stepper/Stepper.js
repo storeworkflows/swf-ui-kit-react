@@ -112,7 +112,7 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, vertical, showCompletedCount, steps, stepsPerPage } = this.props;
+        const { palette, vertical, showCompletedCount, steps, stepsPerPage, arrows } = this.props;
         const { selected, containerWidth, containerRightPos } = this.state;
 
         return (
@@ -136,6 +136,8 @@ class Stepper extends React.Component {
                 {stepsPerPage &&
                 <Arrows
                     onArrowClick={this.onArrowClick()}
+                    arrowsColor={arrows.color}
+                    arrowsSize={arrows.size}
                 />
                 }
                 <div className="stepper-counter">
@@ -152,6 +154,7 @@ Stepper.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object),
     palette: PropTypes.object,
     iconSize: PropTypes.string,
+    arrows: PropTypes.object,
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
     showCompletedCount: PropTypes.bool,
@@ -170,6 +173,10 @@ Stepper.defaultProps = {
         circle: '',
         link: '',
         label: ''
+    },
+    arrows: {
+        color: 'black',
+        size: 'md'
     },
     iconSize: 'sm',
     hideLabels: false,
