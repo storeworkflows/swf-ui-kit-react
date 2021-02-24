@@ -63,6 +63,7 @@ class AvatarGroup extends React.Component {
                     {viewers.map((viewer, index) => (
                         <div key={index + viewer.name.replace("", "_")} onClick={this.openAvatar.bind(this, index)}>
                             <Avatar
+                                id={index}
                                 size={size}
                                 canRemove={canRemove}
                                 onRemove={onRemove}

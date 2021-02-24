@@ -77,6 +77,7 @@ class Avatar extends React.Component {
 
     render() {
         const {
+            id,
             avatarVisible,
             open,
             color,
@@ -84,8 +85,7 @@ class Avatar extends React.Component {
             member: {
                 avatar,
                 name,
-                title,
-                id
+                title
             },
             size,
             canRemove,
@@ -156,6 +156,7 @@ class Avatar extends React.Component {
 }
 
 Avatar.defaultProps = {
+    id: 0,
     clickable: true,
     open: false,
     manageOpened: false,
@@ -168,6 +169,7 @@ Avatar.defaultProps = {
 }
 
 Avatar.propTypes = {
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     avatarVisible: PropTypes.bool,
     canRemove: PropTypes.bool,
     clickable: PropTypes.bool,
@@ -178,7 +180,6 @@ Avatar.propTypes = {
         name: PropTypes.string.required,
         title: PropTypes.string,
         avatar: PropTypes.string,
-        id: PropTypes.string.required
     }),
     onRemove: PropTypes.func,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
