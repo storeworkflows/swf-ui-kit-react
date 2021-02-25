@@ -1,7 +1,7 @@
 export const createCssVariables = (palette) => {
     const { link, label, circle } = palette;
 
-    return `.stepper{` +
+    return `.stepper-container{` +
         `--circle:${circle || '#39A450'};` +
         `--link:${link || circle || '#39A450'};` +
         `--label:${label || '#000000'}` +

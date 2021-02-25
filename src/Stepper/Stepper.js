@@ -1,6 +1,5 @@
 import styles from "./Stepper.scss";
 import Step from './Step/Step';
-import Arrows from "./Arrows/Arrows";
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from "classnames";
@@ -13,7 +12,6 @@ class Stepper extends React.Component {
         this.state = {
             selected: Math.min(props.steps.length - 1, props.selectedItem - 1),
             stepsPerPage: 0,
-            containerWidth: '100%',
             containerRightPos: 0
         };
         this.stepperRef = false;
@@ -22,9 +20,14 @@ class Stepper extends React.Component {
 
     componentDidMount() {
         this.setState({
-            containerWidth: 200 * this.props.steps.length,
             stepsPerPage: Math.floor(this.stepperRef.clientWidth / 200)
         });
+
+        window.addEventListener('resize', () => {
+            this.setState({
+                stepsPerPage: Math.floor(this.stepperRef.clientWidth / 200)
+            });
+        })
     }
 
     selectStep(index, id) {
@@ -96,7 +99,7 @@ class Stepper extends React.Component {
 
     render() {
         const { palette, vertical, showCompletedCount, steps, arrows } = this.props;
-        const { selected, containerWidth, containerRightPos, stepsPerPage } = this.state;
+        const { selected, containerRightPos, stepsPerPage } = this.state;
 
         const isArrowsNeeded = stepsPerPage < steps.length;
 
@@ -104,7 +107,7 @@ class Stepper extends React.Component {
             <>
                 <style type="text/css">{createCssVariables(palette) + styles}</style>
                 <div
-                    className="stepper"
+                    className="stepper-container"
                     ref={elm => this.stepperRef = elm}
                 >
                     {isArrowsNeeded &&
@@ -123,18 +126,18 @@ class Stepper extends React.Component {
                     }
 
                     <div
-                        className="stepper-wrapper"
+                        className="steps-wrapper"
                         style={{
-                            width: stepsPerPage * 200
+                            width: isArrowsNeeded ? stepsPerPage * 200 : '100%'
                         }}
                     >
                         <div
                             className={classnames({
-                                'stepper-container': true,
+                                'steps': true,
                                 '--vertical': vertical
                             })}
                             style={{
-                                width: containerWidth,
+                                width: isArrowsNeeded ? steps.length * 200 : '100%',
                                 right: containerRightPos
                             }}
                         >
@@ -156,20 +159,11 @@ class Stepper extends React.Component {
                         </div>
                     </div>
                     }
-
-                    {/*{isArrowsNeeded &&*/}
-                    {/*<Arrows*/}
-                    {/*    onArrowClick={this.onArrowClick()}*/}
-                    {/*    arrowsColor={arrows.color}*/}
-                    {/*    arrowsSize={arrows.size}*/}
-                    {/*/>*/}
-                    {/*}*/}
-
-                    {/*<div className="stepper-counter">*/}
-                    {/*    {showCompletedCount &&*/}
-                    {/*    `${selected + 1}/${steps.length} Completed`*/}
-                    {/*    }*/}
-                    {/*</div>*/}
+                </div>
+                <div className="stepper-counter">
+                    {showCompletedCount &&
+                    `${selected + 1}/${steps.length} Completed`
+                    }
                 </div>
             </>
 
@@ -186,8 +180,7 @@ Stepper.propTypes = {
     vertical: PropTypes.bool,
     showCompletedCount: PropTypes.bool,
     selectedItem: PropTypes.number,
-    onStepClick: PropTypes.func,
-    stepsPerPage: PropTypes.number
+    onStepClick: PropTypes.func
 }
 
 Stepper.defaultProps = {
