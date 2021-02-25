@@ -44,6 +44,7 @@
   white-space: normal;
   border-radius: .5rem;
   background-color: RGB(var(--mv9-Tvprj--krJUfZvWmp-JvjvZ, var(--now-color--background-primary, 255, 255, 255)));
+  transition: width .3s ease-in, height .3s ease-in;
 
   &.--block {
     display: block;
@@ -89,9 +90,15 @@
   }
 
   &.--full {
-    width: 97%;
-    height: 100%;
-    padding: calc(.5rem * var(--mv9-Tvprj--8tAf8z-1Jrjt, 1)) calc(.5rem * var(--mv9-Tvprj--9Apz8-1Jrjt, 1));
+    &-mobile {
+      width: 97%;
+      height: 100%;
+      padding: calc(.5rem * var(--mv9-Tvprj--8tAf8z-1Jrjt, 1)) calc(.5rem * var(--mv9-Tvprj--9Apz8-1Jrjt, 1));
+    }
+    &-desktop {
+      width: 100%;
+      height: 100%;
+    }
   }
 
 }
@@ -179,6 +186,10 @@
     -ms-grid-column-align: end;
     justify-self: end;
   }
+}
+
+.main-buttons .content, .main-buttons .swf-button {
+  margin: 0;
 }
 
 .modal-body {

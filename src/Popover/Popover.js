@@ -2,12 +2,8 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import styles from "./styles.scss";
-import findByType from "../utils/findByType";
+import findByType, {createSubComponent} from "../utils/findByType";
 import {getPopoverStyle} from "./utils";
-
-const Content = () => null;
-const Target = () => null;
-
 
 class Popover extends React.Component {
     constructor(props) {
@@ -26,7 +22,7 @@ class Popover extends React.Component {
 
     renderContent() {
         const {children} = this.props;
-        const content = findByType(children, Content);
+        const content = findByType(children, "Content");
 
         if (!content)
             return null;
@@ -38,7 +34,7 @@ class Popover extends React.Component {
 
     renderTarget() {
         const {children, positionTarget} = this.props;
-        const target = findByType(children, Target);
+        const target = findByType(children, "Target");
 
         let targetContent = (!target) ? positionTarget : target.props.children ;
 
@@ -108,8 +104,8 @@ class Popover extends React.Component {
     }
 };
 
-Popover.Content = Content;
-Popover.Target = Target;
+Popover.Content = createSubComponent("Content");
+Popover.Target = createSubComponent("Target");
 
 Popover.defaultProps = {
     hideTail: false,
