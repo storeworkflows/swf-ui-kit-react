@@ -17,11 +17,9 @@ class Modal extends React.Component {
 
         this.state = {
             currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT,
-            modalOpened: false,
+            openModal: this.props.openModal,
             mobileFooterOpened: false
         }
-
-        console.log(this.props);
     }
 
     expand() {
@@ -79,7 +77,7 @@ class Modal extends React.Component {
                     slot="trigger"
                     configAria={{"button": {"aria-label": "Close"}}}
                     tooltipContent="Close"
-                    onClick={() => void 0}
+                    onClick={() => this.setState({openModal: false})}
             />
         )
     }
@@ -118,13 +116,30 @@ class Modal extends React.Component {
                     icon="arrow-left"
                     variant="tertiary"
                     bare={true}
-                    size="lg"
+                    size="md"
                     configAria={{"button": {"aria-label": "Back"}}}
                     tooltipContent="Back"
                     onClick={() => this.setState({modalOpened: false})}
                 />
+                <Button
+                    icon="three-dots"
+                    variant="tertiary"
+                    bare={true}
+                    size="md"
+                    configAria={{"button": {"aria-label": "Show Actions"}}}
+                    tooltipContent="Show Actions"
+                    onClick={() => this.setState({mobileFooterOpened: true})}
+                />
             </>
         )
+    }
+
+    componentDidMount() {
+        this.modalRef.current.addEventListener("click", (event) => {
+            if (this.state.mobileFooterOpened) {
+                this.setState({mobileFooterOpened: false})
+            }
+        })
     }
 
     render() {
@@ -159,19 +174,7 @@ class Modal extends React.Component {
                                 </div>
                                 {
                                     headerElements === 3 ? <div className="additional-buttons">
-                                        {isMobile ?
-                                            <now-button-iconic
-                                                icon="ellipsis-h-fill"
-                                                variant="primary"
-                                                bare={true}
-                                                size="md"
-                                                configAria={{"button": {"aria-label": "Show Actions"}}}
-                                                tooltipContent="Show Actions"
-                                                onClick={() => this.setState({mobileFooterOpened: true})}
-                                            />
-                                            :
-                                            findByType(this.props.children, "HeaderButtons")
-                                        }
+                                        {!isMobile &&findByType(this.props.children, "HeaderButtons")}
                                     </div> : ""
                                 }
 
