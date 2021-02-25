@@ -8,6 +8,25 @@ export const createCssVariables = (palette) => {
         `}`
 }
 
+export const getCircleSize = (iconSize) => {
+    switch (iconSize) {
+        case 'xs':
+            return '2rem';
+        case 'sm':
+            return '2rem';
+        case 'md':
+            return '3rem';
+        case 'lg':
+            return '4rem';
+        case 'xl':
+            return '5rem';
+        case 'xxl':
+            return '6rem';
+        default:
+            return `${iconSize * 2}px`;
+    }
+}
+
 // const aaronsExamplePalette = {
 //     icon: {
 //         finished: 'white',

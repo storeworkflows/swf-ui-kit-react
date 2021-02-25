@@ -255,14 +255,13 @@ Name | Type | Default
 ------------ | ------------- | -------------
 steps |  [{ [StepObject](#stepobject) }]
 palette |  [{ [PaletteObject](#paletteobject) }]
-iconSize | "xs", "sm", "md", "lg", "xl", "xxl" | "sm"
+iconSize | "xs", "sm", "md", "lg", "xl", "xxl", <number> (of px) | "sm"
 hideLabels | boolean | false
 vertical | boolean | false
 showCompletedCount | boolean | false
 selectedItem | number (from 1) | 1
 onStepClick | func | ({ index, id }) => { } 
-stepsPerPage | number | If set, will add arrows for horizontal navigation
-arrows | { color: <string>, size: <string> |
+arrows | { color: <string>, size: <string> } | { color: 'black', size: 'md' }
 
 
 #### StepObject

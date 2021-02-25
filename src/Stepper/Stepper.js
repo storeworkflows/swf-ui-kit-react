@@ -198,7 +198,7 @@ Stepper.defaultProps = {
         color: 'black',
         size: 'md'
     },
-    iconSize: 'sm',
+    iconSize: 'md',
     hideLabels: false,
     vertical: false,
     showCompletedCount: false,
