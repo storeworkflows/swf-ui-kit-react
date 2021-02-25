@@ -1,6 +1,7 @@
 .step {
   &-container {
-    width: 100%;
+    //width: 200px;
+
     height: 100%;
     display: flex;
     justify-content: space-evenly;
@@ -28,15 +29,15 @@
     position: relative;
 
     &.--line {
-      flex-grow: 1;
+      flex: 1 1 0;
       height: 2rem;
       justify-content: center;
       align-self: start;
     }
 
     &.--body {
+      flex: 2 1 0;
       padding: 0 0.325rem;
-      flex-shrink: 1;
     }
   }
 
