@@ -3,7 +3,7 @@ import Step from './Step/Step';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from "classnames";
-import { createCssVariables } from "./utils";
+import { createCssVariables, getCircleSize } from "./utils";
 import Icon from "../Icon/Icon";
 
 class Stepper extends React.Component {
@@ -98,7 +98,7 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, vertical, showCompletedCount, steps, arrows } = this.props;
+        const { palette, vertical, showCompletedCount, steps, arrows, iconSize } = this.props;
         const { selected, containerRightPos, stepsPerPage } = this.state;
 
         const isArrowsNeeded = stepsPerPage < steps.length;
@@ -114,6 +114,10 @@ class Stepper extends React.Component {
                     <div
                         className="arrow arrow-left"
                         onClick={this.onArrowClick(-1)}
+                        style={{
+                            width: getCircleSize(iconSize),
+                            height: getCircleSize(iconSize)
+                        }}
                     >
                         <div className="arrow-icon">
                             <Icon
@@ -149,6 +153,10 @@ class Stepper extends React.Component {
                     <div
                         className="arrow arrow-right"
                         onClick={this.onArrowClick(1)}
+                        style={{
+                            width: getCircleSize(iconSize),
+                            height: getCircleSize(iconSize)
+                        }}
                     >
                         <div className="arrow-icon">
                             <Icon

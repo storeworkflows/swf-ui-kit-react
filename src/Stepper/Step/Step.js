@@ -15,10 +15,9 @@ class Step extends React.Component {
 
         return (
             <div className='step-container'>
-                <div className='step-item --line'>
+                <div className="step-body">
                     <div className="step-line --before"/>
-                </div>
-                <div className="step-item --body">
+
                     <div
                         className={classnames({
                             'step-circle': true,
@@ -40,14 +39,13 @@ class Step extends React.Component {
                             }
                         </div>
                     </div>
-                    <div className="step-label">
-                        <span>{!hideLabel && label}</span>
-                        <span className="step-sublabel">{!hideLabel && sublabel}</span>
-                    </div>
+
+                    <div className="step-line --after"/>
                 </div>
 
-                <div className='step-item --line'>
-                    <div className="step-line --after"/>
+                <div className="step-label">
+                    <span>{!hideLabel && label}</span>
+                    <span className="step-sublabel">{!hideLabel && sublabel}</span>
                 </div>
             </div>
         )
