@@ -194,6 +194,31 @@ const getAllStyles = (position, targetDimensions, contentDimensions, windowWidth
     return {isVisible: popoverStyles.isVisible, style: popoverStyles.style, hasArrow: arrowStyles.hasArrow, arrowStyle: arrowStyles.style};
 }
 
+const getAllPossiblePositions = () => {
+    let result = []
+
+    verticalAlignment.forEach((v) => {
+        horizontalAlignment.forEach(h => {
+            result.push(`${v}-${h}`);
+        })
+    })
+
+    return result;
+}
+
+
+export const getAllPossibleVariants = () => {
+    let result = [];
+
+    let allPositions = getAllPossiblePositions();
+    allPositions.forEach((targetPos) => {
+        allPositions.forEach(contentPos => {
+            result.push({target: targetPos, content: contentPos})
+        })
+    })
+    return  result;
+}
+
 
 export const getPopoverStyle = (positions, targetDimensions, contentDimensions, windowWidth, hideTail, roundBorder) => {
     let result = {};
