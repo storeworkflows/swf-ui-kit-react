@@ -1,7 +1,7 @@
 import classnames from "classnames";
 import propTypes from "prop-types";
 import styles from "./styles.scss";
-import {Component, Fragment} from "react";
+import {Component, Fragment, Children} from "react";
 import CardPreloader from "./Preloader";
 
 
@@ -25,7 +25,7 @@ class Card extends Component {
 						[`--${size}`]: true
 					})
 				} style={customStyles}>
-					<Fragment>{this.props.children}</Fragment>
+					<Fragment>{Children.only(this.props.children)}</Fragment>
 				</div>
 			</>
 		)
