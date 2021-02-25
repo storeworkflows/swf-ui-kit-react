@@ -4,7 +4,7 @@ import {SWF_MODAL} from "./constants";
 import styles from "./styles.scss";
 import PropTypes from "prop-types";
 import Button from "../Button/Button";
-import {createSubComponent} from "../utils/findByType";
+import findByType, {createSubComponent} from "../utils/findByType";
 
 class Modal extends React.Component {
     constructor(props) {
@@ -143,7 +143,7 @@ class Modal extends React.Component {
                         <div className={classnames({
                             "modal-dialog": true,
                             [`--${display}`]: true,
-                            [`--full-${isMobile ? "mobile": "desktop"}`]: isMobile || isFullSize
+                            [`--full-${isMobile ? "mobile" : "desktop"}`]: isMobile || isFullSize
                         })}>
                             <div className={classnames({
                                 "modal-header": true,
@@ -155,7 +155,7 @@ class Modal extends React.Component {
                                     {isMobile ? this.mobileButtons() : this.desktopButtons()}
                                 </div>
                                 <div className="header-content">
-                                    <slot name="header"/>
+                                    {findByType(this.props.children, "Header")}
                                 </div>
                                 {
                                     headerElements === 3 ? <div className="additional-buttons">
@@ -170,7 +170,8 @@ class Modal extends React.Component {
                                                 onClick={() => this.setState({mobileFooterOpened: true})}
                                             />
                                             :
-                                            <slot name="header-buttons"/>}
+                                            findByType(this.props.children, "HeaderButtons")
+                                        }
                                     </div> : ""
                                 }
 
@@ -178,7 +179,7 @@ class Modal extends React.Component {
                             <div
                                 className="modal-body"
                             >
-                                <slot name="body"/>
+                                {findByType(this.props.children, "Body")}
                             </div>
                             {isMobile
                                 ?
@@ -197,11 +198,11 @@ class Modal extends React.Component {
                             })}>
                                 {isMobile ?
                                     <div className="footer-content">
-                                        <slot name="footer"/>
-                                        <slot name="header-buttons"/>
+                                        {findByType(this.props.children, "Footer")}
+                                        {findByType(this.props.children, "HeaderButtons")}
                                     </div>
                                     :
-                                    <slot name="footer"/>
+                                    findByType(this.props.children, "Footer")
                                 }
                             </div>
                         </div>

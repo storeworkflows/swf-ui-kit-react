@@ -1,8 +1,9 @@
 import React from "react";
 
-const findByType = (children, component) => {
-
-    return React.Children.map(children, child => child.type.displayName === name ? child : null);
+const findByType = (children, type) => {
+    return React.Children.map(children, child => {
+        return child.type.displayName === type ? child : null
+    });
 }
 
 export const createSubComponent = (name) => {
