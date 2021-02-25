@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import {Avatar} from "../index";
 import styles from "./styles.scss";
+import {noop} from "../utils";
 
 class AvatarGroup extends React.Component {
     constructor(props) {
@@ -15,8 +16,6 @@ class AvatarGroup extends React.Component {
     }
 
     openAvatar(index) {
-        //console.log(...arguments)
-        console.log(index)
         this.setState({openedAvatar: index})
     }
 
@@ -27,15 +26,12 @@ class AvatarGroup extends React.Component {
     }
 
     render() {
-        const {size, max, canAdd, clickable, members, canRemove, onRemove} = this.props;
+        const {size, max, canAdd, clickable, manageOpened, members, canRemove, onRemove} = this.props;
         const hasAdditionalMembers = members.length > max;
-        const additionalMembers = max - members.length;
+        const maxViewers = hasAdditionalMembers ? max : members.length;
+        const additionalMembers = members.length - max;
 
-        const copyMembers = members.slice();
-
-        const viewers = hasAdditionalMembers ? copyMembers.reverse() : copyMembers.slice(0, max).reverse();
-        console.log({props: this.props, viewers})
-
+        const viewers = members.slice(0, maxViewers).reverse();
 
         return (
             <>
@@ -65,14 +61,14 @@ class AvatarGroup extends React.Component {
                     </div>}
 
                     {viewers.map((viewer, index) => (
-                        <div onClick={this.openAvatar.bind(this, index)}>
+                        <div key={index + viewer.name.replace("", "_")} onClick={this.openAvatar.bind(this, index)}>
                             <Avatar
-                                key={index + viewer.name.replace("", "_")}
+                                id={index}
                                 size={size}
                                 canRemove={canRemove}
                                 onRemove={onRemove}
                                 member={viewer}
-                                manageOpened={true}
+                                manageOpened={manageOpened}
                                 open={this.state?.openedAvatar === index}
                             />
                         </div>
@@ -91,16 +87,20 @@ AvatarGroup.defaultProps = {
     members: [],
     canRemove: true,
     canAdd: true,
-    onAdd: () => void 0,
-    onRemove: () => void 0,
+    onAdd: noop,
+    onRemove: noop,
+    onClick: noop,
+    manageOpened: false
 }
 
 AvatarGroup.propTypes = {
     clickable: PropTypes.bool,
     max: PropTypes.number,
     size: PropTypes.oneOf(["xs", "md", "lg"]),
+    manageOpened: PropTypes.bool,
     members: PropTypes.array,
     canRemove: PropTypes.bool,
+    onClick: PropTypes.func,
     canAdd: PropTypes.bool,
     onAdd: PropTypes.func,
     onRemove: PropTypes.func,

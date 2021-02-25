@@ -3,7 +3,7 @@ import classnames from "classnames";
 import styles from "./styles.css";
 
 import PropTypes from "prop-types";
-import findByType from "../utils/findByType";
+import findByType, {createSubComponent} from "../utils/findByType";
 import {noop} from "../utils";
 
 const Start = () => null;
@@ -26,7 +26,7 @@ class Input extends React.Component {
 
     renderStart() {
         const {children} = this.props;
-        const start = findByType(children, Start);
+        const start = findByType(children, "Start");
 
         if (!start) return null;
 
@@ -37,7 +37,7 @@ class Input extends React.Component {
 
     renderEnd() {
         const {children} = this.props;
-        const end = findByType(children, End);
+        const end = findByType(children, "End");
 
         if (!end) return null;
 
@@ -171,8 +171,8 @@ class Input extends React.Component {
     }
 }
 
-Input.Start = Start;
-Input.End = End;
+Input.Start = createSubComponent("Start");
+Input.End = createSubComponent("End");
 
 Input.defaultProps = {
     autofocus: false,

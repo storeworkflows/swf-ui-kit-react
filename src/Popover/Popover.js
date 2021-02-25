@@ -2,12 +2,8 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import styles from "./styles.scss";
-import findByType from "../utils/findByType";
+import findByType, {createSubComponent} from "../utils/findByType";
 import {getPopoverStyle} from "./utils";
-
-const Content = () => null;
-const Target = () => null;
-
 
 class Popover extends React.Component {
     constructor(props) {
@@ -25,20 +21,20 @@ class Popover extends React.Component {
     }
 
     renderContent() {
-        const {children, hideTail} = this.props;
-        const content = findByType(children, Content);
+        const {children} = this.props;
+        const content = findByType(children, "Content");
 
         if (!content)
             return null;
 
-        return <div className="popover-content arrow arrow-up"
+        return <div className="popover-content"
                     ref={this.contentRef}>
                 {content.props.children} </div>
     }
 
     renderTarget() {
         const {children, positionTarget} = this.props;
-        const target = findByType(children, Target);
+        const target = findByType(children, "Target");
 
         let targetContent = (!target) ? positionTarget : target.props.children ;
 
@@ -77,21 +73,18 @@ class Popover extends React.Component {
         {
             let targetDimensions = this.targetRef.current.getBoundingClientRect();
             let contentDimensions = this.contentRef.current.getBoundingClientRect();
-            let position = this.props.positions;
+            const {positions, hideTail, roundBorder} = this.props;
 
-            let stylesInfo =  getPopoverStyle(position, targetDimensions, contentDimensions, window.innerWidth);
+            let stylesInfo =  getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
             let styles = stylesInfo.style;
             this.contentRef.current.style.transform = styles.transform;
             this.contentRef.current.style.left = styles.left;
             this.contentRef.current.style.top = styles.top;
 
-            if(!this.props.hideTail && stylesInfo.hasArrow){
-                stylesInfo.arrowStyle.forEach((style)=> {
-                    console.log(style);
-                   // this.contentRef.current.style[style] =
-                })
+            if(!hideTail && stylesInfo.hasArrow) {
+                for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
+                    this.contentRef.current.style.setProperty(key, value);
             }
-            //console.log("styles", this.contentRef.current.style[]);
         }
     }
 
@@ -111,8 +104,8 @@ class Popover extends React.Component {
     }
 };
 
-Popover.Content = Content;
-Popover.Target = Target;
+Popover.Content = createSubComponent("Content");
+Popover.Target = createSubComponent("Target");
 
 Popover.defaultProps = {
     hideTail: false,
@@ -127,7 +120,8 @@ Popover.defaultProps = {
         { target: 'bottom-end', content: 'bottom-start' },
         { target: 'top-start', content: 'top-end' },
         { target: 'bottom-start', content: 'bottom-end' }
-    ]
+    ],
+    roundBorder: true,
 }
 
 Popover.propTypes = {
@@ -136,7 +130,8 @@ Popover.propTypes = {
     opened: propTypes.bool,
     positionTarget: propTypes.element,
     positions: propTypes.array,
-    onClick: propTypes.func
+    onClick: propTypes.func,
+    roundBorder: propTypes.bool
 }
 
 export default Popover

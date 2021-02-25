@@ -1,15 +1,16 @@
 import React from "react";
 
-const findByType = (children, component) => {
-   const result = [];
-   const type = [component.name];
+const findByType = (children, type) => {
+    return React.Children.map(children, child => {
+        return child.type.displayName === type ? child : null
+    });
+}
 
-   React.Children.forEach(children, child => {
-       const childType = child && child.type && (child.type.name);
-       if (type.includes(childType)) result.push(child);
-   })
+export const createSubComponent = (name) => {
+    const subComponent = ({children}) => children;
 
-    return result[0];
+    Object.defineProperty(subComponent, "displayName", {value: name, writable: false});
+    return subComponent
 }
 
 export default findByType

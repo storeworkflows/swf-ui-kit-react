@@ -12,6 +12,7 @@
 [Pill, ](#Pill)
 [Stepper, ](#Stepper)
 [Lookup Field, ](#LookupField)
+[Popover, ](#Popover)
 
 
 
@@ -49,7 +50,6 @@ color | string
 disabled | bool
 icon | string
 label | string 
->>>>>>> main
 tooltipContent | string
 size | 'sm', 'md', 'lg'
 variant |  "primary" , "primary-positive" , "primary-negative" , "secondary" , "secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""
@@ -261,6 +261,9 @@ vertical | boolean | false
 showCompletedCount | boolean | false
 selectedItem | number (from 1) | 1
 onStepClick | func | ({ index, id }) => { } 
+stepsPerPage | number | If set, will add arrows for horizontal navigation
+arrows | { color: <string>, size: <string> |
+
 
 #### StepObject
 
@@ -297,5 +300,32 @@ name | string,
 type | "reference", "list",
 table | string,
 tableRecordSysId | string
+
+# Popover
+
+**Props**
+
+ Name | Type
+------------ | -------------
+hideTail | bool,
+manageOpened | bool,
+opened | bool,
+positionTarget | element,
+positions | [{ [PositionObject](#positionobject) }],
+onClick | func,
+roundBorder | bool
+
+#### PositionObject
+
+ Name | Type
+------------ | -------------
+target | "{[horizontalAlignment](#horizontalalignment)}-{[verticalAlignment](#verticalalignment)}": string
+content | "{[horizontalAlignment](#horizontalalignment)}-{[verticalAlignment](#verticalalignment)}": string
+
+#### horizontalAlignment
+Posible values: "top", "center", "bottom"
+
+#### verticalAlignment
+Posible values: "start", "center", "end"
 
 

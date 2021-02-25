@@ -4,6 +4,7 @@ import {SWF_MODAL} from "./constants";
 import styles from "./styles.scss";
 import PropTypes from "prop-types";
 import Button from "../Button/Button";
+import findByType, {createSubComponent} from "../utils/findByType";
 
 class Modal extends React.Component {
     constructor(props) {
@@ -16,7 +17,7 @@ class Modal extends React.Component {
 
         this.state = {
             currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT,
-            modalOpened: false,
+            openModal: this.props.openModal,
             mobileFooterOpened: false
         }
     }
@@ -50,13 +51,13 @@ class Modal extends React.Component {
                         }
                     ]}
                 >
-                    <now-button-iconic icon="close-fill"
-                                       variant="tertiary"
-                                       bare={true}
-                                       size="md"
-                                       slot="trigger"
-                                       configAria={{"button": {"aria-label": "Close"}}}
-                                       tooltipContent="Close"
+                    <Button icon="x"
+                            variant="tertiary"
+                            bare={true}
+                            size="md"
+                            slot="trigger"
+                            configAria={{"button": {"aria-label": "Close"}}}
+                            tooltipContent="Close"
                     />
                     <now-template-card-omnichannel
                         slot="content"
@@ -69,24 +70,25 @@ class Modal extends React.Component {
         }
 
         return (
-            <now-button-iconic icon="close-fill"
-                               variant="tertiary"
-                               bare={true}
-                               size="md"
-                               slot="trigger"
-                               configAria={{"button": {"aria-label": "Close"}}}
-                               tooltipContent="Close"
-                               on-click={_closeModal}
+            <Button icon="x"
+                    variant="tertiary"
+                    bare={true}
+                    size="md"
+                    slot="trigger"
+                    configAria={{"button": {"aria-label": "Close"}}}
+                    tooltipContent="Close"
+                    onClick={() => this.setState({openModal: false})}
             />
         )
     }
 
     desktopButtons() {
         const isFullSize = this.state.currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+        const status = isFullSize ? SWF_MODAL.MODAL_SIZE.DEFAULT : SWF_MODAL.MODAL_SIZE.FULL;
 
         return (
             <>
-                <Button icon="arrows-angle-expand"
+                <Button icon="dash"
                         variant="tertiary"
                         bare={true}
                         size="md"
@@ -94,13 +96,13 @@ class Modal extends React.Component {
                         tooltipContent="Collapse"
                         onClick={() => this.setState({modalOpened: true})}
                 />
-                <Button icon={isFullSize ? "collapse-fill" : "arrows-angle-expand"}
-                                   variant="tertiary"
-                                   bare={true}
-                                   size="md"
-                                   configAria={{"button": {"aria-label": "Expand"}}}
-                                   tooltipContent={isFullSize ? "Collapse" : "Expand"}
-                                   onClick={() => this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.FULL})}
+                <Button icon={isFullSize ? "arrows-angle-contract" : "arrows-angle-expand"}
+                        variant="tertiary"
+                        bare={true}
+                        size="md"
+                        configAria={{"button": {"aria-label": "Expand"}}}
+                        tooltipContent={isFullSize ? "Collapse" : "Expand"}
+                        onClick={() => this.setState({currentStatus: status})}
                 />
                 {this.renderPopover()}
             </>
@@ -110,22 +112,40 @@ class Modal extends React.Component {
     mobileButtons() {
         return (
             <>
-                <now-button-iconic
-                    icon="arrow-left-fill"
+                <Button
+                    icon="arrow-left"
                     variant="tertiary"
                     bare={true}
-                    size="lg"
+                    size="md"
                     configAria={{"button": {"aria-label": "Back"}}}
                     tooltipContent="Back"
                     onClick={() => this.setState({modalOpened: false})}
+                />
+                <Button
+                    icon="three-dots"
+                    variant="tertiary"
+                    bare={true}
+                    size="md"
+                    configAria={{"button": {"aria-label": "Show Actions"}}}
+                    tooltipContent="Show Actions"
+                    onClick={() => this.setState({mobileFooterOpened: true})}
                 />
             </>
         )
     }
 
+    componentDidMount() {
+        this.modalRef.current.addEventListener("click", (event) => {
+            if (this.state.mobileFooterOpened) {
+                this.setState({mobileFooterOpened: false})
+            }
+        })
+    }
+
     render() {
         const {display, headerElements} = this.props;
-        const {mobileFooterOpened} = this.state;
+        const {mobileFooterOpened, currentStatus} = this.state;
+        const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
 
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
@@ -138,7 +158,7 @@ class Modal extends React.Component {
                         <div className={classnames({
                             "modal-dialog": true,
                             [`--${display}`]: true,
-                            [`--full`]: isMobile
+                            [`--full-${isMobile ? "mobile" : "desktop"}`]: isMobile || isFullSize
                         })}>
                             <div className={classnames({
                                 "modal-header": true,
@@ -150,22 +170,11 @@ class Modal extends React.Component {
                                     {isMobile ? this.mobileButtons() : this.desktopButtons()}
                                 </div>
                                 <div className="header-content">
-                                    <slot name="header"/>
+                                    {findByType(this.props.children, "Header")}
                                 </div>
                                 {
                                     headerElements === 3 ? <div className="additional-buttons">
-                                        {isMobile ?
-                                            <now-button-iconic
-                                                icon="ellipsis-h-fill"
-                                                variant="primary"
-                                                bare={true}
-                                                size="md"
-                                                configAria={{"button": {"aria-label": "Show Actions"}}}
-                                                tooltipContent="Show Actions"
-                                                onClick={() => this.setState({mobileFooterOpened: true})}
-                                            />
-                                            :
-                                            <slot name="header-buttons"/>}
+                                        {!isMobile &&findByType(this.props.children, "HeaderButtons")}
                                     </div> : ""
                                 }
 
@@ -173,7 +182,7 @@ class Modal extends React.Component {
                             <div
                                 className="modal-body"
                             >
-                                <slot name="body"/>
+                                {findByType(this.props.children, "Body")}
                             </div>
                             {isMobile
                                 ?
@@ -192,11 +201,11 @@ class Modal extends React.Component {
                             })}>
                                 {isMobile ?
                                     <div className="footer-content">
-                                        <slot name="footer"/>
-                                        <slot name="header-buttons"/>
+                                        {findByType(this.props.children, "Footer")}
+                                        {findByType(this.props.children, "HeaderButtons")}
                                     </div>
                                     :
-                                    <slot name="footer"/>
+                                    findByType(this.props.children, "Footer")
                                 }
                             </div>
                         </div>
@@ -206,6 +215,11 @@ class Modal extends React.Component {
         )
     }
 }
+
+Modal.Header = createSubComponent("Header");
+Modal.HeaderButtons = createSubComponent("HeaderButtons");
+Modal.Body = createSubComponent("Body");
+Modal.Footer = createSubComponent("Footer");
 
 Modal.defaultProps = {
     openModal: false,

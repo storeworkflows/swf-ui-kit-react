@@ -13,4 +13,4 @@ export {default as TextArea} from "./TextArea/TextArea";
 export {default as Pill} from "./Pill/Pill";
 export {default as Avatar} from "./Avatar/Avatar"
 export {default as AvatarGroup} from "./AvatarGroup/AvatarGroup";
-export {default as ListField} from "./ListField/ListField"
+export {default as Modal} from "./Modal/Modal";

@@ -5,12 +5,18 @@ import {noop, normalizeURL} from "../utils";
 import styles from "./styles.scss";
 import {Icon} from "../index";
 
-console.shallowCloneLog = function(){
+console.shallowCloneLog = function () {
     var typeString = Function.prototype.call.bind(Object.prototype.toString)
-    console.log.apply(console, Array.prototype.map.call(arguments, function(x){
+    console.log.apply(console, Array.prototype.map.call(arguments, function (x) {
         switch (typeString(x).slice(8, -1)) {
-            case 'Number': case 'String': case 'Undefined': case 'Null': case 'Boolean': return x;
-            case 'Array': return x.slice();
+            case 'Number':
+            case 'String':
+            case 'Undefined':
+            case 'Null':
+            case 'Boolean':
+                return x;
+            case 'Array':
+                return x.slice();
             default:
                 var out = Object.create(Object.getPrototypeOf(x));
                 out.constructor = x.constructor;
@@ -51,10 +57,10 @@ class Avatar extends React.Component {
 
     fixPhotoSize(event) {
         const {nativeEvent} = event;
-        const { path = nativeEvent.composedPath() } = nativeEvent;
+        const {path = nativeEvent.composedPath()} = nativeEvent;
 
         const image = path[0];
-        const { naturalWidth, naturalHeight } = image;
+        const {naturalWidth, naturalHeight} = image;
 
         const sizes = {
             "xs": "1.5rem",
@@ -71,6 +77,7 @@ class Avatar extends React.Component {
 
     render() {
         const {
+            id,
             avatarVisible,
             open,
             color,
@@ -78,8 +85,7 @@ class Avatar extends React.Component {
             member: {
                 avatar,
                 name,
-                title,
-                id
+                title
             },
             size,
             canRemove,
@@ -127,18 +133,22 @@ class Avatar extends React.Component {
                         <p className="name">{name}</p>
                         <p className="title">{title}</p>
                     </div>
-                    <Icon
-                        onClick={(e) => {
-                            this.props.onRemove({id})
-                            e.stopPropagation();
-                        }}
-                        className={classnames({
-                            "remove":true,
-                            "visible": canRemove && openState
-                        })}
-                        icon="x"
-                        size="md"
-                    />
+                    <div onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Remove clicked", id)
+                        this.props.onRemove({id});
+                    }}>
+
+                        <Icon
+                            className={classnames({
+                                "remove": true,
+                                "visible": canRemove && openState
+                            })}
+                            icon="x"
+                            size="md"
+                        />
+                    </div>
+
                 </div>
             </>
         )
@@ -146,6 +156,7 @@ class Avatar extends React.Component {
 }
 
 Avatar.defaultProps = {
+    id: 0,
     clickable: true,
     open: false,
     manageOpened: false,
@@ -158,6 +169,7 @@ Avatar.defaultProps = {
 }
 
 Avatar.propTypes = {
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     avatarVisible: PropTypes.bool,
     canRemove: PropTypes.bool,
     clickable: PropTypes.bool,
@@ -168,7 +180,6 @@ Avatar.propTypes = {
         name: PropTypes.string.required,
         title: PropTypes.string,
         avatar: PropTypes.string,
-        id: PropTypes.string.required
     }),
     onRemove: PropTypes.func,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
