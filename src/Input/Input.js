@@ -32,7 +32,7 @@ class Input extends React.Component {
 
         !this.state.hasStart && this.setState({hasStart: true})
 
-        return <div className="form-control--start">{start.props.children}</div>
+        return <div className="form-control--start">{start}</div>
     }
 
     renderEnd() {
@@ -43,7 +43,7 @@ class Input extends React.Component {
 
         !this.state.hasEnd && this.setState({hasEnd: true})
 
-        return <div className="form-control--end">{end.props.children}</div>
+        return <div className="form-control--end">{end}</div>
     }
 
     onBlur(event) {

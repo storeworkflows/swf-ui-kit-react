@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 
 import styles from "./styles.scss";
 import findByType, {createSubComponent} from "../utils/findByType";
-import {getPopoverStyle} from "./utils";
+import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 
 class Popover extends React.Component {
     constructor(props) {
@@ -11,9 +11,7 @@ class Popover extends React.Component {
         this.targetClicked = this.targetClicked.bind(this)
 
         this.state = {
-            opened: false,
-            height: 0,
-            width: 0
+            opened: false
         }
 
         this.targetRef = React.createRef();
@@ -29,28 +27,40 @@ class Popover extends React.Component {
 
         return <div className="popover-content"
                     ref={this.contentRef}>
-                {content.props.children} </div>
+                {content} </div>;
+
     }
 
     renderTarget() {
         const {children, positionTarget} = this.props;
         const target = findByType(children, "Target");
+      //  console.log(positionTarget);
+        if(positionTarget){
 
-        let targetContent = (!target) ? positionTarget : target.props.children ;
+            if(this.targetRef.current === null)
+                this.targetRef = positionTarget;
 
-        if (!targetContent)
+            let el = this.targetRef.current;
+            el.onclick = this.targetClicked ;
+            el.classList.toggle(`popover-target`);
+
             return null;
+        } else {
+            if (!target)
+                return null;
 
-        return <div id ="popover-target"
-                    ref={this.targetRef}
-                    onClick={ this.targetClicked }>
-                {targetContent} </div>
+            return <div className={"popover-target"}
+                        ref={this.targetRef}
+                        onClick={ this.targetClicked }>
+                             {target}
+                    </div>
+        }
     }
 
     targetClicked (){
         const {manageOpened, onClick} = this.props;
         let currentState = this.state.opened;
-
+      //  console.log(manageOpened);
         if(!manageOpened) {
             currentState = !currentState
             this.setState({
@@ -68,7 +78,7 @@ class Popover extends React.Component {
         })
     }
 
-    componentDidUpdate(){
+    setStylesToContent(){
         if(this.contentRef.current)
         {
             let targetDimensions = this.targetRef.current.getBoundingClientRect();
@@ -80,6 +90,8 @@ class Popover extends React.Component {
             this.contentRef.current.style.transform = styles.transform;
             this.contentRef.current.style.left = styles.left;
             this.contentRef.current.style.top = styles.top;
+            this.contentRef.current.style.visibility = "visible";
+
 
             if(!hideTail && stylesInfo.hasArrow) {
                 for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
@@ -88,17 +100,30 @@ class Popover extends React.Component {
         }
     }
 
+    componentDidUpdate(){
+        if(this.props.manageOpened && this.props.opened!== this.state.opened)
+            this.setState({opened: this.props.opened})
+
+
+        if(this.state.opened) {
+            this.targetRef.current.appendChild(this.contentRef.current);
+            this.setStylesToContent();
+        }
+        else
+        {
+            let elToRemove = this.targetRef.current.querySelector(".popover-content");
+            if(elToRemove !==null)
+                elToRemove.remove();
+        }
+    }
+
 
     render() {
-        const {opened} = this.state;
-
         return (
             <>
                 <style type="text/css">{styles}</style>
-                <div className={"popover-element"}>
-                    {this.renderTarget()}
-                    {opened && this.renderContent()}
-                </div>
+                {this.renderContent()}
+                {this.renderTarget()}
             </>
         );
     }
@@ -111,16 +136,7 @@ Popover.defaultProps = {
     hideTail: false,
     manageOpened: false,
     opened: false,
-    positions: [
-        { target: 'bottom-start', content: 'top-start' },
-        { target: 'bottom-end', content: 'top-end' },
-        { target: 'top-start', content: 'bottom-start' },
-        { target: 'top-end', content: 'bottom-end' },
-        { target: 'top-end', content: 'top-start' },
-        { target: 'bottom-end', content: 'bottom-start' },
-        { target: 'top-start', content: 'top-end' },
-        { target: 'bottom-start', content: 'bottom-end' }
-    ],
+    positions: getAllPossibleVariants(),
     roundBorder: true,
 }
 
@@ -128,8 +144,14 @@ Popover.propTypes = {
     hideTail: propTypes.bool,
     manageOpened: propTypes.bool,
     opened: propTypes.bool,
-    positionTarget: propTypes.element,
-    positions: propTypes.array,
+    positionTarget: propTypes.oneOfType([
+        propTypes.func,
+        propTypes.shape({ current: propTypes.any })
+    ]),
+    positions: propTypes.arrayOf(propTypes.shape({
+        target: propTypes.string,
+        content: propTypes.string,
+    })),
     onClick: propTypes.func,
     roundBorder: propTypes.bool
 }

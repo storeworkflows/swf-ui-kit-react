@@ -5,6 +5,7 @@ import styles from "./styles.scss";
 import PropTypes from "prop-types";
 import Button from "../Button/Button";
 import findByType, {createSubComponent} from "../utils/findByType";
+import {noop} from "../utils";
 
 class Modal extends React.Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class Modal extends React.Component {
 
         this.state = {
             currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT,
-            openModal: this.props.openModal,
+            openModal: true,
             mobileFooterOpened: false
         }
     }
@@ -77,7 +78,10 @@ class Modal extends React.Component {
                     slot="trigger"
                     configAria={{"button": {"aria-label": "Close"}}}
                     tooltipContent="Close"
-                    onClick={() => this.setState({openModal: false})}
+                    onClick={() => {
+                        this.setState({openModal: false});
+                        this.props.onClose();
+                    }}
             />
         )
     }
@@ -135,7 +139,7 @@ class Modal extends React.Component {
     }
 
     componentDidMount() {
-        this.modalRef.current.addEventListener("click", (event) => {
+        this.modalRef?.current?.addEventListener("click", (event) => {
             if (this.state.mobileFooterOpened) {
                 this.setState({mobileFooterOpened: false})
             }
@@ -143,76 +147,77 @@ class Modal extends React.Component {
     }
 
     render() {
-        const {display, headerElements} = this.props;
-        const {mobileFooterOpened, currentStatus} = this.state;
+        const {display, openModal, headerElements, manageOpened} = this.props;
+        const {mobileFooterOpened, openModal: open, currentStatus} = this.state;
         const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+
+        const showModal = manageOpened ? openModal : open;
 
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
-        return (<>
-                <style type="text/css">{styles}</style>
-                <div className="modal-overlay"
-                     ref={elm => this.modalRef.current = elm}
-                >
-                    <div className="modal">
+        return showModal && <>
+            <style type="text/css">{styles}</style>
+            <div className="modal-overlay"
+                 ref={elm => this.modalRef.current = elm}
+            >
+                <div className="modal">
+                    <div className={classnames({
+                        "modal-dialog": true,
+                        [`--${display}`]: true,
+                        [`--full-${isMobile ? "mobile" : "desktop"}`]: isMobile || isFullSize
+                    })}>
                         <div className={classnames({
-                            "modal-dialog": true,
-                            [`--${display}`]: true,
-                            [`--full-${isMobile ? "mobile" : "desktop"}`]: isMobile || isFullSize
+                            "modal-header": true,
+                            "--mobile": isMobile,
+                            "--desktop-content": !isMobile && headerElements === 2,
+                            "--desktop": !isMobile && headerElements === 3
                         })}>
-                            <div className={classnames({
-                                "modal-header": true,
-                                "--mobile": isMobile,
-                                "--desktop-content": !isMobile && headerElements === 2,
-                                "--desktop": !isMobile && headerElements === 3
-                            })}>
-                                <div className="main-buttons">
-                                    {isMobile ? this.mobileButtons() : this.desktopButtons()}
-                                </div>
-                                <div className="header-content">
-                                    {findByType(this.props.children, "Header")}
-                                </div>
-                                {
-                                    headerElements === 3 ? <div className="additional-buttons">
-                                        {!isMobile &&findByType(this.props.children, "HeaderButtons")}
-                                    </div> : ""
-                                }
+                            <div className="main-buttons">
+                                {isMobile ? this.mobileButtons() : this.desktopButtons()}
+                            </div>
+                            <div className="header-content">
+                                {findByType(this.props.children, "Header")}
+                            </div>
+                            {
+                                headerElements === 3 ? <div className="additional-buttons">
+                                    {!isMobile && findByType(this.props.children, "HeaderButtons")}
+                                </div> : ""
+                            }
 
-                            </div>
+                        </div>
+                        <div
+                            className="modal-body"
+                        >
+                            {findByType(this.props.children, "Body")}
+                        </div>
+                        {isMobile
+                            ?
                             <div
-                                className="modal-body"
-                            >
-                                {findByType(this.props.children, "Body")}
-                            </div>
-                            {isMobile
-                                ?
-                                <div
-                                    className={classnames({
-                                        "menu-background": true,
-                                        "--active": mobileFooterOpened
-                                    })}
-                                />
+                                className={classnames({
+                                    "menu-background": true,
+                                    "--active": mobileFooterOpened
+                                })}
+                            />
+                            :
+                            ""}
+                        <div className={classnames({
+                            "modal-footer": true,
+                            "--mobile": isMobile,
+                            "--active": mobileFooterOpened
+                        })}>
+                            {isMobile ?
+                                <div className="footer-content">
+                                    {findByType(this.props.children, "Footer")}
+                                    {findByType(this.props.children, "HeaderButtons")}
+                                </div>
                                 :
-                                ""}
-                            <div className={classnames({
-                                "modal-footer": true,
-                                "--mobile": isMobile,
-                                "--active": mobileFooterOpened
-                            })}>
-                                {isMobile ?
-                                    <div className="footer-content">
-                                        {findByType(this.props.children, "Footer")}
-                                        {findByType(this.props.children, "HeaderButtons")}
-                                    </div>
-                                    :
-                                    findByType(this.props.children, "Footer")
-                                }
-                            </div>
+                                findByType(this.props.children, "Footer")
+                            }
                         </div>
                     </div>
                 </div>
-            </>
-        )
+            </div>
+        </>
     }
 }
 
@@ -224,6 +229,8 @@ Modal.Footer = createSubComponent("Footer");
 Modal.defaultProps = {
     openModal: false,
     showPopover: false,
+    manageOpened: false,
+    onClose: noop,
     popoverContent: {},
     display: "grid",
     headerElements: 2
@@ -232,6 +239,8 @@ Modal.defaultProps = {
 Modal.propTypes = {
     openModal: PropTypes.bool,
     showPopover: PropTypes.bool,
+    manageOpened: PropTypes.bool,
+    onClose: PropTypes.func,
     popoverContent: PropTypes.shape({
         tagline: PropTypes.object,
         content: PropTypes.object,
