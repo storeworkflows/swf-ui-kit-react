@@ -3,7 +3,6 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from "prop-types";
 import Icon from '../../Icon/Icon';
-import { getCircleSize } from "../utils";
 
 class Step extends React.Component {
     constructor(props) {
@@ -23,10 +22,6 @@ class Step extends React.Component {
                             'step-circle': true,
                             [`--${progress}`]: progress
                         })}
-                        style={{
-                            width: getCircleSize(iconSize),
-                            height: getCircleSize(iconSize)
-                        }}
                     >
                         <div className="step-icon">
                             {icon &&

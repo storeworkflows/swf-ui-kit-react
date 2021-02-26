@@ -1,14 +1,4 @@
-export const createCssVariables = (palette) => {
-    const { link, label, circle } = palette;
-
-    return `.stepper-container{` +
-        `--circle:${circle || '#39A450'};` +
-        `--link:${link || circle || '#39A450'};` +
-        `--label:${label || '#000000'}` +
-        `}`
-}
-
-export const getCircleSize = (iconSize) => {
+const getCircleSize = (iconSize) => {
     switch (iconSize) {
         case 'xs':
             return '2rem';
@@ -25,6 +15,17 @@ export const getCircleSize = (iconSize) => {
         default:
             return `${iconSize * 2}px`;
     }
+}
+
+export const createCssVariables = (palette, iconSize) => {
+    const { link, label, circle } = palette;
+
+    return `.stepper{` +
+        `--circle-color:${circle || '#39A450'};` +
+        `--link-color:${link || circle || '#39A450'};` +
+        `--label-color:${label || '#000000'};` +
+        `--circle-size:${getCircleSize(iconSize) || '2rem'}` +
+        `}`
 }
 
 // const aaronsExamplePalette = {

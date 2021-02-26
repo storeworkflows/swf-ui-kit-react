@@ -261,7 +261,6 @@ vertical | boolean | false
 showCompletedCount | boolean | false
 selectedItem | number (from 1) | 1
 onStepClick | func | ({ index, id }) => { } 
-arrows | { color: <string>, size: <string> } | { color: 'black', size: 'md' }
 
 
 #### StepObject
@@ -283,6 +282,7 @@ icon | { "finished": string, "unfinished" : string}
 circle | string
 link | string
 label | string
+arrows | string
 
 
 # LookupField

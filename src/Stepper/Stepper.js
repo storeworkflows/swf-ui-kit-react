@@ -3,7 +3,7 @@ import Step from './Step/Step';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from "classnames";
-import { createCssVariables, getCircleSize } from "./utils";
+import { createCssVariables } from "./utils";
 import Icon from "../Icon/Icon";
 
 class Stepper extends React.Component {
@@ -14,18 +14,18 @@ class Stepper extends React.Component {
             stepsPerPage: 0,
             containerRightPos: 0
         };
-        this.stepperRef = false;
+        this.stepperContainerRef = false;
         this.stepperItemRef = false;
     }
 
     componentDidMount() {
         this.setState({
-            stepsPerPage: Math.floor(this.stepperRef.clientWidth / 200)
+            stepsPerPage: Math.floor(this.stepperContainerRef.clientWidth / 200)
         });
 
         window.addEventListener('resize', () => {
             this.setState({
-                stepsPerPage: Math.floor(this.stepperRef.clientWidth / 200)
+                stepsPerPage: Math.floor(this.stepperContainerRef.clientWidth / 200)
             });
         })
     }
@@ -70,28 +70,27 @@ class Stepper extends React.Component {
                     ? (icon.finished || 'white') : (icon.unfinished || 'black');
 
                 return (
-                    <React.Fragment key={'step' + index}>
-                        <div
-                            className={classnames({
-                                'stepper-item': true,
-                                '--selected': isSelected,
-                                '--before-selected': isBeforeSelected,
-                                '--disabled': step.disabled
-                            })}
-                            onClick={!step.disabled && this.selectStep(index, step.id)}
-                            ref={elm => this.stepperItemRef = elm}
-                        >
-                            <Step
-                                icon={step.icon}
-                                iconColor={iconColor}
-                                iconSize={iconSize}
-                                label={step.label}
-                                sublabel={step.sublabel}
-                                progress={step.progress}
-                                hideLabel={hideLabels}
-                            />
-                        </div>
-                    </React.Fragment>
+                    <div
+                        className={classnames({
+                            'stepper-item': true,
+                            '--selected': isSelected,
+                            '--before-selected': isBeforeSelected,
+                            '--disabled': step.disabled
+                        })}
+                        key={'step' + index}
+                        onClick={!step.disabled && this.selectStep(index, step.id)}
+                        ref={elm => this.stepperItemRef = elm}
+                    >
+                        <Step
+                            icon={step.icon}
+                            iconColor={iconColor}
+                            iconSize={iconSize}
+                            label={step.label}
+                            sublabel={step.sublabel}
+                            progress={step.progress}
+                            hideLabel={hideLabels}
+                        />
+                    </div>
                 )
             })
         )
@@ -104,26 +103,21 @@ class Stepper extends React.Component {
         const isArrowsNeeded = stepsPerPage < steps.length;
 
         return (
-            <>
-                <style type="text/css">{createCssVariables(palette) + styles}</style>
+            <div className="stepper">
+                <style type="text/css">{createCssVariables(palette, iconSize) + styles}</style>
                 <div
                     className="stepper-container"
-                    ref={elm => this.stepperRef = elm}
+                    ref={elm => this.stepperContainerRef = elm}
                 >
                     {isArrowsNeeded &&
                     <div
                         className="arrow arrow-left"
                         onClick={this.onArrowClick(-1)}
-                        style={{
-                            width: getCircleSize(iconSize),
-                            height: getCircleSize(iconSize)
-                        }}
                     >
                         <div className="arrow-icon">
                             <Icon
                                 icon="chevron-left"
-                                color={arrows.color}
-                                size={arrows.size}
+                                color={palette.arrows}
                             />
                         </div>
                     </div>
@@ -153,16 +147,11 @@ class Stepper extends React.Component {
                     <div
                         className="arrow arrow-right"
                         onClick={this.onArrowClick(1)}
-                        style={{
-                            width: getCircleSize(iconSize),
-                            height: getCircleSize(iconSize)
-                        }}
                     >
                         <div className="arrow-icon">
                             <Icon
                                 icon="chevron-right"
-                                color={arrows.color}
-                                size={arrows.size}
+                                color={palette.arrows}
                             />
                         </div>
                     </div>
@@ -173,7 +162,7 @@ class Stepper extends React.Component {
                     `${selected + 1}/${steps.length} Completed`
                     }
                 </div>
-            </>
+            </div>
 
         )
     }
@@ -183,7 +172,6 @@ Stepper.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.object),
     palette: PropTypes.object,
     iconSize: PropTypes.string,
-    arrows: PropTypes.object,
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
     showCompletedCount: PropTypes.bool,
@@ -200,13 +188,10 @@ Stepper.defaultProps = {
         },
         circle: '',
         link: '',
-        label: ''
+        label: '',
+        arrows: 'black'
     },
-    arrows: {
-        color: 'black',
-        size: 'md'
-    },
-    iconSize: 'md',
+    iconSize: 'xl',
     hideLabels: false,
     vertical: false,
     showCompletedCount: false,
