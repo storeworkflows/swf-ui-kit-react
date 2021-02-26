@@ -258,7 +258,7 @@ palette |  [{ [PaletteObject](#paletteobject) }]
 iconSize | "xs", "sm", "md", "lg", "xl", "xxl", <number> (of px) | "sm"
 hideLabels | boolean | false
 vertical | boolean | false
-showCompletedCount | boolean | false
+completedCounter | boolean | false
 selectedItem | number (from 1) | 1
 onStepClick | func | ({ index, id }) => { } 
 

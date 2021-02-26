@@ -10,23 +10,22 @@ class Step extends React.Component {
     }
 
     render() {
-        const { icon, iconColor, iconSize, label, sublabel, progress, hideLabel } = this.props;
+        const { step, iconColor, iconSize, hideLabel } = this.props;
 
         return (
             <div className='step-container'>
                 <div className="step-body">
                     <div className="step-line --before"/>
-
                     <div
                         className={classnames({
                             'step-circle': true,
-                            [`--${progress}`]: progress
+                            [`--${step.progress}`]: step.progress
                         })}
                     >
                         <div className="step-icon">
-                            {icon &&
+                            {step.icon &&
                             <Icon
-                                icon={icon}
+                                icon={step.icon}
                                 color={iconColor || 'white'}
                                 size={iconSize}
                                 customSize={typeof iconSize === 'number' ? iconSize : undefined}
@@ -34,13 +33,11 @@ class Step extends React.Component {
                             }
                         </div>
                     </div>
-
                     <div className="step-line --after"/>
                 </div>
-
                 <div className="step-label">
-                    <span>{!hideLabel && label}</span>
-                    <span className="step-sublabel">{!hideLabel && sublabel}</span>
+                    <span>{!hideLabel && step.label}</span>
+                    <span className="step-sublabel">{!hideLabel && step.sublabel}</span>
                 </div>
             </div>
         )
@@ -48,22 +45,20 @@ class Step extends React.Component {
 }
 
 Step.propTypes = {
-    icon: PropTypes.string,
+    step: PropTypes.object,
     iconColor: PropTypes.string,
     iconSize: PropTypes.string,
-    label: PropTypes.string,
-    sublabel: PropTypes.string,
-    progress: PropTypes.string,
     hideLabel: PropTypes.bool
 };
 
 Step.defaultProps = {
-    icon: '',
+    step: {
+        id: '',
+        icon: '',
+        label:  ''
+    },
     iconColor: 'white',
     iconSize: 'sm',
-    label: '',
-    sublabel: '',
-    progress: '',
     hideLabel: false
 };
 

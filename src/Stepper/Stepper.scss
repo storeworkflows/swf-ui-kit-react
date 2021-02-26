@@ -1,21 +1,14 @@
 @import "Step/Step";
 
 .stepper {
+  height: 100%;
+
   &-container {
     position: relative;
     display: flex;
     justify-content: space-between;
     width: 100%;
-  }
-
-  &-item {
-    min-width: 200px;
-    flex: 1 1 0;
-
-    //hide first & last step-line
-    &:first-child .step-line:first-child, &:last-child .step-line:last-child {
-      visibility: hidden;
-    }
+    height: 100%;
   }
 
   &-counter {
@@ -31,24 +24,38 @@
 }
 
 .steps {
-  width: 100%;
-  max-height: 100%;
-  padding: 5px 0;
-  display: flex;
-  position: relative;
-
-  transition: right 200ms ease;
-
-  &-wrapper {
+  &-shown {
     overflow: hidden;
     margin: 0 auto;
     max-width: 100%;
+    max-height: 100%;
+  }
+
+  &-all {
+    width: 100%;
+    max-height: 100%;
+    padding: 5px 0;
+    display: flex;
+    position: relative;
+
+    transition: right 200ms ease, bottom 200ms ease;
+  }
+
+  &-item {
+    min-width: 200px;
+    flex: 1 1 0;
+
+    //hide first & last step-line
+    &:first-child .step-line:first-child, &:last-child .step-line:last-child {
+      visibility: hidden;
+    }
   }
 }
 
 .arrow {
   height: max-content;
-  margin-top: 5px;
+  margin: 5px auto;
+  width: max-content;
 
   display: flex;
   justify-content: center;
@@ -91,17 +98,32 @@
 }
 
 .--vertical {
-  .steps {
+  .stepper {
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+
+    &-container {
+      height: 90%;
+      flex-direction: column;
+    }
+
+    &-counter {
+      height: 10%;
+    }
   }
 
-  .stepper-item {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    height: max-content;
+  .steps {
+    &-all {
+      flex-direction: column;
+    }
+
+    &-item {
+      min-width: 100px;
+      min-height: 120px;
+      height: 100%;
+    }
+  }
+
+  .arrow {
+    margin: 0 auto;
   }
 }

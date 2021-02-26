@@ -13,10 +13,10 @@ class Stepper extends React.Component {
             selected: Math.min(props.steps.length - 1, props.selectedItem - 1),
             stepsPerPage: 0,
             containerRightPos: 0,
+            containerBottomPos: 0,
             isArrowsNeeded: false
         };
         this.stepperContainerRef = false;
-        this.stepperItemRef = false;
         this.arrowRef = false;
     }
 
@@ -29,13 +29,16 @@ class Stepper extends React.Component {
     }
 
     updateStepsPerPageAmount() {
-        const currArrowsWidth = this.state.isArrowsNeeded ? this.arrowRef?.clientWidth * 2 : 0;
-        const stepsPerPage = Math.floor((this.stepperContainerRef.clientWidth - currArrowsWidth) / 200) || 1;
+        const { vertical } = this.props;
+
+        const currArrowsSize = this.state.isArrowsNeeded ? this.arrowRef?.clientWidth * 2 : 0;
+        const stepsPerPage = Math.floor((this.stepperContainerRef[vertical ? 'clientHeight' : 'clientWidth'] - currArrowsSize) / (vertical ? 120 : 200)) || 1;
 
         this.setState({
             stepsPerPage,
             isArrowsNeeded: stepsPerPage < this.props.steps.length
         });
+
     }
 
     selectStep(index, id) {
@@ -51,17 +54,20 @@ class Stepper extends React.Component {
     }
 
     onArrowClick(direction) {
-        const { containerRightPos, stepsPerPage } = this.state;
-        const { steps } = this.props;
+        const { stepsPerPage } = this.state;
+        const { steps, vertical } = this.props;
 
         return () => {
-            const newContainerRightValue = containerRightPos + (200 * direction);
-            const maxRightPos = 200 * (steps.length - stepsPerPage);
+            const newContainerPosValue = this.state[vertical ? 'containerBottomPos' : 'containerRightPos']
+                + ((vertical ? 120 : 200) * direction);
+            const maxContainerPos = (vertical ? 120 : 200) * (steps.length - stepsPerPage);
 
             this.setState({
-                containerRightPos: Math.min(Math.max(newContainerRightValue, 0), maxRightPos)
+                [vertical ? 'containerBottomPos' : 'containerRightPos']:
+                    Math.min(Math.max(newContainerPosValue, 0), maxContainerPos)
             })
         }
+
     }
 
     renderSteps() {
@@ -80,23 +86,21 @@ class Stepper extends React.Component {
                 return (
                     <div
                         className={classnames({
-                            'stepper-item': true,
+                            'steps-item': true,
                             '--selected': isSelected,
                             '--before-selected': isBeforeSelected,
                             '--disabled': step.disabled
                         })}
                         key={'step' + index}
                         onClick={!step.disabled && this.selectStep(index, step.id)}
-                        ref={elm => this.stepperItemRef = elm}
                     >
                         <Step
-                            icon={step.icon}
                             iconColor={iconColor}
                             iconSize={iconSize}
-                            label={step.label}
-                            sublabel={step.sublabel}
-                            progress={step.progress}
+                            step={step}
                             hideLabel={hideLabels}
+                            isSelected={isSelected}
+                            isBeforeSelected={isBeforeSelected}
                         />
                     </div>
                 )
@@ -105,13 +109,16 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, vertical, showCompletedCount, steps, iconSize } = this.props;
-        const { selected, containerRightPos, stepsPerPage, isArrowsNeeded } = this.state;
-
-        // const isArrowsNeeded = stepsPerPage < steps.length;
+        const { palette, vertical, completedCounter, steps, iconSize } = this.props;
+        const { selected, containerRightPos, containerBottomPos, stepsPerPage, isArrowsNeeded } = this.state;
 
         return (
-            <div className="stepper">
+            <div
+                className={classnames({
+                    'stepper': true,
+                    '--vertical': vertical
+                })}
+            >
                 <style type="text/css">{createCssVariables(palette, iconSize) + styles}</style>
                 <div
                     className="stepper-container"
@@ -125,7 +132,7 @@ class Stepper extends React.Component {
                     >
                         <div className="arrow-icon">
                             <Icon
-                                icon="chevron-left"
+                                icon={vertical ? "chevron-up" : "chevron-left"}
                                 color={palette.arrows}
                             />
                         </div>
@@ -133,19 +140,18 @@ class Stepper extends React.Component {
                     }
 
                     <div
-                        className="steps-wrapper"
+                        className="steps-shown"
                         style={{
-                            width: isArrowsNeeded ? stepsPerPage * 200 : '100%'
+                            width: isArrowsNeeded && !vertical ? stepsPerPage * 200 : '100%',
+                            height: stepsPerPage * 120
                         }}
                     >
                         <div
-                            className={classnames({
-                                'steps': true,
-                                '--vertical': vertical
-                            })}
+                            className="steps-all"
                             style={{
-                                width: isArrowsNeeded ? steps.length * 200 : '100%',
-                                right: containerRightPos
+                                width: isArrowsNeeded && !vertical ? steps.length * 200 : '100%',
+                                right: vertical ? 0 : containerRightPos,
+                                bottom: vertical ? containerBottomPos : 0
                             }}
                         >
                             {this.renderSteps()}
@@ -159,7 +165,7 @@ class Stepper extends React.Component {
                     >
                         <div className="arrow-icon">
                             <Icon
-                                icon="chevron-right"
+                                icon={vertical ? "chevron-down" : "chevron-right"}
                                 color={palette.arrows}
                             />
                         </div>
@@ -167,12 +173,11 @@ class Stepper extends React.Component {
                     }
                 </div>
                 <div className="stepper-counter">
-                    {showCompletedCount &&
+                    {completedCounter &&
                     `${selected + 1}/${steps.length} Completed`
                     }
                 </div>
             </div>
-
         )
     }
 }
@@ -183,7 +188,7 @@ Stepper.propTypes = {
     iconSize: PropTypes.string,
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
-    showCompletedCount: PropTypes.bool,
+    completedCounter: PropTypes.bool,
     selectedItem: PropTypes.number,
     onStepClick: PropTypes.func
 }
@@ -203,7 +208,7 @@ Stepper.defaultProps = {
     iconSize: 'sm',
     hideLabels: false,
     vertical: false,
-    showCompletedCount: false,
+    completedCounter: false,
     selectedItem: 1
 }
 
