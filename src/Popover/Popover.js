@@ -11,7 +11,9 @@ class Popover extends React.Component {
         this.targetClicked = this.targetClicked.bind(this)
 
         this.state = {
-            opened: false
+            opened: false,
+            targetDimensions: null,
+            contentDimensions: null
         }
 
         this.targetRef = React.createRef();
@@ -34,33 +36,29 @@ class Popover extends React.Component {
     renderTarget() {
         const {children, positionTarget} = this.props;
         const target = findByType(children, "Target");
-      //  console.log(positionTarget);
-        if(positionTarget){
 
+        if(positionTarget){
             if(this.targetRef.current === null)
                 this.targetRef = positionTarget;
 
-            let el = this.targetRef.current;
-            el.onclick = this.targetClicked ;
-            el.classList.toggle(`popover-target`);
-
+            this.targetRef.current.onclick = this.targetClicked;
             return null;
-        } else {
-            if (!target)
-                return null;
-
-            return <div className={"popover-target"}
-                        ref={this.targetRef}
-                        onClick={ this.targetClicked }>
-                             {target}
-                    </div>
         }
+
+        if (!target)
+            return null;
+
+        return <div className={"popover-target"}
+                    ref={this.targetRef}
+                    onClick={ this.targetClicked }>
+                        {target}
+                </div>
+
     }
 
     targetClicked (){
         const {manageOpened, onClick} = this.props;
         let currentState = this.state.opened;
-      //  console.log(manageOpened);
         if(!manageOpened) {
             currentState = !currentState
             this.setState({
@@ -76,45 +74,81 @@ class Popover extends React.Component {
         this.setState({
             opened: this.props.opened
         })
+        this.updateDimensions();
+
     }
 
-    setStylesToContent(){
-        if(this.contentRef.current)
-        {
-            let targetDimensions = this.targetRef.current.getBoundingClientRect();
-            let contentDimensions = this.contentRef.current.getBoundingClientRect();
-            const {positions, hideTail, roundBorder} = this.props;
+    updateDimensions(){
+        let newTargetDimensions = this.targetRef.current.getBoundingClientRect()
+        let newContentDimensions = this.contentRef.current.getBoundingClientRect()
+        this.setState({
+            contentDimensions: newContentDimensions,
+            targetDimensions: newTargetDimensions
+        })
+        this.setStylesToContent(newTargetDimensions);
+    }
 
-            let stylesInfo =  getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
-            let styles = stylesInfo.style;
-            this.contentRef.current.style.transform = styles.transform;
-            this.contentRef.current.style.left = styles.left;
-            this.contentRef.current.style.top = styles.top;
-            this.contentRef.current.style.visibility = "visible";
+    setStylesToContent() {
 
+        const {positions, hideTail, roundBorder} = this.props;
+        let targetDimensions = this.targetRef.current.getBoundingClientRect()
+        let contentElement = this.contentRef.current;
+        let contentDimensions = contentElement.getBoundingClientRect();
 
-            if(!hideTail && stylesInfo.hasArrow) {
-                for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
-                    this.contentRef.current.style.setProperty(key, value);
-            }
+        console.log("target", targetDimensions);
+         console.log("content", contentDimensions);
+
+        let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
+        let styles = stylesInfo.style;
+        let addTop = parseInt(styles.top.replace("px", ''));
+        let addLeft = parseInt(styles.left.replace("px", ''));
+
+        contentElement.style.transform = styles.transform;
+        contentElement.style.left = targetDimensions.x - contentDimensions.x + addLeft + "px";
+        contentElement.style.top = targetDimensions.y - contentDimensions.y + addTop  + "px";
+        contentElement.style.visibility = "visible";
+
+        // console.log("transform ", styles);
+        // console.log(contentElement.getBoundingClientRect())
+
+        if (!hideTail && stylesInfo.hasArrow) {
+            for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
+                contentElement.style.setProperty(key, value);
         }
+    }
+
+    changeContentVisibility(visibility){
+        let contentElement = this.contentRef.current;
+        if(contentElement)
+            contentElement.style.visibility = visibility;
+    }
+
+    isSameDimensions(dimensions, dimensionsToCompare){
+        return dimensions.x === dimensionsToCompare.x
+            && dimensions.y === dimensionsToCompare.y
+            && dimensions.height === dimensionsToCompare.height
+            && dimensions.width === dimensionsToCompare.width;
+    }
+
+    isDimensionsChanged(){
+        let currentTargetDimensions = this.targetRef.current.getBoundingClientRect();
+        return !this.isSameDimensions(this.state.targetDimensions, currentTargetDimensions);
     }
 
     componentDidUpdate(){
+        const visible = "visible";
+        const hidden = "hidden";
+
         if(this.props.manageOpened && this.props.opened!== this.state.opened)
             this.setState({opened: this.props.opened})
 
-
         if(this.state.opened) {
-            this.targetRef.current.appendChild(this.contentRef.current);
-            this.setStylesToContent();
+            // if(this.isDimensionsChanged())
+            //     this.updateDimensions();
+            this.changeContentVisibility(visible);
         }
         else
-        {
-            let elToRemove = this.targetRef.current.querySelector(".popover-content");
-            if(elToRemove !==null)
-                elToRemove.remove();
-        }
+            this.changeContentVisibility(hidden);
     }
 
 

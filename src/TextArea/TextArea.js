@@ -72,6 +72,7 @@ class TextArea extends React.Component {
                         onKeyDown={this.onChange}
                         onFocus={this.onFocus}
                         onBlur={this.onBlur}
+                        placeholder={!_hasLabel ? this.props.placeholder : ""}
                     />
                 </div>
             </>
@@ -88,7 +89,8 @@ TextArea.defaultProps = {
     name: "",
     value: "",
     resize: true,
-    label: ""
+    label: "",
+    placeholder: ""
 }
 
 TextArea.propTypes = {
@@ -100,7 +102,8 @@ TextArea.propTypes = {
     onKeyDown: propTypes.func,
     className: propTypes.string,
     autofocus: propTypes.bool,
-    resize: propTypes.bool
+    resize: propTypes.bool,
+    placeholder: propTypes.string
 }
 
 export default TextArea
