@@ -5,6 +5,7 @@ export {default as Button} from "./Button/Button";
 export {default as Icon} from "./Icon/Icon";
 export {default as Tab} from "./Tab/Tab";
 export {default as Popover} from "./Popover/Popover";
+export {default as Tooltip} from "./Tooltip/Tooltip";
 
 export {default as Stepper} from "./Stepper/Stepper";
 export {default as LookupField} from "./LookupField/LookupField";

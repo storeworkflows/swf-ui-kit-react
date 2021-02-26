@@ -4,7 +4,6 @@ import propTypes from "prop-types";
 import styles from "./styles.scss";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
-import PropTypes from "prop-types";
 
 class Popover extends React.Component {
     constructor(props) {
@@ -35,8 +34,8 @@ class Popover extends React.Component {
     renderTarget() {
         const {children, positionTarget} = this.props;
         const target = findByType(children, "Target");
-
-        if(target.length < 1){
+      //  console.log(positionTarget);
+        if(positionTarget){
 
             if(this.targetRef.current === null)
                 this.targetRef = positionTarget;
@@ -61,9 +60,11 @@ class Popover extends React.Component {
     targetClicked (){
         const {manageOpened, onClick} = this.props;
         let currentState = this.state.opened;
+      //  console.log(manageOpened);
         if(!manageOpened) {
+            currentState = !currentState
             this.setState({
-                opened: !currentState
+                opened: currentState
             });
         }
 
@@ -100,6 +101,10 @@ class Popover extends React.Component {
     }
 
     componentDidUpdate(){
+        if(this.props.manageOpened && this.props.opened!== this.state.opened)
+            this.setState({opened: this.props.opened})
+
+
         if(this.state.opened) {
             this.targetRef.current.appendChild(this.contentRef.current);
             this.setStylesToContent();
@@ -139,13 +144,13 @@ Popover.propTypes = {
     hideTail: propTypes.bool,
     manageOpened: propTypes.bool,
     opened: propTypes.bool,
-    positionTarget: PropTypes.oneOfType([
-        PropTypes.func,
-        PropTypes.shape({ current: PropTypes.any })
+    positionTarget: propTypes.oneOfType([
+        propTypes.func,
+        propTypes.shape({ current: propTypes.any })
     ]),
-    positions: PropTypes.arrayOf(PropTypes.shape({
-        target:PropTypes.string,
-        content: PropTypes.string,
+    positions: propTypes.arrayOf(propTypes.shape({
+        target: propTypes.string,
+        content: propTypes.string,
     })),
     onClick: propTypes.func,
     roundBorder: propTypes.bool
