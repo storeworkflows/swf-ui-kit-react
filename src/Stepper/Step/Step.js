@@ -13,26 +13,35 @@ class Step extends React.Component {
         const { icon, iconColor, iconSize, label, sublabel, progress, hideLabel } = this.props;
 
         return (
-            <div className='step step-container'>
-                <div
-                    className={classnames({
-                        'step-circle': true,
-                        [`--${progress}`]: progress
-                    })}
-                >
-                    <div className="step-icon">
-                        {icon &&
+            <div className='step-container'>
+                <div className='step-item --line'>
+                    <div className="step-line --before"/>
+                </div>
+                <div className="step-item --body">
+                    <div
+                        className={classnames({
+                            'step-circle': true,
+                            [`--${progress}`]: progress
+                        })}
+                    >
+                        <div className="step-icon">
+                            {icon &&
                             <Icon
                                 icon={icon}
                                 color={iconColor || 'white'}
                                 size={iconSize}
                             />
-                        }
+                            }
+                        </div>
+                    </div>
+                    <div className="step-label">
+                        <span>{!hideLabel && label}</span>
+                        <span className="step-sublabel">{!hideLabel && sublabel}</span>
                     </div>
                 </div>
-                <div className="step-label">
-                    <span>{!hideLabel && label}</span>
-                    <span className="step-sublabel">{!hideLabel && sublabel}</span>
+
+                <div className='step-item --line'>
+                    <div className="step-line --after"/>
                 </div>
             </div>
         )
