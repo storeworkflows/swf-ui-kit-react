@@ -11,6 +11,7 @@
     }],
     ["@babel/plugin-proposal-class-properties", { "loose": true}],
     ["@babel/plugin-transform-react-jsx", {"runtime": "automatic"}],
-    ["babel-plugin-styled-components"]
+    ["babel-plugin-styled-components"],
+    ["@babel/plugin-proposal-optional-chaining"]
   ]
 }

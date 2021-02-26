@@ -12,22 +12,30 @@ class Stepper extends React.Component {
         this.state = {
             selected: Math.min(props.steps.length - 1, props.selectedItem - 1),
             stepsPerPage: 0,
-            containerRightPos: 0
+            containerRightPos: 0,
+            isArrowsNeeded: false
         };
         this.stepperContainerRef = false;
         this.stepperItemRef = false;
+        this.arrowRef = false;
     }
 
     componentDidMount() {
-        this.setState({
-            stepsPerPage: Math.floor(this.stepperContainerRef.clientWidth / 200)
-        });
+        this.updateStepsPerPageAmount();
 
         window.addEventListener('resize', () => {
-            this.setState({
-                stepsPerPage: Math.floor(this.stepperContainerRef.clientWidth / 200)
-            });
+            this.updateStepsPerPageAmount();
         })
+    }
+
+    updateStepsPerPageAmount() {
+        const currArrowsWidth = this.state.isArrowsNeeded ? this.arrowRef?.clientWidth * 2 : 0;
+        const stepsPerPage = Math.floor((this.stepperContainerRef.clientWidth - currArrowsWidth) / 200) || 1;
+
+        this.setState({
+            stepsPerPage,
+            isArrowsNeeded: stepsPerPage < this.props.steps.length
+        });
     }
 
     selectStep(index, id) {
@@ -97,10 +105,10 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, vertical, showCompletedCount, steps, arrows, iconSize } = this.props;
-        const { selected, containerRightPos, stepsPerPage } = this.state;
+        const { palette, vertical, showCompletedCount, steps, iconSize } = this.props;
+        const { selected, containerRightPos, stepsPerPage, isArrowsNeeded } = this.state;
 
-        const isArrowsNeeded = stepsPerPage < steps.length;
+        // const isArrowsNeeded = stepsPerPage < steps.length;
 
         return (
             <div className="stepper">
@@ -113,6 +121,7 @@ class Stepper extends React.Component {
                     <div
                         className="arrow arrow-left"
                         onClick={this.onArrowClick(-1)}
+                        ref={elm => this.arrowRef = elm}
                     >
                         <div className="arrow-icon">
                             <Icon
@@ -191,7 +200,7 @@ Stepper.defaultProps = {
         label: '',
         arrows: 'black'
     },
-    iconSize: 'xl',
+    iconSize: 'sm',
     hideLabels: false,
     vertical: false,
     showCompletedCount: false,

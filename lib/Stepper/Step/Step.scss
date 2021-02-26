@@ -68,10 +68,8 @@
     border-radius: 50%;
     border: 2px solid var(--circle-color);
 
-    //width: 2rem;
-    //height: 2rem;
-    width: var(--circle-size);
-    height: var(--circle-size);
+    width: var(--circle-size, 2rem);
+    height: var(--circle-size, 2rem);
     margin: 0 1rem;
     display: flex;
     align-items: center;
