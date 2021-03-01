@@ -194,6 +194,24 @@ const getAllStyles = (position, targetDimensions, contentDimensions, windowWidth
     return {isVisible: popoverStyles.isVisible, style: popoverStyles.style, hasArrow: arrowStyles.hasArrow, arrowStyle: arrowStyles.style};
 }
 
+const isOuterPosition = (position) => {
+    let targetPosition = position.target.split('-');
+    let contentPosition = position.content.split('-');
+
+    let targetVertical = targetPosition[0];
+    let targetHorizontal = targetPosition[1];
+
+    let contentVertical = contentPosition[0];
+    let contentHorizontal = contentPosition[1];
+
+    let isDown = targetVertical === ALIGNMENT.TOP && contentVertical === ALIGNMENT.BOTTOM;
+    let isLeft = targetHorizontal === ALIGNMENT.END && contentHorizontal=== ALIGNMENT.START;
+    let isRight = targetHorizontal === ALIGNMENT.START && contentHorizontal === ALIGNMENT.END;
+    let isUp = targetVertical === ALIGNMENT.BOTTOM && contentVertical === ALIGNMENT.TOP;
+
+     return(isDown || isLeft || isRight || isUp)
+}
+
 const getAllPossiblePositions = () => {
     let result = []
 
@@ -213,7 +231,11 @@ export const getAllPossibleVariants = () => {
     let allPositions = getAllPossiblePositions();
     allPositions.forEach((targetPos) => {
         allPositions.forEach(contentPos => {
-            result.push({target: targetPos, content: contentPos})
+            let position = {target: targetPos, content: contentPos};
+            if(isOuterPosition(position))
+                result.unshift(position)
+            else
+                result.push(position)
         })
     })
     return  result;
