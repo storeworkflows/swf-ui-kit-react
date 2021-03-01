@@ -11,9 +11,7 @@ class Popover extends React.Component {
         this.targetClicked = this.targetClicked.bind(this)
 
         this.state = {
-            opened: false,
-            targetDimensions: null,
-            contentDimensions: null
+            opened: false
         }
 
         this.targetRef = React.createRef();
@@ -74,29 +72,20 @@ class Popover extends React.Component {
         this.setState({
             opened: this.props.opened
         })
-        this.updateDimensions();
-
+        this.setStylesToContent();
     }
 
-    updateDimensions(){
-        let newTargetDimensions = this.targetRef.current.getBoundingClientRect()
-        let newContentDimensions = this.contentRef.current.getBoundingClientRect()
-        this.setState({
-            contentDimensions: newContentDimensions,
-            targetDimensions: newTargetDimensions
-        })
-        this.setStylesToContent(newTargetDimensions);
-    }
 
     setStylesToContent() {
 
         const {positions, hideTail, roundBorder} = this.props;
-        let targetDimensions = this.targetRef.current.getBoundingClientRect()
         let contentElement = this.contentRef.current;
+
+        let targetDimensions = this.targetRef.current.getBoundingClientRect()
         let contentDimensions = contentElement.getBoundingClientRect();
 
-        console.log("target", targetDimensions);
-         console.log("content", contentDimensions);
+      //  console.log("target", targetDimensions);
+        console.log("content", contentDimensions);
 
         let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
         let styles = stylesInfo.style;
@@ -107,8 +96,7 @@ class Popover extends React.Component {
         contentElement.style.left = targetDimensions.x - contentDimensions.x + addLeft + "px";
         contentElement.style.top = targetDimensions.y - contentDimensions.y + addTop  + "px";
         contentElement.style.visibility = "visible";
-
-        // console.log("transform ", styles);
+        console.log("transform ", styles);
         // console.log(contentElement.getBoundingClientRect())
 
         if (!hideTail && stylesInfo.hasArrow) {
@@ -119,21 +107,11 @@ class Popover extends React.Component {
 
     changeContentVisibility(visibility){
         let contentElement = this.contentRef.current;
+
         if(contentElement)
             contentElement.style.visibility = visibility;
     }
 
-    isSameDimensions(dimensions, dimensionsToCompare){
-        return dimensions.x === dimensionsToCompare.x
-            && dimensions.y === dimensionsToCompare.y
-            && dimensions.height === dimensionsToCompare.height
-            && dimensions.width === dimensionsToCompare.width;
-    }
-
-    isDimensionsChanged(){
-        let currentTargetDimensions = this.targetRef.current.getBoundingClientRect();
-        return !this.isSameDimensions(this.state.targetDimensions, currentTargetDimensions);
-    }
 
     componentDidUpdate(){
         const visible = "visible";
@@ -143,12 +121,14 @@ class Popover extends React.Component {
             this.setState({opened: this.props.opened})
 
         if(this.state.opened) {
-            // if(this.isDimensionsChanged())
-            //     this.updateDimensions();
-            this.changeContentVisibility(visible);
+
+            this.setStylesToContent();
+           // this.changeContentVisibility(visible);
         }
         else
             this.changeContentVisibility(hidden);
+
+        console.log("styles", this.contentRef.current.getBoundingClientRect() )
     }
 
 

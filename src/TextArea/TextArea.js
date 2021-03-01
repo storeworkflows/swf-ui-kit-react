@@ -70,6 +70,7 @@ class TextArea extends React.Component {
                         value={this.props.value || this.state.value}
                         onInput={this.onChange}
                         onKeyDown={this.onChange}
+                        onChange={() => {}}
                         onFocus={this.onFocus}
                         onBlur={this.onBlur}
                         placeholder={!_hasLabel ? this.props.placeholder : ""}
