@@ -27,7 +27,7 @@ class AvatarGroup extends React.Component {
 
     render() {
         const {size, max, canAdd, clickable, manageOpened, members, canRemove, onRemove} = this.props;
-        const hasAdditionalMembers = members.length > max;
+        const hasAdditionalMembers = members.length > max + 1;
         const maxViewers = hasAdditionalMembers ? max : members.length;
         const additionalMembers = members.length - max;
 
