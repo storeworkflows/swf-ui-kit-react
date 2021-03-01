@@ -38,7 +38,14 @@ class Popover extends React.Component {
 
         if(positionTarget){
             if(this.targetRef.current === null || this.targetRef!==positionTarget)
+            {
                 this.targetRef = positionTarget;
+                if(this.contentRef && this.contentRef.current){
+                    this.resetStyles();
+                    if(this.state.opened)
+                        this.setStylesToContent()
+                }
+            }
 
             this.targetRef.current.onclick = this.targetClicked;
             return null;
