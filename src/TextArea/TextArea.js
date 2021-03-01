@@ -75,7 +75,7 @@ class TextArea extends React.Component {
                         ref={(elm) => this.textAreaRef.current = elm}
                         name={this.props.name}
                         value={this.state.value}
-                        onInput={this.onChange}
+                        onChange={this.onChange}
                         onKeyDown={this.onChange}
                         onFocus={this.onFocus}
                         onBlur={this.onBlur}
