@@ -44,7 +44,7 @@ class TextArea extends React.Component {
         }
     }
 
-    getDerivedStateFromProps (newProps) {
+    static getDerivedStateFromProps (newProps) {
         return {
             value: newProps.value
         }
