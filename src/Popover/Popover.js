@@ -8,7 +8,9 @@ import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 class Popover extends React.Component {
     constructor(props) {
         super(props);
-        this.targetClicked = this.targetClicked.bind(this)
+        this.targetClicked = this.targetClicked.bind(this);
+        this.setStylesToContent = this.setStylesToContent.bind(this);
+        this.resetStyles = this.resetStyles(this);
 
         this.state = {
             opened: false
