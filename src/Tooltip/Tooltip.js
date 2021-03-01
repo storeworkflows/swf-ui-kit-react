@@ -1,6 +1,7 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import Popover from "../Popover/Popover";
+import findByType, {createSubComponent} from "../utils/findByType";
 
 class Tooltip extends React.Component {
     constructor(props) {
@@ -18,11 +19,15 @@ class Tooltip extends React.Component {
     }
 
     renderContent = () => {
-        const {content, container} = this.props;
-        if(!content)
-            return container.current
-        else
+        const {content, children} = this.props;
+        const child = findByType(children, "Content");
+
+        if(!child && !content)
+            return null;
+        else if(!child)
             return <span>{content}</span>
+        else
+            return child;
     }
 
     targetHovered = () => {
@@ -53,34 +58,29 @@ class Tooltip extends React.Component {
         const {
             position,
             roundBorder,
-            targetRef,
-            content,
-            container
+            targetRef
         } = this.props;
 
-        let hasContent = content!==undefined || !container!==undefined;
-
-        if(hasContent)
-            return (
-                <>
-                    <Popover
-                        manageOpened={true}
-                        opened={this.state.opened}
-                        positions={position}
-                        roundBorder={roundBorder}
-                        positionTarget={targetRef}
-                        hideTail={true}
-                    >
-                        <Popover.Content>
-                            {this.renderContent()}
-                        </Popover.Content>
-                    </Popover>
-                </>
-            );
-        else
-            return null;
+        return (
+            <>
+                <Popover
+                    manageOpened={true}
+                    opened={this.state.opened}
+                    positions={position}
+                    roundBorder={roundBorder}
+                    positionTarget={targetRef}
+                    hideTail={true}
+                >
+                    <Popover.Content>
+                        {this.renderContent()}
+                    </Popover.Content>
+                </Popover>
+            </>
+        );
     }
 };
+
+Tooltip.Content = createSubComponent("Content");
 
 Tooltip.defaultProps = {
     delay: 700,
@@ -100,7 +100,7 @@ Tooltip.defaultProps = {
             { target: "top-start", content: "top-end"},
             { target: "bottom-start", content: "bottom-end"}],
     roundBorder: true,
-    content: propTypes.string,
+    content: '',
 }
 
 Tooltip.propTypes = {
@@ -115,11 +115,7 @@ Tooltip.propTypes = {
         content: propTypes.string,
     })),
     roundBorder: propTypes.bool,
-    content: propTypes.string,
-    container: propTypes.oneOfType([
-        propTypes.func,
-        propTypes.shape({ current: propTypes.any })
-    ])
+    content: propTypes.string
 }
 
 export default Tooltip
