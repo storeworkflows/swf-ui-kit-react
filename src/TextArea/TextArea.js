@@ -44,8 +44,15 @@ class TextArea extends React.Component {
         }
     }
 
+    getDerivedStateFromProps (newProps) {
+        return {
+            value: newProps.value
+        }
+    }
+
     render() {
         const _hasLabel = Boolean(this.props.label);
+
         return (
             <>
                 <style type="text/css">{styles}</style>
@@ -67,7 +74,7 @@ class TextArea extends React.Component {
                         })}
                         ref={(elm) => this.textAreaRef.current = elm}
                         name={this.props.name}
-                        value={this.props.value || this.state.value}
+                        value={this.state.value}
                         onInput={this.onChange}
                         onKeyDown={this.onChange}
                         onFocus={this.onFocus}
