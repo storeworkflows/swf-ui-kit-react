@@ -41,11 +41,11 @@ const isCenterArrow = (position) => {
 }
 
 const calculatePosition = (alignType, arrayType, startPosition, addPx = 0) => {
-    let result = `${addPx}px`;
+    let result = addPx;
     if(alignType === arrayType[1])
-        result = `${Math.round(startPosition/2) + addPx}px`;
+        result = Math.round(startPosition/2) + addPx;
     else if(alignType === arrayType[2])
-        result= `${startPosition + addPx}px`;
+        result = startPosition + addPx;
 
     return result;
 }
@@ -131,6 +131,8 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
     let targetPosition = position.target.split('-');
     let contentPosition = position.content.split('-');
 
+    let top = 0;
+    let left = 0;
     if(targetPosition){
         let verticalAlign = targetPosition[0];
         let horizontalAlign = targetPosition[1];
@@ -150,12 +152,14 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
         if(needMoveContentY && hasArrow)
             addPxY = -ARROW_SIZE - ARROW_SPACE;
 
-        style.top = calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
-        style.left = calculatePosition(horizontalAlign, horizontalAlignment, targetWidth, addPxY);
+        top = targetDimensions.y - contentDimensions.y + calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
+        left = targetDimensions.x - contentDimensions.x + calculatePosition(horizontalAlign, horizontalAlignment, targetWidth, addPxY);
 
+        style.top = `${top}px`;
+        style.left = `${left}px`;
     }
 
-    let x, y;
+    let translateX, translateY;
     if(contentPosition){
         let verticalAlign = contentPosition[0];
         let horizontalAlign = contentPosition[1];
@@ -163,19 +167,14 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
         let contentWidth = contentDimensions.width;
         let contentHeight = contentDimensions.height;
 
-        y = calculatePosition(verticalAlign, verticalAlignment, -contentHeight);
-        x = calculatePosition(horizontalAlign, horizontalAlignment, -contentWidth);
+        translateY = calculatePosition(verticalAlign, verticalAlignment, -contentHeight);
+        translateX = calculatePosition(horizontalAlign, horizontalAlignment, -contentWidth);
 
-        style.transform = `translate3d(${x}, ${y}, 0)`;
+        style.transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
     }
 
-    let resultX = targetDimensions.x +
-        parseInt(style.left.replace("px", '')) +
-        parseInt(x.replace("px", ''));
-
-    let resultY = targetDimensions.y +
-        parseInt(style.top.replace("px", '')) +
-        parseInt(y.replace("px", ''));
+    let resultX = targetDimensions.x + left + translateX;
+    let resultY = targetDimensions.y + top + translateY;
 
     let isXVisible = resultX>0 && (resultX + contentDimensions.width) < windowWidth;
     let isYVisible = resultY>0;
@@ -252,6 +251,7 @@ export const getPopoverStyle = (positions, targetDimensions, contentDimensions, 
             break;
         else if(i === positions.length -1)
             result = getAllStyles(positions[0], targetDimensions, contentDimensions, windowWidth, hasArrow);
+
     }
 
     return result;

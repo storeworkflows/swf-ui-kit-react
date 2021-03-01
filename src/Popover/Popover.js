@@ -8,7 +8,9 @@ import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 class Popover extends React.Component {
     constructor(props) {
         super(props);
-        this.targetClicked = this.targetClicked.bind(this)
+        this.targetClicked = this.targetClicked.bind(this);
+        this.setStylesToContent = this.setStylesToContent.bind(this);
+        this.resetStyles = this.resetStyles(this);
 
         this.state = {
             opened: false
@@ -72,7 +74,6 @@ class Popover extends React.Component {
         this.setState({
             opened: this.props.opened
         })
-        this.setStylesToContent();
     }
 
 
@@ -84,20 +85,13 @@ class Popover extends React.Component {
         let targetDimensions = this.targetRef.current.getBoundingClientRect()
         let contentDimensions = contentElement.getBoundingClientRect();
 
-      //  console.log("target", targetDimensions);
-        console.log("content", contentDimensions);
-
         let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
         let styles = stylesInfo.style;
-        let addTop = parseInt(styles.top.replace("px", ''));
-        let addLeft = parseInt(styles.left.replace("px", ''));
 
         contentElement.style.transform = styles.transform;
-        contentElement.style.left = targetDimensions.x - contentDimensions.x + addLeft + "px";
-        contentElement.style.top = targetDimensions.y - contentDimensions.y + addTop  + "px";
+        contentElement.style.left =  styles.left;
+        contentElement.style.top = styles.top;
         contentElement.style.visibility = "visible";
-        console.log("transform ", styles);
-        // console.log(contentElement.getBoundingClientRect())
 
         if (!hideTail && stylesInfo.hasArrow) {
             for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
@@ -105,30 +99,28 @@ class Popover extends React.Component {
         }
     }
 
-    changeContentVisibility(visibility){
+    resetStyles(){
         let contentElement = this.contentRef.current;
 
         if(contentElement)
-            contentElement.style.visibility = visibility;
+        {
+            contentElement.style.visibility = "hidden";
+            contentElement.style.transform = `translate3d(${0}px, ${0}px, 0)`
+            contentElement.style.left =  0;
+            contentElement.style.top = 0;
+        }
     }
 
 
     componentDidUpdate(){
-        const visible = "visible";
-        const hidden = "hidden";
 
         if(this.props.manageOpened && this.props.opened!== this.state.opened)
             this.setState({opened: this.props.opened})
 
-        if(this.state.opened) {
-
+        if(this.state.opened)
             this.setStylesToContent();
-           // this.changeContentVisibility(visible);
-        }
         else
-            this.changeContentVisibility(hidden);
-
-        console.log("styles", this.contentRef.current.getBoundingClientRect() )
+            this.resetStyles();
     }
 
 
