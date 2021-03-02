@@ -80,7 +80,7 @@ class Popover extends React.Component {
 
 
     setStylesToContent() {
-        if(this.contentRef) {
+        if(this.contentRef && this.contentRef.current) {
             const {positions, hideTail, roundBorder} = this.props;
             let contentElement = this.contentRef.current;
 
@@ -103,7 +103,7 @@ class Popover extends React.Component {
     }
 
     resetStyles(){
-        if(this.contentRef)
+        if(this.contentRef && this.contentRef.current)
         {
             let contentElement = this.contentRef.current;
             contentElement.style.visibility = "hidden";
