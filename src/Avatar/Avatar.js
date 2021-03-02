@@ -101,6 +101,7 @@ class Avatar extends React.Component {
             <>
                 <style type="text/css">{styles}</style>
                 <div
+                    ref={elm => this.props.innerRef.current = elm}
                     className={classnames({
                         "avatar": true,
                         [`--${size}`]: true,
@@ -165,7 +166,8 @@ Avatar.defaultProps = {
     avatarVisible: true,
     color: "default",
     onRemove: noop,
-    onClick: noop
+    onClick: noop,
+    innerRef: React.createRef()
 }
 
 Avatar.propTypes = {
@@ -183,7 +185,8 @@ Avatar.propTypes = {
     }),
     onRemove: PropTypes.func,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    innerRef: PropTypes.object
 }
 
 export default Avatar

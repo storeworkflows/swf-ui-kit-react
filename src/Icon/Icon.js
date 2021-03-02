@@ -10,6 +10,7 @@ class Icon extends React.Component {
 
     return (
         <span
+            ref={elm => this.props.innerRef.current = elm}
             className={this.props.className}
             dangerouslySetInnerHTML={{__html: generateSvg(this.props) }}
             style={setSize(size, customSize)}
@@ -22,7 +23,8 @@ Icon.defaultProps = {
   icon: "",
   size: 'md',
   color: "",
-  className: ""
+  className: "",
+  innerRef: React.createRef()
 }
 
 Icon.propTypes = {
@@ -30,7 +32,9 @@ Icon.propTypes = {
   size: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
   customSize: propTypes.number,
   color: propTypes.string,
-  className: propTypes.string
+  className: propTypes.string,
+  innerRef: propTypes.object
+
 }
 
 export default Icon

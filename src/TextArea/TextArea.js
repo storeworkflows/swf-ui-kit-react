@@ -57,6 +57,7 @@ class TextArea extends React.Component {
             <>
                 <style type="text/css">{styles}</style>
                 <div
+                    ref={elm => this.props.innerRef.current = elm}
                     className="form-group"
                     style={{
                         minHeight: this.state.parentHeight
@@ -97,7 +98,8 @@ TextArea.defaultProps = {
     value: "",
     resize: true,
     label: "",
-    placeholder: ""
+    placeholder: "",
+    innerRef: React.createRef()
 }
 
 TextArea.propTypes = {
@@ -110,7 +112,8 @@ TextArea.propTypes = {
     className: propTypes.string,
     autofocus: propTypes.bool,
     resize: propTypes.bool,
-    placeholder: propTypes.string
+    placeholder: propTypes.string,
+    innerRef: propTypes.object
 }
 
 export default TextArea
