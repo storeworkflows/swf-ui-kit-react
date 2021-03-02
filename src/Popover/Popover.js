@@ -9,8 +9,7 @@ class Popover extends React.Component {
     constructor(props) {
         super(props);
         this.targetClicked = this.targetClicked.bind(this);
-        this.setStylesToContent = this.setStylesToContent.bind(this);
-        this.resetStyles = this.resetStyles(this);
+        this.updateOpenedState = this.updateOpenedState.bind(this);
 
         this.state = {
             opened: false
@@ -29,7 +28,7 @@ class Popover extends React.Component {
 
         return <div className="popover-content"
                     ref={this.contentRef}>
-                {content} </div>;
+            {content} </div>;
 
     }
 
@@ -38,8 +37,15 @@ class Popover extends React.Component {
         const target = findByType(children, "Target");
 
         if(positionTarget){
-            if(this.targetRef.current === null)
+            if(this.targetRef.current === null || this.targetRef!==positionTarget)
+            {
                 this.targetRef = positionTarget;
+                if(this.contentRef && this.contentRef.current){
+                    this.resetStyles();
+                    if(this.state.opened)
+                        this.setStylesToContent()
+                }
+            }
 
             this.targetRef.current.onclick = this.targetClicked;
             return null;
@@ -61,9 +67,7 @@ class Popover extends React.Component {
         let currentState = this.state.opened;
         if(!manageOpened) {
             currentState = !currentState
-            this.setState({
-                opened: currentState
-            });
+            this.updateOpenedState(currentState)
         }
 
         if(onClick!==undefined && onClick!==null)
@@ -71,39 +75,37 @@ class Popover extends React.Component {
     }
 
     componentDidMount() {
-        this.setState({
-            opened: this.props.opened
-        })
+        this.updateOpenedState(this.props.opened)
     }
 
 
     setStylesToContent() {
+        if(this.contentRef) {
+            const {positions, hideTail, roundBorder} = this.props;
+            let contentElement = this.contentRef.current;
 
-        const {positions, hideTail, roundBorder} = this.props;
-        let contentElement = this.contentRef.current;
+            let targetDimensions = this.targetRef.current.getBoundingClientRect()
+            let contentDimensions = contentElement.getBoundingClientRect();
 
-        let targetDimensions = this.targetRef.current.getBoundingClientRect()
-        let contentDimensions = contentElement.getBoundingClientRect();
+            let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
+            let styles = stylesInfo.style;
 
-        let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
-        let styles = stylesInfo.style;
+            contentElement.style.transform = styles.transform;
+            contentElement.style.left = styles.left;
+            contentElement.style.top = styles.top;
+            contentElement.style.visibility = "visible";
 
-        contentElement.style.transform = styles.transform;
-        contentElement.style.left =  styles.left;
-        contentElement.style.top = styles.top;
-        contentElement.style.visibility = "visible";
-
-        if (!hideTail && stylesInfo.hasArrow) {
-            for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
-                contentElement.style.setProperty(key, value);
+            if (!hideTail && stylesInfo.hasArrow) {
+                for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
+                    contentElement.style.setProperty(key, value);
+            }
         }
     }
 
     resetStyles(){
-        let contentElement = this.contentRef.current;
-
-        if(contentElement)
+        if(this.contentRef)
         {
+            let contentElement = this.contentRef.current;
             contentElement.style.visibility = "hidden";
             contentElement.style.transform = `translate3d(${0}px, ${0}px, 0)`
             contentElement.style.left =  0;
@@ -113,14 +115,18 @@ class Popover extends React.Component {
 
 
     componentDidUpdate(){
-
+        let openedValue = this.props.opened;
         if(this.props.manageOpened && this.props.opened!== this.state.opened)
-            this.setState({opened: this.props.opened})
+            this.updateOpenedState(openedValue)
+    }
 
-        if(this.state.opened)
+    updateOpenedState(value){
+        if(value)
             this.setStylesToContent();
         else
             this.resetStyles();
+
+        this.setState({opened: value})
     }
 
 

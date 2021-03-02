@@ -13,6 +13,7 @@
 [Stepper, ](#Stepper)
 [Lookup Field, ](#LookupField)
 [Popover, ](#Popover)
+[Tooltip, ](#Tooltip)
 
 
 
@@ -328,3 +329,29 @@ Posible values: "top", "center", "bottom"
 Posible values: "start", "center", "end"
 
 
+# Tooltip
+
+**Props**
+
+ Name | Type
+------------ | -------------
+manageOpened | bool,
+opened | bool,
+targetRef | element,
+position | [{ [PositionObject](#positionobject) }],
+roundBorder | bool,
+content | string,
+delay | number
+
+#### PositionObject
+
+ Name | Type
+------------ | -------------
+target | "{[horizontalAlignment](#horizontalalignment)}-{[verticalAlignment](#verticalalignment)}": string
+content | "{[horizontalAlignment](#horizontalalignment)}-{[verticalAlignment](#verticalalignment)}": string
+
+#### horizontalAlignment
+Posible values: "top", "center", "bottom"
+
+#### verticalAlignment
+Posible values: "start", "center", "end"
