@@ -7,8 +7,8 @@ import styles from "./styles.scss"
 class Checkbox extends React.Component {
     constructor(props) {
         super(props);
-       this.onChangeAction = this.onChangeAction.bind(this);
-       this.onInvalidAction = this.onInvalidAction.bind(this);
+        this.onChangeAction = this.onChangeAction.bind(this);
+        this.onInvalidAction = this.onInvalidAction.bind(this);
 
         this.state = {
             checkedValue: this.props.checked,
@@ -16,21 +16,39 @@ class Checkbox extends React.Component {
         }
     }
 
-    onChangeAction(e){
-        console.log(e)
-        this.setState((prevState) => ({
-            checkedValue: !prevState.checkedValue
-        }))
+    onChangeAction(){
+        const {manageChecked, onChange} = this.props;
+        const currentValue = this.state.checkedValue;
+
+        if(manageChecked)
+            onChange({value: currentValue});
+        else
+            this.setState({ checkedValue: !currentValue })
     }
 
-    onInvalidAction(e){
-        console.log("invalid", e);
+    onInvalidAction(){
+        const {manageInvalid, onInvalid} = this.props;
+        const currentValue = this.state.invalidValue;
+
+        if(manageInvalid)
+            onInvalid({value: currentValue});
+        else
+            this.setState({ invalidValue: !currentValue })
     }
 
     componentDidUpdate(){
-        // let currentValue = this.props.value;
-        // if(this.props.manageChecked && currentValue!== this.state.checkedValue)
-        //     this.setState({checkedValue: currentValue});
+        const {checked, invalid, manageChecked, manageInvalid} = this.props;
+        const {invalidValue, checkedValue} = this.state;
+
+        if(manageChecked && checkedValue!== checked)
+            this.setState({checkedValue: checked});
+
+        if(manageInvalid && invalidValue!== invalid)
+            this.setState({invalidValue: invalid});
+    }
+
+    componentDidMount() {
+
     }
 
     render() {
@@ -38,10 +56,7 @@ class Checkbox extends React.Component {
         const {
             checked,
             disabled,
-            invalid,
             label,
-            manageChecked,
-            manageInvalid,
             name,
             readonly,
             required
@@ -52,12 +67,16 @@ class Checkbox extends React.Component {
         return (
             <>
                 <style type="text/css">{styles}</style>
-                <div className={"radio-buttons-container"}>
+                <div className={classnames({
+                    "checkbox-container": true,
+                    "disabled": disabled,
+                    "readonly": readonly,
+                    "invalid": this.state.invalidValue
+                })}>
                     <input
                         type="checkbox"
                         checked={this.state.checkedValue}
                         disabled={disabled}
-                        readOnly={readonly}
                         required={required}
                         name={name}
                         onInvalid={e => this.onInvalidAction(e)}
@@ -92,7 +111,9 @@ Checkbox.propTypes = {
     manageInvalid: propTypes.bool,
     name: propTypes.string,
     readonly: propTypes.bool,
-    required: propTypes.bool
+    required: propTypes.bool,
+    onInvalid: propTypes.func,
+    onChange: propTypes.func
 }
 
 export default Checkbox
