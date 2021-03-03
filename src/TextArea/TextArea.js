@@ -57,7 +57,7 @@ class TextArea extends React.Component {
             <>
                 <style type="text/css">{styles}</style>
                 <div
-                    ref={elm => this.props.innerRef.current = elm}
+                    ref={elm => (this.props.innerRef) ? this.props.innerRef.current = elm : null}
                     className="form-group"
                     style={{
                         minHeight: this.state.parentHeight

@@ -47,6 +47,7 @@ class RadioButtons extends React.Component {
                 checked = {isChecked}
                 readonly = {readonly || this.props.readonly}
                 disabled = {disabled || this.props.disabled}
+                required = {this.props.required}
                 invalid = {this.props.invalid}
                 name = {name}
                 onChangeAction = {this.optionClicked}
