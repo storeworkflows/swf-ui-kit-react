@@ -1,13 +1,28 @@
 import * as React from "react";
 import propTypes from "prop-types";
+import classnames from "classnames";
 
 import styles from "./styles.scss"
 import RadioOption from "./RadioOption.js"
-import Icon from "../Icon/Icon";
+import {RADIO_BUTTONS_LAYOUT} from "./constants";
 
 class RadioButtons extends React.Component {
     constructor(props) {
         super(props);
+        this.optionClicked = this.optionClicked.bind(this) ;
+
+        this.state = {
+            selectedValue: this.props.value
+        }
+    }
+
+    optionClicked(option){
+        const {manageValue, onChange} = this.props;
+        if(manageValue)
+            onChange(option)
+        else
+            this.setState({selectedValue: option.id});
+
     }
 
     renderValue(option, name){
@@ -20,7 +35,9 @@ class RadioButtons extends React.Component {
             disabled
         } = option;
 
-        let isChecked = this.props.value ? this.props.value === id : checked
+        let isChecked = this.state.selectedValue ? this.state.selectedValue === id : checked
+        let isHorizontal = this.props.layout === RADIO_BUTTONS_LAYOUT.horizontal;
+
         return (
             <RadioOption
                 key={id}
@@ -30,9 +47,18 @@ class RadioButtons extends React.Component {
                 checked = {isChecked}
                 readonly = {readonly || this.props.readonly}
                 disabled = {disabled || this.props.disabled}
+                invalid = {this.props.invalid}
                 name = {name}
+                onChangeAction = {this.optionClicked}
+                isHorizontal = {isHorizontal}
             />
         )
+    }
+
+    componentDidUpdate(){
+        let selectedValue = this.props.value;
+        if(this.props.manageValue && selectedValue!== this.state.selectedValue)
+            this.setState({selectedValue: selectedValue});
     }
 
     render() {
@@ -40,8 +66,6 @@ class RadioButtons extends React.Component {
         const {
             invalid,
             label,
-            layout,
-            manageValue,
             name,
             options,
             required
@@ -51,14 +75,14 @@ class RadioButtons extends React.Component {
             <>
                 <style type="text/css">{styles}</style>
                 <div className={"radio-buttons-container"}>
-                    { label && <span>{label}</span>}
-                    { required &&
-                        <Icon
-                            icon={"exclamation"}
-                            customSize={20}
-                            color={ invalid ? "red" : "black" }
-                        />
-                    }
+                    <div className={classnames({
+                                 "radio-buttons-header": true,
+                                 "invalid": invalid
+                             })}
+                    >
+                        { label && <span className={"radio-buttons-label"}>{label}</span>}
+                        { required && <span className={"radio-buttons-required"}>*</span>}
+                    </div>
                     <div className={"group-of-radio-buttons"}>
                         {options.map((option) => this.renderValue(option, name))}
                     </div>
@@ -70,7 +94,7 @@ class RadioButtons extends React.Component {
 
 RadioButtons.defaultProps = {
     disabled: false,
-    layout: "vertical",
+    layout: RADIO_BUTTONS_LAYOUT.vertical,
     manageValue: false,
     options: [],
     readonly: false,
@@ -81,7 +105,9 @@ RadioButtons.propTypes = {
     disabled: propTypes.bool,
     invalid: propTypes.bool,
     label: propTypes.string,
-    layout: propTypes.oneOf(["vertical", "horizontal"]),
+    layout: propTypes.oneOf(
+        [RADIO_BUTTONS_LAYOUT.vertical, RADIO_BUTTONS_LAYOUT.horizontal]
+    ),
     manageValue: propTypes.bool,
     name: propTypes.string,
     options: propTypes.arrayOf(
@@ -95,7 +121,8 @@ RadioButtons.propTypes = {
     })),
     readonly: propTypes.bool,
     required: propTypes.bool,
-    value: propTypes.string
+    value: propTypes.string,
+    onChange: propTypes.func
 }
 
 export default RadioButtons
