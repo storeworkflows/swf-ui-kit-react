@@ -47,6 +47,7 @@ class Icon extends React.Component {
 
     return (
         <svg
+            ref={elm => this.props.innerRef.current = elm}
             {...this.getAttrs(node.attributes)}
             style={this.getStyles()}>
           <path {...this.getAttrs(node.children[0].attributes)} />
@@ -61,7 +62,8 @@ Icon.defaultProps = {
   icon: "",
   size: 'md',
   color: "",
-  className: ""
+  className: "",
+  innerRef: React.createRef()
 }
 
 Icon.propTypes = {
@@ -69,7 +71,9 @@ Icon.propTypes = {
   size: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
   customSize: propTypes.number,
   color: propTypes.string,
-  className: propTypes.string
+  className: propTypes.string,
+  innerRef: propTypes.object
+
 }
 
 export default Icon

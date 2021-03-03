@@ -36,7 +36,9 @@ class AvatarGroup extends React.Component {
         return (
             <>
                 <style type="text/css">{styles}</style>
-                <div className={
+                <div
+                    ref={elm => this.props.innerRef.current = elm}
+                    className={
                     classnames({
                         "avatar-container": true,
                         [`--${size}`]: true
@@ -63,7 +65,7 @@ class AvatarGroup extends React.Component {
                     {viewers.map((viewer, index) => (
                         <div key={index + viewer.name.replace("", "_")} onClick={this.openAvatar.bind(this, index)}>
                             <Avatar
-                                id={index}
+                                id={viewer.id || index}
                                 size={size}
                                 canRemove={canRemove}
                                 onRemove={onRemove}
@@ -90,7 +92,8 @@ AvatarGroup.defaultProps = {
     onAdd: noop,
     onRemove: noop,
     onClick: noop,
-    manageOpened: false
+    manageOpened: false,
+    innerRef: React.createRef()
 }
 
 AvatarGroup.propTypes = {
@@ -104,6 +107,7 @@ AvatarGroup.propTypes = {
     canAdd: PropTypes.bool,
     onAdd: PropTypes.func,
     onRemove: PropTypes.func,
+    innerRef: PropTypes.object
 }
 
 export default AvatarGroup
