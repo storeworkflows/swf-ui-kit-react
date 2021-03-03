@@ -14,6 +14,7 @@
 [Lookup Field, ](#LookupField)
 [Popover, ](#Popover)
 [Tooltip, ](#Tooltip)
+[RadioButtons, ](#RadioButtons)
 
 
 
@@ -355,3 +356,32 @@ Posible values: "top", "center", "bottom"
 
 #### verticalAlignment
 Posible values: "start", "center", "end"
+
+# RadioButtons
+
+**Props**
+
+ Name | Type
+------------ | -------------
+disabled | bool,
+invalid | bool,
+label | string,
+layout | "horizontal", "vertical",
+manageValue | bool,
+name | string,
+options | [{ [RadioButtonOption](#radiobuttonoption) }],
+readonly | bool,
+required | bool,
+value | string,
+onChange | func
+
+#### RadioButtonOption
+
+ Name | Type
+------------ | -------------
+id | string,
+label | string,
+value | string,
+checked | bool,
+readonly | bool,
+disabled | bool
