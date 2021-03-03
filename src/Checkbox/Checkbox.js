@@ -7,24 +7,31 @@ import styles from "./styles.scss"
 class Checkbox extends React.Component {
     constructor(props) {
         super(props);
-    //    this.optionClicked = this.optionClicked.bind(this) ;
+       this.onChangeAction = this.onChangeAction.bind(this);
+       this.onInvalidAction = this.onInvalidAction.bind(this);
 
-        // this.state = {
-        //     checkedValue: this.props.checked,
-        //     invalidValue:  this.props.invalid
-        // }
+        this.state = {
+            checkedValue: this.props.checked,
+            invalidValue:  this.props.invalid
+        }
     }
 
-    // optionClicked(option){
-    //
-    // }
-    //
-    //
-    // componentDidUpdate(){
-    //     // let currentValue = this.props.value;
-    //     // if(this.props.manageChecked && currentValue!== this.state.checkedValue)
-    //     //     this.setState({checkedValue: currentValue});
-    // }
+    onChangeAction(e){
+        console.log(e)
+        this.setState((prevState) => ({
+            checkedValue: !prevState.checkedValue
+        }))
+    }
+
+    onInvalidAction(e){
+        console.log("invalid", e);
+    }
+
+    componentDidUpdate(){
+        // let currentValue = this.props.value;
+        // if(this.props.manageChecked && currentValue!== this.state.checkedValue)
+        //     this.setState({checkedValue: currentValue});
+    }
 
     render() {
 
@@ -37,32 +44,34 @@ class Checkbox extends React.Component {
             manageInvalid,
             name,
             readonly,
-            required,
-            value
+            required
         } = this.props;
+
+        let isIndeterminate = checked === "indeterminate";
 
         return (
             <>
                 <style type="text/css">{styles}</style>
-                {/*<div className={"radio-buttons-container"}>*/}
-                {/*    <input*/}
-                {/*        type="checkbox"*/}
-                {/*        checked={checked}*/}
-                {/*        value={value}*/}
-                {/*        disabled={disabled}*/}
-                {/*        readOnly={readonly}*/}
-                {/*        required={required}*/}
-                {/*        name={name}*/}
-                {/*    />*/}
-                {/*    {label && <label>{label}</label>}*/}
-                {/*</div>*/}
+                <div className={"radio-buttons-container"}>
+                    <input
+                        type="checkbox"
+                        checked={this.state.checkedValue}
+                        disabled={disabled}
+                        readOnly={readonly}
+                        required={required}
+                        name={name}
+                        onInvalid={e => this.onInvalidAction(e)}
+                        onChange={e => this.onChangeAction(e)}
+                    />
+                    {label && <label>{label}</label>}
+                </div>
             </>
         );
     }
 };
 
 Checkbox.defaultProps = {
- //   checked: false,
+    checked: false,
     disabled: false,
     invalid: false,
     manageChecked: false,
@@ -72,10 +81,10 @@ Checkbox.defaultProps = {
 };
 
 Checkbox.propTypes = {
-    // checked: propTypes.oneOfType([
-    //     propTypes.bool,
-    //     propTypes.oneOf(["indeterminate"])
-    // ]),
+    checked: propTypes.oneOfType([
+        propTypes.bool,
+        propTypes.oneOf(["indeterminate"])
+    ]),
     disabled: propTypes.bool,
     invalid: propTypes.bool,
     label: propTypes.string,
