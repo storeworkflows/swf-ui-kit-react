@@ -1,21 +1,60 @@
 import * as React from "react";
 import propTypes from "prop-types";
 
-import {generateSvg, setSize} from './utils'
+import icons from "./icons";
+import {SIZE} from "./constants";
 
 class Icon extends React.Component {
 
+  getStyles(){
+    const {
+      color,
+      size,
+      customSize
+    } = this.props;
+
+    let style = {}
+    let finalSize = (customSize) ? customSize : SIZE[size];
+
+    style.height = finalSize;
+    style.width = finalSize;
+
+    if(color)
+      style.color = color;
+
+    return style;
+  }
+
+  generateSvg(icon){
+    const wrapper = document.createElement("span");
+    wrapper.innerHTML = icons[icon];
+    return wrapper.children[0];
+  }
+
+  getAttrs(attrs){
+    let props = {};
+    for(let i=0; i<attrs.length; i++){
+      let curProps = attrs.item(i);
+      let name = curProps.name === "class" ? "className" : curProps.name;
+      props[name] = curProps.value;
+    }
+    return props;
+  }
+
+
   render () {
-    const {size, customSize} = this.props;
+    let node = this.generateSvg(this.props.icon);
 
     return (
-        <span
+        <svg
             ref={elm => this.props.innerRef.current = elm}
-            className={this.props.className}
-            dangerouslySetInnerHTML={{__html: generateSvg(this.props) }}
-            style={setSize(size, customSize)}
-        />
-    );
+            {...this.getAttrs(node.attributes)}
+            style={this.getStyles()}>
+          <path {...this.getAttrs(node.children[0].attributes)} />
+        </svg>
+    )
+
+    ;
   }
 }
 

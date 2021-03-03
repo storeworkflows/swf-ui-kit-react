@@ -104,6 +104,7 @@ Tooltip.defaultProps = {
 }
 
 Tooltip.propTypes = {
+    delay: propTypes.number,
     manageOpened: propTypes.bool,
     opened: propTypes.bool,
     targetRef: propTypes.oneOfType([
