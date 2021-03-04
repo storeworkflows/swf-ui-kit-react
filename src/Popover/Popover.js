@@ -4,6 +4,7 @@ import propTypes from "prop-types";
 import styles from "./styles.scss";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
+import classnames from "classnames";
 
 class Popover extends React.Component {
     constructor(props) {
@@ -20,13 +21,16 @@ class Popover extends React.Component {
     }
 
     renderContent() {
-        const {children} = this.props;
+        const {children, roundBorder} = this.props;
         const content = findByType(children, "Content");
 
         if (!content)
             return null;
 
-        return <div className="popover-content"
+        return <div className={classnames({
+                    "popover-content": true,
+                    "noRoundBorder": !roundBorder
+                    })}
                     ref={this.contentRef}>
             {content} </div>;
 
@@ -87,7 +91,14 @@ class Popover extends React.Component {
             let targetDimensions = this.targetRef.current.getBoundingClientRect()
             let contentDimensions = contentElement.getBoundingClientRect();
 
-            let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, window.innerWidth, hideTail, roundBorder);
+            let windowParam = {
+                startY: 0,
+                startX: 0,
+                endY: window.innerHeight,
+                endX: window.innerWidth
+            }
+
+            let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, windowParam, hideTail, roundBorder);
             let styles = stylesInfo.style;
 
             contentElement.style.transform = styles.transform;

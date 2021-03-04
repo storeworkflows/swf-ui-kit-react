@@ -63,6 +63,7 @@ class Checkbox extends React.Component {
         } = this.props;
 
         let isIndeterminate = checked === "indeterminate";
+        let currentValue = this.state.checkedValue
 
         return (
             <>
@@ -79,6 +80,7 @@ class Checkbox extends React.Component {
                         disabled={disabled}
                         required={required}
                         name={name}
+                        value={(this.state.checkedValue) ? "true" : "false"}
                         onInvalid={e => this.onInvalidAction(e)}
                         onChange={e => this.onChangeAction(e)}
                     />

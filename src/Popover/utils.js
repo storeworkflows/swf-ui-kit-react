@@ -126,7 +126,7 @@ const getArrowStyles = (position, contentDimensions) => {
     return {hasArrow: hasArrow, style: style};
 }
 
-const getStyleByPosition = (position, targetDimensions, contentDimensions, windowWidth, hasArrow) => {
+const getStyleByPosition = (position, targetDimensions, contentDimensions, windowParam, hasArrow) => {
     let style = {};
     let targetPosition = position.target.split('-');
     let contentPosition = position.content.split('-');
@@ -173,21 +173,22 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
         style.transform = `translate3d(${translateX}px, ${translateY}px, 0)`;
     }
 
-    let resultX = targetDimensions.x + left + translateX;
-    let resultY = targetDimensions.y + top + translateY;
+    let resultX = contentDimensions.x + left + translateX;
+    let resultY = contentDimensions.y + top + translateY;
 
-    let isXVisible = resultX>0 && (resultX + contentDimensions.width) < windowWidth;
-    let isYVisible = resultY>0;
+    let isXVisible = resultX>windowParam.startX && (resultX + contentDimensions.width) < windowParam.endX;
+    let isYVisible = resultY>windowParam.startY && (resultY + contentDimensions.height) < windowParam.endY;
 
     let isVisible = isXVisible && isYVisible;
 
     return {style: style, isVisible: isVisible};
 }
 
-const getAllStyles = (position, targetDimensions, contentDimensions, windowWidth, hasArrow) => {
+const getAllStyles = (position, targetDimensions, contentDimensions, windowParam, hasArrow) => {
     let arrowStyles = { hasArrow: false, style:{}};
-    let popoverStyles = getStyleByPosition(position, targetDimensions, contentDimensions, windowWidth, hasArrow);
-    if(hasArrow && popoverStyles.isVisible)
+    let popoverStyles = getStyleByPosition(position, targetDimensions, contentDimensions, windowParam, hasArrow);
+
+    if(hasArrow)
         arrowStyles = getArrowStyles(position, contentDimensions);
 
     return {isVisible: popoverStyles.isVisible, style: popoverStyles.style, hasArrow: arrowStyles.hasArrow, arrowStyle: arrowStyles.style};
@@ -241,18 +242,21 @@ export const getAllPossibleVariants = () => {
 }
 
 
-export const getPopoverStyle = (positions, targetDimensions, contentDimensions, windowWidth, hideTail, roundBorder) => {
+export const getPopoverStyle = (positions, targetDimensions, contentDimensions, windowParam, hideTail, roundBorder) => {
     let result = {};
 
     for(let i = 0; i<positions.length; i++){
         let hasArrow = !hideTail && hasArrowByPosition(positions[i], roundBorder);
-        result = getAllStyles(positions[i], targetDimensions, contentDimensions, windowWidth, hasArrow);
+        result = getAllStyles(positions[i], targetDimensions, contentDimensions, windowParam, hasArrow);
         if(result.isVisible)
             break;
         else if(i === positions.length -1)
-            result = getAllStyles(positions[0], targetDimensions, contentDimensions, windowWidth, hasArrow);
+            result = getAllStyles(positions[0], targetDimensions, contentDimensions, windowParam, hasArrow);
 
     }
 
     return result;
 }
+
+
+

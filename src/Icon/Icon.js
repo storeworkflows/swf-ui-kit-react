@@ -44,13 +44,15 @@ class Icon extends React.Component {
 
   render () {
     let node = this.generateSvg(this.props.icon);
-
     return (
         <svg
             ref={elm => this.props.innerRef.current = elm}
             {...this.getAttrs(node.attributes)}
-            style={this.getStyles()}>
-          <path {...this.getAttrs(node.children[0].attributes)} />
+            style={this.getStyles()}
+        >
+              {[ ...node.children ].map( child => {
+                return  <path {...this.getAttrs(child.attributes)} />
+              })}
         </svg>
     )
 
