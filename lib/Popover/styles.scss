@@ -10,6 +10,10 @@
   --popover-border: none;
   --popover-shadow: 0 3px 6px -4px rgba(0, 0, 0 , 0.12), 0 6px 16px 0 rgba(0, 0, 0 , 0.08), 0 9px 28px 8px rgba(0, 0, 0 , 0.05);
 
+  &.noRoundBorder{
+    --popover-border-radius: 0;
+  }
+
   visibility: hidden;
   position: absolute;
   top: 0;
@@ -20,6 +24,7 @@
   border-radius: var(--popover-border-radius);
   box-shadow: var(--popover-shadow);
   border: var(--popover-border);
+  overflow: auto;
 
   --arrow-size: 9px;
 
@@ -35,7 +40,6 @@
   --arrow-bottom-color: transparent;
   --arrow-left-color: transparent;
   --arrow-right-color: transparent;
-
 
 }
 
