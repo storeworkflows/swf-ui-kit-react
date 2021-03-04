@@ -18,13 +18,12 @@
   position: absolute;
   top: 0;
   left: 0;
-  padding: 8px;
+
   background: var(--popover-background);
   z-index: 800;
   border-radius: var(--popover-border-radius);
   box-shadow: var(--popover-shadow);
   border: var(--popover-border);
-  overflow: auto;
 
   --arrow-size: 9px;
 
@@ -41,6 +40,12 @@
   --arrow-left-color: transparent;
   --arrow-right-color: transparent;
 
+}
+
+.popover-content-keeper{
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
 }
 
 
@@ -66,4 +71,29 @@
   border-style: solid;
 
 
+}
+
+//SCROLL STYLES
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+  margin: 8px 1px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
