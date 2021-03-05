@@ -15,6 +15,7 @@
 [Popover, ](#Popover)
 [Tooltip, ](#Tooltip)
 [RadioButtons, ](#RadioButtons)
+[Checkbox, ](#Checkbox)
 
 
 
@@ -293,13 +294,13 @@ arrows | string
 
  Name | Type
 ------------ | -------------
-onValueChange | func,
-value | string,
-declarativeUiActions | object,
-label | string,
-name | string,
-type | "reference", "list",
-table | string,
+onValueChange | func
+value | string
+declarativeUiActions | object
+label | string
+name | string
+type | "reference", "list"
+table | string
 tableRecordSysId | string
 
 # Popover
@@ -308,12 +309,12 @@ tableRecordSysId | string
 
  Name | Type
 ------------ | -------------
-hideTail | bool,
-manageOpened | bool,
-opened | bool,
-positionTarget | element,
-positions | [{ [PositionObject](#positionobject) }],
-onClick | func,
+hideTail | bool
+manageOpened | bool
+opened | bool
+positionTarget | element
+positions | [{ [PositionObject](#positionobject) }]
+onClick | func
 roundBorder | bool
 
 #### PositionObject
@@ -336,12 +337,12 @@ Posible values: "start", "center", "end"
 
  Name | Type
 ------------ | -------------
-manageOpened | bool,
-opened | bool,
-targetRef | element,
-position | [{ [PositionObject](#positionobject) }],
-roundBorder | bool,
-content | string,
+manageOpened | bool
+opened | bool
+targetRef | element
+position | [{ [PositionObject](#positionobject) }]
+roundBorder | bool
+content | string
 delay | number
 
 #### PositionObject
@@ -363,25 +364,43 @@ Posible values: "start", "center", "end"
 
  Name | Type
 ------------ | -------------
-disabled | bool,
-invalid | bool,
-label | string,
-layout | "horizontal", "vertical",
-manageValue | bool,
-name | string,
-options | [{ [RadioButtonOption](#radiobuttonoption) }],
-readonly | bool,
-required | bool,
-value | string,
+disabled | bool
+invalid | bool
+label | string
+layout | "horizontal", "vertical"
+manageValue | bool
+name | string
+options | [{ [RadioButtonOption](#radiobuttonoption) }]
+readonly | bool
+required | bool
+value | string
 onChange | func
 
 #### RadioButtonOption
 
  Name | Type
 ------------ | -------------
-id | string,
-label | string,
-value | string,
-checked | bool,
-readonly | bool,
+id | string
+label | string
+value | string
+checked | bool
+readonly | bool
 disabled | bool
+
+# Checkbox
+
+**Props**
+
+ Name | Type
+------------ | -------------
+checked | bool, "indeterminate"
+disabled | bool
+invalid | bool
+label | string
+manageChecked | bool
+manageInvalid | bool
+name | string
+readonly | bool
+required | bool
+onInvalid | func
+onChange | func
