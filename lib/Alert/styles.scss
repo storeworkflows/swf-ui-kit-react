@@ -1,0 +1,19 @@
+.alert-container{
+  border: 1px solid black;
+  border-radius: 1rem;
+  display: grid;
+  grid-gap: 10px;
+  height: 50px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0.5rem;
+  padding: 0.5rem;
+
+  grid-template-columns: max-content 1fr max-content;
+}
+
+.alert-header{
+  font-weight: bold;
+}

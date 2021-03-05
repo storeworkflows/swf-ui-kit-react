@@ -88,6 +88,8 @@ class Popover extends React.Component {
         if(this.contentRef && this.contentRef.current) {
             const {positions, hideTail, roundBorder} = this.props;
             let contentElement = this.contentRef.current;
+            contentElement.children[0].style.maxHeight = 'none';
+            contentElement.children[0].style.maxWidth = 'none';
 
             let targetDimensions = this.targetRef.current.getBoundingClientRect()
             let contentDimensions = contentElement.getBoundingClientRect();
@@ -107,7 +109,7 @@ class Popover extends React.Component {
             contentElement.style.top = styles.top;
             contentElement.style.visibility = "visible";
             if(styles.maxHeight)
-                contentElement.children[0].style.maxHeight= styles.maxHeight;
+                contentElement.children[0].style.maxHeight = styles.maxHeight;
             if(styles.maxWidth)
                 contentElement.children[0].style.maxWidth = styles.maxWidth;
 
