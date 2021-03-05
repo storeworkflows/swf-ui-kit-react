@@ -32,7 +32,8 @@ class Popover extends React.Component {
                     "noRoundBorder": !roundBorder
                     })}
                     ref={this.contentRef}>
-            {content} </div>;
+            <div className={"popover-content-keeper"}>{content}</div>
+            </div>;
 
     }
 
@@ -105,6 +106,10 @@ class Popover extends React.Component {
             contentElement.style.left = styles.left;
             contentElement.style.top = styles.top;
             contentElement.style.visibility = "visible";
+            if(styles.maxHeight)
+                contentElement.children[0].style.maxHeight= styles.maxHeight;
+            if(styles.maxWidth)
+                contentElement.children[0].style.maxWidth = styles.maxWidth;
 
             if (!hideTail && stylesInfo.hasArrow) {
                 for (const [key, value] of Object.entries(stylesInfo.arrowStyle))

@@ -181,6 +181,12 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
 
     let isVisible = isXVisible && isYVisible;
 
+    let margin = (hasArrow) ? ARROW_SIZE + ARROW_SPACE : 0;
+    if(!isYVisible)
+        style.maxHeight = `${windowParam.endY - resultY - margin}px`;
+    if(!isXVisible)
+        style.maxWidth = `${windowParam.endX - resultX - margin}px`;
+
     return {style: style, isVisible: isVisible};
 }
 
@@ -209,7 +215,7 @@ const isOuterPosition = (position) => {
     let isRight = targetHorizontal === ALIGNMENT.START && contentHorizontal === ALIGNMENT.END;
     let isUp = targetVertical === ALIGNMENT.BOTTOM && contentVertical === ALIGNMENT.TOP;
 
-     return(isDown || isLeft || isRight || isUp)
+    return(isDown || isLeft || isRight || isUp)
 }
 
 const getAllPossiblePositions = () => {
@@ -252,7 +258,6 @@ export const getPopoverStyle = (positions, targetDimensions, contentDimensions, 
             break;
         else if(i === positions.length -1)
             result = getAllStyles(positions[0], targetDimensions, contentDimensions, windowParam, hasArrow);
-
     }
 
     return result;

@@ -9,21 +9,27 @@ class Checkbox extends React.Component {
         super(props);
         this.onChangeAction = this.onChangeAction.bind(this);
         this.onInvalidAction = this.onInvalidAction.bind(this);
+        this.setIndeterminate = this.setIndeterminate.bind(this);
 
         this.state = {
             checkedValue: this.props.checked,
-            invalidValue:  this.props.invalid
+            invalidValue:  this.props.invalid,
+            checkboxRef: React.createRef()
         }
     }
 
     onChangeAction(){
-        const {manageChecked, onChange} = this.props;
+        const {manageChecked, onChange, readonly, disabled} = this.props;
         const currentValue = this.state.checkedValue;
+        let newValue = (currentValue==="indeterminate") ? true : !currentValue;
+        let canChange = !readonly && !disabled;
 
-        if(manageChecked)
-            onChange({value: currentValue});
-        else
-            this.setState({ checkedValue: !currentValue })
+        if(canChange && manageChecked)
+             onChange({value: currentValue});
+        else if(canChange)
+            this.setState({ checkedValue: newValue });
+        else if(currentValue==="indeterminate")
+            this.setIndeterminate()
     }
 
     onInvalidAction(){
@@ -36,25 +42,33 @@ class Checkbox extends React.Component {
             this.setState({ invalidValue: !currentValue })
     }
 
+    setIndeterminate(){
+        let input = this.state.checkboxRef.current.querySelector('input');
+        if(this.props.checked === "indeterminate")
+            input.indeterminate = true;
+    }
+
     componentDidUpdate(){
         const {checked, invalid, manageChecked, manageInvalid} = this.props;
         const {invalidValue, checkedValue} = this.state;
 
-        if(manageChecked && checkedValue!== checked)
+        if(manageChecked && checkedValue !== checked)
+        {
             this.setState({checkedValue: checked});
+            this.setIndeterminate();
+        }
 
         if(manageInvalid && invalidValue!== invalid)
             this.setState({invalidValue: invalid});
     }
 
     componentDidMount() {
-
+        this.setIndeterminate();
     }
 
     render() {
 
         const {
-            checked,
             disabled,
             label,
             name,
@@ -62,8 +76,8 @@ class Checkbox extends React.Component {
             required
         } = this.props;
 
-        let isIndeterminate = checked === "indeterminate";
-        let currentValue = this.state.checkedValue
+        let isIndeterminate = this.state.checkedValue === 'indeterminate'
+        let checkedValue =  isIndeterminate ? false: this.state.checkedValue;
 
         return (
             <>
@@ -73,10 +87,13 @@ class Checkbox extends React.Component {
                     "disabled": disabled,
                     "readonly": readonly,
                     "invalid": this.state.invalidValue
-                })}>
+                    })}
+                     ref = {this.state.checkboxRef}
+                >
                     <input
+                        className={"checkbox-input"}
                         type="checkbox"
-                        checked={this.state.checkedValue}
+                        checked={checkedValue}
                         disabled={disabled}
                         required={required}
                         name={name}
@@ -84,7 +101,10 @@ class Checkbox extends React.Component {
                         onInvalid={e => this.onInvalidAction(e)}
                         onChange={e => this.onChangeAction(e)}
                     />
-                    {label && <label>{label}</label>}
+                    <div className={"checkbox-information"}>
+                        {label && <label className={"checkbox-label"}>{label}</label>}
+                        { required && <span className={"checkbox-required"}>*</span>}
+                    </div>
                 </div>
             </>
         );

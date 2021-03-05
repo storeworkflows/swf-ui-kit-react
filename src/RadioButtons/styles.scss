@@ -50,13 +50,13 @@
     --radio-option-cursor: default;
     --radio-option-hover-backgroung: transparent;
     --radio-option-hover-border: var(--base-radio-button-color);
+
   }
 
   &.horizontal{
     display: inline-flex;
     margin: 0 1rem 0 0;
   }
-
 
   cursor: var(--radio-option-cursor);
 }
