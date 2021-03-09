@@ -17,7 +17,7 @@
   },
   "scripts": {
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",
-    "build": "babel src --out-dir lib --source-maps true --copy-files"
+    "build": "babel src --out-dir lib --source-maps false --copy-files"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
