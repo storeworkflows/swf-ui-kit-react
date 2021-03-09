@@ -12,7 +12,7 @@ class TextArea extends React.Component {
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.state = {
-            value: "",
+            value: this.props.value,
             parentHeight: "auto",
             textareaHeight: "auto",
             focused: false
