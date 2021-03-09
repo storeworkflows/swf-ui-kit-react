@@ -1,7 +1,6 @@
 import propTypes from "prop-types";
 import * as React from "react";
 
-import ClassicEditor from "ckeditor5/packages/ckeditor5-build-classic/build/ckeditor";
 import styles from "./styles.css";
 import {noop} from "../../lib/utils";
 
