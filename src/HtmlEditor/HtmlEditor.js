@@ -3,6 +3,7 @@ import * as React from "react";
 
 import ClassicEditor from "ckeditor5/packages/ckeditor5-build-classic/build/ckeditor";
 import styles from "./styles.css";
+import {noop} from "../../lib/utils";
 
 export default class HtmlEditor extends React.Component {
     constructor(props) {
@@ -22,6 +23,8 @@ export default class HtmlEditor extends React.Component {
             ],
             save: (editor) => {
                 this.changeInput(editor);
+                this.props?.properties?.onValueChange(editor);
+                this.props.onValueChange(editor);
             }
         })
     }
@@ -41,9 +44,11 @@ export default class HtmlEditor extends React.Component {
 }
 
 HtmlEditor.defaultProps = {
-    toolbar: [ 'bold', 'italic', "underline", "undo", "redo", "|", "fontFamily" , "fontSize" , 'insertTable', "|", 'link', "|", "code", "|", "alignment:left", "alignment:center", "alignment:right", "|", 'bulletedList', 'numberedList', "imageUpload" ]
+    toolbar: [ 'bold', 'italic', "underline", "undo", "redo", "|", "fontFamily" , "fontSize" , 'insertTable', "|", 'link', "|", "code", "|", "alignment:left", "alignment:center", "alignment:right", "|", 'bulletedList', 'numberedList', "imageUpload" ],
+    onValueChange: noop
 }
 
 HtmlEditor.propTypes = {
-    toolbar: propTypes.arrayOf(propTypes.string)
+    toolbar: propTypes.arrayOf(propTypes.string),
+    onValueChange: propTypes.func
 }
