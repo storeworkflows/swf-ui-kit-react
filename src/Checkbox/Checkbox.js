@@ -21,7 +21,7 @@ class Checkbox extends React.Component {
     onChangeAction(){
         const {manageChecked, onChange, readonly, disabled} = this.props;
         const currentValue = this.state.checkedValue;
-        let newValue = (currentValue==="indeterminate") ? true : !currentValue;
+        let newValue = (currentValue==="indeterminate") || !currentValue;
         let canChange = !readonly && !disabled;
 
         if(canChange && manageChecked)
@@ -39,7 +39,7 @@ class Checkbox extends React.Component {
         if(manageInvalid)
             onInvalid({value: currentValue});
         else
-            this.setState({ invalidValue: !currentValue })
+            this.setState({ invalidValue: true })
     }
 
     setIndeterminate(){
@@ -60,6 +60,7 @@ class Checkbox extends React.Component {
 
         if(manageInvalid && invalidValue!== invalid)
             this.setState({invalidValue: invalid});
+
     }
 
     componentDidMount() {
@@ -77,7 +78,7 @@ class Checkbox extends React.Component {
         } = this.props;
 
         let isIndeterminate = this.state.checkedValue === 'indeterminate'
-        let checkedValue =  isIndeterminate ? false: this.state.checkedValue;
+        let checkedValue =  isIndeterminate || this.state.checkedValue;
 
         return (
             <>
@@ -89,6 +90,7 @@ class Checkbox extends React.Component {
                     "invalid": this.state.invalidValue
                     })}
                      ref = {this.state.checkboxRef}
+                     onClick={() => this.onChangeAction()}
                 >
                     <input
                         className={"checkbox-input"}
@@ -102,7 +104,7 @@ class Checkbox extends React.Component {
                         onChange={e => this.onChangeAction(e)}
                     />
                     <div className={"checkbox-information"}>
-                        {label && <label className={"checkbox-label"}>{label}</label>}
+                        { label && <label className={"checkbox-label"}>{label}</label>}
                         { required && <span className={"checkbox-required"}>*</span>}
                     </div>
                 </div>
