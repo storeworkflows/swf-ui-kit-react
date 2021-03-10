@@ -103,7 +103,7 @@ class Dropdown extends React.Component {
 
         const {selectedItems, opened} = this.state;
 
-        let hasSelected= (selectedItems.length > 0 );
+        let hasSelected = selectedItems && (selectedItems.length > 0 );
         let hasLabel = hasSelected || placeholder;
 
         return (
@@ -126,7 +126,7 @@ class Dropdown extends React.Component {
                                     "placeholder": !hasSelected
                                 })}
                             >
-                                { hasSelected
+                                { hasSelected && this.getItemById(selectedItems[0], items)
                                     ? this.getItemById(selectedItems[0], items).label
                                     : placeholder
                                 }
