@@ -12,17 +12,18 @@ class Alert extends React.Component {
         super(props);
 
         this.state = {
-            expanded: this.props.expanded
+            expanded: this.props.expanded,
+            isOverflowed: false
         }
 
         this.contentRef = React.createRef();
     }
 
     componentDidMount() {
-        console.log(this.contentRef);
         if(this.contentRef){
             let content = this.contentRef.current;
-            console.log("isOverflowed", content.clientWidth < content.scrollWidth)
+            console.log(content.clientHeight, content.scrollHeight, content.clientHeight<content.scrollHeight)
+            this.setState({isOverflowed: content.clientHeight<content.scrollHeight})
         }
     }
 
@@ -45,7 +46,12 @@ class Alert extends React.Component {
                     {icon && <div className={"alert-icon"}><Icon icon = {icon}/></div>}
                     <div className={"alert-content"} >
                         {header && <div className={"alert-header"}>{header}</div>}
-                        {content && <p className={"alert-text"} ref = {this.contentRef}>{content}</p>}
+                        {content &&
+                            <div ref = {this.contentRef}>
+                                <p className={"alert-text"} >{content}</p>
+                            </div>
+                        }
+                        {this.state.isOverflowed && <span>Show more</span>}
                     </div>
                     <Button>Ok</Button>
                 </div>

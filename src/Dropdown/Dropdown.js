@@ -25,25 +25,38 @@ class Dropdown extends React.Component {
         const {manageOpened, onOpened} = this.props;
         const currentOpened = this.state.opened;
 
-        if(manageOpened)
-            onOpened({ opened: currentOpened});
-        else
+        if(!manageOpened)
             this.setState({opened: !currentOpened})
 
+        if(onOpened)
+            onOpened({ opened: currentOpened});
     }
 
     itemSelected({id}){
-        const {manageSelectedItems, onItemSelected, manageOpened} = this.props;
-        const currentSelected = this.state.selectedItems;
+        const {manageSelectedItems, onItemSelected, manageOpened, items} = this.props;
+        const currentSelectedIds = this.state.selectedItems;
 
-        if(manageSelectedItems)
-            onItemSelected({selectedItems: currentSelected})
-        else
+        if(!manageSelectedItems)
         {
             this.setState({selectedItems: [id]});
             if(!manageOpened)
                 this.setState({opened: false})
         }
+
+        if(onItemSelected)
+            onItemSelected({
+                clickedItem: this.getItemById(id, items),
+                selectedItems: currentSelectedIds
+            });
+    }
+
+    getItemById (id, items) {
+        let result = null;
+        items.map( el => {
+            if(el.id === id)
+                result = el;
+        })
+        return result;
     }
 
     renderItems() {
@@ -93,16 +106,6 @@ class Dropdown extends React.Component {
         let hasSelected= (selectedItems.length > 0 );
         let hasLabel = hasSelected || placeholder;
 
-
-        let getItemLabelById = (id) => {
-            let result = '';
-            items.map( el => {
-                   if(el.id === id)
-                       result = el.label;
-            })
-            return result;
-        }
-
         return (
             <>
                 <style type="text/css">{styles}</style>
@@ -123,7 +126,10 @@ class Dropdown extends React.Component {
                                     "placeholder": !hasSelected
                                 })}
                             >
-                                { hasSelected ? getItemLabelById(selectedItems[0]): placeholder}
+                                { hasSelected
+                                    ? this.getItemById(selectedItems[0], items).label
+                                    : placeholder
+                                }
                             </span>
                         }
                         <div className={"dropdown-caret"}><Icon icon={"caret-down-fill"} customSize={12} /></div>

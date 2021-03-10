@@ -13,9 +13,10 @@ class Checkbox extends React.Component {
 
         this.state = {
             checkedValue: this.props.checked,
-            invalidValue:  this.props.invalid,
-            checkboxRef: React.createRef()
+            invalidValue:  this.props.invalid
         }
+
+        this.checkboxRef = null;
     }
 
     onChangeAction(){
@@ -43,7 +44,7 @@ class Checkbox extends React.Component {
     }
 
     setIndeterminate(){
-        let input = this.state.checkboxRef.current.querySelector('input');
+        let input = this.checkboxRef.querySelector('input');
         if(this.props.checked === "indeterminate")
             input.indeterminate = true;
     }
@@ -89,7 +90,7 @@ class Checkbox extends React.Component {
                     "readonly": readonly,
                     "invalid": this.state.invalidValue
                     })}
-                     ref = {this.state.checkboxRef}
+                     ref = { el => this.checkboxRef = el}
                      onClick={() => this.onChangeAction()}
                 >
                     <input
