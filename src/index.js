@@ -10,6 +10,7 @@ export {default as RadioButtons} from "./RadioButtons/RadioButtons";
 export {default as Checkbox} from "./Checkbox/Checkbox"
 export {default as Alert} from "./Alert/Alert"
 export {default as Dropdown} from "./Dropdown/Dropdown"
+export {default as SmallCalendar} from "./SmallCalendar/SmallCalendar"
 
 export {default as Stepper} from "./Stepper/Stepper";
 export {default as LookupField} from "./LookupField/LookupField";

@@ -26,11 +26,12 @@ class Tab extends React.Component {
             this.setState({currentSelectedItem : selectedItem});
     }
 
-    tabSelected({id}){
-        const {disabled, manageSelectedItem, onClick} = this.props;
+    tabSelected(id, disabled){
+        const {manageSelectedItem, onClick} = this.props;
 
         if (!disabled) {
-            onClick({id: id});
+            if(onClick)
+                onClick({id: id});
 
             if(!manageSelectedItem)
                 this.setState({ currentSelectedItem: id })
@@ -67,7 +68,7 @@ class Tab extends React.Component {
                                 item = {item}
                                 isSelected = {currentSelectedItem === item.id}
                                 hideLabel = {hideLabel}
-                                tabSelected = {this.tabSelected({id: item.id})}
+                                tabSelected = {this.tabSelected}
                             />
                         )
                     }
