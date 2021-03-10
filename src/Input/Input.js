@@ -107,7 +107,7 @@ class Input extends React.Component {
 
         return (
             <>
-                <style>{styles}</style>
+                <style type="text/css">{styles}</style>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
                     {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
                     <div className="input-group">
