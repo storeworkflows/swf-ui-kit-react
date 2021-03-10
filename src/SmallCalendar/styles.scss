@@ -1,0 +1,180 @@
+
+.calendar-mobile__wrapper {
+  overflow: hidden;
+
+  .calendar-mobile__header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    align-items: center;
+    justify-items: center;
+    padding: .6em 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .calendar-mobile__controller {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    justify-items: center;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-top: 0.5em;
+
+    .navigation-arrow--left,
+    .navigation-arrow--right {
+      z-index: 1;
+      width: 100%;
+      background-color: RGB(249, 249, 249);
+      height: 100%;
+      position: relative;
+    }
+
+    .navigation-arrow--left {
+      padding-left: 0.5em;
+
+      .navigation-arrow--left-btn {
+        position: absolute;
+        background-color: RGB(249, 249, 249);
+        left: 0.5em;
+        bottom: -0.3em;
+        display: flex;
+        width: 32px;
+        height: 32px;
+        justify-content: center;
+        align-items: center;
+
+        i {
+          color: #1e856d;
+        }
+      }
+    }
+
+    .navigation-arrow--right {
+      padding-right: 0.5em;
+
+      .navigation-arrow--right-btn {
+        position: absolute;
+        background-color: RGB(249, 249, 249);
+        right: 0.5em;
+        bottom: -0.3em;
+        display: flex;
+        width: 32px;
+        height: 32px;
+        justify-content: center;
+        align-items: center;
+
+        i {
+          color: #1e856d;
+        }
+      }
+    }
+
+    .calendar-mobile__month-items {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-columns: repeat(3, 100%);
+      position: relative;
+      justify-items: center;
+      align-items: center;
+      width: 100%;
+
+      // right: 100%;
+      &.--prev-month {
+        right: 0;
+        transition: all 0.3s;
+      }
+
+      &.--current-month {
+        right: 100%;
+      }
+
+      &.--next-month {
+        right: 200%;
+        transition: all 0.3s;
+      }
+
+      .--currentMonth {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .calendar-mobile__body-wrapper {
+    display: grid;
+    grid-auto-flow: column;
+    position: relative;
+    grid-template-columns: repeat(3, 100%);
+
+    &.--prev-month {
+      right: 0;
+      transition: all 0.3s;
+    }
+
+    &.--current-month {
+      right: 100%;
+    }
+
+    &.--next-month {
+      right: 200%;
+      transition: all 0.3s;
+    }
+
+    .calendar-mobile__body {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      align-items: center;
+      justify-items: center;
+      width: 10px;
+      top: 0;
+      position: relative;
+
+      .date {
+        border-radius: 50%;
+
+        &.--choosen {
+          background-color: #58948b;
+          color: #fff;
+          height: 2.5em;
+          width: 2.5em;
+        }
+      }
+
+      .calendar-mobile__day {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        padding: 0.7em 0.8em;
+        border-radius: 50%;
+        cursor: pointer;
+        position: relative;
+
+        &.--disabled {
+          color: #9f9f9f;
+        }
+
+        &.--current {
+          color: red;
+          font-weight: bold;
+        }
+
+        &.--choosen {
+          color: #fff;
+        }
+
+        .task-presence {
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background-color: rgb(75, 166, 107);
+          position: absolute;
+          bottom: 5px;
+        }
+      }
+    }
+  }
+}

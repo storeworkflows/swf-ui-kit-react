@@ -152,8 +152,8 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
         if(needMoveContentY && hasArrow)
             addPxY = -ARROW_SIZE - ARROW_SPACE;
 
-        top = targetDimensions.y - (contentDimensions.y - contentDimensions.top) + calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
-        left = targetDimensions.x - (contentDimensions.x - contentDimensions.left) + calculatePosition(horizontalAlign, horizontalAlignment, targetWidth, addPxY);
+        top = targetDimensions.y - contentDimensions.y  + calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
+        left = targetDimensions.x - contentDimensions.x + calculatePosition(horizontalAlign, horizontalAlignment, targetWidth, addPxY);
 
         style.top = `${top}px`;
         style.left = `${left}px`;
