@@ -46,7 +46,8 @@
 .checkbox-label{
   align-items: center;
   margin: auto 4px auto 17px;
-  color: var(--checkbox-label-color);;
+  color: var(--checkbox-label-color);
+  cursor: var(--checkbox-cursor);
 }
 
 .checkbox-required{
