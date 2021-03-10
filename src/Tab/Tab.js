@@ -13,11 +13,30 @@ class Tab extends React.Component {
 
     constructor(props) {
         super(props);
+        this.tabSelected = this.tabSelected.bind(this);
+
         this.state = {
             currentSelectedItem: props.selectedItem
         }
     }
 
+    componentDidUpdate() {
+        const {manageSelectedItem, selectedItem} = this.props;
+        if(manageSelectedItem && selectedItem !== this.state.currentSelectedItem)
+            this.setState({currentSelectedItem : selectedItem});
+    }
+
+    tabSelected({id}){
+        const {disabled, manageSelectedItem, onClick} = this.props;
+
+        if (!disabled) {
+            onClick({id: id});
+
+            if(!manageSelectedItem)
+                this.setState({ currentSelectedItem: id })
+        }
+
+    }
 
     render() {
 
@@ -26,21 +45,10 @@ class Tab extends React.Component {
             items,
             fixedWidth,
             maxWidth,
-            manageSelectedItem,
-            tabsAlignment,
-            onClick
+            tabsAlignment
         } = this.props
 
         const {currentSelectedItem} = this.state;
-
-        const tabSelected = (id, disabled) => {
-            if (!disabled) {
-                onClick({id: id});
-
-                if(!manageSelectedItem)
-                    this.setState({ currentSelectedItem: id })
-            }
-        }
 
         return (
             <>
@@ -59,7 +67,7 @@ class Tab extends React.Component {
                                 item = {item}
                                 isSelected = {currentSelectedItem === item.id}
                                 hideLabel = {hideLabel}
-                                tabSelected = {tabSelected}
+                                tabSelected = {this.tabSelected({id: item.id})}
                             />
                         )
                     }
