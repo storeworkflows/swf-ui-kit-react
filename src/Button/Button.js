@@ -41,6 +41,7 @@ class Button extends React.Component {
 						{
 							"swf-button": true,
 							"active": !disabled,
+							"disabled": disabled,
 							"has-icon": _hasIcon
 						}
 					)}

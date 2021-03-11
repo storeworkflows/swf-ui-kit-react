@@ -139,6 +139,13 @@
   font-family: var(--mv9-kWzzvm--Pvmz-PrTAjO,var(--now-font-family));
   white-space: nowrap;
   margin: auto;
+
+  &.disabled{
+    background: #ededed;
+    color: #a5a5a5;
+  }
+
+
 }
 
 .content{
@@ -164,6 +171,8 @@
 }
 
 .active {
+  cursor: pointer;
+
   &.swf-button:hover {
     background: var(--hover-base-color);
     border-color: var(--hover-border-color);
