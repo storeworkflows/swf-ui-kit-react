@@ -8,7 +8,6 @@
   "dependencies": {
     "@tinymce/tinymce-react": "^2.6.1",
     "autosize": "^4.0.2",
-    "ckeditor5": "git+https://github.com/oleksandr-oliinyk/ckeditor5.git",
     "classnames": "^2.2.6",
     "cross-fetch": "^3.0.6",
     "lodash": "^4.17.20"

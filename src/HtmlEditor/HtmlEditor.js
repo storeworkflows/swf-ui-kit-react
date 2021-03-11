@@ -13,10 +13,13 @@ export default class HtmlEditor extends React.Component {
         }
         this.changeInput = this.changeInput.bind(this);
         this.toolbar = this.props.toolbar;
+        this.content = this.props.content;
+        this.readonly = this.props.readonly;
     }
 
-    changeInput(editor) {
-        this.setState({inputVal: editor.getData()});
+    changeInput(content) {
+        this.setState({inputVal: content});
+        console.log(content);
     }
 
     render() {
@@ -26,7 +29,18 @@ export default class HtmlEditor extends React.Component {
                 <Editor
                     apiKey="b6bpe90lvjdq7atv9dmi24bl3l5mzf5kseh9ziaxzc2n0woz"
                     toolbar={this.toolbar}
-                    menubar={false}
+                    plugins={[
+                        "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,sn_resizer,code"
+                    ]}
+                    // skin="lightgray"
+                    onEditorChange ={this.changeInput}
+                    init={{
+                        menubar: false,
+                        init_instance_callback: (editor) => {
+                            !!this.content ? editor.insertContent(this.content) : null;
+                            this.readonly ? editor.setMode("readonly") : null;
+                        }
+                    }}
                 />
             </>
         );
@@ -34,11 +48,15 @@ export default class HtmlEditor extends React.Component {
 }
 
 HtmlEditor.defaultProps = {
-    toolbar: 'bold italic underline undo redo | fontselect fontsizeselect table | link unlink | code  | alignleft aligncenter alignright | bullist numlist',
-    onValueChange: noop
+    toolbar: 'bold italic underline undo redo | fontselect fontsizeselect table | link unlink | code  | alignleft aligncenter alignright | bullist numlist | fullscreen',
+    onValueChange: noop,
+    content: "",
+    readonly: false
 }
 
 HtmlEditor.propTypes = {
     toolbar: propTypes.string,
-    onValueChange: propTypes.func
+    onValueChange: propTypes.func,
+    content: propTypes.string,
+    readonly: propTypes.bool
 }
