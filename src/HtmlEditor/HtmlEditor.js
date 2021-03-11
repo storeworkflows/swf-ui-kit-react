@@ -17,6 +17,7 @@ export default class HtmlEditor extends React.Component {
 
     changeInput(editor) {
         this.setState({inputVal: editor.getData()});
+        this.props?.properties?.onValueChange(editor.getData())
     }
 
     render() {
