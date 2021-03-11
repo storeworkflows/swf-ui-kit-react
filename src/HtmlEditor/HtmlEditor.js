@@ -1,7 +1,8 @@
 import propTypes from "prop-types";
 import * as React from "react";
 
-import ClassicEditor from "ckeditor5/packages/ckeditor5-build-classic/build/ckeditor";
+import {Editor} from "@tinymce/tinymce-react";
+import {noop} from "../../lib/utils";
 import styles from "./styles.css";
 
 export default class HtmlEditor extends React.Component {
@@ -14,18 +15,6 @@ export default class HtmlEditor extends React.Component {
         this.toolbar = this.props.toolbar;
     }
 
-    componentDidMount() {
-        ClassicEditor.create(this.ckRef, {
-            toolbar: this.toolbar,
-            fontSize: [
-                8, 10, 12, 14, 18, 24, 36
-            ],
-            save: (editor) => {
-                this.changeInput(editor);
-            }
-        })
-    }
-
     changeInput(editor) {
         this.setState({inputVal: editor.getData()});
     }
@@ -34,16 +23,22 @@ export default class HtmlEditor extends React.Component {
         return(
             <>
                 <style>{styles}</style>
-                <div ref={ elem => this.ckRef = elem } />
+                <Editor
+                    apiKey="b6bpe90lvjdq7atv9dmi24bl3l5mzf5kseh9ziaxzc2n0woz"
+                    toolbar={this.toolbar}
+                    menubar={false}
+                />
             </>
         );
     }
 }
 
 HtmlEditor.defaultProps = {
-    toolbar: [ 'bold', 'italic', "underline", "undo", "redo", "|", "fontFamily" , "fontSize" , 'insertTable', "|", 'link', "|", "code", "|", "alignment:left", "alignment:center", "alignment:right", "|", 'bulletedList', 'numberedList', "imageUpload" ]
+    toolbar: 'bold italic underline undo redo | fontselect fontsizeselect table | link unlink | code  | alignleft aligncenter alignright | bullist numlist',
+    onValueChange: noop
 }
 
 HtmlEditor.propTypes = {
-    toolbar: propTypes.arrayOf(propTypes.string)
+    toolbar: propTypes.string,
+    onValueChange: propTypes.func
 }
