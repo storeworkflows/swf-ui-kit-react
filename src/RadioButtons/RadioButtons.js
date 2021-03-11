@@ -9,10 +9,12 @@ import {RADIO_BUTTONS_LAYOUT} from "./constants";
 class RadioButtons extends React.Component {
     constructor(props) {
         super(props);
-        this.optionClicked = this.optionClicked.bind(this) ;
+        this.optionClicked = this.optionClicked.bind(this);
+        this.optionInvalid = this.optionInvalid.bind(this);
 
         this.state = {
-            selectedValue: this.props.value
+            selectedValue: this.props.value,
+            isInvalid: this.props.invalid
         }
     }
 
@@ -22,7 +24,14 @@ class RadioButtons extends React.Component {
             onChange(option)
         else
             this.setState({selectedValue: option.id});
+    }
 
+    optionInvalid(){
+        const {manageInvalid, onInvalid} = this.props;
+        if(manageInvalid)
+            onInvalid()
+        else
+            this.setState({isInvalid: true});
     }
 
     renderValue(option, name){
@@ -48,24 +57,28 @@ class RadioButtons extends React.Component {
                 readonly = {readonly || this.props.readonly}
                 disabled = {disabled || this.props.disabled}
                 required = {this.props.required}
-                invalid = {this.props.invalid}
+                invalid = {this.state.isInvalid}
                 name = {name}
                 onChangeAction = {this.optionClicked}
+                onInvalidAction = {this.optionInvalid}
                 isHorizontal = {isHorizontal}
             />
         )
     }
 
     componentDidUpdate(){
-        let selectedValue = this.props.value;
-        if(this.props.manageValue && selectedValue!== this.state.selectedValue)
-            this.setState({selectedValue: selectedValue});
+        let {value, invalid, manageValue, manageInvalid} = this.props;
+
+        if(manageValue && value!== this.state.selectedValue)
+            this.setState({selectedValue: value});
+
+        if(manageInvalid && invalid!== this.state.isInvalid)
+            this.setState({isInvalid: invalid});
     }
 
     render() {
 
         const {
-            invalid,
             label,
             name,
             options,
@@ -78,7 +91,7 @@ class RadioButtons extends React.Component {
                 <div className={"radio-buttons-container"}>
                     <div className={classnames({
                                  "radio-buttons-header": true,
-                                 "invalid": invalid
+                                 "invalid": this.state.isInvalid
                              })}
                     >
                         { label && <span className={"radio-buttons-label"}>{label}</span>}
@@ -99,7 +112,8 @@ RadioButtons.defaultProps = {
     manageValue: false,
     options: [],
     readonly: false,
-    required: false
+    required: false,
+    manageInvalid: false
 };
 
 RadioButtons.propTypes = {
@@ -110,6 +124,7 @@ RadioButtons.propTypes = {
         [RADIO_BUTTONS_LAYOUT.vertical, RADIO_BUTTONS_LAYOUT.horizontal]
     ),
     manageValue: propTypes.bool,
+    manageInvalid: propTypes.bool,
     name: propTypes.string,
     options: propTypes.arrayOf(
         propTypes.shape({
@@ -123,7 +138,8 @@ RadioButtons.propTypes = {
     readonly: propTypes.bool,
     required: propTypes.bool,
     value: propTypes.string,
-    onChange: propTypes.func
+    onChange: propTypes.func,
+    onInvalid: propTypes.func
 }
 
 export default RadioButtons

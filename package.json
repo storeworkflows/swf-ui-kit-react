@@ -12,6 +12,7 @@
     "cross-fetch": "^3.0.6",
     "lodash": "^4.17.20",
     "uuid": "^8.3.2"
+    "hammerjs": "^2.0.8",
   },
   "peerDependencies": {
     "react": "^17.0.1",
@@ -19,7 +20,7 @@
   },
   "scripts": {
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",
-    "build": "babel src --out-dir lib --source-maps true --copy-files"
+    "build": "babel src --out-dir lib --source-maps false --copy-files"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",

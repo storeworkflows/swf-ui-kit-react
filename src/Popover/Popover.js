@@ -16,8 +16,8 @@ class Popover extends React.Component {
             opened: false
         }
 
-        this.targetRef = React.createRef();
-        this.contentRef = React.createRef();
+        this.targetRef = null;
+        this.contentRef = null;
     }
 
     renderContent() {
@@ -31,7 +31,7 @@ class Popover extends React.Component {
                     "popover-content": true,
                     "noRoundBorder": !roundBorder
                     })}
-                    ref={this.contentRef}>
+                    ref={el => this.contentRef = el}>
             <div className={"popover-content-keeper"}>{content}</div>
             </div>;
 
@@ -42,17 +42,17 @@ class Popover extends React.Component {
         const target = findByType(children, "Target");
 
         if(positionTarget){
-            if(this.targetRef.current === null || this.targetRef!==positionTarget)
+            if(this.targetRef === null || this.targetRef!==positionTarget.current)
             {
-                this.targetRef = positionTarget;
-                if(this.contentRef && this.contentRef.current){
+                this.targetRef = positionTarget.current;
+                if(this.contentRef){
                     this.resetStyles();
                     if(this.state.opened)
                         this.setStylesToContent()
                 }
             }
 
-            this.targetRef.current.onclick = this.targetClicked;
+            this.targetRef.onclick = this.targetClicked;
             return null;
         }
 
@@ -60,7 +60,7 @@ class Popover extends React.Component {
             return null;
 
         return <div className={"popover-target"}
-                    ref={this.targetRef}
+                    ref={ el => this.targetRef = el}
                     onClick={ this.targetClicked }>
                         {target}
                 </div>
@@ -85,11 +85,10 @@ class Popover extends React.Component {
 
 
     setStylesToContent() {
-        if(this.contentRef && this.contentRef.current) {
+        if(this.contentRef && this.targetRef) {
             const {positions, hideTail, roundBorder} = this.props;
-            let contentElement = this.contentRef.current;
-
-            let targetDimensions = this.targetRef.current.getBoundingClientRect()
+            let contentElement = this.contentRef;
+            let targetDimensions = this.targetRef.getBoundingClientRect()
             let contentDimensions = contentElement.getBoundingClientRect();
 
             let windowParam = {
@@ -106,8 +105,9 @@ class Popover extends React.Component {
             contentElement.style.left = styles.left;
             contentElement.style.top = styles.top;
             contentElement.style.visibility = "visible";
+
             if(styles.maxHeight)
-                contentElement.children[0].style.maxHeight= styles.maxHeight;
+                contentElement.children[0].style.maxHeight = styles.maxHeight;
             if(styles.maxWidth)
                 contentElement.children[0].style.maxWidth = styles.maxWidth;
 
@@ -119,13 +119,16 @@ class Popover extends React.Component {
     }
 
     resetStyles(){
-        if(this.contentRef && this.contentRef.current)
+        let contentElement = this.contentRef;
+        if(contentElement)
         {
-            let contentElement = this.contentRef.current;
             contentElement.style.visibility = "hidden";
-            contentElement.style.transform = `translate3d(${0}px, ${0}px, 0)`
+            contentElement.style.transform = `translate3d(0, 0, 0)`;
             contentElement.style.left =  0;
             contentElement.style.top = 0;
+            contentElement.children[0].style.maxHeight = 'none';
+            contentElement.children[0].style.maxWidth = 'none';
+            contentElement.style.margin = 0;
         }
     }
 

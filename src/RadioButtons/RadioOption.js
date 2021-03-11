@@ -22,6 +22,7 @@ class RadioOption extends React.Component {
             value,
             label,
             onChangeAction,
+            onInvalidAction,
             invalid,
             isHorizontal,
             required
@@ -50,7 +51,8 @@ class RadioOption extends React.Component {
                         readOnly={readonly}
                         name={name}
                         required={required}
-                        onChange={(e)=>{console.log(e)}}
+                        onChange={() => canChangeValue && onChangeAction({id: id, name: name, value: value})}
+                        onInvalid={() => onInvalidAction({id: id})}
                     />
                     <label className={"radio-option-label"}>{label}</label>
                 </div>
@@ -81,6 +83,7 @@ RadioOption.propTypes = {
     isHorizontal: propTypes.bool,
     name: propTypes.string,
     onChangeAction: propTypes.func,
+    onInvalidAction: propTypes.func,
     required: propTypes.bool
 }
 

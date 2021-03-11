@@ -44,6 +44,12 @@ class Icon extends React.Component {
 
   render () {
     let node = this.generateSvg(this.props.icon);
+
+    if (!node) {
+      console.error(`Icon error: unregistered icon ${this.props.icon}`)
+      return null
+    }
+
     return (
         <svg
             ref={elm => this.props.innerRef.current = elm}
