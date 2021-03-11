@@ -256,6 +256,10 @@ div.mce-tinymce-inline {
     background-color: #e1e1e1
 }
 
+.mce-branding {
+    display: none !important;
+}
+
 .mce-branding-powered-by {
     background-color: #f0f0f0;
     position: absolute;
