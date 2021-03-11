@@ -23,9 +23,6 @@ class SmallCalendar extends React.Component {
             openedDate: new Date(defaultDate)
         }
 
-        this.calendarElem = null;
-        this.headerRef = null;
-        this.containerRef = null;
     }
 
     setDate(day, isActive){
@@ -141,7 +138,6 @@ class SmallCalendar extends React.Component {
                     "next": isNext
                 })}
                 onClick = {() => this.changeMonth(isNext)}
-                ref = { el => isNext ? this.nextButtonRef = el : this.prevButtonRef = el}
             >
 
                 <Icon
@@ -169,10 +165,7 @@ class SmallCalendar extends React.Component {
 
                     <div className={"calendar-header"}>
                         {this.renderArrowButton(false)}
-                        <span
-                            className={"calendar-header-label"}
-                            ref = {el => this.headerRef = el}
-                        >
+                        <span className={"calendar-header-label"} >
                             {curMonthLabel}
                         </span>
                         {this.renderArrowButton(true)}
@@ -182,7 +175,7 @@ class SmallCalendar extends React.Component {
                             return <div className={"calendar-element week-day"}> {el} </div>
                         })}
                     </div>
-                    <div className={"calendar-view"} ref = {el => this.containerRef = el}>
+                    <div className={"calendar-view"} >
                         {this.renderMonth().map(el => el)}
                     </div>
                 </div>
