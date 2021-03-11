@@ -10,7 +10,8 @@
     "autosize": "^4.0.2",
     "classnames": "^2.2.6",
     "cross-fetch": "^3.0.6",
-    "lodash": "^4.17.20"
+    "lodash": "^4.17.20",
+    "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "react": "^17.0.1",
