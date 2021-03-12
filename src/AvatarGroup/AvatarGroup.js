@@ -26,7 +26,7 @@ class AvatarGroup extends React.Component {
     }
 
     render() {
-        const {size, max, canAdd, clickable, manageOpened, members, canRemove, onRemove} = this.props;
+        const {size, max, canAdd, clickable, manageOpened, members, canRemove, onRemove, customIcon} = this.props;
         const hasAdditionalMembers = members.length > max + 1;
         const maxViewers = hasAdditionalMembers ? max : members.length;
         const additionalMembers = members.length - max;
@@ -39,11 +39,11 @@ class AvatarGroup extends React.Component {
                 <div
                     ref={elm => this.props.innerRef.current = elm}
                     className={
-                    classnames({
-                        "avatar-container": true,
-                        [`--${size}`]: true
-                    })
-                }
+                        classnames({
+                            "avatar-container": true,
+                            [`--${size}`]: true
+                        })
+                    }
                 >
                     {canAdd && <div
                         className={classnames({
@@ -59,7 +59,10 @@ class AvatarGroup extends React.Component {
                         "avatar-multiple": true,
                         "additional-members": true
                     })}>
-                        <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p>
+                        {customIcon ?
+                            <Icon icon={customIcon} size={size}/>
+                            :
+                            <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p> }
                     </div>}
 
                     {viewers.map((viewer, index) => (
@@ -93,7 +96,8 @@ AvatarGroup.defaultProps = {
     onRemove: noop,
     onClick: noop,
     manageOpened: false,
-    innerRef: React.createRef()
+    innerRef: React.createRef(),
+    customIcon: ""
 }
 
 AvatarGroup.propTypes = {
@@ -105,6 +109,7 @@ AvatarGroup.propTypes = {
     canRemove: PropTypes.bool,
     onClick: PropTypes.func,
     canAdd: PropTypes.bool,
+    customIcon: PropTypes.string,
     onAdd: PropTypes.func,
     onRemove: PropTypes.func,
     innerRef: PropTypes.object
