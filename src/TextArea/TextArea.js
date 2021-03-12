@@ -20,8 +20,11 @@ class TextArea extends React.Component {
     }
 
     onChange (event) {
-       // this.setState({value: event.target.value})
+        this.setState({value: event.target.value})
         this.props.onKeyDown(event)
+        if (this.textAreaRef.current) {
+            autosize(this.textAreaRef.current);
+        }
     }
 
     onFocus(event) {
