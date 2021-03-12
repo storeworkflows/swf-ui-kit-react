@@ -65,7 +65,7 @@ class Button extends React.Component {
 							</div>
 						}
 
-						{ _hasLabel && <label>{label}</label> }
+						{ _hasLabel && <label className={"button-label"}>{label}</label> }
 						{_slotElement && children}
 
 					</div>

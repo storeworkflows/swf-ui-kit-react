@@ -140,9 +140,17 @@
   white-space: nowrap;
   margin: auto;
 
+  .button-label{
+    cursor: pointer;
+  }
+
   &.disabled{
     background: #ededed;
     color: #a5a5a5;
+
+    .button-label{
+      cursor: default;
+    }
   }
 
 

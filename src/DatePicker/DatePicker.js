@@ -31,23 +31,33 @@ class DatePicker extends React.Component {
         });
     }
 
-    getDateString(date){
-        let monthNumber = date.getMonth();
+    getDateString(date, format){
+
+        let monthNumber = date.getMonth() + 1;
         let dayNumber = date.getDate();
 
         let month = monthNumber<10 ? `0${monthNumber}` : monthNumber;
         let day = dayNumber<10 ? `0${dayNumber}` : dayNumber;
-        return `${month}/${day}/${date.getFullYear()}`;
+        let year =date.getFullYear();
+
+        return format.replace('m', month).replace('d', day).replace('y', year);
+    }
+
+    componentDidMount() {
+        if(this.inputRef && this.inputRef.current){
+            let input = this.inputRef.current.querySelector("input");
+            console.log("mount", input)
+        }
     }
 
 
     render() {
-        const {label, defaultDate} = this.props;
+        const {label, defaultDate, format} = this.props;
         const {currentDate, isOpenedCalendar} = this.state
 
 
         let dateValue = (currentDate)
-            ? this.getDateString(currentDate)
+            ? this.getDateString(currentDate, format)
             : '';
 
         return (
@@ -56,8 +66,8 @@ class DatePicker extends React.Component {
                 <div ref = {el => this.inputRef = {current: el}}>
                     <Input
                         label={label}
-                        readonly={true}
                         value={dateValue}
+                        onChange={()=> console.log("changing")}
                     >
                         <Input.End>
                             <Button
@@ -94,13 +104,32 @@ class DatePicker extends React.Component {
     }
 }
 
+
+const GENERATE_FORMATS = () => {
+    let result = [];
+    let separators = [".", "/", "-"];
+
+    separators.forEach( s => {
+        result.push(`m${s}d${s}y`);
+        result.push(`m${s}y${s}d`);
+        result.push(`d${s}m${s}y`);
+        result.push(`d${s}y${s}m`);
+        result.push(`y${s}d${s}m`);
+        result.push(`y${s}m${s}d`);
+    })
+
+    return result;
+}
+
 DatePicker.defaultProps = {
-    label: ""
+    label: undefined,
+    format: "m.d.y"
 }
 
 DatePicker.propTypes = {
     label: propTypes.string,
-    defaultDate: propTypes.number
+    defaultDate: propTypes.number,
+    format: propTypes.oneOf(GENERATE_FORMATS)
 }
 
 export default DatePicker
