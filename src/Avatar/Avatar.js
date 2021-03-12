@@ -50,7 +50,7 @@ class Avatar extends React.Component {
     getInitials(name) {
         return name
             .split(" ")
-            .map((letter, index) => index < 2 && letter[0])
+            .map((letter, index) => index < 2 ? letter[0]: '')
             .join("")
             .toUpperCase();
     }

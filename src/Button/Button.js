@@ -41,6 +41,7 @@ class Button extends React.Component {
 						{
 							"swf-button": true,
 							"active": !disabled,
+							"disabled": disabled,
 							"has-icon": _hasIcon
 						}
 					)}
@@ -64,7 +65,7 @@ class Button extends React.Component {
 							</div>
 						}
 
-						{ _hasLabel && <label>{label}</label> }
+						{ _hasLabel && <label className={"button-label"}>{label}</label> }
 						{_slotElement && children}
 
 					</div>
