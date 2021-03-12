@@ -55,15 +55,15 @@ export default class HtmlEditor extends React.Component {
                     apiKey="b6bpe90lvjdq7atv9dmi24bl3l5mzf5kseh9ziaxzc2n0woz"
                     toolbar={this.toolbar}
                     plugins={[
-                        "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,sn_resizer,code"
+                        "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,code"
                     ]}
                     // skin="lightgray"
                     onEditorChange ={this.changeInput}
                     init={{
                         menubar: false,
                         init_instance_callback: (editor) => {
-                            !!this.content ? editor.insertContent(this.content) : null;
-                            this.readonly ? editor.setMode("readonly") : null;
+                            !!this.content ? editor.selection.setContent(this.content) : noop;
+                            this.readonly ? editor.setMode("readonly") : noop;
                         },
                         // images_upload_handler: (blobInfo, success, failure) => {
                         //     const selectedFile = blobInfo;

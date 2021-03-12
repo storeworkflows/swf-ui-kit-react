@@ -594,10 +594,14 @@ div.mce-tinymce-inline {
     position: relative
 }
 
+.mce-panel.mce-container.mce-tinymce#mceu_17 {
+    width: 99% !important;
+}
+
 .mce-panel {
     border: 0 solid #cacaca;
     border: 0 solid rgba(0, 0, 0, 0.2);
-    background-color: #f0f0f0
+    background-color: #f0f0f0;
 }
 
 .mce-floatpanel {
