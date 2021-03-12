@@ -20,9 +20,10 @@ class TextArea extends React.Component {
     }
 
     onChange (event) {
-        this.setState({value: event.target.value})
+       // this.setState({value: event.target.value})
         this.props.onKeyDown(event)
     }
+
     onFocus(event) {
         this.setState({focused: true})
     }
@@ -75,7 +76,7 @@ class TextArea extends React.Component {
                         })}
                         ref={(elm) => this.textAreaRef.current = elm}
                         name={this.props.name}
-                        value={this.state.value}
+                        value={this.props.value}
                         onChange={this.onChange}
                         onKeyDown={this.onChange}
                         onFocus={this.onFocus}
