@@ -34,9 +34,9 @@ class DatePicker extends React.Component {
         let separator = (format[2] === 'Y') ? format[4] : format[2];
 
         let isNumber = input>='0' && input <='9';
-        if(isNumber){
-            if()
-        }
+        // if(isNumber){
+        //     if()
+        // }
 
         this.setState((state)=>{return {stringValue: state.stringValue+input}})
     }
