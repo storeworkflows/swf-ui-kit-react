@@ -24,6 +24,7 @@ class DatePicker extends React.Component {
         this.inputRef = null;
         this.openCalendar = this.openCalendar.bind(this);
         this.changeValue = this.changeValue.bind(this);
+        this.dateSelected = this.dateSelected.bind(this);
     }
 
     changeValue({input}){
@@ -31,12 +32,14 @@ class DatePicker extends React.Component {
         const {format} = this.props;
         const {stringValue} = this.state;
 
-        let separator = (format[2] === 'Y') ? format[4] : format[2];
+        let isYearFirst = (format[0] === 'Y');
+        let separator = isYearFirst ? format[4] : format[2];
+        let currentPosition = stringValue.length;
 
         let isNumber = input>='0' && input <='9';
-        // if(isNumber){
-        //     if()
-        // }
+        if(isNumber){
+           // if(currentPosition ===0 && )
+        }
 
         this.setState((state)=>{return {stringValue: state.stringValue+input}})
     }
@@ -78,8 +81,8 @@ class DatePicker extends React.Component {
             : '';
 
          let separator = format[1];
-         //let patternValue = `d{2}${separator}d{2}${separator}d{4}`
-         console.log(separator);
+         let patternValue = `d{2}${separator}d{2}${separator}d{4}`
+         console.log(separator, patternValue);
 
         return (
             <>
@@ -90,7 +93,7 @@ class DatePicker extends React.Component {
                         value={stringValue}
                         onChange={(e)=> this.changeValue({ input: e.nativeEvent.data})}
                         placeholder={format}
-
+                        pattern={patternValue}
                     >
                         <Input.End>
                             <Button
