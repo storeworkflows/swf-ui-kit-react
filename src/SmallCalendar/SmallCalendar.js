@@ -6,140 +6,177 @@ import classnames from 'classnames';
 import hammer from "hammerjs";
 
 import styles from './styles.scss';
-import { DAYS_OF_WEEK } from "./constants";
-
 import Icon from "../Icon/Icon"
+
+const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 class SmallCalendar extends React.Component {
     constructor(props) {
         super(props);
+        this.changeMonth = this.changeMonth.bind(this);
+        this.setDate = this.setDate.bind(this);
+
+        const {defaultDate} = this.props;
 
         this.state = {
-            selectedDate: this.props.defaultDate
+            selectedDate: new Date(defaultDate),
+            openedDate: new Date(defaultDate)
         }
 
-        this._addSwipeEvents = this._addSwipeEvents.bind(this);
-
     }
 
-    _addSwipeEvents(elem) {
-        let mc = new Hammer(elem);
-        mc.on("swipeleft", this.handleChangeMonthClicked.bind(this, 'next'))
-        mc.on("swiperight", this.handleChangeMonthClicked.bind(this, 'prev'))
+    setDate(day, isActive){
+        const {openedDate} = this.state;
+        const {onSelected} = this.props;
+        let newSelected;
+
+        if(isActive)
+            newSelected = new Date(openedDate.getFullYear(), openedDate.getMonth(), day);
+        else {
+            let isNext = day>15 ? -1 : 1;
+            let updatedMonth = moment(openedDate).add(isNext, "month").toDate();
+
+            newSelected = new Date(updatedMonth.getFullYear(), updatedMonth.getMonth(), day);
+            this.setState({openedDate: updatedMonth});
+        }
+
+        this.setState({selectedDate: newSelected});
+        if(onSelected)
+            onSelected({date: newSelected});
     }
 
-    _getKeyByValue = (value, obj) => {
-        return Object.keys(obj).find(key => obj[key] === value)
+    changeMonth(isNext) {
+        let additionValue = isNext ? 1 : -1;
+        let changedTo = moment(this.state.openedDate).add(additionValue, "month");
+
+        this.setState({openedDate: changedTo.toDate()})
     }
 
-    handleDateClick(date) {
+    renderCalendarElement(day, isActive){
+        const {openedDate, selectedDate} = this.state;
 
+        let dayNumber = parseInt(day)
+
+        let selectedMonth = selectedDate.getMonth();
+        let selectedYear = selectedDate.getFullYear();
+        let openedMonth =  openedDate.getMonth();
+        let openedYear = openedDate.getFullYear();
+
+        let nextMonth = (openedMonth + 1) % 12;
+        let prevMonth = (openedMonth - 1) % 12;
+        let nextYear = (nextMonth === 0) ? (openedYear + 1) : openedYear;
+        let prevYear = (prevMonth === 11) ? (openedYear - 1) : openedYear;
+
+        let isSelectedDateInOpenedMonth = isActive && selectedMonth === openedMonth && selectedYear === openedYear ;
+        let isSelectedDateInNextMonth =  !isActive && selectedMonth === nextMonth && selectedYear === nextYear;
+        let isSelectedDateInPrevMonth =  !isActive && selectedMonth === prevMonth && selectedYear === prevYear;
+
+
+        let isSelected =  selectedDate.getDate() === dayNumber &&
+                        ( isSelectedDateInOpenedMonth
+                        || isSelectedDateInNextMonth
+                        || isSelectedDateInPrevMonth);
+
+        return (
+            <div className={
+                classnames({
+                    "calendar-element": true,
+                    "day-element": true,
+                    "notActive": !isActive,
+                    "active": isActive,
+                    "selected": isSelected
+                })}
+                 onClick={() =>  this.setDate(dayNumber, isActive)}
+            >
+                {day}
+            </div>
+        )
     }
 
-    handleChangeMonthClicked(button) {
+    componentDidMount() {
+       if(this.calendarElem){
+            let mc = new Hammer(this.calendarElem);
+            mc.on("swipeleft", () => this.changeMonth(true))
+            mc.on("swiperight", () => this.changeMonth(false))
+        }
+    }
 
+
+    renderMonth(){
+        const {openedDate} = this.state;
+        let result = [];
+
+        let openedMonth = openedDate.getMonth() + 1;
+        let currentWeek = moment(openedDate);
+        currentWeek.startOf("month").startOf("week")
+
+        for(let w=0; w<5; w++)
+        {
+            if(w>0)
+                currentWeek.add(1, 'week');
+            let currentDay = currentWeek.startOf("week");
+
+            for(let d=0; d<7; d++)
+            {
+                if(d>0)
+                    currentDay.add(1, "day");
+
+                const isActive = currentDay.format('M') === `${openedMonth}`;
+                result.push(this.renderCalendarElement(currentDay.format('D'), isActive));
+            }
+        }
+
+        return result;
+    }
+
+
+    renderArrowButton(isNext){
+        return (
+            <div
+                className={classnames({
+                    "calendar-arrow": true,
+                    "next": isNext
+                })}
+                onClick = {() => this.changeMonth(isNext)}
+            >
+
+                <Icon
+                    icon={isNext ? "chevron-right" : "chevron-left"}
+                    size={"sm"}/>
+            </div>
+        )
     }
 
 
     render() {
 
-        const {
-            defaultDate,
-        } = this.props;
-
-        const currentDate = moment([defaultDate.year, defaultDate.month, defaultDate.day])
-        let formattedCurDate = currentDate.format("YYYY-MM-DD");
+        const {openedDate} = this.state;
+        const currentDate = moment(openedDate)
+        let curMonthLabel = `${currentDate.format('MMMM')} ${currentDate.year()}`;
 
         return (
             <>
                 <style>{styles}</style>
-                <div className="calendar-mobile__wrapper" >
-                    <div className="calendar-mobile__controller">
-                        <div className="navigation-arrow--left">
-                            <div
-                                className="navigation-arrow--left-btn"
-                                onClick={this.handleChangeMonthClicked.bind(this, 'prev')}
-                            >
-                                <Icon icon="arrow-left" />
-                            </div>
-                        </div>
-                        <div className={classnames({
-                            "calendar-mobile__month-items": true
-                        })}>
-                            {Object.values(monthList).map(month =>
-                                <div
-                                    className={`--${this._getKeyByValue(month, monthList)}`}
-                                >
-                                    {`${month[0].choosenMonth} ${month[0].choosenYear}`}
-                                </div>)
-                            }
-                        </div>
-                        <div className="navigation-arrow--right">
-                            <div
-                                className="navigation-arrow--right-btn"
-                                onClick={this.handleChangeMonthClicked.bind(this, 'next')}
-                            >
-                                <Icon icon="arrow-right" />
-                            </div>
-                        </div>
+
+                <div
+                    className={"ui-kit__calendar-container"}
+                    ref = {el => this.calendarElem = el}
+                >
+
+                    <div className={"calendar-header"}>
+                        {this.renderArrowButton(false)}
+                        <span className={"calendar-header-label"} >
+                            {curMonthLabel}
+                        </span>
+                        {this.renderArrowButton(true)}
                     </div>
-                    <div className="calendar-mobile__header">
-                        {DAYS_OF_WEEK.map(day => (<div className="calendar-mobile__header-item">{day}</div>))}
-                    </div>
-                    <div
-                        className={classnames({
-                            "calendar-mobile__body-wrapper": true,
-                            "--prev-month": classFlags.prevIsCalled,
-                            "--current-month": !classFlags.prevIsCalled && !classFlags.nextIsCalled,
-                            "--next-month": classFlags.nextIsCalled,
+                    <div className={"week-days-container"}>
+                        {DAYS_OF_WEEK.map( el => {
+                            return <div className={"calendar-element week-day"}> {el} </div>
                         })}
-                        ref={this._addSwipeEvents}
-                    >
-                        {Object.values(monthList).map(month => (
-                            <div className={classnames({
-                                "calendar-mobile__body": true,
-                            })}>
-                                {month.map(date => (
-                                    <div className={classnames({
-                                        "date": true,
-                                        "--choosen": momentDate === formattedCurDate
-                                    })}
-                                         style={
-                                             {
-                                                 width: heatMap ? "100%" : "",
-                                                 height: heatMap ? "100%" : "",
-                                                 "border-radius": heatMap ? "0" : "",
-                                             }
-                                         }
-                                    >
-                                        <div className={classnames({
-                                            "calendar-mobile__day": true,
-                                            "--disabled": !date.inThisMonth,
-                                            "--current": isMomentDateSelected,
-                                            "--choosen": isMomentDateSelected
-                                        })}
-                                             style={
-                                                 {
-                                                     borderRadius: heatMap ? "none" : ""
-                                                 }
-                                             }
-                                             onClick={this.handleDateClick.bind(this, date)}
-                                        >
-                                            <span style={{
-                                                color: isMomentDateSelected && heatMap ? "#000" : "",
-                                                fontWeight: isMomentDateSelected && heatMap ? "800" : "",
-                                            }}>
-                                                {date.day}
-                                            </span>
-                                            {date.isTask && !heatMap && showProjects ?
-                                                <div className="task-presence"/>
-                                                : null
-                                            }
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
+                    </div>
+                    <div className={"calendar-view"} >
+                        {this.renderMonth().map(el => el)}
                     </div>
                 </div>
             </>
@@ -148,21 +185,12 @@ class SmallCalendar extends React.Component {
 }
 
 SmallCalendar.defaultProps = {
-    defaultDate: {
-        week: moment().get("week"),
-        day: moment().get("date"),
-        month: moment().month(),
-        year: moment().year(),
-    }
+    defaultDate: Date.now()
 }
 
 SmallCalendar.propTypes = {
-    defaultDate: propTypes.shape({
-        week: propTypes.number,
-        day: propTypes.number,
-        month: propTypes.number,
-        year: propTypes.number
-    })
+    defaultDate: propTypes.number,
+    onSelected: propTypes.func
 }
 
 

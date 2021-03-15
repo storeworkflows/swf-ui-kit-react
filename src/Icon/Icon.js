@@ -35,7 +35,15 @@ class Icon extends React.Component {
     let props = {};
     for(let i=0; i<attrs.length; i++){
       let curProps = attrs.item(i);
-      let name = curProps.name === "class" ? "className" : curProps.name;
+      let name = curProps.name;
+
+      if (curProps.name === "class")
+        name = "className";
+      if (curProps.name === "fill-rule")
+        name = "fillRule";
+      if (curProps.name === "fillrule")
+        name = "fillRule";
+
       props[name] = curProps.value;
     }
     return props;
