@@ -6,17 +6,16 @@ import {noop} from "../../lib/utils";
 import {v4 as uuidv4} from "uuid";
 import styles from "./styles.css";
 import fetch from "cross-fetch";
+import {Icon} from "../index";
 
 export default class HtmlEditor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            inputVal: ""
+            inputVal: "",
+            TinyMcEditor: null
         }
         this.changeInput = this.changeInput.bind(this);
-        this.toolbar = this.props.toolbar;
-        this.content = this.props.content;
-        this.readonly = this.props.readonly;
     }
 
     changeInput(content) {
@@ -25,35 +24,48 @@ export default class HtmlEditor extends React.Component {
         // console.log(content);
     }
 
-    // fetchRequest = async ({ url, params = {} }) => {
-    //     let result;
-    //     try {
-    //         const response = await fetch(url, {
-    //             ...params,
-    //             credentials: 'same-origin',
-    //             headers: {
-    //                 'X-Transaction-Source': window.transaction_source,
-    //                 'X-UserToken': window.g_ck,
-    //                 'Content-Type': 'multipart/form-data'
-    //             },
-    //         });
-    //         const resultJson = await response.json();
-    //         console.log(resultJson)
-    //         result = resultJson.result.slice(0,);
-    //     } catch (e) {
-    //         console.error(e)
-    //     }
-    //     return result;
-    // }
+    fetchRequest = async ({ url, params = {} }) => {
+        let result;
+        try {
+            const response = await fetch(url, {
+                ...params,
+                credentials: 'same-origin',
+                headers: {
+                    'X-Transaction-Source': window.transaction_source,
+                    'X-UserToken': window.g_ck,
+                    'Content-Type': 'multipart/form-data'
+                },
+            });
+            const resultJson = await response.json();
+            console.log(resultJson)
+            result = resultJson.result.slice(0,);
+        } catch (e) {
+            console.error(e)
+        }
+        return result;
+    }
 
     render() {
+        const {
+            toolbar,
+            content,
+            readonly,
+            label,
+            required
+        } = this.props;
+
+        const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)" 
 
         return(
             <>
                 <style>{styles}</style>
+                {!!label || required ? <div className="editor-label-area">
+                    <label style={{color: labelColor}} onClick={() => this.state.TinyMcEditor.focus()}>{label}</label>
+                    {required ? <Icon color={labelColor} icon="asterisk" size="xs" /> : null}
+                </div> : null}
                 <Editor
                     apiKey="b6bpe90lvjdq7atv9dmi24bl3l5mzf5kseh9ziaxzc2n0woz"
-                    toolbar={this.toolbar}
+                    toolbar={toolbar}
                     plugins={[
                         "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,code"
                     ]}
@@ -61,26 +73,30 @@ export default class HtmlEditor extends React.Component {
                     onEditorChange ={this.changeInput}
                     init={{
                         menubar: false,
+                        statusbar: false,
                         init_instance_callback: (editor) => {
-                            !!this.content ? editor.selection.setContent(this.content) : noop;
-                            this.readonly ? editor.setMode("readonly") : noop;
+                            !!content ? editor.selection.setContent(content) : noop;
+                            readonly ? editor.setMode("readonly") : noop;
+                            this.setState({TinyMcEditor: editor})
                         },
+                        width: "99%",
                         // images_upload_handler: (blobInfo, success, failure) => {
-                        //     const selectedFile = blobInfo;
-
-                        //     console.log(blobInfo)
-                            
-                        //     const formData = new FormData();
-                        //     formData.append("table_name", "sys_attachment");
-                        //     formData.append("table_sys_id", uuidv4().split("-").join(""));
-                        //     console.log("HELLOTHERE");
-                        //     // formData.append("file", selectedFile.file());
+                        //     const selectedFile = blobInfo.blob();
+                        //     const uuid = uuidv4().split("-").join("");
+                        //     const data = new FormData();
+                        //     data.append('table_name', `ZZ_YYsys_attachment`);
+                        //     data.append('table_sys_id', uuid);
+                        //     data.append('file', selectedFile);
+                        //     console.log("PROSHLO", uuid, selectedFile)
                         //     const params = {
                         //         method: "POST",
-                        //         data: formData
+                        //         data
                         //     }
                         //     // console.log(this);
-                        //     this.fetchRequest({url: "https://dev78490.service-now.com/api/now/attachment/upload", params})
+                        //     if (!!selectedFile.size) {
+                        //         console.log(selectedFile.size);
+                        //         this.fetchRequest({url: `${window.location.origin}/api/now/attachment/upload`, params})
+                        //     }
                         // }
                     }}
                 />
@@ -93,12 +109,16 @@ HtmlEditor.defaultProps = {
     toolbar: 'bold italic underline undo redo | fontselect fontsizeselect table | link unlink | code  | alignleft aligncenter alignright | bullist numlist | fullscreen',
     onValueChange: noop,
     content: "",
-    readonly: false
+    readonly: false,
+    label: "",
+    required: false
 }
 
 HtmlEditor.propTypes = {
     toolbar: propTypes.string,
     onValueChange: propTypes.func,
     content: propTypes.string,
-    readonly: propTypes.bool
+    readonly: propTypes.bool,
+    label: propTypes.string,
+    required: propTypes.bool
 }
