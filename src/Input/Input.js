@@ -1,6 +1,6 @@
 import * as React from "react";
 import classnames from "classnames";
-import styles from "./styles.css";
+import styles from "./styles.scss";
 
 import PropTypes from "prop-types";
 import findByType, {createSubComponent} from "../utils/findByType";
@@ -30,23 +30,31 @@ class Input extends React.Component {
     renderStart() {
         const {children} = this.props;
         const start = findByType(children, "Start");
+        const classes = classnames({
+            "form-control--start": true,
+            "--invalid": this.state?.invalid
+        })
 
-        if (!start) return null;
+        if (!start || start.length<1) return null;
 
         !this.state.hasStart && this.setState({hasStart: true})
 
-        return <div className="form-control--start">{start}</div>
+        return <div className={classes}>{start}</div>
     }
 
     renderEnd() {
         const {children} = this.props;
         const end = findByType(children, "End");
+        const classes = classnames({
+            "form-control--end": true,
+            "--invalid": this.state?.invalid
+        })
 
-        if (!end) return null;
+        if (!end || end.length<1) return null;
 
         !this.state.hasEnd && this.setState({hasEnd: true})
 
-        return <div className="form-control--end">{end}</div>
+        return <div className={classes}>{end}</div>
     }
 
     onBlur(event) {
@@ -109,6 +117,7 @@ class Input extends React.Component {
 
         const containerClasses = classnames({
             "form-group": true,
+            "--invalid": this.state?.invalid,
             [this.props.containerClass]: true
         })
 
@@ -158,8 +167,7 @@ class Input extends React.Component {
                                onChange={this.props.onChange}
                                onFocus={(event) => {
                                    this.onFocus(event)
-                               }
-                               }
+                               }}
                                onBlur={(event) => {
                                    this.onBlur(event)
                                }}
