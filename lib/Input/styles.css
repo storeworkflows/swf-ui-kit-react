@@ -71,6 +71,15 @@ label.--invalid {
     border-left: none;
     border-top-right-radius: 0.375rem;
     border-bottom-right-radius: 0.375rem;
+
+}
+
+.form-control--end.--invalid{
+    border-color: red;
+}
+
+.form-control--start.--invalid{
+    border-color: red;
 }
 
 .form-control {
