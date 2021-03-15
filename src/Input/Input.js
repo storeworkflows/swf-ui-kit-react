@@ -15,8 +15,11 @@ class Input extends React.Component {
         this.onBlur = this.onBlur.bind(this)
         this.onFocus = this.onFocus.bind(this)
         this.onInput = this.onInput.bind(this)
+        this.onInvalid = this.onInvalid.bind(this)
+
         this.state = {
             checked: this.props.checked,
+            invalid: this.props.invalid,
             hasStart: false,
             hasEnd: false,
             focused: false,
@@ -61,6 +64,22 @@ class Input extends React.Component {
         this.props.onInput(event)
     }
 
+    onInvalid(e){
+        const {manageInvalid, onInvalid} = this.props;
+
+        if(!manageInvalid)
+            this.setState({invalid: true});
+        onInvalid(e);
+    }
+
+    componentDidUpdate() {
+        const {invalid, manageInvalid} = this.props;
+
+        if(manageInvalid && this.state.invalid !== invalid)
+            this.setState({invalid: invalid});
+    }
+
+
     render() {
         const {
             disabled,
@@ -83,6 +102,7 @@ class Input extends React.Component {
             message
         } = this.props;
 
+
         const _hasLabel = label !== undefined;
         const _hasMessages = message.length > 0;
         const _moved = this.state.focused || value || this.state.hasStart;
@@ -95,13 +115,15 @@ class Input extends React.Component {
         const labelClasses = classnames({
             "inp-label": true,
             "--moved": _moved,
-            "--focused": this.state?.focused
+            "--focused": this.state?.focused,
+            "--invalid": this.state?.invalid
         });
 
         const inputClasses = classnames({
             "form-control": true,
             "no-start-border": this.state?.hasStart,
             "no-end-border": this.state?.hasEnd,
+            "--invalid": this.state?.invalid,
             [this.props.inputClass]: true
         })
 
@@ -141,6 +163,7 @@ class Input extends React.Component {
                                onBlur={(event) => {
                                    this.onBlur(event)
                                }}
+                               onInvalid={(e) => this.onInvalid(e)}
                         />
                         {this.renderEnd()}
                     </div>
@@ -229,6 +252,7 @@ Input.propTypes = {
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
+    onInvalid: PropTypes.func,
     internalRef: PropTypes.element
 }
 

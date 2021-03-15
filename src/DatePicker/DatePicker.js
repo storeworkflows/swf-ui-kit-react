@@ -12,8 +12,8 @@ class DatePicker extends React.Component {
 
     constructor(props) {
         super(props);
-        const {defaultDate} = this.props;
-        let currentDateValue = (defaultDate) ? new Date(defaultDate) : null;
+        const {value} = this.props;
+        let currentDateValue = (value) ? new Date(value) : null;
 
         this.state = {
             stringValue: currentDateValue,
@@ -22,18 +22,19 @@ class DatePicker extends React.Component {
         }
 
         this.inputRef = null;
-        this.openCalendar = this.openCalendar.bind(this);
+
         this.changeValue = this.changeValue.bind(this);
+        this.openCalendar = this.openCalendar.bind(this);
         this.dateSelected = this.dateSelected.bind(this);
     }
 
     changeValue({input}){
         console.log(input)
-        const {format} = this.props;
+        const {pattern} = this.props;
         const {stringValue} = this.state;
 
-        let isYearFirst = (format[0] === 'Y');
-        let separator = isYearFirst ? format[4] : format[2];
+        let isYearFirst = (pattern[0] === 'Y');
+        let separator = isYearFirst ? pattern[4] : pattern[2];
         let currentPosition = stringValue.length;
 
         let isNumber = input>='0' && input <='9';
@@ -44,14 +45,18 @@ class DatePicker extends React.Component {
         this.setState((state)=>{return {stringValue: state.stringValue+input}})
     }
 
+    dateSelected(date){
+        this.setState({currentDate: date, stringValue: date})
+    }
 
+l
     openCalendar(){
         this.setState((state) => {
             return{isOpenedCalendar: !state.isOpenedCalendar}
         });
     }
 
-    getDateString(date, format){
+    getDateString(date, pattern){
 
         let monthNumber = date.getMonth() + 1;
         let dayNumber = date.getDate();
@@ -60,29 +65,29 @@ class DatePicker extends React.Component {
         let day = dayNumber<10 ? `0${dayNumber}` : dayNumber;
         let year =date.getFullYear();
 
-        return format.replace('MM', month).replace('DD', day).replace('YYYY', year);
+        return pattern.replace('MM', month).replace('DD', day).replace('YYYY', year);
     }
 
     componentDidMount() {
         if(this.inputRef && this.inputRef.current){
             let input = this.inputRef.current.querySelector("input");
-            console.log("mount", input)
+            //console.log("mount", input)
         }
     }
 
 
     render() {
-        const {label, defaultDate, format} = this.props;
+        const {label, value, pattern} = this.props;
         const {stringValue, currentDate, isOpenedCalendar} = this.state
 
 
         let dateValue = (currentDate)
-            ? this.getDateString(currentDate, format)
+            ? this.getDateString(currentDate, pattern)
             : '';
 
-         let separator = format[1];
-         let patternValue = `d{2}${separator}d{2}${separator}d{4}`
-         console.log(separator, patternValue);
+        let separator = (pattern[0] === 'Y') ? pattern[4] : pattern[2];
+        let patternValue = `d{2}${separator}d{2}${separator}d{4}`
+        // console.log(separator, patternValue);
 
         return (
             <>
@@ -90,10 +95,11 @@ class DatePicker extends React.Component {
                 <div ref = {el => this.inputRef = {current: el}}>
                     <Input
                         label={label}
-                        value={stringValue}
-                        onChange={(e)=> this.changeValue({ input: e.nativeEvent.data})}
-                        placeholder={format}
+                        value={dateValue}
+                        //onChange={(e)=> this.changeValue({ input: e.nativeEvent.data})}
+                        placeholder={pattern}
                         pattern={patternValue}
+                        invalid = {true}
                     >
                         <Input.End>
                             <Button
@@ -118,8 +124,8 @@ class DatePicker extends React.Component {
                         >
                             <Popover.Content>
                                 <SmallCalendar
-                                    onSelected={({date}) => this.setState({currentDate: date})}
-                                    defaultDate={(defaultDate) ? defaultDate : undefined}
+                                    onSelected={({date}) => this.dateSelected(date)}
+                                    defaultDate={(value) ? value : undefined}
                                 />
                             </Popover.Content>
                         </Popover>
@@ -149,13 +155,18 @@ const GENERATE_FORMATS = () => {
 
 DatePicker.defaultProps = {
     label: undefined,
-    format: "MM.DD.YYYY"
+    pattern: "MM.DD.YYYY",
+    mandatory: false,
+    readonly: false
 }
 
 DatePicker.propTypes = {
     label: propTypes.string,
-    defaultDate: propTypes.number,
-    format: propTypes.oneOf(GENERATE_FORMATS)
+    value: propTypes.string,
+    pattern: propTypes.oneOf(GENERATE_FORMATS),
+    onValueChange: propTypes.func,
+    mandatory: propTypes.bool,
+    readonly: propTypes.bool
 }
 
 export default DatePicker
