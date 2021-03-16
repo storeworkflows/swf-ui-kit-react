@@ -77,9 +77,10 @@ export default class HtmlEditor extends React.Component {
                             !!content ? editor.selection.setContent(content) : noop;
                             readonly ? editor.setMode("readonly") : noop;
                             this.setState({TinyMcEditor: editor})
-                            editor.dom.setStyle(editor.getContentAreaContainer(), "height", height);
+                            editor.dom.setStyle(editor.iframeElement, "height", height);
                         },
                         width: "99%",
+                        height: 0
                         // images_upload_handler: (blobInfo, success, failure) => {
                         //     const selectedFile = blobInfo.blob();
                         //     const uuid = uuidv4().split("-").join("");
