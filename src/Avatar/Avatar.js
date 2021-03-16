@@ -40,7 +40,10 @@ class Avatar extends React.Component {
         }
     }
 
-    onClick() {
+    onClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         if (this.props.clickable) {
             this.setState({open: !this.state?.open})
             this.props.onClick();
@@ -136,20 +139,20 @@ class Avatar extends React.Component {
                     </div>
                     <div onClick={(e) => {
                         e.stopPropagation();
-                        console.log("Remove clicked", id)
+                        e.preventDefault();
+
                         this.props.onRemove({id});
                     }}>
-
-                        <Icon
-                            className={classnames({
-                                "remove": true,
-                                "visible": canRemove && openState
-                            })}
-                            icon="x"
-                            size="md"
-                        />
+                        <div className={classnames({
+                            "remove": true,
+                            "visible": canRemove && openState
+                        })}>
+                            <Icon
+                                icon="x"
+                                size="md"
+                            />
+                        </div>
                     </div>
-
                 </div>
             </>
         )
