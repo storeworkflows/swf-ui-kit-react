@@ -21,7 +21,6 @@ export default class HtmlEditor extends React.Component {
     changeInput(content) {
         this.setState({inputVal: content});
         this.props?.onValueChange(content);
-        // console.log(content);
     }
 
     fetchRequest = async ({ url, params = {} }) => {
@@ -51,7 +50,8 @@ export default class HtmlEditor extends React.Component {
             content,
             readonly,
             label,
-            required
+            required,
+            // height
         } = this.props;
 
         const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)" 
@@ -64,20 +64,20 @@ export default class HtmlEditor extends React.Component {
                     {required ? <Icon color={labelColor} icon="asterisk" size="xs" /> : null}
                 </div> : null}
                 <Editor
-                    apiKey="b6bpe90lvjdq7atv9dmi24bl3l5mzf5kseh9ziaxzc2n0woz"
                     toolbar={toolbar}
                     plugins={[
                         "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,code"
                     ]}
-                    // skin="lightgray"
                     onEditorChange ={this.changeInput}
                     init={{
                         menubar: false,
                         statusbar: false,
                         init_instance_callback: (editor) => {
+                            const height = !!this.props.height ? this.props.height : `${Math.round(document.body.offsetHeight * 0.6) - 36}px`;
                             !!content ? editor.selection.setContent(content) : noop;
                             readonly ? editor.setMode("readonly") : noop;
                             this.setState({TinyMcEditor: editor})
+                            editor.dom.setStyle(editor.getContentAreaContainer(), "height", height);
                         },
                         width: "99%",
                         // images_upload_handler: (blobInfo, success, failure) => {
@@ -111,7 +111,8 @@ HtmlEditor.defaultProps = {
     content: "",
     readonly: false,
     label: "",
-    required: false
+    required: false,
+    height: ""
 }
 
 HtmlEditor.propTypes = {
@@ -120,5 +121,6 @@ HtmlEditor.propTypes = {
     content: propTypes.string,
     readonly: propTypes.bool,
     label: propTypes.string,
-    required: propTypes.bool
+    required: propTypes.bool,
+    height: propTypes.string
 }
