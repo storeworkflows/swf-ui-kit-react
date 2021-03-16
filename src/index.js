@@ -22,3 +22,4 @@ export {default as Avatar} from "./Avatar/Avatar"
 export {default as AvatarGroup} from "./AvatarGroup/AvatarGroup";
 export {default as Modal} from "./Modal/Modal";
 export {default as HtmlEditor} from "./HtmlEditor/HtmlEditor";
+export {default as Preloader} from "./Preloader/Preloader";

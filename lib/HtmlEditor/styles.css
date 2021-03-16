@@ -69,11 +69,15 @@
     z-index: 100
 }
 
+div.mce-fullscreen.mce-panel.mce-container.mce-tinymce {
+    border-radius: 0;
+}
+
 div.mce-fullscreen {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100% !important;
     height: auto
 }
 
@@ -90,8 +94,16 @@ div.mce-fullscreen {
 
 div.mce-edit-area {
     background: #FFF;
-    filter: none
+    filter: none;
+    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
 }
+
+div.mce-edit-area iframe {
+    border-radius: inherit;
+}
+
+
 
 .mce-statusbar {
     position: relative
@@ -197,7 +209,9 @@ div.mce-tinymce-inline {
 }
 
 .mce-toolbar-grp {
-    padding: 2px 0
+    padding: 2px 0;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
 }
 
 .mce-toolbar-grp .mce-flow-layout-item {
@@ -594,10 +608,6 @@ div.mce-tinymce-inline {
     position: relative
 }
 
-.mce-panel.mce-container.mce-tinymce#mceu_17 {
-    width: 99% !important;
-}
-
 .mce-panel {
     border: 0 solid #cacaca;
     border: 0 solid rgba(0, 0, 0, 0.2);
@@ -677,6 +687,11 @@ div.mce-tinymce-inline {
 .mce-floatpanel.mce-popover.mce-bottom.mce-end>.mce-arrow {
     right: 10px;
     left: auto
+}
+
+.mce-panel.mce-container.mce-tinymce {
+    /* width: 99% !important; */
+    border-radius: 1rem;
 }
 
 .mce-fullscreen {
@@ -1312,7 +1327,8 @@ body .mce-abs-layout-item,
 .mce-btn-group .mce-btn {
     border-width: 1px;
     margin: 0;
-    margin-left: 2px
+    margin-left: 2px;
+    border-radius: 0.5rem;
 }
 
 .mce-btn-group:not(:first-child) {
@@ -2276,7 +2292,9 @@ i.mce-i-resize {
 }
 
 .mce-splitbtn .mce-open {
-    border-left: 1px solid transparent
+    border-left: 1px solid transparent;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
 }
 
 .mce-splitbtn:hover .mce-open {
@@ -2295,7 +2313,7 @@ i.mce-i-resize {
 
 .mce-splitbtn .mce-open.mce-active {
     background-color: #dbdbdb;
-    outline: 1px solid #ccc
+    /* outline: 1px solid #ccc */
 }
 
 .mce-splitbtn.mce-btn-small .mce-open {
@@ -2938,4 +2956,20 @@ i.mce-i-resize {
 i.mce-i-backcolor {
     text-shadow: none;
     background: #BBB
+}
+
+.editor-label-area {
+    margin-block-end: 0.125rem;
+    font-size: 0.75rem;
+    line-height: 1.33333;
+    margin-inline: 0.25rem;
+}
+
+.editor-label-area label {
+    margin-inline-end: 0.25rem;
+}
+
+/*Container, container body, iframe*/
+.mce-tinymce, .mce-container-body, #code_ifr {
+    min-height: 100% !important;
 }
