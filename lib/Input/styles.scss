@@ -121,7 +121,6 @@ label.--invalid {
 
 .form-control.--invalid{
   border-color: red;
-  box-shadow: 0 0.313rem 0.719rem rgba(255, 123, 0, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
 }
 
 .form-control.no-start-border:focus,
@@ -154,9 +153,9 @@ label.--invalid {
 
   .--invalid{
     border-color: red;
- //   box-shadow: 0 0.313rem 0.719rem rgba(255, 123, 0, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
   }
 }
+
 .form-control:focus {
   color: #495057;
   background-color: #fff;
@@ -165,14 +164,13 @@ label.--invalid {
 
   &.--invalid{
     border-color: red;
-  //  box-shadow: 0 0.313rem 0.719rem rgba(255, 123, 0, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
   }
 }
+
 .form-control:hover {
   border-color: #8fa4b8;
   &.--invalid{
     border-color: red;
-   // box-shadow: 0 0.313rem 0.719rem rgba(255, 123, 0, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
   }
 }
 

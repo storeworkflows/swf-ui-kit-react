@@ -1,3 +1,4 @@
+import moment from "moment";
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
@@ -8,17 +9,22 @@ import Button from "../Button/Button";
 import Popover from "../Popover/Popover";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 
+import {addCharToDate} from "./utils";
+
 class DatePicker extends React.Component {
 
     constructor(props) {
         super(props);
-        const {value} = this.props;
-        let currentDateValue = (value) ? new Date(value) : null;
+        const {value, format, opened, invalid, manageInvalid} = this.props;
+
+        let dateValue = moment(value, format);
+        let invalidValue = invalid || ( value && !manageInvalid && !dateValue.isValid());
 
         this.state = {
-            stringValue: currentDateValue,
-            currentDate: currentDateValue,
-            isOpenedCalendar: false
+            stringValue: value,
+            currentDate: dateValue.isValid() ? dateValue.toDate() : null,
+            isOpened: opened,
+            isInvalid: invalidValue
         }
 
         this.inputRef = null;
@@ -26,68 +32,102 @@ class DatePicker extends React.Component {
         this.changeValue = this.changeValue.bind(this);
         this.openCalendar = this.openCalendar.bind(this);
         this.dateSelected = this.dateSelected.bind(this);
+        this.invalidInput = this.invalidInput.bind(this);
     }
 
-    changeValue({input}){
-        console.log(input)
-        const {pattern} = this.props;
+    changeValue(e){
+        e.preventDefault();
+        let input = e.nativeEvent.data;
+        const {format, manageValue, onValueChange} = this.props;
         const {stringValue} = this.state;
 
-        let isYearFirst = (pattern[0] === 'Y');
-        let separator = isYearFirst ? pattern[4] : pattern[2];
-        let currentPosition = stringValue.length;
+        onValueChange({oldValue: stringValue, input: input});
 
-        let isNumber = input>='0' && input <='9';
-        if(isNumber){
-           // if(currentPosition ===0 && )
+        if(!manageValue) {
+            let newDateString = addCharToDate(format, stringValue, input);
+            this.setState({stringValue: newDateString})
         }
-
-        this.setState((state)=>{return {stringValue: state.stringValue+input}})
     }
 
     dateSelected(date){
-        this.setState({currentDate: date, stringValue: date})
-    }
+        const {manageValue, onValueChange} = this.props;
+        let dateInFormat =  moment(date).format(this.props.format);
 
-l
-    openCalendar(){
-        this.setState((state) => {
-            return{isOpenedCalendar: !state.isOpenedCalendar}
-        });
-    }
-
-    getDateString(date, pattern){
-
-        let monthNumber = date.getMonth() + 1;
-        let dayNumber = date.getDate();
-
-        let month = monthNumber<10 ? `0${monthNumber}` : monthNumber;
-        let day = dayNumber<10 ? `0${dayNumber}` : dayNumber;
-        let year =date.getFullYear();
-
-        return pattern.replace('MM', month).replace('DD', day).replace('YYYY', year);
-    }
-
-    componentDidMount() {
-        if(this.inputRef && this.inputRef.current){
-            let input = this.inputRef.current.querySelector("input");
-            //console.log("mount", input)
+        if(!manageValue)
+        {
+            onValueChange({oldValue: this.state.stringValue, newValue: dateInFormat});
+            this.setState({
+                currentDate: date,
+                stringValue: dateInFormat
+            })
         }
+    }
+
+    invalidInput(isInvalid){
+        const {manageInvalid, onInvalid} = this.props;
+
+        if(!manageInvalid)
+            this.setState({isInvalid: isInvalid});
+        onInvalid(isInvalid);
+    }
+
+    openCalendar(){
+        const {manageOpened, onOpen, format} = this.props;
+        const {isOpened, stringValue} = this.state;
+
+        let openState = isOpened;
+        let isValidStringDate = moment(stringValue, format).isValid();
+
+        if(!manageOpened) {
+            openState = !openState;
+
+            if(isValidStringDate)
+                this.setState({currentDate: moment(stringValue, format).toDate()})
+            else
+                this.setState( {
+                    stringValue: '',
+                    currentDate: null
+                });
+
+            this.setState({isOpened: openState});
+        }
+
+        onOpen(openState)
+    }
+
+    componentDidUpdate() {
+        const {manageInvalid, manageOpened, manageValue, opened, invalid, value, format} = this.props
+        const {isInvalid, isOpened, stringValue} = this.state;
+
+        if(manageInvalid && isInvalid !== invalid)
+            this.invalidInput(invalid)
+        if(manageOpened && opened!==isOpened)
+            this.openCalendar();
+        if(manageValue && value!==stringValue)
+        {
+            let dateValue = moment(value, format);
+            let invalidValue = invalid || ( value && !manageInvalid && !dateValue.isValid());
+
+            this.setState({
+                stringValue: value,
+                currentDate: dateValue.isValid() ? dateValue.toDate() : null,
+                invalid: invalidValue
+            })
+        }
+
     }
 
 
     render() {
-        const {label, value, pattern} = this.props;
-        const {stringValue, currentDate, isOpenedCalendar} = this.state
+        const {label, format, message, required} = this.props;
+        const {stringValue, currentDate, isOpened, isInvalid} = this.state
 
-
-        let dateValue = (currentDate)
-            ? this.getDateString(currentDate, pattern)
-            : '';
-
-        let separator = (pattern[0] === 'Y') ? pattern[4] : pattern[2];
-        let patternValue = `d{2}${separator}d{2}${separator}d{4}`
-        // console.log(separator, patternValue);
+        const calendarPositions = [
+            {target: "bottom-center", content: "top-center"},
+            {target: "top-center", content: "bottom-center"},
+            {target: "center-end", content: "center-start"},
+            {target: "center-start", content: "center-end"},
+        ]
 
         return (
             <>
@@ -95,11 +135,14 @@ l
                 <div ref = {el => this.inputRef = {current: el}}>
                     <Input
                         label={label}
-                        value={dateValue}
-                        //onChange={(e)=> this.changeValue({ input: e.nativeEvent.data})}
-                        placeholder={pattern}
-                        pattern={patternValue}
-                        invalid = {true}
+                        placeholder={format}
+                        value={stringValue}
+                        manageInvalid={true}
+                        invalid = {isInvalid}
+                        onInvalid={() => this.invalidInput(true)}
+                        onChange={(e) => this.changeValue(e)}
+                        message = {message}
+                        required={required}
                     >
                         <Input.End>
                             <Button
@@ -111,21 +154,16 @@ l
                     </Input>
                     { this.inputRef &&
                         <Popover
-                            positionTarget={this.inputRef}
-                            positions={[
-                                {target: "bottom-center", content: "top-center"},
-                                {target: "top-center", content: "bottom-center"},
-                                {target: "center-end", content: "center-start"},
-                                {target: "center-start", content: "center-end"},
-                            ]}
                             hideTail={true}
                             manageOpened={true}
-                            opened={isOpenedCalendar}
+                            opened={isOpened}
+                            positions={calendarPositions}
+                            positionTarget={this.inputRef}
                         >
                             <Popover.Content>
                                 <SmallCalendar
                                     onSelected={({date}) => this.dateSelected(date)}
-                                    defaultDate={(value) ? value : undefined}
+                                    openedDate={currentDate}
                                 />
                             </Popover.Content>
                         </Popover>
@@ -136,37 +174,41 @@ l
     }
 }
 
-
-const GENERATE_FORMATS = () => {
-    let result = [];
-    let separators = [".", "/", "-"];
-
-    separators.forEach( s => {
-        result.push(`MM${s}DD${s}YYYY`);
-        result.push(`MM${s}YYYY${s}DD`);
-        result.push(`DD${s}MM${s}YYYY`);
-        result.push(`DD${s}YYYY${s}MM`);
-        result.push(`YYYY${s}DD${s}MM`);
-        result.push(`YYYY${s}MM${s}DD`);
-    })
-
-    return result;
-}
-
 DatePicker.defaultProps = {
     label: undefined,
-    pattern: "MM.DD.YYYY",
-    mandatory: false,
-    readonly: false
+    format: "MM.DD.YYYY",
+    value: "",
+    required: false,
+    readonly: false,
+    invalid: false,
+    opened: false,
+    manageOpened: false,
+    manageInvalid: false,
+    manageValue: false,
+    onOpen: () => void 0,
+    onInvalid: () => void 0,
+    onValueChange: () => void 0
 }
 
 DatePicker.propTypes = {
     label: propTypes.string,
     value: propTypes.string,
-    pattern: propTypes.oneOf(GENERATE_FORMATS),
+    format: propTypes.string,
+    required: propTypes.bool,
+    readonly: propTypes.bool,
+    invalid: propTypes.bool,
+    opened: propTypes.bool,
+    manageOpened: propTypes.bool,
+    manageInvalid: propTypes.bool,
+    manageValue: propTypes.bool,
+    message: propTypes.arrayOf(propTypes.shape({
+        status: propTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        content: propTypes.string,
+        icon: propTypes.string
+    })),
+    onOpen: propTypes.func,
+    onInvalid: propTypes,
     onValueChange: propTypes.func,
-    mandatory: propTypes.bool,
-    readonly: propTypes.bool
 }
 
 export default DatePicker
