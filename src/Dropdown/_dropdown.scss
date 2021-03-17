@@ -1,0 +1,126 @@
+.dropdown-container{
+  display: inline-block;
+  position: relative;
+  width: 10rem;
+
+  --dropdown-padding: 0.5rem;
+}
+
+.dropdown-label{
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &.placeholder{
+    color: #888
+  }
+}
+
+.dropdown-button{
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  width: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  padding: var(--dropdown-padding) calc(var(--dropdown-padding) + 12px) var(--dropdown-padding) var(--dropdown-padding);
+  border-radius: 0.5rem;
+  border: none;
+  background: rgb(228, 230, 231);
+  height: 2rem;
+  color: black;
+
+  &.opened{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.disabled{
+    cursor: default;
+    color: rgba(16, 16, 16, 0.3);
+  }
+}
+
+.dropdown-icon{
+  margin: auto;
+}
+
+.dropdown-items{
+  z-index: 500;
+  position: absolute;
+  width: 100%;
+  border: 1px solid rgb(228, 230, 231);
+  border-radius: 0 0 0.5rem 0.5rem;
+  border-top: none;
+  color: black;
+  overflow: auto;
+  background: white;
+
+  max-height: 15rem;
+}
+
+.dropdown-caret{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: var(--dropdown-padding);
+}
+
+.dropdown-item{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+
+  &.disabled{
+    cursor: default;
+    color: rgba(16, 16, 16, 0.3);
+    background: white;
+  }
+}
+
+.dropdown-item:hover{
+  color: rgb(30, 133, 109);
+  background: rgb(227, 227, 227);
+
+  &.disabled{
+    color: rgba(16, 16, 16, 0.3);
+    background: white;
+  }
+}
+
+.dropdown-button:focus {
+  outline: none;
+}
+
+//SCROLL STYLES
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+  margin: 1px 1px 1px 0;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a5a5a5;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
