@@ -100,8 +100,10 @@ class DatePicker extends React.Component {
 
         if(manageInvalid && isInvalid !== invalid)
             this.invalidInput(invalid)
+
         if(manageOpened && opened!==isOpened)
             this.openCalendar();
+
         if(manageValue && value!==stringValue)
         {
             let dateValue = moment(value, format);
@@ -153,7 +155,7 @@ class DatePicker extends React.Component {
                     { this.inputRef &&
                         <Popover
                             hideTail={true}
-                           // manageOpened={true}
+                            manageOpened={true}
                             opened={isOpened}
                             positions={calendarPositions}
                             positionTarget={this.inputRef}

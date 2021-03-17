@@ -23,7 +23,7 @@ class Popover extends React.Component {
     }
 
     renderContent() {
-        const {children, roundBorder} = this.props;
+        const {children, roundBorder, contentStyles} = this.props;
         const content = findByType(children, "Content");
 
         if (!content)
@@ -35,6 +35,7 @@ class Popover extends React.Component {
                         "noRoundBorder": !roundBorder
                     })}
                  ref={el => this.contentRef = el}
+                 style={contentStyles}
             >
                 <div className={"popover-content-keeper"}>{content}</div>
             </div>
@@ -223,7 +224,8 @@ Popover.propTypes = {
     })),
     onTargetClick: propTypes.func,
     onOuterPopoverClicked: propTypes.func,
-    roundBorder: propTypes.bool
+    roundBorder: propTypes.bool,
+    contentStyles: propTypes.object
 }
 
 export default Popover
