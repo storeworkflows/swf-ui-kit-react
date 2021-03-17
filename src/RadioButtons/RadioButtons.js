@@ -2,7 +2,6 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 
-import styles from "./styles.scss"
 import RadioOption from "./RadioOption.js"
 import {RADIO_BUTTONS_LAYOUT} from "./constants";
 
@@ -87,7 +86,6 @@ class RadioButtons extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={"radio-buttons-container"}>
                     <div className={classnames({
                                  "radio-buttons-header": true,

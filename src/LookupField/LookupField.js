@@ -4,7 +4,6 @@ import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
 import {query} from "./datasource";
 import _ from "lodash";
 import {Input} from "../index";
-import styles from "./styles.scss";
 import DeclarativeUIActions from "./DeclarativeUIActions";
 import Result from "./Result";
 import Pill from "../Pill/Pill";
@@ -176,7 +175,6 @@ class LookupField extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}>
                     <Input
                         internalRef={this.inputRef}

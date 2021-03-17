@@ -1,7 +1,6 @@
 import * as React from "react";
 import classnames from "classnames";
 import {SWF_MODAL} from "./constants";
-import styles from "./styles.scss";
 import PropTypes from "prop-types";
 import Button from "../Button/Button";
 import findByType, {createSubComponent} from "../utils/findByType";
@@ -156,7 +155,6 @@ class Modal extends React.Component {
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
         return showModal && <>
-            <style type="text/css">{styles}</style>
             <div className="modal-overlay"
                  ref={elm => this.modalRef.current = elm}
             >

@@ -1,7 +1,6 @@
 import * as React from "react";
 import propTypes from "prop-types";
 
-import styles from "./styles.scss"
 import classnames from "classnames";
 
 class RadioOption extends React.Component {
@@ -29,7 +28,6 @@ class RadioOption extends React.Component {
         let canChangeValue = !readonly && !disabled;
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={classnames({
                     "radio-option-container": true,
                     "disabled": disabled,

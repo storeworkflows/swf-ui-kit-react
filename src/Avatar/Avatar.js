@@ -2,7 +2,6 @@ import * as React from "react";
 import classnames from "classnames";
 import PropTypes from "prop-types";
 import {noop, normalizeURL} from "../utils";
-import styles from "./styles.scss";
 import {Icon} from "../index";
 
 console.shallowCloneLog = function () {
@@ -102,7 +101,6 @@ class Avatar extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div
                     ref={elm => this.props.innerRef.current = elm}
                     className={classnames({

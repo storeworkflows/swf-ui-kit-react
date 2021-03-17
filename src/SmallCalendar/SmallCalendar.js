@@ -5,7 +5,6 @@ import classnames from 'classnames';
 
 import hammer from "hammerjs";
 
-import styles from './styles.scss';
 import Icon from "../Icon/Icon"
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];

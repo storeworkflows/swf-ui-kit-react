@@ -3,7 +3,6 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 
-import styles from "./styles.scss";
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import Popover from "../Popover/Popover";
@@ -131,7 +130,6 @@ class DatePicker extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div ref = {el => this.inputRef = {current: el}}>
                     <Input
                         label={label}
