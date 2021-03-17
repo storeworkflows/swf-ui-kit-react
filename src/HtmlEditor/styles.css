@@ -2968,8 +2968,3 @@ i.mce-i-backcolor {
 .editor-label-area label {
     margin-inline-end: 0.25rem;
 }
-
-/*Container, container body, iframe*/
-.mce-tinymce, .mce-container-body, #code_ifr {
-    min-height: 100% !important;
-}
