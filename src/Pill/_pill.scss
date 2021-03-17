@@ -84,53 +84,53 @@
       background-color: rgb(157, 0, 51);
     }
   }
-}
 
-.pill-icon {
-  display: flex;
-  align-items: center;
-  margin-left: 5px;
+  .pill-icon {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
 
-  &.--delete {
-    padding: 2px;
-    cursor: pointer;
-    background: #cecece;
-    border-radius: 50%;
-    margin-right: 5px;
-    &:hover {
-      background: #e0e0e0;
-      transform: scale(1.1);
+    &.--delete {
+      padding: 2px;
+      cursor: pointer;
+      background: #cecece;
+      border-radius: 50%;
+      margin-right: 5px;
+      &:hover {
+        background: #e0e0e0;
+        transform: scale(1.1);
+      }
+    }
+
+    .--primary &.--delete {
+      background: rgb(255, 255 ,255);
+      color: rgb(25,118, 210);
+    }
+
+    .--negative &.--delete {
+      background: rgb(255, 255 ,255);
+      color: rgb(220, 0, 78);
     }
   }
 
-  .--primary &.--delete {
-    background: rgb(255, 255 ,255);
-    color: rgb(25,118, 210);
-  }
-
-  .--negative &.--delete {
-    background: rgb(255, 255 ,255);
-    color: rgb(220, 0, 78);
-  }
-}
-
-.pill-label {
-  overflow: hidden;
-  white-space: nowrap;
-  padding-left: 12px;
-  padding-right: 12px;
-  text-overflow: ellipsis;
-
-  &.--sm,
-  &.--md {
+  .pill-label {
+    overflow: hidden;
+    white-space: nowrap;
     padding-left: 12px;
     padding-right: 12px;
-    font-size: .8rem;
-  }
+    text-overflow: ellipsis;
 
-  &.--lg {
-    padding-left: 16px;
-    padding-right: 16px;
-    font-size: 1rem;
+    &.--sm,
+    &.--md {
+      padding-left: 12px;
+      padding-right: 12px;
+      font-size: .8rem;
+    }
+
+    &.--lg {
+      padding-left: 16px;
+      padding-right: 16px;
+      font-size: 1rem;
+    }
   }
 }
