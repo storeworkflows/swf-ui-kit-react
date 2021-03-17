@@ -8,7 +8,7 @@ class Preloader extends Component {
     }
     render() {
         const { count, items, width, height, flexDirectionGeneral, background, mainStyles, blur } = this.props;
-        return <div className="mock-component" style={{ flexDirection: flexDirectionGeneral }}>
+        return <div className="swf-preloader" style={{ flexDirection: flexDirectionGeneral }}>
             {new Array(count).fill(null).map(() => <div className={classNames({ "mock-container": true, "gray": background })} style={Object.assign({ width, height }, mainStyles)}>
                 <div className="light-container">
                     <div className="light" style={{ filter: `blur(${blur})` }}/>
