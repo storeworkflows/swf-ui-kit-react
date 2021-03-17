@@ -174,8 +174,6 @@ class SmallCalendar extends React.Component {
 
         return (
             <>
-                <style>{styles}</style>
-
                 <div
                     className={"ui-kit__calendar-container"}
                     ref = {el => this.calendarElem = el}
