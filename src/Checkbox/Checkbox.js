@@ -82,7 +82,7 @@ class Checkbox extends React.Component {
         return (
             <>
                 <div className={classnames({
-                    "checkbox-container": true,
+                    "swf-checkbox-container": true,
                     "disabled": disabled,
                     "readonly": readonly,
                     "invalid": this.state.invalidValue
