@@ -91,7 +91,8 @@ class Avatar extends React.Component {
             },
             size,
             canRemove,
-            clickable
+            clickable,
+            className
         } = this.props;
 
         const hasAvatar = Boolean(avatar);
@@ -109,6 +110,7 @@ class Avatar extends React.Component {
                         [`--${color}`]: true,
                         "--clickable": clickable,
                         "--selected": openState,
+                        [className]: true
                     })}
                     onClick={this.onClick}
                 >
@@ -168,7 +170,8 @@ Avatar.defaultProps = {
     color: "default",
     onRemove: noop,
     onClick: noop,
-    innerRef: React.createRef()
+    innerRef: React.createRef(),
+    className: ""
 }
 
 Avatar.propTypes = {
@@ -187,7 +190,8 @@ Avatar.propTypes = {
     onRemove: PropTypes.func,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
     onClick: PropTypes.func,
-    innerRef: PropTypes.object
+    innerRef: PropTypes.object,
+    className: PropTypes.string
 }
 
 export default Avatar

@@ -155,7 +155,7 @@ class Modal extends React.Component {
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
         return showModal && <>
-            <div className="modal-overlay"
+            <div className="swf-modal-overlay"
                  ref={elm => this.modalRef.current = elm}
             >
                 <div className="modal">

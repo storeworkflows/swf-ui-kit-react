@@ -24,22 +24,21 @@ export default class HtmlEditor extends React.Component {
 
     fetchRequest = async ({ url, params = {} }) => {
         let result;
-        try {
-            const response = await fetch(url, {
-                ...params,
-                credentials: 'same-origin',
-                headers: {
-                    'X-Transaction-Source': window.transaction_source,
-                    'X-UserToken': window.g_ck,
-                    'Content-Type': 'multipart/form-data'
-                },
-            });
-            const resultJson = await response.json();
-            console.log(resultJson)
-            result = resultJson.result.slice(0,);
-        } catch (e) {
-            console.error(e)
-        }
+        console.log("params", params, "url", url)
+        const response = await fetch(url, {
+            ...params,
+            credentials: 'same-origin',
+            headers: {
+                'X-Transaction-Source': window.transaction_source,
+                'X-UserToken': window.g_ck,
+                'Content-Type': 'multipart/form-data',
+                'Accept': "*/*"
+            },
+        });
+        const resultJson = await response.json();
+        result = resultJson.result;
+        console.log(resultJson)
+
         return result;
     }
 
@@ -49,15 +48,13 @@ export default class HtmlEditor extends React.Component {
             content,
             readonly,
             label,
-            required,
-            // height
+            required
         } = this.props;
 
         const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)" 
 
         return(
             <>
-                <style>{styles}</style>
                 {!!label || required ? <div className="editor-label-area">
                     <label style={{color: labelColor}} onClick={() => this.state.TinyMcEditor.focus()}>{label}</label>
                     {required ? <Icon color={labelColor} icon="asterisk" size="xs" /> : null}
@@ -65,7 +62,7 @@ export default class HtmlEditor extends React.Component {
                 <Editor
                     toolbar={toolbar}
                     plugins={[
-                        "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,code"
+                        "link,lists,advlist,table,powerpaste,searchreplace,preview,fullscreen,a11y_fixes,placeholder,readonlynoborder,code,textcolor"
                     ]}
                     onEditorChange ={this.changeInput}
                     init={{
@@ -79,25 +76,28 @@ export default class HtmlEditor extends React.Component {
                             editor.dom.setStyle(editor.iframeElement, "height", height);
                         },
                         width: "99%",
-                        height: 0
-                        // images_upload_handler: (blobInfo, success, failure) => {
-                        //     const selectedFile = blobInfo.blob();
-                        //     const uuid = uuidv4().split("-").join("");
-                        //     const data = new FormData();
-                        //     data.append('table_name', `ZZ_YYsys_attachment`);
-                        //     data.append('table_sys_id', uuid);
-                        //     data.append('file', selectedFile);
-                        //     console.log("PROSHLO", uuid, selectedFile)
-                        //     const params = {
-                        //         method: "POST",
-                        //         data
-                        //     }
-                        //     // console.log(this);
-                        //     if (!!selectedFile.size) {
-                        //         console.log(selectedFile.size);
-                        //         this.fetchRequest({url: `${window.location.origin}/api/now/attachment/upload`, params})
-                        //     }
-                        // }
+                        // height: 0,
+                        document_base_url: window.location.origin,
+                        images_upload_handler: (blobInfo, success, failure) => {
+                            const selectedFile = blobInfo.blob();
+                            const uuid = uuidv4().split("-").join("");
+                            const data = new FormData();
+                            data.append('table_name', `ZZ_YYsys_attachment`);
+                            data.append('table_sys_id', uuid);
+                            data.append('file', selectedFile);
+                            if (data.has("file")) {
+                                fetch(`${window.location.origin}/api/now/attachment/upload`, {
+                                    method: "POST",
+                                    headers: {
+                                        'X-UserToken': window.g_ck,
+                                        'Content-Type': 'multipart/form-data',
+                                    },
+                                    data,
+                                })
+                                .then(res => console.log(res.json()))
+                            }
+                            // `${window.location.origin}/api/now/attachment/upload`
+                        }
                     }}
                 />
             </>
@@ -106,7 +106,7 @@ export default class HtmlEditor extends React.Component {
 }
 
 HtmlEditor.defaultProps = {
-    toolbar: 'bold italic underline undo redo | fontselect fontsizeselect table | link unlink | code  | alignleft aligncenter alignright | bullist numlist | fullscreen',
+    toolbar: 'bold italic underline undo redo | forecolor backcolor | fontselect fontsizeselect table | link unlink | code  | alignleft aligncenter alignright | bullist numlist | fullscreen',
     onValueChange: noop,
     content: "",
     readonly: false,
