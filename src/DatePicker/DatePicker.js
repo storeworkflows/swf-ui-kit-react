@@ -146,17 +146,18 @@ class DatePicker extends React.Component {
                             <Button
                                 icon={"calendar"}
                                 variant={"tertiary"}
-                                onClick={() => this.openCalendar()}
+                                onClick={() =>this.openCalendar()}
                             />
                         </Input.End>
                     </Input>
                     { this.inputRef &&
                         <Popover
                             hideTail={true}
-                            manageOpened={true}
+                           // manageOpened={true}
                             opened={isOpened}
                             positions={calendarPositions}
                             positionTarget={this.inputRef}
+                            onOuterPopoverClicked={() =>  this.openCalendar()}
                         >
                             <Popover.Content>
                                 <SmallCalendar
