@@ -107,7 +107,7 @@ class Dropdown extends React.Component {
 
         return (
             <>
-                <div className={"dropdown-container"}>
+                <div className={"swf-dropdown-container"}>
                     <input type="hidden" name={name}/>
                     <button
                         onClick={()=>this.dropdownClicked()}

@@ -115,7 +115,7 @@ class Input extends React.Component {
         const _moved = this.state.focused || value || this.state.hasStart;
 
         const containerClasses = classnames({
-            "form-group": true,
+            "swf-form-group": true,
             "--invalid": this.state?.invalid,
             [this.props.containerClass]: true
         })

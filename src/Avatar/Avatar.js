@@ -104,7 +104,7 @@ class Avatar extends React.Component {
                 <div
                     ref={elm => this.props.innerRef.current = elm}
                     className={classnames({
-                        "avatar": true,
+                        "swf-avatar": true,
                         [`--${size}`]: true,
                         [`--${color}`]: true,
                         "--clickable": clickable,

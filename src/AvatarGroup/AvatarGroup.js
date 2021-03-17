@@ -38,7 +38,7 @@ class AvatarGroup extends React.Component {
                     ref={elm => this.props.innerRef.current = elm}
                     className={
                         classnames({
-                            "avatar-container": true,
+                            "swf-avatar-container": true,
                             [`--${size}`]: true
                         })
                     }

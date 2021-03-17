@@ -40,7 +40,7 @@ class Alert extends React.Component {
 
         return (
             <>
-                <div className={"alert-container"}>
+                <div className={"swf-alert-container"}>
                     {icon && <div className={"alert-icon"}><Icon icon = {icon}/></div>}
                     <div className={"alert-content"} >
                         {header && <div className={"alert-header"}>{header}</div>}
