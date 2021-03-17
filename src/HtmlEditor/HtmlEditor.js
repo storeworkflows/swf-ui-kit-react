@@ -55,7 +55,6 @@ export default class HtmlEditor extends React.Component {
 
         return(
             <>
-                <style>{styles}</style>
                 {!!label || required ? <div className="editor-label-area">
                     <label style={{color: labelColor}} onClick={() => this.state.TinyMcEditor.focus()}>{label}</label>
                     {required ? <Icon color={labelColor} icon="asterisk" size="xs" /> : null}
