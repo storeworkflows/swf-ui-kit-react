@@ -1,6 +1,5 @@
 import * as React from "react";
 import classnames from "classnames";
-import styles from "./styles.scss";
 
 import PropTypes from "prop-types";
 import findByType, {createSubComponent} from "../utils/findByType";
@@ -138,7 +137,6 @@ class Input extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
                     {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
                     <div className="input-group">

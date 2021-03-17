@@ -4,7 +4,6 @@ import propTypes from "prop-types";
 import classNames from 'classnames';
 
 import TabItem from "./TabItem";
-import styles from "./styles.scss";
 import {ITEMS} from "./mock";
 import {ALIGNMENT} from './constants'
 
@@ -53,7 +52,6 @@ class Tab extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={classNames({
                     "swf-tabs-container": true,
                     "flex-start": tabsAlignment === 'left',

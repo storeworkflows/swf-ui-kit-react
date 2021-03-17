@@ -2,8 +2,6 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 
-import styles from "./styles.scss"
-
 class Checkbox extends React.Component {
     constructor(props) {
         super(props);
@@ -83,7 +81,6 @@ class Checkbox extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={classnames({
                     "checkbox-container": true,
                     "disabled": disabled,

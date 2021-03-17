@@ -1,6 +1,5 @@
 import classnames from "classnames";
 import propTypes from "prop-types";
-import styles from "./styles.scss";
 import {Component, Fragment, Children} from "react";
 import CardPreloader from "./Preloader";
 
@@ -17,7 +16,6 @@ class Card extends Component {
 
 		return (
 			<>
-				<style type="text/css">{styles}</style>
 				<div className={
 					classnames({
 						"swf-card": true,

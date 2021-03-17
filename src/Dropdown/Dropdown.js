@@ -2,7 +2,6 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 
-import styles from "./styles.scss";
 import DropdownItem from "./DropdownItem";
 import Icon from "../Icon/Icon"
 
@@ -108,7 +107,6 @@ class Dropdown extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={"dropdown-container"}>
                     <input type="hidden" name={name}/>
                     <button
