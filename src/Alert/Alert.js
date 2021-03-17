@@ -3,7 +3,6 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 
 import Icon from "../Icon/Icon";
-import styles from "./styles.scss";
 import Button from "../Button/Button";
 
 class Alert extends React.Component {
@@ -41,8 +40,7 @@ class Alert extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
-                <div className={"alert-container"}>
+                <div className={"swf-alert-container"}>
                     {icon && <div className={"alert-icon"}><Icon icon = {icon}/></div>}
                     <div className={"alert-content"} >
                         {header && <div className={"alert-header"}>{header}</div>}

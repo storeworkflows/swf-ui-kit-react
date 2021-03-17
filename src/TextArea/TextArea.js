@@ -1,6 +1,5 @@
 import * as React from "react";
 import propTypes from "prop-types";
-import styles from "./styles.css";
 import classnames from "classnames";
 import autosize from "autosize/dist/autosize";
 
@@ -59,7 +58,6 @@ class TextArea extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div
                     ref={elm => this.props.innerRef.current = elm }
                     className="form-group"

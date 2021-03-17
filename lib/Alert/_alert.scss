@@ -1,0 +1,43 @@
+.swf-alert-container{
+  border: 1px solid black;
+  border-radius: 1rem;
+  display: grid;
+  grid-gap: 10px;
+  height: 3.5rem;
+  text-align: left;
+
+  overflow: hidden;
+  margin: 0.5rem;
+  padding: 0.5rem;
+
+  max-width: 100%;
+  grid-template-columns: 24px 1fr max-content;
+
+  .swf-button{
+    //margin: 0 !important;
+    height: fit-content;
+  }
+
+  .alert-text{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    //white-space: nowrap;
+  }
+
+  .alert-content{
+    width: 100%;
+    display: inline-block;
+    overflow: hidden;
+  }
+
+  .alert-header{
+    font-weight: bold;
+  }
+
+  .alert-icon{
+    margin: auto;
+  }
+}

@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import Avatar from "../Avatar/Avatar";
 import Icon from "../Icon/Icon";
-import styles from "./styles.scss";
 import {noop} from "../utils";
 
 class Pill extends React.Component {
@@ -43,7 +42,6 @@ class Pill extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div
                     ref={elm => this.pillRef.current = elm}
                     className={classnames({

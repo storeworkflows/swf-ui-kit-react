@@ -1,4 +1,3 @@
-import styles from "./Stepper.scss";
 import Step from './Step/Step';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -119,7 +118,7 @@ class Stepper extends React.Component {
                     '--vertical': vertical
                 })}
             >
-                <style type="text/css">{createCssVariables(palette, iconSize) + styles}</style>
+                <style type="text/css">{createCssVariables(palette, iconSize)}</style>
                 <div
                     className="stepper-container"
                     ref={elm => this.stepperContainerRef = elm}

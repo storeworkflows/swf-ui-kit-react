@@ -1,0 +1,60 @@
+.swf-checkbox-container{
+  --checkbox-cursor: pointer;
+  --checkbox-label-color: black;
+  --checkbox-required-color: var(--checkbox-label-color);
+
+  display: block;
+  position: relative;
+  min-height: 13px;
+  min-width: 13px;
+  padding: 0 2px;
+
+  &.invalid{
+    --checkbox-required-color: red;
+    background: #ff000026;
+    border: 1px solid red;
+  }
+
+  &.disabled{
+    --checkbox-label-color: #00000070;
+    --checkbox-cursor: default;
+  }
+
+  &.readonly{
+    --checkbox-cursor: default;
+    pointer-events:none;
+  }
+
+  cursor: var(--checkbox-cursor);
+
+  .checkbox-information{
+    width: 100%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+  }
+
+
+  .checkbox-input{
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .checkbox-label{
+    align-items: center;
+    margin: auto 4px auto 17px;
+    color: var(--checkbox-label-color);
+    cursor: var(--checkbox-cursor);
+  }
+
+  .checkbox-required{
+    color: var(--checkbox-required-color);
+    font-size: 1.5rem;
+    overflow: hidden;
+    line-height: 1rem;
+    padding-top: 5px;
+  }
+}
+

@@ -2,7 +2,6 @@ import * as React from "react";
 import classnames from "classnames";
 import PropTypes from "prop-types";
 import {noop, normalizeURL} from "../utils";
-import styles from "./styles.scss";
 import {Icon} from "../index";
 
 console.shallowCloneLog = function () {
@@ -40,7 +39,10 @@ class Avatar extends React.Component {
         }
     }
 
-    onClick() {
+    onClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
         if (this.props.clickable) {
             this.setState({open: !this.state?.open})
             this.props.onClick();
@@ -89,7 +91,8 @@ class Avatar extends React.Component {
             },
             size,
             canRemove,
-            clickable
+            clickable,
+            className
         } = this.props;
 
         const hasAvatar = Boolean(avatar);
@@ -99,15 +102,15 @@ class Avatar extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div
                     ref={elm => this.props.innerRef.current = elm}
                     className={classnames({
-                        "avatar": true,
+                        "swf-avatar": true,
                         [`--${size}`]: true,
                         [`--${color}`]: true,
                         "--clickable": clickable,
                         "--selected": openState,
+                        [className]: true
                     })}
                     onClick={this.onClick}
                 >
@@ -136,20 +139,20 @@ class Avatar extends React.Component {
                     </div>
                     <div onClick={(e) => {
                         e.stopPropagation();
-                        console.log("Remove clicked", id)
+                        e.preventDefault();
+
                         this.props.onRemove({id});
                     }}>
-
-                        <Icon
-                            className={classnames({
-                                "remove": true,
-                                "visible": canRemove && openState
-                            })}
-                            icon="x"
-                            size="md"
-                        />
+                        <div className={classnames({
+                            "remove": true,
+                            "visible": canRemove && openState
+                        })}>
+                            <Icon
+                                icon="x"
+                                size="md"
+                            />
+                        </div>
                     </div>
-
                 </div>
             </>
         )
@@ -167,7 +170,8 @@ Avatar.defaultProps = {
     color: "default",
     onRemove: noop,
     onClick: noop,
-    innerRef: React.createRef()
+    innerRef: React.createRef(),
+    className: ""
 }
 
 Avatar.propTypes = {
@@ -186,7 +190,8 @@ Avatar.propTypes = {
     onRemove: PropTypes.func,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
     onClick: PropTypes.func,
-    innerRef: PropTypes.object
+    innerRef: PropTypes.object,
+    className: PropTypes.string
 }
 
 export default Avatar

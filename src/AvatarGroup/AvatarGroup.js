@@ -2,7 +2,6 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import classnames from "classnames";
 import {Avatar} from "../index";
-import styles from "./styles.scss";
 import {noop} from "../utils";
 
 class AvatarGroup extends React.Component {
@@ -35,12 +34,11 @@ class AvatarGroup extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div
                     ref={elm => this.props.innerRef.current = elm}
                     className={
                         classnames({
-                            "avatar-container": true,
+                            "swf-avatar-container": true,
                             [`--${size}`]: true
                         })
                     }

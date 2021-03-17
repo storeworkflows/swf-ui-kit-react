@@ -3,7 +3,6 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 
 import Icon from "../Icon/Icon";
-import styles from "./styles.scss";
 import {addStyles, getIconSize} from "./utils";
 
 class Button extends React.Component {
@@ -32,7 +31,6 @@ class Button extends React.Component {
 
 		return (
 			<>
-				<style type="text/css">{styles}</style>
 				<button
 					//ref={elm => this.props.innerRef(elm)}
 					className={classnames(

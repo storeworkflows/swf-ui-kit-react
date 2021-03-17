@@ -4,7 +4,6 @@ import * as React from "react";
 import {Editor} from "@tinymce/tinymce-react";
 import {noop} from "../../lib/utils";
 import {v4 as uuidv4} from "uuid";
-import styles from "./styles.css";
 import fetch from "cross-fetch";
 import {Icon} from "../index";
 

@@ -1,7 +1,6 @@
 import * as React from "react";
 import propTypes from "prop-types";
 
-import styles from "./styles.scss";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import classnames from "classnames";
@@ -152,7 +151,6 @@ class Popover extends React.Component {
     render() {
         return (
             <>
-                <style type="text/css">{styles}</style>
                 {this.renderContent()}
                 {this.renderTarget()}
             </>

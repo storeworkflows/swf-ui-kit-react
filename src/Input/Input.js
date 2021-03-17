@@ -1,6 +1,5 @@
 import * as React from "react";
 import classnames from "classnames";
-import styles from "./styles.scss";
 
 import PropTypes from "prop-types";
 import findByType, {createSubComponent} from "../utils/findByType";
@@ -80,7 +79,7 @@ class Input extends React.Component {
         onInvalid(e);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
         const {invalid, manageInvalid} = this.props;
 
         if(manageInvalid && this.state.invalid !== invalid)
@@ -110,13 +109,12 @@ class Input extends React.Component {
             message
         } = this.props;
 
-
         const _hasLabel = label !== undefined;
         const _hasMessages = message.length > 0;
         const _moved = this.state.focused || value || this.state.hasStart;
 
         const containerClasses = classnames({
-            "form-group": true,
+            "swf-form-group": true,
             "--invalid": this.state?.invalid,
             [this.props.containerClass]: true
         })
@@ -138,7 +136,6 @@ class Input extends React.Component {
 
         return (
             <>
-                <style type="text/css">{styles}</style>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
                     {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
                     <div className="input-group">
@@ -223,7 +220,8 @@ Input.defaultProps = {
     onInput: noop,
     onChange: noop,
     onBlur: noop,
-    onFocus: noop
+    onFocus: noop,
+    onInvalid: noop
 }
 
 Input.propTypes = {

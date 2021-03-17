@@ -5,7 +5,6 @@ import classnames from 'classnames';
 
 import hammer from "hammerjs";
 
-import styles from './styles.scss';
 import Icon from "../Icon/Icon"
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
@@ -16,11 +15,13 @@ class SmallCalendar extends React.Component {
         this.changeMonth = this.changeMonth.bind(this);
         this.setDate = this.setDate.bind(this);
 
-        const {defaultDate} = this.props;
+        const {openedDate} = this.props;
+        let date = (openedDate) ? new Date(openedDate) : null;
+        console.log(date)
 
         this.state = {
-            selectedDate: new Date(defaultDate),
-            openedDate: new Date(defaultDate)
+            selectedDate: date,
+            openedDate: (date) ? date : new Date()
         }
 
     }
@@ -57,25 +58,28 @@ class SmallCalendar extends React.Component {
 
         let dayNumber = parseInt(day)
 
-        let selectedMonth = selectedDate.getMonth();
-        let selectedYear = selectedDate.getFullYear();
-        let openedMonth =  openedDate.getMonth();
-        let openedYear = openedDate.getFullYear();
+        let isSelected = false;
+        if(selectedDate) {
+            let selectedMonth = selectedDate.getMonth();
+            let selectedYear = selectedDate.getFullYear();
+            let openedMonth = openedDate.getMonth();
+            let openedYear = openedDate.getFullYear();
 
-        let nextMonth = (openedMonth + 1) % 12;
-        let prevMonth = (openedMonth - 1) % 12;
-        let nextYear = (nextMonth === 0) ? (openedYear + 1) : openedYear;
-        let prevYear = (prevMonth === 11) ? (openedYear - 1) : openedYear;
+            let nextMonth = (openedMonth + 1) % 12;
+            let prevMonth = (openedMonth - 1) % 12;
+            let nextYear = (nextMonth === 0) ? (openedYear + 1) : openedYear;
+            let prevYear = (prevMonth === 11) ? (openedYear - 1) : openedYear;
 
-        let isSelectedDateInOpenedMonth = isActive && selectedMonth === openedMonth && selectedYear === openedYear ;
-        let isSelectedDateInNextMonth =  !isActive && selectedMonth === nextMonth && selectedYear === nextYear;
-        let isSelectedDateInPrevMonth =  !isActive && selectedMonth === prevMonth && selectedYear === prevYear;
+            let isSelectedDateInOpenedMonth = isActive && selectedMonth === openedMonth && selectedYear === openedYear;
+            let isSelectedDateInNextMonth = !isActive && selectedMonth === nextMonth && selectedYear === nextYear;
+            let isSelectedDateInPrevMonth = !isActive && selectedMonth === prevMonth && selectedYear === prevYear;
 
 
-        let isSelected =  selectedDate.getDate() === dayNumber &&
-                        ( isSelectedDateInOpenedMonth
-                        || isSelectedDateInNextMonth
-                        || isSelectedDateInPrevMonth);
+            isSelected = selectedDate.getDate() === dayNumber &&
+                (isSelectedDateInOpenedMonth
+                    || isSelectedDateInNextMonth
+                    || isSelectedDateInPrevMonth);
+        }
 
         return (
             <div className={
@@ -101,6 +105,19 @@ class SmallCalendar extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+
+        const {openedDate} = this.props;
+        if(openedDate !== prevProps.openedDate) {
+            let date = (openedDate) ? new Date(openedDate) : null;
+
+            this.setState({
+                selectedDate: date,
+                openedDate: (date) ? date : new Date()
+            })
+        }
+    }
+
 
     renderMonth(){
         const {openedDate} = this.state;
@@ -110,7 +127,7 @@ class SmallCalendar extends React.Component {
         let currentWeek = moment(openedDate);
         currentWeek.startOf("month").startOf("week")
 
-        for(let w=0; w<5; w++)
+        for(let w=0; w<6; w++)
         {
             if(w>0)
                 currentWeek.add(1, 'week');
@@ -131,14 +148,15 @@ class SmallCalendar extends React.Component {
 
 
     renderArrowButton(isNext){
+        let classes = classnames({
+            "calendar-arrow": true,
+            "next": isNext
+        });
+
         return (
             <div
-                className={classnames({
-                    "calendar-arrow": true,
-                    "next": isNext
-                })}
-                onClick = {() => this.changeMonth(isNext)}
-            >
+                className={classes}
+                onClick = {() => this.changeMonth(isNext)}>
 
                 <Icon
                     icon={isNext ? "chevron-right" : "chevron-left"}
@@ -156,8 +174,6 @@ class SmallCalendar extends React.Component {
 
         return (
             <>
-                <style>{styles}</style>
-
                 <div
                     className={"ui-kit__calendar-container"}
                     ref = {el => this.calendarElem = el}
@@ -185,11 +201,11 @@ class SmallCalendar extends React.Component {
 }
 
 SmallCalendar.defaultProps = {
-    defaultDate: Date.now()
+    openedDate: null
 }
 
 SmallCalendar.propTypes = {
-    defaultDate: propTypes.number,
+    openedDate: propTypes.number,
     onSelected: propTypes.func
 }
 
