@@ -81,10 +81,6 @@ class Dropdown extends React.Component {
             return null;
     }
 
-    componentDidMount() {
-        document.addEventListener("click", e => {console.log("clicked", e)});
-    }
-
     componentDidUpdate() {
         const {opened, selectedItems, manageOpened, manageSelectedItems} = this.props;
 

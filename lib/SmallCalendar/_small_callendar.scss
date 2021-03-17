@@ -13,6 +13,7 @@
     .calendar-header-label{
       margin: auto 0.5rem;
       cursor: default;
+      font: 1rem Arial;
     }
 
     .calendar-arrow{
@@ -60,6 +61,7 @@
     height: 2rem;
     width: 2rem;
     border-radius: 50%;
+    font-family: Arial;
 
     &.day-element{
       cursor: pointer;

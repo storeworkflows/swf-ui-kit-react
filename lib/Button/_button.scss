@@ -133,6 +133,7 @@
   font-family: var(--mv9-kWzzvm--Pvmz-PrTAjO,var(--now-font-family));
   white-space: nowrap;
   margin: auto;
+  cursor: pointer;
 
   .button-label{
     cursor: pointer;
@@ -141,6 +142,7 @@
   &.disabled{
     background: #ededed;
     color: #a5a5a5;
+    cursor: default;
 
     .button-label{
       cursor: default;
@@ -169,7 +171,7 @@
     float: left;
   }
 
-  .active {
+  &.active {
     cursor: pointer;
 
     &.swf-button:hover {
