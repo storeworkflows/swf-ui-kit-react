@@ -79,7 +79,7 @@ class Input extends React.Component {
         onInvalid(e);
     }
 
-    componentDidUpdate() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
         const {invalid, manageInvalid} = this.props;
 
         if(manageInvalid && this.state.invalid !== invalid)
@@ -108,7 +108,6 @@ class Input extends React.Component {
             multiple,
             message
         } = this.props;
-
 
         const _hasLabel = label !== undefined;
         const _hasMessages = message.length > 0;
@@ -221,7 +220,8 @@ Input.defaultProps = {
     onInput: noop,
     onChange: noop,
     onBlur: noop,
-    onFocus: noop
+    onFocus: noop,
+    onInvalid: noop
 }
 
 Input.propTypes = {
