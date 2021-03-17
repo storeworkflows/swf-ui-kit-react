@@ -64,8 +64,8 @@ class Icon extends React.Component {
             {...this.getAttrs(node.attributes)}
             style={this.getStyles()}
         >
-              {[ ...node.children ].map( child => {
-                return  <path {...this.getAttrs(child.attributes)} />
+              {[ ...node.children ].map( (child, id) => {
+                return  <path {...this.getAttrs(child.attributes)} key = {id}/>
               })}
         </svg>
     )

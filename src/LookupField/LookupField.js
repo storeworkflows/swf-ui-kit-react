@@ -214,7 +214,7 @@ LookupField.propTypes = {
     declarativeUiActions: propTypes.object,
     label: propTypes.string,
     name: propTypes.string,
-    type: propTypes.oneOfType(["reference", "list"]),
+    type: propTypes.oneOf(["reference", "list"]),
     table: propTypes.string,
     tableRecordSysId: propTypes.string
 }

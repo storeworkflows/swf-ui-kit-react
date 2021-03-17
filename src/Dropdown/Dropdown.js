@@ -65,16 +65,14 @@ class Dropdown extends React.Component {
         const {opened, selectedItems} = this.state;
 
         let listStyles = {
-            '--popover-border-radius': '0 0 1rem 1rem',
+            '--popover-border-radius': '0 0 0.5rem 0.5rem',
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': '10rem',
-            'max-height': '15rem'
+            'width': 'calc(10rem - 2px)',
+            'maxHeight': '15rem'
         }
 
-        console.log(this.dropdownRef );
-        //if(opened) {
             return (
                 <Popover
                     positionTarget={this.dropdownRef}
@@ -105,8 +103,6 @@ class Dropdown extends React.Component {
                     </Popover.Content>
                 </Popover>
             )
-        //} else
-           // return null;
     }
 
     componentDidUpdate() {
@@ -150,7 +146,7 @@ class Dropdown extends React.Component {
                 >
                     <input type="hidden" name={name}/>
                     <button
-                        onClick={()=>this.dropdownClicked()}
+                        onClick={this.dropdownClicked}
                         disabled={disabled}
                         className={buttonClasses}
                     >
@@ -187,14 +183,16 @@ Dropdown.defaultProps = {
 Dropdown.propTypes = {
     name: propTypes.string,
     disabled: propTypes.bool,
-    items: propTypes.shape({
-        id: propTypes.oneOfType([
-            propTypes.string,
-            propTypes.number
-        ]),
-        label: propTypes.string,
-        disabled: propTypes.bool
-    }),
+    items: propTypes.arrayOf(
+        propTypes.shape({
+            id: propTypes.oneOfType([
+                propTypes.string,
+                propTypes.number
+            ]),
+            label: propTypes.string,
+            disabled: propTypes.bool
+        }
+    )),
     manageOpened: propTypes.bool,
     manageSelectedItems: propTypes.bool,
     opened: propTypes.bool,

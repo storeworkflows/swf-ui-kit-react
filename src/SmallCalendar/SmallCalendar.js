@@ -17,7 +17,6 @@ class SmallCalendar extends React.Component {
 
         const {openedDate} = this.props;
         let date = (openedDate) ? new Date(openedDate) : null;
-        console.log(date)
 
         this.state = {
             selectedDate: date,
@@ -53,7 +52,7 @@ class SmallCalendar extends React.Component {
         this.setState({openedDate: changedTo.toDate()})
     }
 
-    renderCalendarElement(day, isActive){
+    renderCalendarElement(day, isActive, key){
         const {openedDate, selectedDate} = this.state;
 
         let dayNumber = parseInt(day)
@@ -91,6 +90,7 @@ class SmallCalendar extends React.Component {
                     "selected": isSelected
                 })}
                  onClick={() =>  this.setDate(dayNumber, isActive)}
+                 key={key}
             >
                 {day}
             </div>
@@ -139,7 +139,7 @@ class SmallCalendar extends React.Component {
                     currentDay.add(1, "day");
 
                 const isActive = currentDay.format('M') === `${openedMonth}`;
-                result.push(this.renderCalendarElement(currentDay.format('D'), isActive));
+                result.push(this.renderCalendarElement(currentDay.format('D'), isActive, currentDay));
             }
         }
 
@@ -187,8 +187,8 @@ class SmallCalendar extends React.Component {
                         {this.renderArrowButton(true)}
                     </div>
                     <div className={"week-days-container"}>
-                        {DAYS_OF_WEEK.map( el => {
-                            return <div className={"calendar-element week-day"}> {el} </div>
+                        {DAYS_OF_WEEK.map( (el, id) => {
+                            return <div className={"calendar-element week-day"} key={id}> {el} </div>
                         })}
                     </div>
                     <div className={"calendar-view"} >
