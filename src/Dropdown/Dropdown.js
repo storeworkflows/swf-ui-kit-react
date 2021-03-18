@@ -5,7 +5,7 @@ import classnames from "classnames";
 import DropdownItem from "./DropdownItem";
 import Icon from "../Icon/Icon"
 import Popover from "../Popover/Popover";
-import {calculateScroll, getItemById} from "./utils";
+import {getItemById} from "./utils";
 
 class Dropdown extends React.Component {
 
@@ -28,11 +28,16 @@ class Dropdown extends React.Component {
         const {manageOpened, onOpened, scrollToSelected} = this.props;
         const currentOpened = this.state.opened;
         const container = this.itemsContainerRef;
+        const {selectedItems} = this.state;
+        let hasSelectedItems = selectedItems && selectedItems.length>0;
 
         if(!manageOpened){
-            if(!currentOpened && container && scrollToSelected)
-                container.scrollTop = calculateScroll(container, this.state.selectedItems)
             this.setState({opened: !currentOpened})
+
+            if(container && hasSelectedItems && scrollToSelected){
+                let selectedEl = container.querySelector(`div[data-key="${selectedItems[0]}"]`)
+                selectedEl.scrollIntoView();
+            }
         }
 
         if(onOpened)
@@ -61,9 +66,13 @@ class Dropdown extends React.Component {
         const {opened, selectedItems, manageOpened, manageSelectedItems, scrollToSelected} = this.props;
         const container = this.itemsContainerRef;
 
+        let hasSelectedItems = this.state.selectedItems && this.state.selectedItems.length>0;
+
         if(manageOpened && opened !== this.state.opened){
-            if(this.state.opened && container && scrollToSelected)
-                container.scrollTop = calculateScroll(container, this.state.selectedItems)
+            if(opened && container && hasSelectedItems && scrollToSelected){
+                let selectedEl = container.querySelector(`div[data-key="${this.state.selectedItems[0]}"]`)
+                selectedEl.scrollIntoView();
+            }
             this.setState({opened: opened})
         }
 
