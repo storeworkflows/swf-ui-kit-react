@@ -47,7 +47,8 @@ class AvatarGroup extends React.Component {
                     {canAdd && <div
                         className={classnames({
                             "avatar-multiple": true,
-                            "add-new-member": true
+                            "add-new-member": true,
+                            "additional-avatar": true
                         })}
                         onClick={this.addNewMember}
                     >
