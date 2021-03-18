@@ -46,6 +46,9 @@ class DatePicker extends React.Component {
 
         if(!manageValue) {
             let newDateString = addCharToDate(format, stringValue, input);
+
+            if(moment(newDateString, format, true).isValid())
+                this.setState({currentDate: newDateString});
             this.setState({stringValue: newDateString})
         }
     }
@@ -104,7 +107,7 @@ class DatePicker extends React.Component {
             this.invalidInput(invalid)
 
         if(manageOpened && opened!==isOpened)
-            this.openCalendar();
+            this.setState({isOpened: opened});
 
         if(manageValue && value!==stringValue)
         {
@@ -118,6 +121,17 @@ class DatePicker extends React.Component {
             })
         }
 
+    }
+
+    componentDidMount() {
+        if(this.inputRef && this.inputRef.current){
+            let inputEl = this.inputRef.current.querySelector('input');
+            inputEl.onclick = (e) =>
+                inputEl.selectionStart = inputEl.selectionEnd = this.state.stringValue.length;
+
+            inputEl.onkeydown = (e) =>
+                setTimeout(()=>{ inputEl.selectionStart = inputEl.selectionEnd = this.state.stringValue.length; }, 0);
+        }
     }
 
     renderInput(){

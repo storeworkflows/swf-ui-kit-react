@@ -43,16 +43,16 @@
 
   //SCROLL STYLES
 
-  /* width */
   ::-webkit-scrollbar {
     width: 7px;
+    height: 7px;
   }
 
   /* Track */
   ::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 10px;
-    margin: 8px 1px;
+    margin: 4px 1px;
   }
 
   /* Handle */
@@ -70,6 +70,8 @@
 .popover-content-keeper{
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
   overflow: auto;
 }
 

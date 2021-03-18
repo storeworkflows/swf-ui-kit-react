@@ -158,8 +158,8 @@ class Popover extends React.Component {
             contentElement.style.transform = `translate3d(0, 0, 0)`;
             contentElement.style.left =  0;
             contentElement.style.top = 0;
-            contentElement.children[0].style.maxHeight = 'none';
-            contentElement.children[0].style.maxWidth = 'none';
+            contentElement.children[0].style.maxHeight = contentElement.style.height || contentElement.style.maxHeight;
+            contentElement.children[0].style.maxWidth = contentElement.style.width || contentElement.style.maxWidth;
             contentElement.style.margin = 0;
         }
     }

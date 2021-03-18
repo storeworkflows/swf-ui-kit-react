@@ -38,7 +38,7 @@ class CardPreloader extends React.Component {
 					},
 				]}
 				height="11rem"
-				width={GLOBAL_CONSTANTS.IS_MOBILE ? "280px" : "400px"}
+				width={GLOBAL_CONSTANTS.IS_MOBILE ? "280px" : "100%"}
 				flexDirectionGeneral="row"
 				blur="3rem"
 			/>

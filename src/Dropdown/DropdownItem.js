@@ -19,6 +19,7 @@ class DropdownItem extends React.Component {
     render() {
 
         const {
+            id,
             label,
             disabled,
             isSelected
@@ -32,6 +33,7 @@ class DropdownItem extends React.Component {
                    "selected": isSelected
                })}
                     onClick={() => this.itemSelected()}
+                    data-key={id}
                >
                    {label}
                </div>
