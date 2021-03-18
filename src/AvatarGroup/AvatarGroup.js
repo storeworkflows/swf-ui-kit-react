@@ -20,7 +20,6 @@ class AvatarGroup extends React.Component {
     }
 
     addNewMember(event) {
-        console.log("Add Clicked", {func: this.props.onAdd});
         if (this.props.clickable) {
             this.props.onAdd();
         }
