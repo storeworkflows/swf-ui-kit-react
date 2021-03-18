@@ -22,6 +22,17 @@ export default class HtmlEditor extends React.Component {
         this.props?.onValueChange(content);
     }
 
+    ascii_to_hexa(str)
+  {
+	var arr1 = [];
+	for (var n = 0, l = str.length; n < l; n ++) 
+     {
+		var hex = Number(str.charCodeAt(n)).toString(16);
+		arr1.push(hex);
+	 }
+	return arr1.join('');
+   }
+
     fetchRequest = async ({ url, params = {} }) => {
         let result;
         console.log("params", params, "url", url)
@@ -76,27 +87,28 @@ export default class HtmlEditor extends React.Component {
                             editor.dom.setStyle(editor.iframeElement, "height", height);
                         },
                         width: "99%",
-                        // height: 0,
                         document_base_url: window.location.origin,
                         images_upload_handler: (blobInfo, success, failure) => {
                             const selectedFile = blobInfo.blob();
                             const uuid = uuidv4().split("-").join("");
-                            const data = new FormData();
-                            data.append('table_name', `ZZ_YYsys_attachment`);
-                            data.append('table_sys_id', uuid);
-                            data.append('file', selectedFile);
-                            if (data.has("file")) {
-                                fetch(`${window.location.origin}/api/now/attachment/upload`, {
-                                    method: "POST",
-                                    headers: {
-                                        'X-UserToken': window.g_ck,
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                    data,
-                                })
-                                .then(res => console.log(res.json()))
-                            }
-                            // `${window.location.origin}/api/now/attachment/upload`
+
+                            let myHeaders = new Headers();
+                            const formdata = new FormData();
+
+                            myHeaders.append("X-UserToken", window.g_ck);
+                            formdata.append('table_name', `ZZ_YYsys_attachment`);
+                            formdata.append('table_sys_id', uuid);
+                            formdata.append('file', selectedFile);
+                            fetch(`${window.location.origin}/api/now/attachment/upload`, {
+                                method: "POST",
+                                headers: myHeaders,
+                                body: formdata
+                            })
+                            .then(res => {
+                                if (res.status === 201)
+                                    return res.json();
+                            })
+                            .then(resJson => success(window.location.origin + "/sys_attachment.do?sys_id=" + resJson.result.sys_id))
                         }
                     }}
                 />
