@@ -121,7 +121,7 @@ class DatePicker extends React.Component {
     }
 
     renderInput(){
-        const {label, format, message, required} = this.props;
+        const {label, format, message, required, name} = this.props;
         const {stringValue, isInvalid} = this.state
 
         return (
@@ -129,7 +129,7 @@ class DatePicker extends React.Component {
                 label={label}
                 placeholder={format}
                 value={stringValue}
-                name={""}
+                name={name}
                 manageInvalid={true}
                 invalid = {isInvalid}
                 onInvalid={() => this.invalidInput(true)}
@@ -204,6 +204,7 @@ DatePicker.defaultProps = {
 }
 
 DatePicker.propTypes = {
+    name: propTypes.string,
     label: propTypes.string,
     value: propTypes.string,
     format: propTypes.string,

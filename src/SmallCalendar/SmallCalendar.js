@@ -205,10 +205,8 @@ SmallCalendar.defaultProps = {
 }
 
 SmallCalendar.propTypes = {
-    openedDate: propTypes.number,
+    openedDate: propTypes.any,
     onSelected: propTypes.func
 }
-
-
 
 export default SmallCalendar;
