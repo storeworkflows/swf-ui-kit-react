@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import {Avatar} from "../index";
 import {noop} from "../utils";
+import Icon from "../Icon/Icon";
 
 class AvatarGroup extends React.Component {
     constructor(props) {
@@ -30,7 +31,7 @@ class AvatarGroup extends React.Component {
         const maxViewers = hasAdditionalMembers ? max : members.length;
         const additionalMembers = members.length - max;
 
-        const viewers = members.slice(0, maxViewers).reverse();
+        const viewers = members.slice(0, maxViewers).reverse().filter(viewer => viewer.name);
 
         return (
             <>
@@ -46,21 +47,19 @@ class AvatarGroup extends React.Component {
                     {canAdd && <div
                         className={classnames({
                             "avatar-multiple": true,
-                            "add-new-member": true
+                            "add-new-member": true,
+                            "additional-avatar": true
                         })}
                         onClick={this.addNewMember}
                     >
-                        <p className="additional-avatar">{String.fromCharCode(43)}</p>
+                        <Icon icon={customIcon || "person-plus"} size={size}/>
                     </div>}
 
                     {hasAdditionalMembers && <div className={classnames({
                         "avatar-multiple": true,
                         "additional-members": true
                     })}>
-                        {customIcon ?
-                            <Icon icon={customIcon} size={size}/>
-                            :
-                            <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p> }
+                        <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p>
                     </div>}
 
                     {viewers.map((viewer, index) => (

@@ -47,20 +47,6 @@
       margin: auto;
     }
 
-    .dropdown-items {
-      z-index: 500;
-      position: absolute;
-      width: 100%;
-      border: 1px solid rgb(228, 230, 231);
-      border-radius: 0 0 0.5rem 0.5rem;
-      border-top: none;
-      color: black;
-      overflow: auto;
-      background: white;
-
-      max-height: 15rem;
-    }
-
     .dropdown-caret {
       display: flex;
       justify-content: center;
@@ -78,11 +64,11 @@
       text-overflow: ellipsis;
       padding: 0.25rem 0.5rem;
       cursor: pointer;
+      font: 400 1rem Arial;
 
       &.disabled {
         cursor: default;
         color: rgba(16, 16, 16, 0.3);
-        background: white;
       }
 
       &.selected{
@@ -96,7 +82,7 @@
 
       &.disabled {
         color: rgba(16, 16, 16, 0.3);
-        background: white;
+        background: transparent;
       }
     }
 

@@ -17,7 +17,8 @@ class DatePicker extends React.Component {
         const {value, format, opened, invalid, manageInvalid} = this.props;
 
         let dateValue = moment(value, format);
-        let invalidValue = invalid || ( value && !manageInvalid && !dateValue.isValid());
+        let isInvalidValue = (value) ? !dateValue.isValid() : false;
+        let invalidValue = manageInvalid ? invalid : isInvalidValue;
 
         this.state = {
             stringValue: value,
@@ -28,6 +29,7 @@ class DatePicker extends React.Component {
 
         this.inputRef = null;
 
+        this.renderInput = this.renderInput.bind(this);
         this.changeValue = this.changeValue.bind(this);
         this.openCalendar = this.openCalendar.bind(this);
         this.dateSelected = this.dateSelected.bind(this);
@@ -100,8 +102,10 @@ class DatePicker extends React.Component {
 
         if(manageInvalid && isInvalid !== invalid)
             this.invalidInput(invalid)
+
         if(manageOpened && opened!==isOpened)
             this.openCalendar();
+
         if(manageValue && value!==stringValue)
         {
             let dateValue = moment(value, format);
@@ -116,12 +120,40 @@ class DatePicker extends React.Component {
 
     }
 
+    renderInput(){
+        const {label, format, message, required, name} = this.props;
+        const {stringValue, isInvalid} = this.state
+
+        return (
+            <Input
+                label={label}
+                placeholder={format}
+                value={stringValue}
+                name={name}
+                manageInvalid={true}
+                invalid = {isInvalid}
+                onInvalid={() => this.invalidInput(true)}
+                onChange={this.changeValue}
+                message = {message}
+                required={required}
+            >
+                <Input.End>
+                    <Button
+                        icon={"calendar"}
+                        variant={"tertiary"}
+                        onClick={this.openCalendar}
+                    />
+                </Input.End>
+            </Input>
+        )
+    }
+
 
     render() {
-        const {label, format, message, required} = this.props;
-        const {stringValue, currentDate, isOpened, isInvalid} = this.state
+        const {currentDate, isOpened} = this.state
 
         const calendarPositions = [
+            {target: "bottom-end", content: "top-end"},
             {target: "bottom-center", content: "top-center"},
             {target: "top-center", content: "bottom-center"},
             {target: "center-end", content: "center-start"},
@@ -131,25 +163,7 @@ class DatePicker extends React.Component {
         return (
             <>
                 <div ref = {el => this.inputRef = {current: el}}>
-                    <Input
-                        label={label}
-                        placeholder={format}
-                        value={stringValue}
-                        manageInvalid={true}
-                        invalid = {isInvalid}
-                        onInvalid={() => this.invalidInput(true)}
-                        onChange={(e) => this.changeValue(e)}
-                        message = {message}
-                        required={required}
-                    >
-                        <Input.End>
-                            <Button
-                                icon={"calendar"}
-                                variant={"tertiary"}
-                                onClick={() => this.openCalendar()}
-                            />
-                        </Input.End>
-                    </Input>
+                    { this.renderInput() }
                     { this.inputRef &&
                         <Popover
                             hideTail={true}
@@ -157,6 +171,7 @@ class DatePicker extends React.Component {
                             opened={isOpened}
                             positions={calendarPositions}
                             positionTarget={this.inputRef}
+                            onOuterPopoverClicked={this.openCalendar}
                         >
                             <Popover.Content>
                                 <SmallCalendar
@@ -189,6 +204,7 @@ DatePicker.defaultProps = {
 }
 
 DatePicker.propTypes = {
+    name: propTypes.string,
     label: propTypes.string,
     value: propTypes.string,
     format: propTypes.string,
@@ -205,7 +221,7 @@ DatePicker.propTypes = {
         icon: propTypes.string
     })),
     onOpen: propTypes.func,
-    onInvalid: propTypes,
+    onInvalid: propTypes.func,
     onValueChange: propTypes.func,
 }
 

@@ -61,3 +61,20 @@ export const addCharToDate = (format, curStr, char) => {
 
     return result;
 }
+
+
+export const isPointInsideTheElement = (element, pointX, pointY) => {
+    let elementDimensions = element.getBoundingClientRect();
+
+    let elementPoints = {
+        startY: elementDimensions.y,
+        startX: elementDimensions.x,
+        endY: elementDimensions.y + elementDimensions.height,
+        endX: elementDimensions.x + elementDimensions.width
+    }
+
+    let insideX = pointX<elementPoints.endX && pointX>elementPoints.startX;
+    let insideY = pointY<elementPoints.endY && pointY>elementPoints.startY;
+
+    return insideY && insideX
+}

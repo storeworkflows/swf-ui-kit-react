@@ -4,11 +4,14 @@ import propTypes from "prop-types";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import classnames from "classnames";
+import {isPointInsideTheElement} from "../DatePicker/utils";
 
 class Popover extends React.Component {
     constructor(props) {
         super(props);
         this.targetClicked = this.targetClicked.bind(this);
+        this.documentClicked = this.documentClicked.bind(this);
+        this.changeOpenedState = this.changeOpenedState.bind(this);
         this.updateOpenedState = this.updateOpenedState.bind(this);
 
         this.state = {
@@ -20,20 +23,23 @@ class Popover extends React.Component {
     }
 
     renderContent() {
-        const {children, roundBorder} = this.props;
+        const {children, roundBorder, contentStyles} = this.props;
         const content = findByType(children, "Content");
 
         if (!content)
             return null;
 
-        return <div className={classnames({
-                    "popover-content": true,
-                    "noRoundBorder": !roundBorder
+        return (
+            <div className={classnames({
+                        "popover-content": true,
+                        "noRoundBorder": !roundBorder
                     })}
-                    ref={el => this.contentRef = el}>
-            <div className={"popover-content-keeper"}>{content}</div>
-            </div>;
-
+                 ref={el => this.contentRef = el}
+                 style={contentStyles}
+            >
+                <div className={"popover-content-keeper"}>{content}</div>
+            </div>
+        );
     }
 
     renderTarget() {
@@ -51,7 +57,7 @@ class Popover extends React.Component {
                 }
             }
 
-            this.targetRef.onclick = this.targetClicked;
+            this.targetRef.onclick = (e) => this.targetClicked(e)
             return null;
         }
 
@@ -60,28 +66,55 @@ class Popover extends React.Component {
 
         return <div className={"popover-target"}
                     ref={ el => this.targetRef = el}
-                    onClick={ this.targetClicked }>
+                    onClick={ (e) => this.targetClicked(e) }>
                         {target}
                 </div>
 
     }
 
-    targetClicked (){
-        const {manageOpened, onClick} = this.props;
+    changeOpenedState(){
+        const {manageOpened} = this.props;
         let currentState = this.state.opened;
+
         if(!manageOpened) {
             currentState = !currentState
             this.updateOpenedState(currentState)
         }
-
-        if(onClick!==undefined && onClick!==null)
-            onClick({value: currentState})
     }
 
-    componentDidMount() {
-        this.updateOpenedState(this.props.opened)
+    targetClicked (e){
+        e.preventDefault();
+        const {manageOpened, onTargetClick} = this.props;
+        const {opened} = this.state;
+
+        if(isPointInsideTheElement(this.targetRef, e.clientX, e.clientY)) {
+            this.changeOpenedState();
+            onTargetClick({value: manageOpened ? opened : !opened})
+        }
     }
 
+    documentClicked(event){
+        const {manageOpened, onOuterPopoverClicked} = this.props;
+        event.preventDefault();
+
+        let pointX = event.clientX;
+        let pointY = event.clientY;
+        let currentState = this.state.opened;
+        let contentElement = this.contentRef;
+        let targetElement = this.targetRef;
+
+        if( currentState && contentElement && targetElement) {
+
+            let isOutsideContent = !isPointInsideTheElement(contentElement, pointX, pointY);
+            let isOutsideTarget = !isPointInsideTheElement(targetElement, pointX, pointY);
+
+            if(isOutsideContent && isOutsideTarget) {
+                if(!manageOpened)
+                    this.changeOpenedState();
+                onOuterPopoverClicked();
+            }
+        }
+    }
 
     setStylesToContent() {
         if(this.contentRef && this.targetRef) {
@@ -131,13 +164,6 @@ class Popover extends React.Component {
         }
     }
 
-
-    componentDidUpdate(){
-        let openedValue = this.props.opened;
-        if(this.props.manageOpened && this.props.opened!== this.state.opened)
-            this.updateOpenedState(openedValue)
-    }
-
     updateOpenedState(value){
         if(value)
             this.setStylesToContent();
@@ -147,6 +173,19 @@ class Popover extends React.Component {
         this.setState({opened: value})
     }
 
+
+    componentDidUpdate(prevProps){
+        let {opened, manageOpened} = this.props;
+
+        if(manageOpened && opened!== this.state.opened)
+            this.updateOpenedState(opened)
+    }
+
+
+    componentDidMount() {
+        document.addEventListener("click", e => this.documentClicked(e));
+        this.updateOpenedState(this.props.opened)
+    }
 
     render() {
         return (
@@ -167,6 +206,8 @@ Popover.defaultProps = {
     opened: false,
     positions: getAllPossibleVariants(),
     roundBorder: true,
+    onTargetClick: () => void 0,
+    onOuterPopoverClicked: () => void 0
 }
 
 Popover.propTypes = {
@@ -181,8 +222,10 @@ Popover.propTypes = {
         target: propTypes.string,
         content: propTypes.string,
     })),
-    onClick: propTypes.func,
-    roundBorder: propTypes.bool
+    onTargetClick: propTypes.func,
+    onOuterPopoverClicked: propTypes.func,
+    roundBorder: propTypes.bool,
+    contentStyles: propTypes.object
 }
 
 export default Popover

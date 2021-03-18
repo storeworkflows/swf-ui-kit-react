@@ -4,6 +4,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {noop} from "../utils";
+import propTypes from "prop-types";
 
 const Start = () => null;
 const End = () => null;
@@ -241,7 +242,7 @@ Input.propTypes = {
         icon: PropTypes.string
     })),
     multiple: PropTypes.bool,
-    name: PropTypes.string.required,
+    name: PropTypes.string,
     pattern: PropTypes.string,
     placeholder: PropTypes.string,
     inputClass: PropTypes.string,
@@ -250,7 +251,7 @@ Input.propTypes = {
     required: PropTypes.bool,
     step: PropTypes.oneOfType([
         PropTypes.number,
-        PropTypes.oneOf["any"]
+        PropTypes.oneOf(["any"])
     ]),
     type: PropTypes.oneOf(["text", "password", "email", "number", "url", "tel", "search", "date", "datetime", "datetime-local", "month", "week", "time"]),
     value: PropTypes.string,
@@ -259,7 +260,10 @@ Input.propTypes = {
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
     onInvalid: PropTypes.func,
-    internalRef: PropTypes.element
+    internalRef: PropTypes.oneOfType([
+        propTypes.func,
+        propTypes.shape({ current: propTypes.any })
+    ])
 }
 
 export default Input;
