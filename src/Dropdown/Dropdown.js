@@ -5,6 +5,7 @@ import classnames from "classnames";
 import DropdownItem from "./DropdownItem";
 import Icon from "../Icon/Icon"
 import Popover from "../Popover/Popover";
+import {calculateScroll, getItemById} from "./utils";
 
 class Dropdown extends React.Component {
 
@@ -20,14 +21,19 @@ class Dropdown extends React.Component {
         }
 
         this.dropdownRef = null;
+        this.itemsContainerRef = null;
     }
 
     dropdownClicked(){
-        const {manageOpened, onOpened} = this.props;
+        const {manageOpened, onOpened, scrollToSelected} = this.props;
         const currentOpened = this.state.opened;
+        const container = this.itemsContainerRef;
 
-        if(!manageOpened)
+        if(!manageOpened){
+            if(!currentOpened && container && scrollToSelected)
+                container.scrollTop = calculateScroll(container, this.state.selectedItems)
             this.setState({opened: !currentOpened})
+        }
 
         if(onOpened)
             onOpened({ opened: currentOpened});
@@ -39,25 +45,30 @@ class Dropdown extends React.Component {
 
         if(!manageSelectedItems)
         {
-            this.setState({selectedItems: [id]});
+            this.setState({ selectedItems: [id] });
             if(!manageOpened)
                 this.setState({opened: false})
         }
 
         if(onItemSelected)
             onItemSelected({
-                clickedItem: this.getItemById(id, items),
+                clickedItem: getItemById(id, items),
                 selectedItems: currentSelectedIds
             });
     }
 
-    getItemById (id, items) {
-        let result = null;
-        items.map( el => {
-            if(el.id === id)
-                result = el;
-        })
-        return result;
+    componentDidUpdate() {
+        const {opened, selectedItems, manageOpened, manageSelectedItems, scrollToSelected} = this.props;
+        const container = this.itemsContainerRef;
+
+        if(manageOpened && opened !== this.state.opened){
+            if(this.state.opened && container && scrollToSelected)
+                container.scrollTop = calculateScroll(container, this.state.selectedItems)
+            this.setState({opened: opened})
+        }
+
+        if(manageSelectedItems && selectedItems!== this.state.selectedItems)
+                this.setState({selectedItems: selectedItems});
     }
 
     renderItems() {
@@ -69,8 +80,7 @@ class Dropdown extends React.Component {
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': 'calc(10rem - 2px)',
-            'maxHeight': '15rem'
+            'width': 'calc(10rem - 2px)'
         }
 
             return (
@@ -80,13 +90,14 @@ class Dropdown extends React.Component {
                     opened={opened}
                     hideTail={true}
                     onOuterPopoverClicked={() => this.dropdownClicked()}
-                    positions={[
-                        {target: "bottom-start", content: "top-start"}
-                    ]}
+                    positions={[{target: "bottom-start", content: "top-start"}]}
                     contentStyles={listStyles}
                 >
                     <Popover.Content>
-
+                        <div
+                            className={"dropdown-items-container"}
+                            ref = {el => this.itemsContainerRef = el}
+                        >
                         {items.map((item) => {
                             const {id, label, disabled} = item;
 
@@ -99,20 +110,10 @@ class Dropdown extends React.Component {
                                 isSelected={selectedItems.includes(id)}
                             />
                         })}
-
+                        </div>
                     </Popover.Content>
                 </Popover>
             )
-    }
-
-    componentDidUpdate() {
-        const {opened, selectedItems, manageOpened, manageSelectedItems} = this.props;
-
-        if(manageOpened && opened !== this.state.opened)
-            this.setState({opened: opened});
-
-        if(manageSelectedItems && selectedItems!== this.state.selectedItems)
-            this.setState({selectedItems: selectedItems});
     }
 
     render() {
@@ -152,8 +153,8 @@ class Dropdown extends React.Component {
                     >
                         {hasLabel &&
                             <span  className={labelClasses}>
-                                { hasSelected && this.getItemById(selectedItems[0], items)
-                                    ? this.getItemById(selectedItems[0], items).label
+                                { hasSelected && getItemById(selectedItems[0], items)
+                                    ? getItemById(selectedItems[0], items).label
                                     : placeholder
                                 }
                             </span>
@@ -173,6 +174,7 @@ class Dropdown extends React.Component {
 
 Dropdown.defaultProps = {
     disabled: false,
+    scrollToSelected: true,
     items: [],
     manageOpened: false,
     manageSelectedItems: false,
@@ -182,6 +184,7 @@ Dropdown.defaultProps = {
 
 Dropdown.propTypes = {
     name: propTypes.string,
+    scrollToSelected: propTypes.bool,
     disabled: propTypes.bool,
     items: propTypes.arrayOf(
         propTypes.shape({

@@ -18,6 +18,12 @@
     }
   }
 
+  .dropdown-items-container{
+    max-height: 15rem;
+    overflow: auto;
+  }
+
+
     .dropdown-button {
       display: flex;
       justify-content: right;
