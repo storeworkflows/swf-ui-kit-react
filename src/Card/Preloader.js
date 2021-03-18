@@ -1,5 +1,6 @@
 import {GLOBAL_CONSTANTS} from "./constants";
 import * as React from "react";
+import Preloader from "../Preloader/Preloader";
 
 class CardPreloader extends React.Component {
 	constructor(props) {
@@ -8,7 +9,7 @@ class CardPreloader extends React.Component {
 
 	render() {
 		return (
-			<swf-preloader
+			<Preloader
 				count={1}
 				items={[
 					{

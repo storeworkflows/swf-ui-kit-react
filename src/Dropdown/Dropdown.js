@@ -4,6 +4,7 @@ import classnames from "classnames";
 
 import DropdownItem from "./DropdownItem";
 import Icon from "../Icon/Icon"
+import Popover from "../Popover/Popover";
 
 class Dropdown extends React.Component {
 
@@ -18,6 +19,7 @@ class Dropdown extends React.Component {
             selectedItems: this.props.selectedItems
         }
 
+        this.dropdownRef = null;
     }
 
     dropdownClicked(){
@@ -62,23 +64,45 @@ class Dropdown extends React.Component {
         const {items} = this.props;
         const {opened, selectedItems} = this.state;
 
-        if(opened) {
-            return <div className={"dropdown-items"}>
-                {items.map((item) => {
-                    const {id, label, disabled} = item;
+        let listStyles = {
+            '--popover-border-radius': '0 0 0.5rem 0.5rem',
+            '--popover-border': '1px solid rgb(228, 230, 231)',
+            '--popover-shadow': 'none',
+            'padding': '0',
+            'width': 'calc(10rem - 2px)',
+            'maxHeight': '15rem'
+        }
 
-                    return <DropdownItem
-                        key = {id}
-                        onSelectAction={this.itemSelected}
-                        id={id}
-                        label={label}
-                        disabled={this.props.disabled || disabled}
-                        isSelected={selectedItems.includes(id)}
-                    />
-                })}
-            </div>
-        } else
-            return null;
+            return (
+                <Popover
+                    positionTarget={this.dropdownRef}
+                    manageOpened={true}
+                    opened={opened}
+                    hideTail={true}
+                    onOuterPopoverClicked={() => this.dropdownClicked()}
+                    positions={[
+                        {target: "bottom-start", content: "top-start"}
+                    ]}
+                    contentStyles={listStyles}
+                >
+                    <Popover.Content>
+
+                        {items.map((item) => {
+                            const {id, label, disabled} = item;
+
+                            return <DropdownItem
+                                key = {id}
+                                onSelectAction={this.itemSelected}
+                                id={id}
+                                label={label}
+                                disabled={this.props.disabled || disabled}
+                                isSelected={selectedItems.includes(id)}
+                            />
+                        })}
+
+                    </Popover.Content>
+                </Popover>
+            )
     }
 
     componentDidUpdate() {
@@ -105,34 +129,42 @@ class Dropdown extends React.Component {
         let hasSelected = selectedItems && (selectedItems.length > 0 );
         let hasLabel = hasSelected || placeholder;
 
+        let buttonClasses = classnames({
+            "dropdown-button" : true,
+            "opened": opened,
+            "disabled": disabled
+        })
+        let labelClasses = classnames({
+            "dropdown-label": true,
+            "placeholder": !hasSelected
+        })
+
         return (
             <>
-                <div className={"swf-dropdown-container"}>
+                <div className={"swf-dropdown-container"}
+                     ref = {el => this.dropdownRef =  {current: el}}
+                >
                     <input type="hidden" name={name}/>
                     <button
-                        onClick={()=>this.dropdownClicked()}
+                        onClick={this.dropdownClicked}
                         disabled={disabled}
-                        className={ classnames({
-                            "dropdown-button" : true,
-                            "opened": opened,
-                            "disabled": disabled
-                        })}
+                        className={buttonClasses}
                     >
                         {hasLabel &&
-                            <span  className={classnames({
-                                    "dropdown-label": true,
-                                    "placeholder": !hasSelected
-                                })}
-                            >
+                            <span  className={labelClasses}>
                                 { hasSelected && this.getItemById(selectedItems[0], items)
                                     ? this.getItemById(selectedItems[0], items).label
                                     : placeholder
                                 }
                             </span>
                         }
-                        <div className={"dropdown-caret"}><Icon icon={"caret-down-fill"} customSize={12} /></div>
+                        <div className={"dropdown-caret"}>
+                            <Icon
+                                icon={"caret-down-fill"}
+                                customSize={12} />
+                        </div>
                     </button>
-                    {this.renderItems()}
+                    {this.dropdownRef && this.renderItems()}
                 </div>
             </>
         )
@@ -151,14 +183,16 @@ Dropdown.defaultProps = {
 Dropdown.propTypes = {
     name: propTypes.string,
     disabled: propTypes.bool,
-    items: propTypes.shape({
-        id: propTypes.oneOfType([
-            propTypes.string,
-            propTypes.number
-        ]),
-        label: propTypes.string,
-        disabled: propTypes.bool
-    }),
+    items: propTypes.arrayOf(
+        propTypes.shape({
+            id: propTypes.oneOfType([
+                propTypes.string,
+                propTypes.number
+            ]),
+            label: propTypes.string,
+            disabled: propTypes.bool
+        }
+    )),
     manageOpened: propTypes.bool,
     manageSelectedItems: propTypes.bool,
     opened: propTypes.bool,
