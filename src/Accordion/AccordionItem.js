@@ -39,10 +39,10 @@ class AccordionItem extends React.Component {
     }
 
     renderHeader() {
-        const {children, name} = this.props;
+        const {children, label} = this.props;
         const header = findByType(children, "Header");
 
-        if (!header || header.length<1) return <label>{name}</label>;
+        if (!header || header.length<1) return <label>{label}</label>;
 
         return header
     }
@@ -73,7 +73,6 @@ class AccordionItem extends React.Component {
         })
 
         return <Button
-            size={"sm"}
             className = {classes}
             icon={triggerIcon}
             variant={"tertiary"}
@@ -82,18 +81,27 @@ class AccordionItem extends React.Component {
 
 
     render() {
-        const { iconToStart} = this.props;
+        const { iconToStart, isLastItem, isFirstItem, className} = this.props;
         const {opened} = this.state;
+
+        const itemStyles =  classnames(
+            className,
+            {
+                "accordion-item": true,
+                "last": isLastItem,
+                "first": isFirstItem
+            })
 
         const headerContentStyles =  classnames({
                 "accordion-header-content": true,
                 "left": !iconToStart,
-                "right": iconToStart
+                "right": iconToStart,
+                "opened": opened
             })
 
         return (
             <>
-                <div className={"accordion-item"}>
+                <div className={itemStyles}>
                     <div
                         className={"accordion-item-header"}
                         onClick={this.itemClicked}
@@ -116,18 +124,24 @@ AccordionItem.defaultProps = {
     manageOpened: false,
     triggerIcon: "chevron-down",
     iconToStart: false,
+    className: {},
     onClick: () => void 0,
-    onSelected: () => void 0
+    onSelected: () => void 0,
+    isLastItem: false,
+    isFirstItem: false
 }
 
 AccordionItem.propTypes = {
-    name: propTypes.string,
+    label: propTypes.string,
     opened: propTypes.bool,
     manageOpened: propTypes.bool,
     onSelected: propTypes.func,
     onClick: propTypes.func,
     triggerIcon: propTypes.string,
-    iconToStart: propTypes.bool
+    iconToStart: propTypes.bool,
+    isLastItem: propTypes.bool,
+    isFirstItem: propTypes.bool,
+    className: propTypes.object
 }
 
 export default AccordionItem
