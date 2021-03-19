@@ -168,6 +168,7 @@ class DatePicker extends React.Component {
 
         const calendarPositions = [
             {target: "bottom-end", content: "top-end"},
+            {target: "top-end", content: "bottom-end"},
             {target: "bottom-center", content: "top-center"},
             {target: "top-center", content: "bottom-center"},
             {target: "center-end", content: "center-start"},

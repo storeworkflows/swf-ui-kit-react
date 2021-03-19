@@ -18,7 +18,8 @@ class Button extends React.Component {
 			variant,
 			customStyle,
 			children,
-			onClick
+			onClick,
+			className
 		} = this.props;
 
 		const additionalStyle = addStyles(customStyle);
@@ -34,6 +35,7 @@ class Button extends React.Component {
 				<button
 					//ref={elm => this.props.innerRef(elm)}
 					className={classnames(
+						className,
 						variant,
 						`button-${size}`,
 						{
@@ -80,7 +82,8 @@ Button.defaultProps = {
 	tooltipContent: "",
 	size: 'md',
 	variant:  "secondary",
-	customStyle: null
+	customStyle: null,
+	className: {}
 }
 
 Button.propTypes = {
@@ -93,6 +96,7 @@ Button.propTypes = {
 				"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
 	customStyle: propTypes.object,
 	onClick: propTypes.func,
+	className: propTypes.object
 	//innerRef: propTypes.func
 }
 
