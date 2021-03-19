@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {noop} from "../utils";
 import propTypes from "prop-types";
+import Icon from "../Icon/Icon";
 
 const Start = () => null;
 const End = () => null;
@@ -183,8 +184,8 @@ class Input extends React.Component {
                             _exist
                                 ?
                                 <div className={classnames(el.status)}>
-                                    {_hasIcon && null
-                                        //<x-mobi-swf-icon icon={el.icon} size="sm"/>
+                                    {_hasIcon &&
+                                        <Icon icon={el.icon} size="sm"/>
                                     }
                                     {_hasContent &&
                                     <span>{el.content}</span>

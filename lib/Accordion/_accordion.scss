@@ -1,0 +1,43 @@
+.accordion-container{
+  width: 100%;
+
+  .accordion-item{
+    width: 100%;
+
+    .accordion-item-header{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .accordion-header-content{
+          width: calc(100% - 1.5rem);
+          padding: 0 0.5rem;
+      }
+
+      .trigger-icon{
+        width: 1.5rem;
+      }
+
+
+      .left{
+        left: 0;
+      }
+      .right{
+        right: 0;
+      }
+
+    }
+
+    .accordion-content{
+      padding: 0.5rem;
+    }
+
+
+    .accordion-item-header:hover{
+      background: #ededed;
+    }
+
+  }
+
+}

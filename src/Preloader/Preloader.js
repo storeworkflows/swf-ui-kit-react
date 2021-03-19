@@ -6,10 +6,11 @@ class Preloader extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         const { count, items, width, height, flexDirectionGeneral, background, mainStyles, blur } = this.props;
         return <div className="swf-preloader" style={{ flexDirection: flexDirectionGeneral }}>
-            {new Array(count).fill(null).map(() => <div className={classNames({ "mock-container": true, "gray": background })} style={Object.assign({ width, height }, mainStyles)}>
+            {new Array(count).fill(null).map((el, i) => <div className={classNames({ "mock-container": true, "gray": background })} style={Object.assign({ width, height }, mainStyles)} key={i}>
                 <div className="light-container">
                     <div className="light" style={{ filter: `blur(${blur})` }}/>
                 </div>
@@ -17,7 +18,7 @@ class Preloader extends Component {
                 {items.map(({ repeat, width, height, styles, itemStyles }) => <div style={Object.assign({ display: "flex" }, itemStyles)}>
                     {new Array(repeat).fill(null).map((_, index) => {
                         const style = styles ? styles[index] : {};
-                        return (<div className="mock-row" style={Object.assign({ width, height }, style)}/>);
+                        return (<div className="mock-row" style={Object.assign({ width, height }, style)} key={index}/>);
                     })}
                 </div>)}
 
