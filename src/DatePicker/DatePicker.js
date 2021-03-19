@@ -141,7 +141,7 @@ class DatePicker extends React.Component {
         return (
             <Input
                 label={label}
-                placeholder={format}
+                placeholder={(label) ? "" : format}
                 value={stringValue}
                 name={name}
                 manageInvalid={true}
@@ -202,8 +202,7 @@ class DatePicker extends React.Component {
 }
 
 DatePicker.defaultProps = {
-    label: undefined,
-    format: "MM.DD.YYYY",
+    format: "YYYY-MM-DD",
     value: "",
     required: false,
     readonly: false,

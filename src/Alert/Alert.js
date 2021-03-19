@@ -15,14 +15,20 @@ class Alert extends React.Component {
             isOverflowed: false
         }
 
-        this.contentRef = React.createRef();
+        this.contentRef = null;
+        this.textRef = null;
     }
 
     componentDidMount() {
-        if(this.contentRef){
-            let content = this.contentRef.current;
-            console.log(content.clientHeight, content.scrollHeight, content.clientHeight<content.scrollHeight)
-            this.setState({isOverflowed: content.clientHeight<content.scrollHeight})
+        if(this.contentRef && this.textRef){
+            let content = this.contentRef;
+            let text = this.textRef;
+
+            let contentEndX = content.getBoundingClientRect().y + content.clientHeight;
+            let textEndX = text.getBoundingClientRect().y + text.clientHeight;
+
+            console.log(contentEndX<textEndX)
+            this.setState({isOverflowed: contentEndX<textEndX})
         }
     }
 
@@ -38,20 +44,28 @@ class Alert extends React.Component {
             textLinkProps
         } = this.props;
 
+        const {isOverflowed} = this.state;
+
         return (
             <>
                 <div className={"swf-alert-container"}>
                     {icon && <div className={"alert-icon"}><Icon icon = {icon}/></div>}
-                    <div className={"alert-content"} >
+                    <div className={"alert-content"} ref = { el => this.contentRef = el}>
                         {header && <div className={"alert-header"}>{header}</div>}
                         {content &&
-                            <div ref = {this.contentRef}>
+                            <div
+                                ref = { el => this.textRef = el}
+                                className={classnames({
+                                    "text-container": true,
+                                    "overflowed": isOverflowed
+                                })}
+                            >
                                 <p className={"alert-text"} >{content}</p>
                             </div>
                         }
-                        {this.state.isOverflowed && <span>Show more</span>}
+                        {isOverflowed && <span>Show more</span>}
                     </div>
-                    <Button>Ok</Button>
+                    <Button label={"Ok"}/>
                 </div>
             </>
         )
