@@ -12,19 +12,21 @@
 
   max-width: 100%;
   grid-template-columns: 24px 1fr max-content;
+  font: 400 1rem Alial;
 
-  .swf-button{
-    //margin: 0 !important;
-    height: fit-content;
+  .text-container{
+    &.overflowed{
+      height: 60%;
+    }
   }
 
   .alert-text{
     margin: 0;
     padding: 0;
     width: 100%;
+    height: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
-    //white-space: nowrap;
   }
 
   .alert-content{

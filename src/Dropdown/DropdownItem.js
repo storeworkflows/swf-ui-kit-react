@@ -7,6 +7,8 @@ class DropdownItem extends React.Component {
     constructor(props) {
         super(props);
         this.itemSelected = this.itemSelected.bind(this);
+
+        this.itemRef = null;
     }
 
     itemSelected() {
@@ -14,6 +16,12 @@ class DropdownItem extends React.Component {
 
         if(!disabled)
             onSelectAction({id: id});
+    }
+
+    componentDidMount() {
+        const {showOnMount, isSelected} = this.props;
+        if(this.itemRef && isSelected && showOnMount)
+            this.itemRef.scrollIntoView();
     }
 
     render() {
@@ -34,6 +42,7 @@ class DropdownItem extends React.Component {
                })}
                     onClick={() => this.itemSelected()}
                     data-key={id}
+                    ref = {el => this.itemRef = el}
                >
                    {label}
                </div>
@@ -44,7 +53,8 @@ class DropdownItem extends React.Component {
 
 DropdownItem.defaultProps = {
     disabled: false,
-    isSelected: false
+    isSelected: false,
+    showOnMount: true
 }
 
 DropdownItem.propTypes = {
@@ -55,7 +65,8 @@ DropdownItem.propTypes = {
     label: propTypes.string,
     disabled: propTypes.bool,
     onSelectAction: propTypes.func,
-    isSelected: propTypes.bool
+    isSelected: propTypes.bool,
+    showOnMount: propTypes.bool,
 }
 
 export default DropdownItem

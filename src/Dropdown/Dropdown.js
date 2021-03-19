@@ -5,7 +5,7 @@ import classnames from "classnames";
 import DropdownItem from "./DropdownItem";
 import Icon from "../Icon/Icon"
 import Popover from "../Popover/Popover";
-import {calculateScroll, getItemById} from "./utils";
+import {getItemById} from "./utils";
 
 class Dropdown extends React.Component {
 
@@ -25,15 +25,11 @@ class Dropdown extends React.Component {
     }
 
     dropdownClicked(){
-        const {manageOpened, onOpened, scrollToSelected} = this.props;
+        const {manageOpened, onOpened} = this.props;
         const currentOpened = this.state.opened;
-        const container = this.itemsContainerRef;
 
-        if(!manageOpened){
-            if(!currentOpened && container && scrollToSelected)
-                container.scrollTop = calculateScroll(container, this.state.selectedItems)
+        if(!manageOpened)
             this.setState({opened: !currentOpened})
-        }
 
         if(onOpened)
             onOpened({ opened: currentOpened});
@@ -58,21 +54,17 @@ class Dropdown extends React.Component {
     }
 
     componentDidUpdate() {
-        const {opened, selectedItems, manageOpened, manageSelectedItems, scrollToSelected} = this.props;
-        const container = this.itemsContainerRef;
+        const {opened, selectedItems, manageOpened, manageSelectedItems} = this.props;
 
-        if(manageOpened && opened !== this.state.opened){
-            if(this.state.opened && container && scrollToSelected)
-                container.scrollTop = calculateScroll(container, this.state.selectedItems)
+        if(manageOpened && opened !== this.state.opened)
             this.setState({opened: opened})
-        }
 
         if(manageSelectedItems && selectedItems!== this.state.selectedItems)
                 this.setState({selectedItems: selectedItems});
     }
 
     renderItems() {
-        const {items} = this.props;
+        const {items, scrollToSelected} = this.props;
         const {opened, selectedItems} = this.state;
 
         let listStyles = {
@@ -98,18 +90,21 @@ class Dropdown extends React.Component {
                             className={"dropdown-items-container"}
                             ref = {el => this.itemsContainerRef = el}
                         >
-                        {items.map((item) => {
-                            const {id, label, disabled} = item;
+                            {opened &&
+                                items.map((item) => {
+                                    const {id, label, disabled} = item;
 
-                            return <DropdownItem
-                                key = {id}
-                                onSelectAction={this.itemSelected}
-                                id={id}
-                                label={label}
-                                disabled={this.props.disabled || disabled}
-                                isSelected={selectedItems.includes(id)}
-                            />
-                        })}
+                                    return <DropdownItem
+                                        key={id}
+                                        onSelectAction={this.itemSelected}
+                                        id={id}
+                                        label={label}
+                                        disabled={this.props.disabled || disabled}
+                                        isSelected={selectedItems.includes(id)}
+                                        showOnMount = {scrollToSelected}
+                                    />
+                                })
+                            }
                         </div>
                     </Popover.Content>
                 </Popover>
