@@ -16,6 +16,7 @@
 [Tooltip, ](#Tooltip)
 [RadioButtons, ](#RadioButtons)
 [Checkbox, ](#Checkbox)
+[HtmlEditor, ](#HtmlEditor)
 
 
 
@@ -404,3 +405,17 @@ readonly | bool
 required | bool
 onInvalid | func
 onChange | func
+
+# HtmlEditor
+
+**Props**
+
+Name | Type
+------------ | -------------
+label | string
+required | bool
+toolbar | string
+readonly | bool
+content | string
+height | string
+onValueChange | func
