@@ -141,7 +141,7 @@ class Stepper extends React.Component {
                     <div
                         className="steps-shown"
                         style={{
-                            width: isArrowsNeeded && !vertical ? stepsPerPage * 200 : '100%',
+                            width: '100%',
                             height: stepsPerPage * 120
                         }}
                     >
