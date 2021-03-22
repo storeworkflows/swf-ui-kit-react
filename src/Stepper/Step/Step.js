@@ -31,11 +31,10 @@ class Step extends React.Component {
                                 customSize={typeof iconSize === 'number' ? iconSize : undefined}
                             />
                             }
-
-                            <div className="step-label">
-                                <span>{!hideLabel && step.label}</span>
-                                <span className="step-sublabel">{!hideLabel && step.sublabel}</span>
-                            </div>
+                        </div>
+                        <div className="step-label">
+                            <span>{!hideLabel && step.label}</span>
+                            <span className="step-sublabel">{!hideLabel && step.sublabel}</span>
                         </div>
                     </div>
                     <div className="step-line --after"/>
