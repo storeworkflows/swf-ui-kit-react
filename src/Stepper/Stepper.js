@@ -91,7 +91,7 @@ class Stepper extends React.Component {
                             '--disabled': step.disabled
                         })}
                         key={'step' + index}
-                        onClick={!step.disabled && this.selectStep(index, step.id)}
+                        onClick={step.disabled ? undefined : this.selectStep(index, step.id)}
                     >
                         <Step
                             iconColor={iconColor}
