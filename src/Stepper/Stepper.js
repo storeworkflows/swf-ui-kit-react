@@ -59,7 +59,7 @@ class Stepper extends React.Component {
         return () => {
             const newContainerPosValue = this.state[vertical ? 'containerBottomPos' : 'containerRightPos']
                 + ((vertical ? 120 : 200) * direction);
-            const maxContainerPos = (vertical ? 120 : 200) * (steps.length - stepsPerPage);
+            const maxContainerPos = (vertical ? 120 : 150) * (steps.length - stepsPerPage);
 
             this.setState({
                 [vertical ? 'containerBottomPos' : 'containerRightPos']:
