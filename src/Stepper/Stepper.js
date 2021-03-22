@@ -70,13 +70,13 @@ class Stepper extends React.Component {
     }
 
     renderSteps() {
-        const { steps, hideLabels, palette: { icon }, iconSize } = this.props;
+        const { steps, hideLabels, palette: { icon }, iconSize, selectedItem } = this.props;
         const { selected } = this.state;
 
         return (
             steps.map((step, index) => {
-                const isSelected = selected === index;
-                const isBeforeSelected = selected > index;
+                const isSelected = selectedItem === index;
+                const isBeforeSelected = selectedItem > index;
                 const iconColor = (isSelected || isBeforeSelected)
                 && (step.progress !== 'none' && step.progress !== 'partial')
                 || step.progress === 'done'
