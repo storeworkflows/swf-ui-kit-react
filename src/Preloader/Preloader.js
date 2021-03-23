@@ -16,7 +16,7 @@ class Preloader extends Component {
                     <div
                         className={classNames({ "mock-container": true, "gray": background })}
                         style={Object.assign({ width, height }, mainStyles)}
-                        key={'preloader-mock-container-' + i}
+                        key={`${width}-${height}-${count}-preloader-mock-container`}
                     >
                         <div className="light-container">
                             <div className="light" style={{ filter: `blur(${blur})` }}/>
@@ -25,7 +25,7 @@ class Preloader extends Component {
                         {items.map(({ repeat, width, height, styles, itemStyles }, i) => (
                             <div
                                 style={Object.assign({ display: "flex" }, itemStyles)}
-                                key={'preloader-row-container-' + i}
+                                key={`${width}-${height}-${count}-${repeat}-preloader-row-container`}
                             >
                                 {new Array(repeat).fill(null).map((_, i) => {
                                     const style = styles ? styles[i] : {};
@@ -33,7 +33,7 @@ class Preloader extends Component {
                                         <div
                                             className="mock-row"
                                             style={Object.assign({ width, height }, style)}
-                                            key={'preloader-mock-row-' + i}
+                                            key={`${width}-${height}-${count}-${repeat}-preloader-mock-row`}
                                         />
                                     );
                                 })}
