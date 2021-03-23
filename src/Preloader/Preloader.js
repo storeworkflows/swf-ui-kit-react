@@ -1,6 +1,7 @@
 import { Component } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import { v4 as uuidv4 } from 'uuid';
 
 class Preloader extends Component {
     constructor(props) {
@@ -9,21 +10,40 @@ class Preloader extends Component {
 
     render() {
         const { count, items, width, height, flexDirectionGeneral, background, mainStyles, blur } = this.props;
-        return <div className="swf-preloader" style={{ flexDirection: flexDirectionGeneral }}>
-            {new Array(count).fill(null).map((el, i) => <div className={classNames({ "mock-container": true, "gray": background })} style={Object.assign({ width, height }, mainStyles)} key={i}>
-                <div className="light-container">
-                    <div className="light" style={{ filter: `blur(${blur})` }}/>
-                </div>
 
-                {items.map(({ repeat, width, height, styles, itemStyles }) => <div style={Object.assign({ display: "flex" }, itemStyles)}>
-                    {new Array(repeat).fill(null).map((_, index) => {
-                        const style = styles ? styles[index] : {};
-                        return (<div className="mock-row" style={Object.assign({ width, height }, style)} key={index}/>);
-                    })}
-                </div>)}
+        return (
+            <div className="swf-preloader" style={{ flexDirection: flexDirectionGeneral }}>
+                {new Array(count).fill(null).map((el, i) => (
+                    <div
+                        className={classNames({ "mock-container": true, "gray": background })}
+                        style={Object.assign({ width, height }, mainStyles)}
+                        key={'preloader-mock-container' + uuidv4()}
+                    >
+                        <div className="light-container">
+                            <div className="light" style={{ filter: `blur(${blur})` }}/>
+                        </div>
 
-            </div>)}
-        </div>;
+                        {items.map(({ repeat, width, height, styles, itemStyles }) => (
+                            <div
+                                style={Object.assign({ display: "flex" }, itemStyles)}
+                                key={'preloader-row-container' + uuidv4()}
+                            >
+                                {new Array(repeat).fill(null).map((_, index) => {
+                                    const style = styles ? styles[index] : {};
+                                    return (
+                                        <div
+                                            className="mock-row"
+                                            style={Object.assign({ width, height }, style)}
+                                            key={'preloader-mock-row' + uuidv4()}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        );
     }
 }
 Preloader.defaultProps = {
