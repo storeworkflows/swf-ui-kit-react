@@ -132,11 +132,11 @@
   width: inherit;
   font-family: var(--mv9-kWzzvm--Pvmz-PrTAjO,var(--now-font-family));
   white-space: nowrap;
-  margin: auto;
   cursor: pointer;
 
   .button-label{
     cursor: pointer;
+    color: var(--text-color);
   }
 
   &.disabled{
