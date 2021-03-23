@@ -1,7 +1,6 @@
 import { Component } from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import { v4 as uuidv4 } from 'uuid';
 
 class Preloader extends Component {
     constructor(props) {
@@ -17,24 +16,24 @@ class Preloader extends Component {
                     <div
                         className={classNames({ "mock-container": true, "gray": background })}
                         style={Object.assign({ width, height }, mainStyles)}
-                        key={'preloader-mock-container' + uuidv4()}
+                        key={'preloader-mock-container-' + i}
                     >
                         <div className="light-container">
                             <div className="light" style={{ filter: `blur(${blur})` }}/>
                         </div>
 
-                        {items.map(({ repeat, width, height, styles, itemStyles }) => (
+                        {items.map(({ repeat, width, height, styles, itemStyles }, i) => (
                             <div
                                 style={Object.assign({ display: "flex" }, itemStyles)}
-                                key={'preloader-row-container' + uuidv4()}
+                                key={'preloader-row-container-' + i}
                             >
-                                {new Array(repeat).fill(null).map((_, index) => {
-                                    const style = styles ? styles[index] : {};
+                                {new Array(repeat).fill(null).map((_, i) => {
+                                    const style = styles ? styles[i] : {};
                                     return (
                                         <div
                                             className="mock-row"
                                             style={Object.assign({ width, height }, style)}
-                                            key={'preloader-mock-row' + uuidv4()}
+                                            key={'preloader-mock-row-' + i}
                                         />
                                     );
                                 })}

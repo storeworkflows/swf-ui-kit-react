@@ -16,13 +16,16 @@ class Card extends Component {
 
 		return (
 			<>
-				<div className={
-					classnames({
-						"swf-card": true,
-						"vertical": vertical,
-						[`--${size}`]: true
-					})
-				} style={customStyles}>
+				<div
+					className={
+						classnames({
+							"swf-card": true,
+							"vertical": vertical,
+							[`--${size}`]: true
+						})
+					}
+					 style={customStyles}
+				>
 					<Fragment>{Children.only(this.props.children)}</Fragment>
 				</div>
 			</>
