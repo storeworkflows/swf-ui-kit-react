@@ -26,7 +26,7 @@ class DeclarativeUIActions extends React.Component {
     formatActions(props) {
         const actions = props.declarativeUiActions;
 
-        const formattedActions = actions.map(({actionDispatch, assignmentId, icon, requiresValue, tooltip}) => {
+        const formattedActions = actions?.map(({actionDispatch, assignmentId, icon, requiresValue, tooltip}) => {
             return {
                 actionDispatch: actionDispatch,
                 icon: this.compareIcon(icon),

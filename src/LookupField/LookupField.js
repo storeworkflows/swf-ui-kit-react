@@ -186,7 +186,7 @@ class LookupField extends React.Component {
                         onInput={this.onChange}
                     >
                         {isList && this.renderListPills()}
-                        <Input.End><DeclarativeUIActions record={referenceRecord}/></Input.End>
+                        <Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>
                     </Input>
                     {showResults ? <ul className="result" style={{top: `${this.inputRef?.current?.offsetHeight + 10}px`}}>
                         {loading ? <span className="message">Loading...</span> : null}
