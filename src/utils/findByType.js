@@ -2,7 +2,7 @@ import React from "react";
 
 const findByType = (children, type) => {
     return React.Children.map(children, child => {
-        return child.type.displayName === type ? child : null
+        return child?.type?.displayName === type ? child : null
     });
 }
 
