@@ -50,14 +50,14 @@ class DeclarativeUIActions extends React.Component {
 
         return actions.map(action => (
             <div
-                key={action.id}
-                title={action.tooltip}
+                key={action?.id}
+                title={action?.tooltip}
                 className={
                     classNames({
                         "action": true,
-                        "visible": !action.requiresValue || this.props.record.sysId
+                        "visible": !action?.requiresValue || this.props?.record?.sysId
                     })
-                }><Icon icon={action.icon}/></div>
+                }><Icon icon={action?.icon}/></div>
         ))
     }
 
