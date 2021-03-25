@@ -57,7 +57,7 @@ class DeclarativeUIActions extends React.Component {
                         "action": true,
                         "visible": !action?.requiresValue || this.props?.record?.sysId
                     })
-                }><Icon icon={action?.icon} size="xs"/></div>
+                }><Icon icon={action?.icon} size="sm"/></div>
         ))
     }
 
