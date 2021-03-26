@@ -119,7 +119,7 @@ class Avatar extends React.Component {
                             title={name}
                             onLoad={this.fixPhotoSize}
                             className="member-photo"
-                            src={normalizeURL(`/${avatar}`)}
+                            src={avatar}
                         />
                     </div>}
                     {avatarIsVisible && <div className={classnames({
