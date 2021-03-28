@@ -8,6 +8,8 @@ import fetch from "cross-fetch";
 import {Icon} from "../index";
 
 export default class HtmlEditor extends React.Component {
+    static baseUrl = "/scripts/tinymce_default/node_modules/sn-tinymce/js/tinymce";
+
     constructor(props) {
         super(props);
         this.state = {
@@ -51,6 +53,12 @@ export default class HtmlEditor extends React.Component {
         console.log(resultJson)
 
         return result;
+    }
+
+    componentDidMount() {
+       if (window.tinymce.baseURL !== HtmlEditor.baseUrl) {
+           window.tinymce.baseURL = HtmlEditor.baseUrl
+       }
     }
 
     render() {
