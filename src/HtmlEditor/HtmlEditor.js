@@ -79,6 +79,9 @@ export default class HtmlEditor extends React.Component {
                     init={{
                         menubar: false,
                         statusbar: false,
+                        remove_script_host: true,
+                        relative_urls: true,
+                        convert_urls: false,
                         init_instance_callback: (editor) => {
                             const height = !!this.props.height ? this.props.height : `${Math.round(document.body.offsetHeight * 0.6) - 36}px`;
                             !!content ? editor.selection.setContent(content) : noop;
@@ -88,7 +91,13 @@ export default class HtmlEditor extends React.Component {
                         },
                         width: "99%",
                         document_base_url: window.location.origin,
-                        base_url: "/scripts/tinymce_default/node_modules/sn-tinymce/js/tinymce",
+                        external_plugins: {
+                            codemirror:
+                                '/scripts/tinymce_default/node_modules/sn-tinymce/js/tinymce/sn_plugins/codemirror/plugin.min.js'
+                        },
+                        codemirror: {
+                            path: 'CodeMirror'
+                        },
                         images_upload_handler: (blobInfo, success, failure) => {
                             const selectedFile = blobInfo.blob();
                             const uuid = uuidv4().split("-").join("");
