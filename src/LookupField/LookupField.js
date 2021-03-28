@@ -30,8 +30,8 @@ class LookupField extends React.Component {
         this.state = {
             records: [],
             referenceRecord: {
-                sysId: this.isList ? "" : this.props.value?.value ?? null,
-                displayValue: this.isList ? "" : this.props.value?.displayValue ?? ""
+                sysId: this.isList ? "" : this.props.value || null,
+                displayValue: this.isList ? "" : this.props.displayValue || ""
             },
             listRecords: {
                 value: this.props.value?.value?.split(",") ?? [],
@@ -172,7 +172,6 @@ class LookupField extends React.Component {
 
         const isList = type === "list";
 
-
         return (
             <>
                 <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}>
@@ -210,6 +209,7 @@ LookupField.defaultProps = {
 LookupField.propTypes = {
     onValueChange: propTypes.func,
     value: propTypes.string,
+    displayValue: propTypes.string,
     declarativeUiActions: propTypes.object,
     label: propTypes.string,
     name: propTypes.string,
