@@ -55,12 +55,6 @@ export default class HtmlEditor extends React.Component {
         return result;
     }
 
-    componentDidMount() {
-       if (window.tinymce.baseURL !== HtmlEditor.baseUrl) {
-           window.tinymce.baseURL = HtmlEditor.baseUrl
-       }
-    }
-
     render() {
         const {
             toolbar,
@@ -127,6 +121,12 @@ export default class HtmlEditor extends React.Component {
                                     return res.json();
                             })
                             .then(resJson => success(window.location.origin + "/sys_attachment.do?sys_id=" + resJson.result.sys_id))
+                        },
+                        setup: editor => {
+                            this.editor = editor;
+                            editor.on("init", () => {
+                                console.log({editor});
+                            })
                         }
                     }}
                 />
