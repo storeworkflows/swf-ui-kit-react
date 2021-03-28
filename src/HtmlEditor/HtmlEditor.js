@@ -88,6 +88,7 @@ export default class HtmlEditor extends React.Component {
                         },
                         width: "99%",
                         document_base_url: window.location.origin,
+                        base_url: "/scripts/tinymce_default/node_modules/sn-tinymce/js/tinymce",
                         images_upload_handler: (blobInfo, success, failure) => {
                             const selectedFile = blobInfo.blob();
                             const uuid = uuidv4().split("-").join("");
