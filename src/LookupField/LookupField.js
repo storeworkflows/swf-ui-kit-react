@@ -164,7 +164,7 @@ class LookupField extends React.Component {
     render() {
         const {matchesCount, records, loading, loaded, focused, referenceRecord} = this.state;
 
-        const {label, declarativeUiActions, type, name} = this.props;
+        const {label, declarativeUiActions, type, name, readonly} = this.props;
 
         const hasMatches = matchesCount > 0;
 
@@ -183,6 +183,7 @@ class LookupField extends React.Component {
                         label={label}
                         name={name}
                         onInput={this.onChange}
+                        readonly={readonly}
                     >
                         {isList && this.renderListPills()}
                         <Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>
@@ -203,7 +204,8 @@ LookupField.defaultProps = {
     name: "default",
     onValueChange: () => void 0,
     declarativeUiActions: [],
-    type: "reference"
+    type: "reference",
+    readonly: false
 }
 
 LookupField.propTypes = {
@@ -215,7 +217,8 @@ LookupField.propTypes = {
     name: propTypes.string,
     type: propTypes.oneOf(["reference", "list"]),
     table: propTypes.string,
-    tableRecordSysId: propTypes.string
+    tableRecordSysId: propTypes.string,
+    readonly: propTypes.bool
 }
 
 export default LookupField
