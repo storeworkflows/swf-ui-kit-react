@@ -20,6 +20,7 @@ export default class HtmlEditor extends React.Component {
             TinyMcEditor: null
         }
         this.changeInput = this.changeInput.bind(this);
+        this.changeBaseURL();
     }
 
     changeInput(content) {
@@ -36,6 +37,12 @@ export default class HtmlEditor extends React.Component {
 		arr1.push(hex);
 	 }
 	return arr1.join('');
+   }
+
+   changeBaseURL() {
+        if ("tinymce" in window) {
+            window.tinymce.baseURL = HtmlEditor.baseUrl;
+        }
    }
 
     fetchRequest = async ({ url, params = {} }) => {
