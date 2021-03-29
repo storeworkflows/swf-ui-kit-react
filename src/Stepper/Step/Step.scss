@@ -28,7 +28,7 @@
 
   &-label {
     position: absolute;
-    bottom: -20px;
+    bottom: -30px;
     max-width: 100%;
     text-align: center;
     font-size: .8rem;
@@ -67,7 +67,7 @@
     align-items: center;
     justify-content: center;
 
-    transition: background-color 200ms ease, box-shadow 400ms ease, opacity 400ms ease;
+    transition: background-color 200ms ease, box-shadow 300ms ease, opacity 300ms ease;
   }
 
   &-icon {

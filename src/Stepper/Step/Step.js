@@ -15,7 +15,7 @@ class Step extends React.Component {
         return (
             <div className='step-container'>
                 <div className="step-body">
-                    {/*<div className="step-line --before"/>*/}
+                    <div className="step-line --before"/>
                     <div
                         className={classnames({
                             'step-circle': true,
