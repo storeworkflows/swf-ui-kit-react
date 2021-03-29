@@ -1,5 +1,7 @@
 import propTypes from "prop-types";
 import * as React from "react";
+import tinymce from "./tinymce/tinymce";
+import './tinymce/themes/modern/theme';
 
 import {Editor} from "@tinymce/tinymce-react";
 import {noop} from "../../lib/utils";
@@ -7,6 +9,7 @@ import {v4 as uuidv4} from "uuid";
 import fetch from "cross-fetch";
 import {Icon} from "../index";
 
+(() => tinymce)()
 export default class HtmlEditor extends React.Component {
     static baseUrl = "/scripts/tinymce_default/node_modules/sn-tinymce/js/tinymce";
 
@@ -64,7 +67,7 @@ export default class HtmlEditor extends React.Component {
             required
         } = this.props;
 
-        const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)" 
+        const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)";
 
         return(
             <>
