@@ -91,14 +91,14 @@ class Modal extends React.Component {
 
         return (
             <>
-                <Button icon="dash"
-                        variant="tertiary"
-                        bare={true}
-                        size="md"
-                        configAria={{"button": {"aria-label": "Collapse"}}}
-                        tooltipContent="Collapse"
-                        onClick={() => this.setState({modalOpened: true})}
-                />
+                {/*<Button icon="dash"*/}
+                {/*        variant="tertiary"*/}
+                {/*        bare={true}*/}
+                {/*        size="md"*/}
+                {/*        configAria={{"button": {"aria-label": "Collapse"}}}*/}
+                {/*        tooltipContent="Collapse"*/}
+                {/*        onClick={() => this.setState({modalOpened: true})}*/}
+                {/*/>*/}
                 <Button icon={isFullSize ? "arrows-angle-contract" : "arrows-angle-expand"}
                         variant="tertiary"
                         bare={true}
