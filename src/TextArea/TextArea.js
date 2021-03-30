@@ -30,8 +30,9 @@ class TextArea extends React.Component {
         this.setState({focused: true})
     }
 
-    onBlur () {
+    onBlur (event) {
         this.setState({focused: false})
+        this.onChange(event)
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -77,7 +78,7 @@ class TextArea extends React.Component {
                         })}
                         ref={(elm) => this.textAreaRef.current = elm}
                         name={this.props.name}
-                        value={this.props.value}
+                        value={this.props.value || this.state.value}
                         onChange={this.onChange}
                         onKeyDown={this.onChange}
                         onFocus={this.onFocus}
