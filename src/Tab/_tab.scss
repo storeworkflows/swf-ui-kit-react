@@ -31,7 +31,7 @@ $primary: RGB( 30, 133, 109);
   padding: 10px;
   display: inline-flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.5rem;
   border-bottom: 2px solid transparent;
   cursor: pointer;
   &:hover{
@@ -39,12 +39,20 @@ $primary: RGB( 30, 133, 109);
   }
   &.active {
     border-bottom-color: $primary;
+    &.invalid{
+      border-bottom-color: red;
+    }
+
   }
   &:hover, &.active{
     color: $primary
+  }
+  &.invalid{
+    color: red;
   }
   &.disabled{
     pointer-events: none;
     opacity: 0.5;
   }
+
 }
