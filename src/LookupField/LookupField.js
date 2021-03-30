@@ -7,6 +7,7 @@ import {Input} from "../index";
 import DeclarativeUIActions from "./DeclarativeUIActions";
 import Result from "./Result";
 import Pill from "../Pill/Pill";
+import Popover from "../Popover/Popover";
 
 class LookupField extends React.Component {
     constructor(props) {
@@ -72,6 +73,7 @@ class LookupField extends React.Component {
                 }
             });
             const json = await response.json();
+            console.log(json);
             const {
                 referenceDataList,
                 referenceRecentDataList,
@@ -138,7 +140,11 @@ class LookupField extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.inputRef)
+        console.log("input ref", this.inputRef)
+    }
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {loading, loaded, records} = this.state;
+        console.log(records, loading, loaded);
     }
 
     onClick(record) {
@@ -188,11 +194,26 @@ class LookupField extends React.Component {
                         {isList && this.renderListPills()}
                         <Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>
                     </Input>
-                    {showResults ? <ul className="result" style={{top: `${this.inputRef?.current?.offsetHeight + 10}px`}}>
-                        {loading ? <span className="message">Loading...</span> : null}
-                        {loaded && !hasMatches ? <span className="message">No Results Found</span> : null}
-                        {loaded && <Result records={records} onClick={this.onClick}/>}
-                    </ul> : null}
+                    {this.inputRef && this.inputRef.current &&
+                        <Popover
+                            hideTail={true}
+                            manageOpened={true}
+                            opened={showResults}
+                            positionTarget={this.inputRef}
+                            positions={[
+                                {target: "bottom-center", content: "top-center"},
+                                {target: "top-center", content: "bottom-center"}
+                                ]}
+                        >
+                            <Popover.Content>
+                                <ul className="result" style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}>
+                                    {loading ? <span className="message">Loading...</span> : null}
+                                    {loaded && !hasMatches ? <span className="message" style={{height: `200px`}}>No Results Found</span> : null}
+                                    {loaded && <Result records={records} onClick={this.onClick}/>}
+                                </ul>
+                            </Popover.Content>
+                        </Popover>
+                    }
                 </div>
             </>
         )
@@ -222,8 +243,21 @@ LookupField.propTypes = {
     readonly: propTypes.bool,
     required: propTypes.bool,
     content: propTypes.string
-    //mandatory
 }
+/*
+content = "d5640bdadbfb2300f0ee760a689619e6"
+					displayValue = "Viktor Bardakov - Admin"
+					label= "Creator"
+					mandatory= {false}
+					name= "opened_by"
+					onValueChange= {() => {}}
+					readonly = {false}s
+					required = {false}
+					table = "x_aaro2_teamwork_container"
+					tableRecordSysId = "e40fcb88db5be8505884eb184b96191b"
+					type = "reference"
+					value = "d5640bdadbfb2300f0ee760a689619e6"
+ */
 
 
 
