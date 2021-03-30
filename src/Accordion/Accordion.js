@@ -37,13 +37,13 @@ class Accordion extends React.Component {
         return items.map((el, i) => {
             return (
                 <AccordionItem
-                    {...el.props}
                     key={el.key}
                     opened={el.key === selectedItemKey}
                     manageOpened={!selectMany}
                     onSelected={() => !selectMany && this.itemSelected({key: el.key})}
                     isLastItem = {i===(items.length-1)}
                     isFirstItem = {i===0}
+                    {...el.props}
                 />
             )
         });
@@ -80,7 +80,7 @@ Accordion.propTypes = {
     selectMany: propTypes.bool,
     onItemClicked: propTypes.func,
     hideDividers: propTypes.bool,
-    className: propTypes.object
+    className: propTypes.object,
 }
 
 export default Accordion

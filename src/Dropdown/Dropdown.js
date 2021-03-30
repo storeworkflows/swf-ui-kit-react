@@ -40,11 +40,10 @@ class Dropdown extends React.Component {
         const currentSelectedIds = this.state.selectedItems;
 
         if(!manageSelectedItems)
-        {
             this.setState({ selectedItems: [id] });
-            if(!manageOpened)
-                this.setState({opened: false})
-        }
+
+        if(!manageOpened)
+            this.setState({opened: false})
 
         if(onItemSelected)
             onItemSelected({
@@ -60,7 +59,7 @@ class Dropdown extends React.Component {
             this.setState({opened: opened})
 
         if(manageSelectedItems && selectedItems!== this.state.selectedItems)
-                this.setState({selectedItems: selectedItems});
+            this.setState({selectedItems: selectedItems});
     }
 
     renderItems() {

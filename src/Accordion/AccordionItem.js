@@ -81,7 +81,7 @@ class AccordionItem extends React.Component {
 
 
     render() {
-        const { iconToStart, isLastItem, isFirstItem, className} = this.props;
+        const { iconToStart, isLastItem, isFirstItem, className, headerClassName} = this.props;
         const {opened} = this.state;
 
         const itemStyles =  classnames(
@@ -92,7 +92,8 @@ class AccordionItem extends React.Component {
                 "first": isFirstItem
             })
 
-        const headerContentStyles =  classnames({
+        const headerContentStyles =  classnames(
+            {
                 "accordion-header-content": true,
                 "left": !iconToStart,
                 "right": iconToStart,
@@ -103,7 +104,7 @@ class AccordionItem extends React.Component {
             <>
                 <div className={itemStyles}>
                     <div
-                        className={"accordion-item-header"}
+                        className= {classnames(headerClassName,"accordion-item-header")}
                         onClick={this.itemClicked}
                     >
                         {iconToStart && this.renderIcon()}
@@ -128,7 +129,8 @@ AccordionItem.defaultProps = {
     onClick: () => void 0,
     onSelected: () => void 0,
     isLastItem: false,
-    isFirstItem: false
+    isFirstItem: false,
+    headerClassName: {}
 }
 
 AccordionItem.propTypes = {
@@ -141,7 +143,8 @@ AccordionItem.propTypes = {
     iconToStart: propTypes.bool,
     isLastItem: propTypes.bool,
     isFirstItem: propTypes.bool,
-    className: propTypes.object
+    className: propTypes.object,
+    headerClassName: propTypes.object
 }
 
 export default AccordionItem
