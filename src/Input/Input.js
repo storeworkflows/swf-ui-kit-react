@@ -151,7 +151,7 @@ class Input extends React.Component {
                                type={type}
                                aria-required={required}
                                aria-invalid={invalid}
-                               value={value}
+                               value={this.state.value}
                                readOnly={readonly}
                                required={required}
                                autoFocus={autofocus}
@@ -163,12 +163,13 @@ class Input extends React.Component {
                                disabled={disabled}
                                multiple={multiple}
                                onInput={this.onInput}
-                               onChange={this.props.onChange}
+                               onChange={this.onInput}
                                onFocus={(event) => {
                                    this.onFocus(event)
                                }}
                                onBlur={(event) => {
-                                   this.onBlur(event)
+                                   this.onBlur(event);
+                                   this.onInput(event)
                                }}
                                onInvalid={(e) => this.onInvalid(e)}
                         />
