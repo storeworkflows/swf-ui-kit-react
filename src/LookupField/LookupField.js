@@ -205,7 +205,8 @@ LookupField.defaultProps = {
     onValueChange: () => void 0,
     declarativeUiActions: [],
     type: "reference",
-    readonly: false
+    readonly: false,
+    required: false
 }
 
 LookupField.propTypes = {
@@ -218,7 +219,12 @@ LookupField.propTypes = {
     type: propTypes.oneOf(["reference", "list"]),
     table: propTypes.string,
     tableRecordSysId: propTypes.string,
-    readonly: propTypes.bool
+    readonly: propTypes.bool,
+    required: propTypes.bool,
+    content: propTypes.string
+    //mandatory
 }
+
+
 
 export default LookupField
