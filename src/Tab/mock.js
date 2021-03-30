@@ -1,34 +1,29 @@
 export const ITEMS = [
   {
     id: '1',
-    label: 'Label One',
+    label: 'Week',
    // icon: 'app-indicator',
     count: 3,
     presence: '',
-    disabled: false
+    disabled: false,
   },
   {
     id: '2',
-    label: 'Label tWO',
+    label: 'Month',
     //icon: 'arrow-down-left-circle-fill',
     count: 2,
     presence: '',
-    disabled: false
+    disabled: false,
+    required: true
   },
   {
     id: '3',
-    label: 'Label tHREE',
+    label: 'Year',
     icon: 'binoculars-fill',
     count: 1,
     presence: '',
-    disabled: false
-  },
-  {
-    id: '4',
-    label: 'Label Four',
-    icon: 'bookmark-fill',
-    count: 4,
-    presence: '',
-    disabled: true
+    disabled: false,
+    invalid: true,
+    required: true
   }
 ]

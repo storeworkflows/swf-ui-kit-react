@@ -162,6 +162,8 @@ class Popover extends React.Component {
             contentElement.style.top = 0;
             contentElement.children[0].style.maxHeight = contentElement.style.height || contentElement.style.maxHeight;
             contentElement.children[0].style.maxWidth = contentElement.style.width || contentElement.style.maxWidth;
+            // contentElement.children[0].style.maxHeight = `none`;
+            // contentElement.children[0].style.maxWidth = `none`;
             contentElement.style.margin = 0;
         }
     }

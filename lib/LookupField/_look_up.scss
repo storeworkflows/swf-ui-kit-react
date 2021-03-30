@@ -1,27 +1,27 @@
 .swf-reference {
   width: 100%;
   .result {
-    position: absolute;
+ //   position: absolute;
     display: flex;
     flex-direction: column;
     max-height: 300px;
     overflow: auto;
     width: 98%;
     will-change: transform;
-    top: 48px;
-    left: 7px;
-    margin: 4px 0;
+   // top: 48px;
+   // left: 7px;
+    margin:  0;
     font-size: 1rem;
     font-family: Roboto, Helvetica, Arial, sans-serif;
     background: #fff;
     font-weight: 400;
     line-height: 1.5;
     letter-spacing: .00938em;
-    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
-    border: 1px solid #becad6;
-    border-radius: .375rem;
+    //box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+    //border: 1px solid #becad6;
+    //border-radius: .375rem;
     z-index: 99;
-    padding: 0 1rem;
+    padding: 0;
   }
 
   .message {
