@@ -24,7 +24,7 @@ class Input extends React.Component {
             hasStart: false,
             hasEnd: false,
             focused: false,
-            value: ""
+            value: this.props.value || ""
         }
     };
 
