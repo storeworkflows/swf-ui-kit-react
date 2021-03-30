@@ -24,7 +24,7 @@ class Input extends React.Component {
             hasStart: false,
             hasEnd: false,
             focused: false,
-            value: this.props.value || ""
+            value: this.props.value
         }
     };
 
@@ -86,6 +86,12 @@ class Input extends React.Component {
 
         if(manageInvalid && this.state.invalid !== invalid)
             this.setState({invalid: invalid});
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({
+            value: nextProps
+        })
     }
 
 
