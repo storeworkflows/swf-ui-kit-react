@@ -163,13 +163,12 @@ class Input extends React.Component {
                                disabled={disabled}
                                multiple={multiple}
                                onInput={this.onInput}
-                               onChange={this.onInput}
+                               onChange={this.props.onChange}
                                onFocus={(event) => {
                                    this.onFocus(event)
                                }}
                                onBlur={(event) => {
                                    this.onBlur(event);
-                                   this.onInput(event)
                                }}
                                onInvalid={(e) => this.onInvalid(e)}
                         />
