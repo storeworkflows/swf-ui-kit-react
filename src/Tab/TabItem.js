@@ -7,7 +7,7 @@ class TabItem extends React.Component {
 
     render() {
         const {item, isSelected, hideLabel, tabSelected} = this.props;
-        const {label, icon, id, disabled, style} = this.props.item;
+        const {label, icon, id, disabled, style, required, invalid} = this.props.item;
 
         const hasIcon = icon !== undefined && icon.length > 0;
         return (

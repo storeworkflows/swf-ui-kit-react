@@ -94,7 +94,9 @@ Tab.propTypes = {
         icon: propTypes.string,
         count: propTypes.number,
         presence: propTypes.string,
-        disabled: propTypes.bool
+        disabled: propTypes.bool,
+        required: propTypes.bool,
+        invalid: propTypes.bool
     })),
     fixedWidth: propTypes.bool,
     hideLabel: propTypes.bool,
