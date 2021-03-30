@@ -89,12 +89,14 @@ class Input extends React.Component {
     }
 
     static getDerivedStateFromProps (nextProps) {
+        console.log("getDerivedStateFromProps")
         return {
             value: nextProps.value
         }
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+    componentWillReceiveProps(nextProps, nextContext) {
+        console.log("componentWillReceiveProps")
         this.setState({
             value: nextProps
         })
