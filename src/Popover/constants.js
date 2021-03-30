@@ -23,5 +23,6 @@ export const POPOVER = {
         TOP: "top"
     },
     ARROW_SIZE: 9,
-    ARROW_SPACE: 3
+    ARROW_SPACE: 3,
+    PADDING_SIZE: 8,
 }

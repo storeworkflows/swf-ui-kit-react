@@ -1,17 +1,17 @@
-const getCircleSize = (iconSize) => {
+export const getCircleSize = (iconSize) => {
     switch (iconSize) {
         case 'xs':
-            return '2rem';
+            return '16px';
         case 'sm':
-            return '2rem';
+            return '32px';
         case 'md':
-            return '3rem';
+            return '48px';
         case 'lg':
-            return '4rem';
+            return '64px';
         case 'xl':
-            return '5rem';
+            return '96px';
         case 'xxl':
-            return '6rem';
+            return '128px';
         default:
             return `${iconSize * 2}px`;
     }
@@ -24,7 +24,7 @@ export const createCssVariables = (palette, iconSize) => {
         `--circle-color:${circle || '#39A450'};` +
         `--link-color:${link || circle || '#39A450'};` +
         `--label-color:${label || '#000000'};` +
-        `--circle-size:${getCircleSize(iconSize) || '2rem'}` +
+        `--circle-size:${getCircleSize(iconSize) || '16px'}` +
         `}`
 }
 
