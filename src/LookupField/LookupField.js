@@ -73,7 +73,7 @@ class LookupField extends React.Component {
                 }
             });
             const json = await response.json();
-            console.log(json);
+        //    console.log(json);
             const {
                 referenceDataList,
                 referenceRecentDataList,
@@ -140,11 +140,11 @@ class LookupField extends React.Component {
     }
 
     componentDidMount() {
-        console.log("input ref", this.inputRef)
+       // console.log("input ref", this.inputRef)
     }
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {loading, loaded, records} = this.state;
-        console.log(records, loading, loaded);
+       // console.log(records, loading, loaded);
     }
 
     onClick(record) {
@@ -217,7 +217,7 @@ class LookupField extends React.Component {
                 </div>
             </>
         )
-    }
+    }d
 }
 
 LookupField.defaultProps = {
