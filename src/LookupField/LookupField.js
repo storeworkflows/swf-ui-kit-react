@@ -208,7 +208,7 @@ class LookupField extends React.Component {
                             <Popover.Content>
                                 <ul className="result" style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}>
                                     {loading ? <span className="message">Loading...</span> : null}
-                                    {loaded && !hasMatches ? <span className="message" style={{height: `200px`}}>No Results Found</span> : null}
+                                    {loaded && !hasMatches ? <span className="message">No Results Found</span> : null}
                                     {loaded && <Result records={records} onClick={this.onClick}/>}
                                 </ul>
                             </Popover.Content>
@@ -217,7 +217,7 @@ class LookupField extends React.Component {
                 </div>
             </>
         )
-    }d
+    }
 }
 
 LookupField.defaultProps = {
