@@ -6,6 +6,10 @@ import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class Popover extends React.Component {
     constructor(props) {
         super(props);
@@ -13,9 +17,12 @@ class Popover extends React.Component {
         this.documentClicked = this.documentClicked.bind(this);
         this.changeOpenedState = this.changeOpenedState.bind(this);
         this.updateOpenedState = this.updateOpenedState.bind(this);
+        this.contentResized = this.contentResized.bind(this);
 
         this.state = {
-            opened: false
+            opened: false,
+            haveScroll: false,
+            contentHeight: 0
         }
 
         this.targetRef = null;
@@ -37,7 +44,11 @@ class Popover extends React.Component {
                  ref={el => this.contentRef = el}
                  style={contentStyles}
             >
-                <div className={"popover-content-keeper"}>{content}</div>
+                <div
+                    className={"popover-content-keeper"}
+                    onresize={this.contentResized()}
+                >
+                    {content}</div>
             </div>
         );
     }
@@ -70,6 +81,24 @@ class Popover extends React.Component {
                         {target}
                 </div>
 
+    }
+
+    async contentResized() {
+        const {opened, contentHeight} = this.state;
+        if (this.contentRef) {
+            let el = this.contentRef.children[0];
+            let curHeight = contentHeight;
+
+            await sleep(100);
+            curHeight = el.scrollHeight;
+            if (curHeight !== contentHeight) {
+                this.setState({contentHeight: curHeight})
+
+                this.resetStyles();
+                if (opened)
+                    this.setStylesToContent();
+            }
+        }
     }
 
     changeOpenedState(){
@@ -162,8 +191,6 @@ class Popover extends React.Component {
             contentElement.style.top = 0;
             contentElement.children[0].style.maxHeight = contentElement.style.height || contentElement.style.maxHeight;
             contentElement.children[0].style.maxWidth = contentElement.style.width || contentElement.style.maxWidth;
-            // contentElement.children[0].style.maxHeight = `none`;
-            // contentElement.children[0].style.maxWidth = `none`;
             contentElement.style.margin = 0;
         }
     }
