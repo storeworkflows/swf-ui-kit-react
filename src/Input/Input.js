@@ -24,7 +24,7 @@ class Input extends React.Component {
             hasStart: false,
             hasEnd: false,
             focused: false,
-            value: ""
+            value: this.props.value
         }
     };
 
@@ -86,6 +86,20 @@ class Input extends React.Component {
 
         if(manageInvalid && this.state.invalid !== invalid)
             this.setState({invalid: invalid});
+    }
+
+    static getDerivedStateFromProps (nextProps) {
+        console.log("getDerivedStateFromProps")
+        return {
+            value: nextProps.value
+        }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        console.log("componentWillReceiveProps")
+        this.setState({
+            value: nextProps
+        })
     }
 
 
@@ -151,7 +165,7 @@ class Input extends React.Component {
                                type={type}
                                aria-required={required}
                                aria-invalid={invalid}
-                               value={value}
+                               value={this.state.value}
                                readOnly={readonly}
                                required={required}
                                autoFocus={autofocus}
@@ -168,7 +182,7 @@ class Input extends React.Component {
                                    this.onFocus(event)
                                }}
                                onBlur={(event) => {
-                                   this.onBlur(event)
+                                   this.onBlur(event);
                                }}
                                onInvalid={(e) => this.onInvalid(e)}
                         />

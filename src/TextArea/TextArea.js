@@ -30,8 +30,9 @@ class TextArea extends React.Component {
         this.setState({focused: true})
     }
 
-    onBlur () {
+    onBlur (event) {
         this.setState({focused: false})
+        this.props.onBlur(event);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -77,7 +78,7 @@ class TextArea extends React.Component {
                         })}
                         ref={(elm) => this.textAreaRef.current = elm}
                         name={this.props.name}
-                        value={this.props.value}
+                        value={this.state.value}
                         onChange={this.onChange}
                         onKeyDown={this.onChange}
                         onFocus={this.onFocus}
@@ -96,6 +97,7 @@ TextArea.defaultProps = {
     className: "",
     onChange: () => void 0,
     onKeyDown: () => void 0,
+    onBlur: () => void 0,
     name: "",
     value: "",
     resize: true,
@@ -115,7 +117,8 @@ TextArea.propTypes = {
     autofocus: propTypes.bool,
     resize: propTypes.bool,
     placeholder: propTypes.string,
-    innerRef: propTypes.object
+    innerRef: propTypes.object,
+    onBlur: propTypes.func
 }
 
 export default TextArea
