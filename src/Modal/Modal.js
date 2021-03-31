@@ -100,7 +100,9 @@ class Modal extends React.Component {
                 {/*        onClick={() => this.setState({modalOpened: true})}*/}
                 {/*/>*/}
                 {
-                    isFullSize && <Button icon="printer" bare={true}
+                    isFullSize && <Button icon="printer"
+                                          variant="tertiary"
+                                          bare={true}
                                           size="md"
                                           configAria={{"button": {"aria-label": "Print"}}}
                                           tooltipContent={isFullSize ? "Collapse" : "Print"}
