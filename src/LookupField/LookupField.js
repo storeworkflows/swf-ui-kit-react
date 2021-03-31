@@ -73,7 +73,6 @@ class LookupField extends React.Component {
                 }
             });
             const json = await response.json();
-        //    console.log(json);
             const {
                 referenceDataList,
                 referenceRecentDataList,
@@ -139,13 +138,10 @@ class LookupField extends React.Component {
         this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString())
     }
 
-    componentDidMount() {
-       // console.log("input ref", this.inputRef)
-    }
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {loading, loaded, records} = this.state;
-       // console.log(records, loading, loaded);
-    }
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     const {loading, loaded, records} = this.state;
+    //     console.log(records, loading, loaded);
+    // }
 
     onClick(record) {
         const isReference = this.props?.type === "reference"
@@ -244,21 +240,6 @@ LookupField.propTypes = {
     required: propTypes.bool,
     content: propTypes.string
 }
-/*
-content = "d5640bdadbfb2300f0ee760a689619e6"
-					displayValue = "Viktor Bardakov - Admin"
-					label= "Creator"
-					mandatory= {false}
-					name= "opened_by"
-					onValueChange= {() => {}}
-					readonly = {false}s
-					required = {false}
-					table = "x_aaro2_teamwork_container"
-					tableRecordSysId = "e40fcb88db5be8505884eb184b96191b"
-					type = "reference"
-					value = "d5640bdadbfb2300f0ee760a689619e6"
- */
-
 
 
 export default LookupField

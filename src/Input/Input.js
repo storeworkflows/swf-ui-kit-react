@@ -82,24 +82,46 @@ class Input extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {invalid, manageInvalid} = this.props;
+        const {invalid, manageInvalid, value} = this.props;
+
+        if(prevProps.value!==value)
+            this.setState({value: value})
 
         if(manageInvalid && this.state.invalid !== invalid)
             this.setState({invalid: invalid});
     }
 
-    static getDerivedStateFromProps (nextProps) {
-        console.log("getDerivedStateFromProps")
-        return {
-            value: nextProps.value
-        }
-    }
+    // static getDerivedStateFromProps (nextProps) {
+    //     console.log("getDerivedStateFromProps")
+    //     console.log(nextProps.value)
+    //     // return {
+    //     //     value: nextProps.value
+    //     // }
+    // }
+    //
+    // componentWillReceiveProps(nextProps, nextContext) {
+    //     console.log("componentWillReceiveProps")
+    //     this.setState({
+    //         value: nextProps
+    //     })
+    // }
+    renderMessage(el){
+        const messageClasses = classnames(
+            el.className,
+            el.status,
+            "input-message"
+        );
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        console.log("componentWillReceiveProps")
-        this.setState({
-            value: nextProps
-        })
+        let iconSize = el.iconSize ? el.iconSize : 16;
+        return  (
+            el.content
+                ?
+                <div className={messageClasses}>
+                    {el.icon && <Icon className="input-message-icon" icon={el.icon} customSize={iconSize}/> }
+                    <span className="input-message-content">{el.content}</span>
+                </div>
+                : null
+        )
     }
 
 
@@ -132,6 +154,7 @@ class Input extends React.Component {
         const containerClasses = classnames({
             "swf-form-group": true,
             "--invalid": this.state?.invalid,
+            "--readonly": this.props.readonly,
             [this.props.containerClass]: true
         })
 
@@ -142,72 +165,64 @@ class Input extends React.Component {
             "--invalid": this.state?.invalid
         });
 
+        const requiredClasses = classnames({
+            "inp-required": true,
+            "--focused": this.state?.focused,
+            "--invalid": this.state?.invalid
+        });
+
         const inputClasses = classnames({
             "form-control": true,
             "no-start-border": this.state?.hasStart,
             "no-end-border": this.state?.hasEnd,
             "--invalid": this.state?.invalid,
+            "--readonly": this.props.readonly,
             [this.props.inputClass]: true
         })
 
         return (
             <>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
+                    { required && <Icon icon={'asterisk'} className={requiredClasses} customSize={7}/>}
                     {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
                     <div className="input-group">
                         {this.renderStart()}
                         <input
                             className={inputClasses}
-                               id="name"
-                               name={name}
-                               placeholder={placeholder}
-                               step={step}
-                               type={type}
-                               aria-required={required}
-                               aria-invalid={invalid}
-                               value={this.state.value}
-                               readOnly={readonly}
-                               required={required}
-                               autoFocus={autofocus}
-                               max={max}
-                               min={min}
-                               maxLength={maxlength}
-                               minLength={minlength}
-                               pattern={pattern}
-                               disabled={disabled}
-                               multiple={multiple}
-                               onInput={this.onInput}
-                               onChange={this.props.onChange}
-                               onFocus={(event) => {
+                            id="name"
+                            name={name}
+                            placeholder={placeholder}
+                            step={step}
+                            type={type}
+                            aria-required={required}
+                            aria-invalid={invalid}
+                            value={this.state.value}
+                            readOnly={readonly}
+                            required={required}
+                            autoFocus={autofocus}
+                            max={max}
+                            min={min}
+                            maxLength={maxlength}
+                            minLength={minlength}
+                            pattern={pattern}
+                            disabled={disabled}
+                            multiple={multiple}
+                            onInput={this.onInput}
+                            onChange={this.props.onChange}
+                            onFocus={(event) => {
                                    this.onFocus(event)
                                }}
-                               onBlur={(event) => {
+                            onBlur={(event) => {
                                    this.onBlur(event);
                                }}
-                               onInvalid={(e) => this.onInvalid(e)}
+                            onInvalid={(e) => this.onInvalid(e)}
                         />
                         {this.renderEnd()}
                     </div>
                     {_hasMessages &&
-                    message.map((el) => {
-                        const _hasIcon = el.icon !== undefined && el.icon.length > 0;
-                        const _hasContent = el.content !== undefined && el.content.length > 0;
-
-                        const _exist = _hasIcon || _hasContent;
-                        return (
-                            _exist
-                                ?
-                                <div className={classnames(el.status)}>
-                                    {_hasIcon &&
-                                        <Icon icon={el.icon} size="sm"/>
-                                    }
-                                    {_hasContent &&
-                                    <span>{el.content}</span>
-                                    }
-                                </div>
-                                : null
-                        )
-                    })
+                        message.map((el) => {
+                            return this.renderMessage(el)
+                        })
                     }
                 </div>
             </>
@@ -254,7 +269,9 @@ Input.propTypes = {
     message: PropTypes.arrayOf(PropTypes.shape({
         status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
         content: PropTypes.string,
-        icon: PropTypes.string
+        icon: PropTypes.string,
+        className: propTypes.object,
+        iconSize: PropTypes.number
     })),
     multiple: PropTypes.bool,
     name: PropTypes.string,
