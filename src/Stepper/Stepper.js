@@ -9,36 +9,59 @@ class Stepper extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            stepsPerPage: 0,
-            containerRightPos: 0,
-            containerBottomPos: 0,
+            visibleStepsAmount: 0,
+            stepsCurrShiftedPos: 0,
             isArrowsNeeded: false,
-            arrowsSize: parseInt(getCircleSize(props.iconSize))
+            stepSize: this.props.vertical ? 120 : 150,
+            arrowsSize: parseInt(getCircleSize(this.props.iconSize))
         };
         this.stepperContainerRef = false;
     }
 
     componentDidMount() {
-        this.updateStepsPerPageAmount();
+        this.updateVisibleStepsAmount();
+        window.addEventListener('resize', this.updateVisibleStepsAmount);
 
-        window.addEventListener('resize', () => {
-            this.updateStepsPerPageAmount();
+        this.shiftStepsAccordinglyToSelectedItem();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.selectedItem !== prevProps.selectedItem) {
+            this.shiftStepsAccordinglyToSelectedItem();
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateVisibleStepsAmount);
+    }
+
+    shiftStepsAccordinglyToSelectedItem = () => {
+        return this.setState((state, props) => {
+            const { steps, selectedItem } = props;
+            const { stepSize, visibleStepsAmount } = state;
+
+            const newStepsPosValue = selectedItem * stepSize;
+            const maxStepsPos = stepSize * (steps.length - visibleStepsAmount);
+
+            return {
+                stepsCurrShiftedPos: Math.min(Math.max(newStepsPosValue, 0), maxStepsPos)
+            }
         })
     }
 
-    updateStepsPerPageAmount = () => {
-        const { vertical } = this.props;
+    updateVisibleStepsAmount = () => {
+        const { vertical, steps } = this.props;
+        const { stepSize, arrowsSize } = this.state;
 
         const containerSize = this.stepperContainerRef[vertical ? 'clientHeight' : 'clientWidth'];
-        const stepSize = vertical ? 120 : 200;
 
-        const isArrowsNeeded = this.props.steps.length * stepSize > containerSize;
-        const currArrowsSize = isArrowsNeeded ? this.state.arrowsSize : 0;
+        const isArrowsNeeded = steps.length * stepSize > containerSize;
+        const currArrowsSize = isArrowsNeeded ? arrowsSize : 0;
 
-        const stepsPerPage = Math.floor((containerSize - (currArrowsSize * 2)) / stepSize) || 1;
+        const visibleStepsAmount = Math.floor((containerSize - (currArrowsSize * 2)) / stepSize) || 1;
 
         this.setState({
-            stepsPerPage,
+            visibleStepsAmount,
             isArrowsNeeded
         });
     }
@@ -50,19 +73,15 @@ class Stepper extends React.Component {
     }
 
     onArrowClick = (direction) => () => {
-        const { stepsPerPage } = this.state;
-        const { steps, vertical } = this.props;
+        const { visibleStepsAmount, stepSize, stepsCurrShiftedPos } = this.state;
+        const { steps } = this.props;
 
-        const stepSize = vertical ? 120 : 150;
-
-        const currContainerPosVariable = vertical ? 'containerBottomPos' : 'containerRightPos';
-        const newContainerPosValue = this.state[currContainerPosVariable] + (stepSize * direction);
-        const maxContainerPos = stepSize * (steps.length - stepsPerPage);
+        const newStepsPosValue = stepsCurrShiftedPos + (stepSize * direction);
+        const maxStepsPos = stepSize * (steps.length - visibleStepsAmount);
 
         this.setState({
-            [currContainerPosVariable]:
-                Math.min(Math.max(newContainerPosValue, 0), maxContainerPos)
-        })
+            stepsCurrShiftedPos: Math.min(Math.max(newStepsPosValue, 0), maxStepsPos)
+        });
     }
 
     renderSteps() {
@@ -104,7 +123,7 @@ class Stepper extends React.Component {
 
     render() {
         const { palette, vertical, completedCounter, steps, iconSize, selectedItem } = this.props;
-        const { containerRightPos, containerBottomPos, stepsPerPage, isArrowsNeeded, arrowsSize } = this.state;
+        const { stepsCurrShiftedPos, visibleStepsAmount, isArrowsNeeded, arrowsSize, stepSize } = this.state;
 
         return (
             <div
@@ -138,16 +157,16 @@ class Stepper extends React.Component {
                             '--vertical': vertical
                         })}
                         style={{
-                            width: vertical ? '100%' : stepsPerPage * 150,
-                            height: vertical ? stepsPerPage * 120 : arrowsSize * 4
+                            width: vertical ? '100%' : visibleStepsAmount * stepSize,
+                            height: vertical ? visibleStepsAmount * stepSize : arrowsSize * 4
                         }}
                     >
                         <div
                             className="steps-all"
                             style={{
-                                width: isArrowsNeeded && !vertical ? steps.length * 150 : '100%',
-                                right: vertical ? 0 : containerRightPos,
-                                bottom: vertical ? containerBottomPos : 0
+                                width: isArrowsNeeded && !vertical ? steps.length * stepSize : '100%',
+                                right: vertical ? 0 : stepsCurrShiftedPos,
+                                bottom: vertical ? stepsCurrShiftedPos : 0
                             }}
                         >
                             {this.renderSteps()}
@@ -205,7 +224,7 @@ Stepper.defaultProps = {
     hideLabels: false,
     vertical: false,
     completedCounter: false,
-    selectedItem: 1
+    selectedItem: 0
 }
 
 export default Stepper;
