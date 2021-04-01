@@ -143,15 +143,14 @@ class Avatar extends React.Component {
 
                         this.props.onRemove({id});
                     }}>
-                        <div className={classnames({
-                            "remove": true,
-                            "visible": canRemove && openState
+                        {canRemove && openState && <div className={classnames({
+                            "remove": true
                         })}>
                             <Icon
                                 icon="x"
                                 size="md"
                             />
-                        </div>
+                        </div> }
                     </div>
                 </div>
             </>

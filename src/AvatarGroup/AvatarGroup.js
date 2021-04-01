@@ -70,7 +70,7 @@ class AvatarGroup extends React.Component {
                                 canRemove={canRemove}
                                 onRemove={onRemove}
                                 member={viewer}
-                                manageOpened={manageOpened}
+                                manageOpened={true}
                                 open={this.state?.openedAvatar === index}
                             />
                         </div>
