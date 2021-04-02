@@ -39,6 +39,7 @@ class Pill extends React.Component {
 
         const hasIcon = !hasMember && icon;
 
+        const showPillIcon = hasMember || hasIcon;
 
         return (
             <>
@@ -53,10 +54,10 @@ class Pill extends React.Component {
                         [`--${color}`]: true,
                         [classNames]: true
                     })}>
-                    <div className="pill-icon">
+                    {showPillIcon && <div className="pill-icon">
                         {hasMember && <Avatar member={member} clickable={false}/>}
                         {hasIcon && <Icon icon={icon} size="sm"/>}
-                    </div>
+                    </div> }
                     <span className={classnames({
                         "pill-label": true,
                         [`--${size}`]: true
