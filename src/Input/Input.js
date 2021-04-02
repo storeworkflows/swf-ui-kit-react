@@ -95,6 +95,7 @@ class Input extends React.Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
+        console.log({state: this.state, nextProps: nextProps, prevProps: this.props})
         this.setState({
             value: nextProps.value
         })
