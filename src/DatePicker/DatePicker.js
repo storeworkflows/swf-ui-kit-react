@@ -9,6 +9,7 @@ import Popover from "../Popover/Popover";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 
 import {addCharToDate} from "./utils";
+import PropTypes from "prop-types";
 
 class DatePicker extends React.Component {
 
@@ -164,6 +165,7 @@ class DatePicker extends React.Component {
 
 
     render() {
+        const visible = this.props;
         const {currentDate, isOpened} = this.state
 
         const calendarPositions = [
@@ -176,6 +178,7 @@ class DatePicker extends React.Component {
         ]
 
         return (
+            visible ?
             <>
                 <div ref = {el => this.inputRef = {current: el}}>
                     { this.renderInput() }
@@ -198,6 +201,7 @@ class DatePicker extends React.Component {
                     }
                 </div>
             </>
+            : null
         )
     }
 }
@@ -214,7 +218,8 @@ DatePicker.defaultProps = {
     manageValue: false,
     onOpen: () => void 0,
     onInvalid: () => void 0,
-    onValueChange: () => void 0
+    onValueChange: () => void 0,
+    visible: true
 }
 
 DatePicker.propTypes = {
@@ -229,14 +234,17 @@ DatePicker.propTypes = {
     manageOpened: propTypes.bool,
     manageInvalid: propTypes.bool,
     manageValue: propTypes.bool,
-    message: propTypes.arrayOf(propTypes.shape({
-        status: propTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
-        content: propTypes.string,
-        icon: propTypes.string
+    message: PropTypes.arrayOf(PropTypes.shape({
+        status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        content: PropTypes.string,
+        icon: PropTypes.string,
+        className: propTypes.object,
+        iconSize: PropTypes.number
     })),
     onOpen: propTypes.func,
     onInvalid: propTypes.func,
     onValueChange: propTypes.func,
+    visible: propTypes.bool
 }
 
 export default DatePicker

@@ -22,23 +22,28 @@ class RadioOption extends React.Component {
             onInvalidAction,
             invalid,
             isHorizontal,
-            required
+            required,
+            className
         } = this.props;
+
+        let optionClasses= classnames(
+            className,
+            "radio-option-container",
+            {
+                "disabled": disabled,
+                "readonly": readonly,
+                "invalid": invalid,
+                "horizontal": isHorizontal
+            })
 
         let canChangeValue = !readonly && !disabled;
         return (
             <>
-                <div className={classnames({
-                    "radio-option-container": true,
-                    "disabled": disabled,
-                    "readonly": readonly,
-                    "invalid": invalid,
-                    "horizontal": isHorizontal
-                })}
-                     onClick={()=> canChangeValue && onChangeAction({id: id, name: name, value: value})}
+                <div className={optionClasses}
+                     onClick={()=> {canChangeValue && onChangeAction({id: id, name: name, value: value})}}
                 >
                     <input
-                        className={"radio-option"}
+                        className={classnames("radio-option", {"checked": checked})}
                         type="radio"
                         id={id}
                         checked={checked}
@@ -47,8 +52,8 @@ class RadioOption extends React.Component {
                         readOnly={readonly}
                         name={name}
                         required={required}
-                        onChange={() => canChangeValue && onChangeAction({id: id, name: name, value: value})}
-                        onInvalid={() => onInvalidAction({id: id})}
+                        onChange={() => {}}
+                        onInvalid={(e) => onInvalidAction({e, id: id})}
                     />
                     <label className={"radio-option-label"}>{label}</label>
                 </div>
@@ -65,7 +70,8 @@ RadioOption.defaultProps = {
     isHorizontal: false,
     required: false,
     name: "",
-    label: ""
+    label: "",
+    className: {}
 };
 
 RadioOption.propTypes = {
@@ -80,7 +86,8 @@ RadioOption.propTypes = {
     name: propTypes.string,
     onChangeAction: propTypes.func,
     onInvalidAction: propTypes.func,
-    required: propTypes.bool
+    required: propTypes.bool,
+    className: propTypes.object
 }
 
 

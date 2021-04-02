@@ -6,6 +6,7 @@ import findByType, {createSubComponent} from "../utils/findByType";
 import {noop} from "../utils";
 import propTypes from "prop-types";
 import Icon from "../Icon/Icon";
+import InfoMessage from "../InfoMessage/InfoMessage";
 
 const Start = () => null;
 const End = () => null;
@@ -84,7 +85,7 @@ class Input extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {invalid, manageInvalid, value} = this.props;
 
-        if(prevProps.value!==value)
+        if(prevProps.value!==value || value!==this.state.value)
             this.setState({value: value})
 
         if(manageInvalid && this.state.invalid !== invalid)
@@ -183,8 +184,13 @@ class Input extends React.Component {
         return (
             <>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
-                    { required && <Icon icon={'asterisk'} className={requiredClasses} customSize={7}/>}
-                    {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
+
+                    {_hasLabel &&
+                        <span className={labelClasses}>
+                            <label htmlFor="name">{label}</label>
+                            { required && <Icon icon={'asterisk'} className={requiredClasses} customSize={7}/>}
+                        </span>
+                    }
                     <div className="input-group">
                         {this.renderStart()}
                         <input
@@ -221,14 +227,20 @@ class Input extends React.Component {
                     </div>
                     {_hasMessages &&
                         message.map((el) => {
-                            return this.renderMessage(el)
+                            return <InfoMessage
+                                iconSize={el.iconSize}
+                                className={el.className}
+                                content={el.content}
+                                icon={el.icon}
+                                status={el.status}
+                            />
                         })
                     }
                 </div>
             </>
         )
     }
-}
+};
 
 Input.Start = createSubComponent("Start");
 Input.End = createSubComponent("End");

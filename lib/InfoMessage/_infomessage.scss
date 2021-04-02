@@ -1,0 +1,47 @@
+
+.info-message {
+
+    margin: 3px 0 0 0;
+    padding: 3px 5px;
+    border-radius: 0.25rem;
+    display: flex;
+    align-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    background: #f2dede;
+    color: red;
+
+    &.warning{
+      background: #faebcc;
+      color: orangered;
+    }
+
+    &.positive{
+      background: #dff0d8;
+      color: green;
+    }
+
+    &.info{
+      background: #d9edf7;
+      color: cornflowerblue;
+    }
+
+    &.suggestion{
+      background: lavender;
+      color: blueviolet;
+    }
+
+
+  .input-message-content {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .input-message-icon {
+    margin: auto 5px auto 0;
+  }
+}
