@@ -138,7 +138,8 @@ class Input extends React.Component {
             "inp-label": true,
             "--moved": _moved,
             "--focused": this.state?.focused,
-            "--invalid": this.state?.invalid
+            "--invalid": this.state?.invalid,
+            "--readonly": this.props.readonly
         });
 
         const inputClasses = classnames({
@@ -146,44 +147,45 @@ class Input extends React.Component {
             "no-start-border": this.state?.hasStart,
             "no-end-border": this.state?.hasEnd,
             "--invalid": this.state?.invalid,
+            "--readonly": this.props.readonly,
             [this.props.inputClass]: true
         })
 
         return (
             <>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
-                    {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}</label>}
+                    {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}{required && <Icon icon="asterisk" size="xs" />}</label>}
                     <div className="input-group">
                         {this.renderStart()}
                         <input
-                               className={inputClasses}
-                               id="name"
-                               name={name}
-                               placeholder={placeholder}
-                               step={step}
-                               type={type}
-                               aria-required={required}
-                               aria-invalid={invalid}
-                               value={this.state.value}
-                               readOnly={readonly}
-                               required={required}
-                               autoFocus={autofocus}
-                               max={max}
-                               min={min}
-                               maxLength={maxlength}
-                               minLength={minlength}
-                               pattern={pattern}
-                               disabled={disabled}
-                               multiple={multiple}
-                               onInput={this.onInput}
-                               onChange={this.props.onChange}
-                               onFocus={(event) => {
-                                   this.onFocus(event)
-                               }}
-                               onBlur={(event) => {
-                                   this.onBlur(event);
-                               }}
-                               onInvalid={(e) => this.onInvalid(e)}
+                            className={inputClasses}
+                            id="name"
+                            name={name}
+                            placeholder={placeholder}
+                            step={step}
+                            type={type}
+                            aria-required={required}
+                            aria-invalid={invalid}
+                            value={this.state.value}
+                            readOnly={readonly}
+                            required={required}
+                            autoFocus={autofocus}
+                            max={max}
+                            min={min}
+                            maxLength={maxlength}
+                            minLength={minlength}
+                            pattern={pattern}
+                            disabled={disabled}
+                            multiple={multiple}
+                            onInput={this.onInput}
+                            onChange={this.props.onChange}
+                            onFocus={(event) => {
+                                this.onFocus(event)
+                            }}
+                            onBlur={(event) => {
+                                this.onBlur(event);
+                            }}
+                            onInvalid={(e) => this.onInvalid(e)}
                         />
                         {this.renderEnd()}
                     </div>
@@ -198,7 +200,7 @@ class Input extends React.Component {
                                 ?
                                 <div className={classnames(el.status)}>
                                     {_hasIcon &&
-                                        <Icon icon={el.icon} size="sm"/>
+                                    <Icon icon={el.icon} size="sm"/>
                                     }
                                     {_hasContent &&
                                     <span>{el.content}</span>
