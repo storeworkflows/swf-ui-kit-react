@@ -152,6 +152,12 @@ class LookupField extends React.Component {
 
     onFocus(event) {
         this.setState({focused: true});
+        if (this.controllerRef.current) {
+            this.controllerRef.current.abort();
+        }
+
+        this.controllerRef.current = new AbortController();
+        this.getReferenceList("");
     }
 
     onBlur(event) {
@@ -196,7 +202,7 @@ class LookupField extends React.Component {
                         message={message}
                     >
                         {isList && this.renderListPills()}
-                        <Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>
+                        {/*<Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>*/}
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover

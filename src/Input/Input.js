@@ -92,6 +92,11 @@ class Input extends React.Component {
             this.setState({invalid: invalid});
     }
 
+    static getDerivedStateFromProps (nextProps) {
+        return {
+            value: nextProps.value
+        }
+    }
     // static getDerivedStateFromProps (nextProps) {
     //     console.log("getDerivedStateFromProps")
     //     console.log(nextProps.value)
@@ -124,6 +129,7 @@ class Input extends React.Component {
                 : null
         )
     }
+
 
 
     render() {

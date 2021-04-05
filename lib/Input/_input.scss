@@ -48,6 +48,7 @@
     width: 100%;
   }
 
+
     .input-group > .form-control {
       position: relative;
       flex: 1 1 auto;
@@ -133,6 +134,10 @@
       border-radius: 0.375rem;
       box-shadow: none;
       transition: box-shadow 250ms cubic-bezier(0.27, 0.01, 0.38, 0.06), border 250ms cubic-bezier(0.27, 0.01, 0.38, 0.06);
+
+      .form-control:read-only {
+        background: #5a6169;
+      }
 
       .--invalid {
         border-color: red;

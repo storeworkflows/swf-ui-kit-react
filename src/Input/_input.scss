@@ -16,14 +16,15 @@
       background: #fff;
       padding: 4px;
       transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
+    }
 
-      &.--moved {
-        transform: translate(14px, -14px) scale(0.75);
-      }
+    label.--moved {
+      transform: translate(14px, -14px) scale(0.75);
+    }
 
-      &.--focused {
-        color: #007bff;
-      }
+    label.--focused {
+      color: #007bff;
+    }
 
       &.--invalid {
         color: red;
@@ -47,6 +48,7 @@
     align-items: stretch;
     width: 100%;
   }
+
 
     .input-group > .form-control {
       position: relative;
@@ -133,6 +135,10 @@
       border-radius: 0.375rem;
       box-shadow: none;
       transition: box-shadow 250ms cubic-bezier(0.27, 0.01, 0.38, 0.06), border 250ms cubic-bezier(0.27, 0.01, 0.38, 0.06);
+
+      .form-control:read-only {
+        background: #5a6169;
+      }
 
       .--invalid {
         border-color: red;

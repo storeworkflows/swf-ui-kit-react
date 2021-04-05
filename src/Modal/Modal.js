@@ -86,6 +86,7 @@ class Modal extends React.Component {
     }
 
     desktopButtons() {
+        const {showPrint} = this.props;
         const isFullSize = this.state.currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
         const status = isFullSize ? SWF_MODAL.MODAL_SIZE.DEFAULT : SWF_MODAL.MODAL_SIZE.FULL;
 
@@ -100,12 +101,12 @@ class Modal extends React.Component {
                 {/*        onClick={() => this.setState({modalOpened: true})}*/}
                 {/*/>*/}
                 {
-                    isFullSize && <Button icon="printer"
+                    showPrint && isFullSize && <Button icon="printer"
                                           variant="tertiary"
                                           bare={true}
                                           size="md"
                                           configAria={{"button": {"aria-label": "Print"}}}
-                                          tooltipContent={isFullSize ? "Collapse" : "Print"}
+                                          tooltipContent={"Print"}
                                           onClick={() => window.print()}
                     />
                 }
@@ -241,7 +242,8 @@ Modal.defaultProps = {
     onClose: noop,
     popoverContent: {},
     display: "grid",
-    headerElements: 2
+    headerElements: 2,
+    showPrint: false
 }
 
 Modal.propTypes = {
@@ -264,7 +266,8 @@ Modal.propTypes = {
         'inline-flex',
         'none'
     ]),
-    headerElements: PropTypes.number
+    headerElements: PropTypes.number,
+    showPrint: PropTypes.bool
 }
 
 export default Modal
