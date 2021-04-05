@@ -160,7 +160,7 @@ class LookupField extends React.Component {
         }
 
         this.controllerRef.current = new AbortController();
-        this.getReferenceList("");
+        !this.props.readonly && this.getReferenceList("");
     }
 
     onBlur(event) {
