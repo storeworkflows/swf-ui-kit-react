@@ -142,6 +142,7 @@ class LookupField extends React.Component {
     componentDidMount() {
        // console.log("input ref", this.inputRef)
     }
+
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {loading, loaded, records} = this.state;
        // console.log(records, loading, loaded);
@@ -154,6 +155,12 @@ class LookupField extends React.Component {
 
     onFocus(event) {
         this.setState({focused: true});
+        if (this.controllerRef.current) {
+            this.controllerRef.current.abort();
+        }
+
+        this.controllerRef.current = new AbortController();
+        this.getReferenceList("");
     }
 
     onBlur(event) {
