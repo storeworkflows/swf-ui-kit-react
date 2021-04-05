@@ -192,7 +192,7 @@ class LookupField extends React.Component {
                         readonly={readonly}
                     >
                         {isList && this.renderListPills()}
-                        <Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>
+                        {/*<Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>*/}
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover
