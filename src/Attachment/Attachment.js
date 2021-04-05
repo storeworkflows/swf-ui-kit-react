@@ -263,6 +263,7 @@ class Attachment extends React.Component {
     }
 };
 
+
 Attachment.defaultProps = {
     disabled: false,
     invalid: false,
@@ -276,7 +277,10 @@ Attachment.defaultProps = {
     onValueChange: () => void 0,
     labelClassName: {},
     message: [],
-    errorMessagesDelay: 2000
+    errorMessagesDelay: 2000,
+    tableSysId: "8f51828adbc32c905884eb184b9619a5",
+    tableName: "x_aaro2_teamwork_container",
+    attachmentSysId: "76c68f4adb1ba4905884eb184b961904",
 };
 
 Attachment.propTypes = {
@@ -315,6 +319,7 @@ Attachment.propTypes = {
     value: propTypes.object,
     tableSysId: propTypes.string,
     tableName: propTypes.string,
+    attachmentSysId: propTypes.string,
 
     //classes
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
