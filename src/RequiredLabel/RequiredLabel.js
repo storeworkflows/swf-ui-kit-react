@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import Icon from "../Icon/Icon";
 import classnames from "classnames";
+import propTypes from "prop-types";
 
 class RequiredLabel extends React.Component{
     constructor(props) {
@@ -38,7 +39,7 @@ RequiredLabel.propTypes = {
     required: PropTypes.bool,
     invalid: PropTypes.bool,
     label: PropTypes.string,
-    className: PropTypes.object,
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
     htmlFor: PropTypes.string
 }
 

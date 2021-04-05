@@ -63,7 +63,8 @@ class DatePicker extends React.Component {
             onValueChange({oldValue: this.state.stringValue, newValue: dateInFormat});
             this.setState({
                 currentDate: date,
-                stringValue: dateInFormat
+                stringValue: dateInFormat,
+                isOpened: false
             })
         }
     }
@@ -136,7 +137,7 @@ class DatePicker extends React.Component {
     }
 
     renderInput(){
-        const {label, format, message, required, name} = this.props;
+        const {label, format, message, required, name, className} = this.props;
         const {stringValue, isInvalid} = this.state
 
         return (
@@ -151,6 +152,7 @@ class DatePicker extends React.Component {
                 onChange={this.changeValue}
                 message = {message}
                 required={required}
+                className={className}
             >
                 <Input.End>
                     <Button
@@ -165,7 +167,7 @@ class DatePicker extends React.Component {
 
 
     render() {
-        const visible = this.props;
+        const {visible} = this.props;
         const {currentDate, isOpened} = this.state
 
         const calendarPositions = [
@@ -219,7 +221,8 @@ DatePicker.defaultProps = {
     onOpen: () => void 0,
     onInvalid: () => void 0,
     onValueChange: () => void 0,
-    visible: true
+    visible: true,
+    className: {}
 }
 
 DatePicker.propTypes = {
@@ -244,7 +247,8 @@ DatePicker.propTypes = {
     onOpen: propTypes.func,
     onInvalid: propTypes.func,
     onValueChange: propTypes.func,
-    visible: propTypes.bool
+    visible: propTypes.bool,
+    className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 export default DatePicker

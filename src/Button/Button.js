@@ -30,21 +30,28 @@ class Button extends React.Component {
 		const _slotElement = !_hasLabel && !_hasIcon && children!==undefined;
 		const _iconSize = getIconSize(customStyle, icon, size);
 
+		const buttonClasses = classnames(
+			className,
+			variant,
+			`button-${size}`,
+			{
+				"swf-button": true,
+				"active": !disabled,
+				"disabled": disabled,
+				"has-icon": _hasIcon
+			}
+		);
+
+		const iconClasses = classnames({
+				"button-icon": true,
+				"label-button-icon": !_hasOnlyIcon
+			});
+
 		return (
 			<>
 				<button
 					//ref={elm => this.props.innerRef(elm)}
-					className={classnames(
-						className,
-						variant,
-						`button-${size}`,
-						{
-							"swf-button": true,
-							"active": !disabled,
-							"disabled": disabled,
-							"has-icon": _hasIcon
-						}
-					)}
+					className={buttonClasses}
 					onClick={onClick}
 					disabled = {disabled}
 					title = {tooltipContent}
@@ -52,12 +59,7 @@ class Button extends React.Component {
 				>
 					<div className="content">
 						{_hasIcon &&
-							<div className={classnames(
-								{
-									"button-icon": true,
-									"label-button-icon": !_hasOnlyIcon
-								}
-							)}>
+							<div className={iconClasses}>
 								<Icon
 									icon={icon}
 									customSize={_iconSize}
@@ -66,7 +68,7 @@ class Button extends React.Component {
 						}
 
 						{ _hasLabel && <label className={"button-label"}>{label}</label> }
-						{_slotElement && children}
+						{children && children}
 
 					</div>
 				</button>
@@ -96,7 +98,7 @@ Button.propTypes = {
 				"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
 	customStyle: propTypes.object,
 	onClick: propTypes.func,
-	className: propTypes.object
+	className: propTypes.oneOfType([propTypes.object, propTypes.string])
 	//innerRef: propTypes.func
 }
 

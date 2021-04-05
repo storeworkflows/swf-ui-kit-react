@@ -11,7 +11,6 @@ class Tooltip extends React.Component {
         this.state = {
             opened: opened,
             targetElement:  targetRef
-
         }
 
         this.renderContent = this.renderContent.bind(this);

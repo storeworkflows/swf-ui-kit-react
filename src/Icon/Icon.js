@@ -88,7 +88,7 @@ Icon.propTypes = {
   size: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
   customSize: propTypes.number,
   color: propTypes.string,
-  className: propTypes.object,
+  className: propTypes.oneOfType([propTypes.object, propTypes.string]),
   innerRef: propTypes.object
 }
 

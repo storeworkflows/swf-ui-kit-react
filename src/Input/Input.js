@@ -145,14 +145,15 @@ class Input extends React.Component {
             minlength,
             pattern,
             multiple,
-            message
+            message,
+            className
         } = this.props;
 
         const _hasLabel = label !== undefined;
         const _hasMessages = message.length > 0;
         const _moved = this.state.focused || value || this.state.hasStart;
 
-        const containerClasses = classnames({
+        const containerClasses = classnames( className,{
             "swf-form-group": true,
             "--invalid": this.state?.invalid,
             "--readonly": this.props.readonly,
@@ -264,7 +265,8 @@ Input.defaultProps = {
     onChange: noop,
     onBlur: noop,
     onFocus: noop,
-    onInvalid: noop
+    onInvalid: noop,
+    className: {}
 }
 
 Input.propTypes = {
@@ -307,7 +309,8 @@ Input.propTypes = {
     internalRef: PropTypes.oneOfType([
         propTypes.func,
         propTypes.shape({ current: propTypes.any })
-    ])
+    ]),
+    className:propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 export default Input;

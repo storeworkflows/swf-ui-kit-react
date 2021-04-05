@@ -7,10 +7,40 @@ import propTypes from "prop-types";
 class InfoMessage extends React.Component{
     constructor(props) {
         super(props);
+
+        this.state = {
+            content: this.props.content
+        }
+        this.setDelay = this.setDelay.bind(this);
+    }
+
+    setDelay(){
+        const {delay} = this.props;
+        console.log(delay)
+        if(delay)
+            setTimeout(() =>
+                    this.setState({content: undefined}) ,
+                delay);
+    }
+
+
+    componentDidMount() {
+        this.setDelay();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        const {content} = this.props;
+
+        if(content !== prevProps.content){
+            this.setState({content: content});
+            this.setDelay();
+        }
     }
 
     render() {
-        const { status, content, icon, className, iconSize} = this.props;
+        const { status, icon, className, iconSize} = this.props;
+        const {content} = this.state;
+
         const messageClasses = classnames(
             className,
             status,
@@ -33,7 +63,6 @@ class InfoMessage extends React.Component{
 InfoMessage.defaultProps = {
     status: "critical",
     className: {},
-    iconSize: PropTypes.number
 }
 
 InfoMessage.propTypes = {
@@ -41,7 +70,8 @@ InfoMessage.propTypes = {
     content: PropTypes.string,
     icon: PropTypes.string,
     className: propTypes.object,
-    iconSize: PropTypes.number
+    iconSize: PropTypes.number,
+    delay: propTypes.number
 }
 
 export default InfoMessage
