@@ -156,7 +156,7 @@ class Input extends React.Component {
                     <div className="input-group">
                         {this.renderStart()}
                         <input
-                            className={inputClasses}
+                               className={inputClasses}
                                id="name"
                                name={name}
                                placeholder={placeholder}
