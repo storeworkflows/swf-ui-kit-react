@@ -22,12 +22,12 @@ export default class FilterTemplates extends React.Component {
         this.setState({popoverTarget: elem})
     }
 
-    componentDidMount = () => {
+    componentDidMount  = async () => {
         const myHeaders = new Headers();
         myHeaders.append("X-UserToken", window.g_ck);
         // myHeaders.append("Authorization", "Basic c3dmX2RldmVsb3Blcjpzd2ZfZGV2ZWxvcGVy")
 
-        fetch(`${window.location.origin}/api/now/table/sys_filter`, {
+        await fetch(`${window.location.origin}/api/now/table/sys_filter`, {
             method: "GET",
             headers: myHeaders
         })

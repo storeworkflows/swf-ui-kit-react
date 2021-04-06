@@ -22,7 +22,8 @@ export default class FilterConditionItem extends React.Component {
             },
             selectedItem: this.props.conditionObj.conditionOptions.fieldItems,
             dropdownFields: [],
-            operators: []
+            operators: [],
+            textAreaValue: ""
         }
     }
 
@@ -62,6 +63,12 @@ export default class FilterConditionItem extends React.Component {
         if (conditionOptions.operator) {
             this.valueInputActivation()
         }
+    }
+
+    textAreaValueSet = ({value}) => {
+        const { conditionID, globalConditionID, setConditionOptions } = this.props;
+        this.setState({textAreaValue: value})
+        setConditionOptions({ value: this.state.textAreaValue, currentConditionID: conditionID, globalConditionID, conditionOption: "value"})
     }
 
     itemClicked = (item) => {
@@ -270,7 +277,7 @@ export default class FilterConditionItem extends React.Component {
                     />
                 </div>
                 {
-                    inputValue(this.state, conditionObj.conditionOptions, this.itemClicked, this.onDatePickerChange, this.inputValueSet, this.itemDropdownHandle)
+                    inputValue(this.state, conditionObj.conditionOptions, this.itemClicked, this.onDatePickerChange, this.inputValueSet, this.textAreaValueSet)
                 }
                 {operatorType !== "^OR" && <>
                     <div className="btn-container">

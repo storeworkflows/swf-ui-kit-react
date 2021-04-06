@@ -1,7 +1,8 @@
 import classnames from "classnames";
 import propTypes from "prop-types";
 import * as React from "react";
-import FilterDropdown from "./Components/FilterDropdown/FilterDropdown"
+import FilterDropdown from "./Components/FilterDropdown/FilterDropdown";
+import FilterSaver from "./Components/FilterSaver/FilterSaver";
 
 import FilterBreadcrumbs from "./Components/FilterBreadcrumbs/FilterBreadcrumbs";
 
@@ -631,8 +632,14 @@ export default class FilterCondition extends React.Component {
         }
     }
 
+    saveToogle = () => {
+        const { isSave } = this.state;
+        this.setState({isSave: !isSave})
+    }
+
     render() {
-        const { isFilterCollapsed, conditionsArray, tableFields, referenceTableFieldsData, labelArr, operatorArr, breadcrumbsItems } = this.state;
+        const { isFilterCollapsed, conditionsArray, tableFields, referenceTableFieldsData, labelArr, operatorArr, breadcrumbsItems, isSave } = this.state;
+        const { table, user } = this.props;
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
         columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})))
@@ -679,7 +686,9 @@ export default class FilterCondition extends React.Component {
                                         "border-color": "rgb(172,180,181)",
                                         "hover-border-color": "rgb(172,180,181)",
                                         "active-border-color": "rgb(172,180,181)"
-                                    }} />
+                                    }}
+                                    onClick={this.saveToogle}
+                                    />
                                 </div>
                                 <div className="btn">
                                     <Button
@@ -699,6 +708,9 @@ export default class FilterCondition extends React.Component {
                                 <FilterTemplates />
                             </div>
                         </div>
+                        {
+                            isSave && <FilterSaver table={table} user={user} />
+                        }
                     </div>
                     <div className="filter-body">
                         <div className="conditions-container">
@@ -772,7 +784,7 @@ export default class FilterCondition extends React.Component {
 }
 
 FilterCondition.defaultProps = {
-    table: "incident",
+    table: "",
     query: "",
     allowFields: [],
     blockFields: [],
