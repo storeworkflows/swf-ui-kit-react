@@ -643,7 +643,7 @@ export default class FilterCondition extends React.Component {
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
         columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})))
-        console.log("%c%s", "color: green", "REACT Filter Condition State", this.state)
+        // console.log("%c%s", "color: green", "REACT Filter Condition State", this.state)
         return (
             <>
                 <div className="collapsed-filter-header">
@@ -705,7 +705,7 @@ export default class FilterCondition extends React.Component {
                                 </div>
                             </div>
                             <div className="templates">
-                                <FilterTemplates />
+                                {/* <FilterTemplates /> */}
                             </div>
                         </div>
                         {
