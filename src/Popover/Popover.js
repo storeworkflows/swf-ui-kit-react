@@ -124,7 +124,6 @@ class Popover extends React.Component {
 
     documentClicked(event){
         const {manageOpened, onOuterPopoverClicked} = this.props;
-        event.preventDefault();
 
         let pointX = event.clientX;
         let pointY = event.clientY;

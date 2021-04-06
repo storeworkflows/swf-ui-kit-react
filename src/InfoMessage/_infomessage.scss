@@ -2,13 +2,14 @@
 .info-message {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     margin: 3px 0 0 0;
-    padding: 3px 5px;
+    padding: 3px;
     border-radius: 0.25rem;
     display: flex;
     align-content: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: 14px;
 
     background: #f2dede;
     color: red;

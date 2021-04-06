@@ -1,8 +1,7 @@
-import './Step.scss';
 import React from 'react';
 import classnames from 'classnames';
 import PropTypes from "prop-types";
-import Icon from '../../Icon/Icon';
+import Icon from '../Icon/Icon';
 
 class Step extends React.Component {
     constructor(props) {
