@@ -19,7 +19,6 @@ export default class FilterCondition extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isFilterCollapsed: true,
             referenceFieldData: {},
             conditionsArray: [],
             isSave: false,
@@ -240,16 +239,14 @@ export default class FilterCondition extends React.Component {
 
             onSendQuery(resultQuery);
 
+            this.setState({
+                queryToSave: resultQuery,
+            }, () => console.log(this.state.queryToSave));
+
             switch (operation) {
                 case 'run':
                     // dispatch(FILTER_ACTIONS.QUERY_GENERATE.SUCCESSED, { value: resultQuery });
                     this.setState({ breadcrumbsItems })
-                    break;
-                case 'save':
-                    this.setState({
-                        queryToSave: resultQuery,
-                        isSave: !isSave
-                    });
                     break;
             }
         })
@@ -373,14 +370,11 @@ export default class FilterCondition extends React.Component {
 
     setConditionOptionsValue = ({value, conditionOptions, conditionOption}) => {
         const { editor } = conditionOptions.operator;
+        console.log(value)
         switch (editor) {
             case 'choice_multiple':
             case 'textarea':
-                let copyValue = conditionOptions.value;
-                copyValue = copyValue ? copyValue.split(',') : [];
-                copyValue.indexOf(value) < 0 ? copyValue.push(value) : copyValue.splice(copyValue.indexOf(value), 1);
-                copyValue = copyValue.join(',');
-                conditionOptions.value = copyValue;
+                conditionOptions.value = value;
                 return conditionOptions;
             case 'between_field':
             case 'relative_field':
@@ -441,6 +435,7 @@ export default class FilterCondition extends React.Component {
                 currentConditionInArr.conditionOptions = this.setConditionOptionsOperator({value, conditionOptions: copyConditionOptions, properCurrentConditionID, properGlobalConditionID})
                 break;
             case "value":
+                console.log(value)
                 currentConditionInArr.conditionOptions = this.setConditionOptionsValue({value, conditionOptions: copyConditionOptions, conditionOption});
                 break;
             case "valueAditionalData":
@@ -643,7 +638,7 @@ export default class FilterCondition extends React.Component {
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
         columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})))
-        console.log("%c%s", "color: green", "REACT Filter Condition State", this.state)
+        // console.log("%c%s", "color: green", "REACT Filter Condition State", this.state)
         return (
             <>
                 <div className="collapsed-filter-header">
@@ -705,7 +700,7 @@ export default class FilterCondition extends React.Component {
                                 </div>
                             </div>
                             <div className="templates">
-                                <FilterTemplates />
+                                {/* <FilterTemplates /> */}
                             </div>
                         </div>
                         {

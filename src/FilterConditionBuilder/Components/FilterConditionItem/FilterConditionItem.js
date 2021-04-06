@@ -67,8 +67,7 @@ export default class FilterConditionItem extends React.Component {
 
     textAreaValueSet = ({value}) => {
         const { conditionID, globalConditionID, setConditionOptions } = this.props;
-        this.setState({textAreaValue: value})
-        setConditionOptions({ value: this.state.textAreaValue, currentConditionID: conditionID, globalConditionID, conditionOption: "value"})
+        this.setState({textAreaValue: value}, () => setConditionOptions({ value: this.state.textAreaValue.replace(/\s/g, ""), conditionOption: "value"}))
     }
 
     itemClicked = (item) => {

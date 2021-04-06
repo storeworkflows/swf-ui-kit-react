@@ -71,6 +71,7 @@ class Modal extends React.Component {
 
         return (
             <Button icon="x"
+                    innerRef={this.props.closeRef}
                     variant="tertiary"
                     bare={true}
                     size="md"
@@ -78,7 +79,9 @@ class Modal extends React.Component {
                     configAria={{"button": {"aria-label": "Close"}}}
                     tooltipContent="Close"
                     onClick={() => {
-                        this.setState({openModal: false});
+                        if (!this.props.manageOpened) {
+                            this.setState({openModal: false});
+                        }
                         this.props.onClose();
                     }}
             />
@@ -243,7 +246,8 @@ Modal.defaultProps = {
     popoverContent: {},
     display: "grid",
     headerElements: 2,
-    showPrint: false
+    showPrint: false,
+    closeRef: React.createRef()
 }
 
 Modal.propTypes = {
@@ -267,7 +271,8 @@ Modal.propTypes = {
         'none'
     ]),
     headerElements: PropTypes.number,
-    showPrint: PropTypes.bool
+    showPrint: PropTypes.bool,
+    closeRef: PropTypes.object
 }
 
 export default Modal
