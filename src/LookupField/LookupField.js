@@ -19,6 +19,7 @@ class LookupField extends React.Component {
         this.getReferenceList = _.debounce(this.getReferenceList, 500);
         this.listHandleClick = this.listHandleClick.bind(this);
         this.referenceHandleClick = this.referenceHandleClick.bind(this);
+        this.deleteValue = this.deleteValue.bind(this);
         this.renderListPills = this.renderListPills.bind(this);
 
         this.onClick = this.onClick.bind(this);
@@ -28,7 +29,7 @@ class LookupField extends React.Component {
         this.controllerRef = React.createRef();
         this.inputRef = React.createRef();
 
-        this.isList = this.props.type === "list";
+        this.isList = this.props.type === "glide_list";
 
         this.state = {
             records: [],
@@ -37,8 +38,8 @@ class LookupField extends React.Component {
                 displayValue: this.isList ? "" : this.props.displayValue || ""
             },
             listRecords: {
-                value: this.props.value?.value?.split(",") ?? [],
-                displayValue: this.props.value?.displayValue?.split(",") ?? []
+                value: this.props.value?.split(",") ?? [],
+                displayValue: this.props.displayValue?.split(",") ?? []
             },
             searchValue: "",
             matchesCount: 0,
@@ -137,7 +138,25 @@ class LookupField extends React.Component {
             loaded: false
         })
 
-        this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString())
+        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
+    }
+
+    deleteValue ({label}) {
+        const value = new Map(this.state.listRecords.value.map((v, i) => [i, v]));
+        const displayValue = new Map(this.state.listRecords.displayValue.map((v ,i) => [v, i]));
+
+        const id = displayValue.get(label);
+        value.delete(id);
+        displayValue.delete(id);
+
+        const listRecords = {
+            value: Array.from(value.values()),
+            displayValue: Array.from(displayValue.keys())
+        }
+
+        this.setState({listRecords});
+
+        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
     }
 
     // componentDidUpdate(prevProps, prevState, snapshot) {
@@ -167,7 +186,7 @@ class LookupField extends React.Component {
     renderListPills() {
         return (
             <Input.Start>{this.state.listRecords.displayValue.map((label) => <Pill label={label}
-                                                                                   canDismiss={true}/>)}</Input.Start>
+                                                                                   canDismiss={true} onDelete={this.deleteValue}/>)}</Input.Start>
         )
     }
 
@@ -181,7 +200,7 @@ class LookupField extends React.Component {
 
         const showResults = loading || (loaded && focused);
 
-        const isList = type === "list";
+        const isList = type === "glide_list";
 
         return (
             visible ?
@@ -252,7 +271,7 @@ LookupField.propTypes = {
     declarativeUiActions: propTypes.object,
     label: propTypes.string,
     name: propTypes.string,
-    type: propTypes.oneOf(["reference", "list"]),
+    type: propTypes.oneOf(["reference", "glide_list"]),
     table: propTypes.string,
     tableRecordSysId: propTypes.string,
     readonly: propTypes.bool,

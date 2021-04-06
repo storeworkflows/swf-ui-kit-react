@@ -40,7 +40,9 @@ class Stepper extends React.Component {
     shiftStepsAccordinglyToSelectedItem = () => {
         return this.setState((state, props) => {
             const { steps, selectedItem } = props;
-            const { stepSize, visibleStepsAmount } = state;
+            const { stepSize, visibleStepsAmount, isArrowsNeeded } = state;
+
+            if (!isArrowsNeeded) return;
 
             const newStepsPosValue = selectedItem * stepSize;
             const maxStepsPos = stepSize * (steps.length - visibleStepsAmount);
@@ -87,7 +89,8 @@ class Stepper extends React.Component {
     }
 
     renderSteps() {
-        const { steps, hideLabels, palette: { icon }, iconSize, selectedItem } = this.props;
+        const { steps, hideLabels, palette: { icon }, iconSize, selectedItem, disableScroll } = this.props;
+        const { stepSize } = this.state;
 
         return (
             steps.map((step, index) => {
@@ -108,6 +111,7 @@ class Stepper extends React.Component {
                         })}
                         key={'step' + index}
                         onClick={step.disabled ? undefined : this.selectStep(index, step.id)}
+                        style={{maxWidth: disableScroll ? '100%' : stepSize}}
                     >
                         <Step
                             iconColor={iconColor}
