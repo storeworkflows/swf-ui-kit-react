@@ -261,6 +261,7 @@ steps |  [{ [StepObject](#stepobject) }]
 palette |  [{ [PaletteObject](#paletteobject) }]
 iconSize | "xs", "sm", "md", "lg", "xl", "xxl", <number> (of px) | "sm"
 hideLabels | boolean | false
+disableScroll | boolean | false
 vertical | boolean | false
 completedCounter | boolean | false
 selectedItem | number (from 1) | 1
