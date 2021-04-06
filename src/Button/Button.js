@@ -43,14 +43,14 @@ class Button extends React.Component {
 		);
 
 		const iconClasses = classnames({
-				"button-icon": true,
-				"label-button-icon": !_hasOnlyIcon
-			});
+			"button-icon": true,
+			"label-button-icon": !_hasOnlyIcon
+		});
 
 		return (
 			<>
 				<button
-					//ref={elm => this.props.innerRef(elm)}
+					ref={elm => this.props.innerRef.current = elm}
 					className={buttonClasses}
 					onClick={onClick}
 					disabled = {disabled}
@@ -59,12 +59,12 @@ class Button extends React.Component {
 				>
 					<div className="content">
 						{_hasIcon &&
-							<div className={iconClasses}>
-								<Icon
-									icon={icon}
-									customSize={_iconSize}
-								/>
-							</div>
+						<div className={iconClasses}>
+							<Icon
+								icon={icon}
+								customSize={_iconSize}
+							/>
+						</div>
 						}
 
 						{ _hasLabel && <label className={"button-label"}>{label}</label> }
@@ -85,7 +85,8 @@ Button.defaultProps = {
 	size: 'md',
 	variant:  "secondary",
 	customStyle: null,
-	className: {}
+	className: {},
+	innerRef: React.createRef()
 }
 
 Button.propTypes = {
@@ -95,11 +96,11 @@ Button.propTypes = {
 	tooltipContent: propTypes.string,
 	size: propTypes.oneOf(['sm', 'md', 'lg']),
 	variant:  propTypes.oneOf(["primary" , "primary-positive" , "primary-negative" , "secondary" ,
-				"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
+		"secondary-positive" , "secondary-negative" , "tertiary" , "inherit", ""]),
 	customStyle: propTypes.object,
 	onClick: propTypes.func,
-	className: propTypes.oneOfType([propTypes.object, propTypes.string])
-	//innerRef: propTypes.func
+	className: propTypes.oneOfType([propTypes.object, propTypes.string]),
+	innerRef: propTypes.object
 }
 
 export default Button

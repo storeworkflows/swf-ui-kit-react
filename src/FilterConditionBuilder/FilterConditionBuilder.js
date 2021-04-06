@@ -19,7 +19,6 @@ export default class FilterCondition extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isFilterCollapsed: true,
             referenceFieldData: {},
             conditionsArray: [],
             isSave: false,
