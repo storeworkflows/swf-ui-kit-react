@@ -1,5 +1,7 @@
 .step {
   &-container {
+    --box-shadow: 0 0 0 3px var(--circle-color);
+
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -11,7 +13,7 @@
       cursor: pointer;
 
       .step-circle {
-        box-shadow: 0 0 0 3px var(--circle-color);
+        box-shadow: var(--box-shadow);
 
         &.--partial {
           border-width: 0;
@@ -92,10 +94,11 @@
 
   .step-circle {
     opacity: 1;
-    box-shadow: 0 0 0 3px var(--circle-color);
+    box-shadow: var(--box-shadow);
 
     &.--partial {
-      border-width: 0;
+      border-width: 4px;
+      box-shadow: none;
     }
   }
 
@@ -179,5 +182,12 @@
 
   .step-circle {
     box-shadow: none;
+  }
+}
+
+.steps-item.--selected .step-container:hover {
+  .step-circle.--partial {
+    box-shadow: none;
+    border-width: 4px;
   }
 }
