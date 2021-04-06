@@ -1,0 +1,27 @@
+.filter-dropdown-btn {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    cursor: pointer;
+    max-width: inherit;
+    width: 100%;
+    margin: 0px;
+    border-style: solid;
+    padding-block: 0px;
+    justify-content: space-between;
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    text-transform: none;
+    height: 2rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    padding-inline-start: 1rem;
+    padding-inline-end: 0.75rem;
+    border-radius: 1em;
+    &:focus {
+        outline: none
+    }
+    .dropdown-value {
+        min-height: 0px;
+    }
+}
