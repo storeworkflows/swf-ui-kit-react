@@ -1,4 +1,4 @@
-import Step from './Step/Step';
+import Step from './Step';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classnames from "classnames";
@@ -89,8 +89,7 @@ class Stepper extends React.Component {
     }
 
     renderSteps() {
-        const { steps, hideLabels, palette: { icon }, iconSize, selectedItem, disableScroll } = this.props;
-        const { stepSize } = this.state;
+        const { steps, hideLabels, palette: { icon }, iconSize, selectedItem } = this.props;
 
         return (
             steps.map((step, index) => {
@@ -111,7 +110,6 @@ class Stepper extends React.Component {
                         })}
                         key={'step' + index}
                         onClick={step.disabled ? undefined : this.selectStep(index, step.id)}
-                        style={{maxWidth: disableScroll ? '100%' : stepSize}}
                     >
                         <Step
                             iconColor={iconColor}

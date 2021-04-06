@@ -1,4 +1,4 @@
-@import "Step/Step";
+@import "./step";
 
 .stepper {
   height: 100%;
@@ -45,6 +45,7 @@
 
   &-item {
     flex: 1 1 0;
+    max-width: 100%;
 
     //hide first & last step-line
     &:first-child .step-line:first-child, &:last-child .step-line:last-child {
