@@ -87,7 +87,7 @@ class Dropdown extends React.Component {
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': 'calc(10rem - 2px)'
+            'width': 'calc(100% - 2px)'
         }
 
             return (
@@ -147,7 +147,7 @@ class Dropdown extends React.Component {
         let hasSelected = selectedItems && (selectedItems.length > 0 );
         let hasLabel = hasSelected || placeholder;
 
-        let buttonClasses = classnames(className,{
+        let buttonClasses = classnames({
             "dropdown-button" : true,
             "opened": opened,
             "disabled": disabled,
@@ -161,7 +161,7 @@ class Dropdown extends React.Component {
         return (
             visible ?
             <>
-                <div className={"swf-dropdown-container"}>
+                <div className={classnames(className, "swf-dropdown-container")}>
                     <input
                         type="hidden"
                         name={name}
@@ -267,9 +267,9 @@ Dropdown.propTypes = {
         className: propTypes.object,
         iconSize: PropTypes.number
     })),
-    className: propTypes.object,
-    labelClassName: propTypes.object,
-    itemClassName:propTypes.object,
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    labelClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    itemClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
     visible: propTypes.bool,
     manageInvalid: propTypes.bool,
     onInvalid: propTypes.func
