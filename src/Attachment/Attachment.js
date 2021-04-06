@@ -7,6 +7,7 @@ import InfoMessage from "../InfoMessage/InfoMessage";
 import {getFileExtensions} from "./utils";
 import File from "./File";
 import Button from "../Button/Button";
+import fetch from "cross-fetch";
 
 class Attachment extends React.Component {
     constructor(props) {
@@ -138,6 +139,42 @@ class Attachment extends React.Component {
 
         if(manageInvalid && invalid !== this.state.invalid)
             this.setState({invalid: invalid})
+    }
+
+    componentDidMount() {
+        const {attachmentSysId} = this.props;
+
+        if(attachmentSysId) {
+        //    let url = `/api/now/attachment?sysparm_query=sys_id%${attachmentSysId}`;
+            let url = `/api/now/attachment/${attachmentSysId}`;
+          //  let params = {sysparm_query: `sys_id%${attachmentSysId}`}
+
+
+            const requestOptions = {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'content-type': "application/json",
+                  }
+            };
+
+
+            fetch(url, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+                    console.log(data);
+                  //  this.setState({postId: data.id})
+                })
+                .catch(error => {
+                    //this.setState({errorMessage: error.toString()});
+                    console.error('There was an error!', error);
+                });
+        }
     }
 
     renderLabel() {
