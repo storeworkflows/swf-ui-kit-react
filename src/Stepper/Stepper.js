@@ -12,13 +12,15 @@ class Stepper extends React.Component {
             visibleStepsAmount: 0,
             stepsCurrShiftedPos: 0,
             isArrowsNeeded: false,
-            stepSize: this.props.vertical ? 120 : 150,
+            stepSize: this.props.vertical ? 120 : 140,
             arrowsSize: parseInt(getCircleSize(this.props.iconSize))
         };
         this.stepperContainerRef = false;
     }
 
     componentDidMount() {
+        if (this.props.disableScroll) return;
+
         this.updateVisibleStepsAmount();
         window.addEventListener('resize', this.updateVisibleStepsAmount);
 
@@ -26,7 +28,7 @@ class Stepper extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.selectedItem !== prevProps.selectedItem) {
+        if (!this.props.disableScroll && (this.props.selectedItem !== prevProps.selectedItem)) {
             this.shiftStepsAccordinglyToSelectedItem();
         }
     }
@@ -122,7 +124,7 @@ class Stepper extends React.Component {
     }
 
     render() {
-        const { palette, vertical, completedCounter, steps, iconSize, selectedItem } = this.props;
+        const { palette, vertical, completedCounter, steps, iconSize, selectedItem, disableScroll } = this.props;
         const { stepsCurrShiftedPos, visibleStepsAmount, isArrowsNeeded, arrowsSize, stepSize } = this.state;
 
         return (
@@ -157,7 +159,7 @@ class Stepper extends React.Component {
                             '--vertical': vertical
                         })}
                         style={{
-                            width: vertical ? '100%' : visibleStepsAmount * stepSize,
+                            width: vertical || disableScroll ? '100%' : visibleStepsAmount * stepSize,
                             height: vertical ? visibleStepsAmount * stepSize : arrowsSize * 4
                         }}
                     >
@@ -205,7 +207,8 @@ Stepper.propTypes = {
     vertical: PropTypes.bool,
     completedCounter: PropTypes.bool,
     selectedItem: PropTypes.number,
-    onStepClick: PropTypes.func
+    onStepClick: PropTypes.func,
+    disableScroll: PropTypes.bool
 }
 
 Stepper.defaultProps = {
@@ -224,7 +227,8 @@ Stepper.defaultProps = {
     hideLabels: false,
     vertical: false,
     completedCounter: false,
-    selectedItem: 0
+    selectedItem: 0,
+    disableScroll: false
 }
 
 export default Stepper;
