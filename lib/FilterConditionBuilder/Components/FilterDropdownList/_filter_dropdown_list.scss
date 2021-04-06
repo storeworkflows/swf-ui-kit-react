@@ -1,0 +1,11 @@
+.filter-dropdown-list {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    max-height: 300px;
+    overflow: auto;
+    border: 1px solid rgb(30, 133, 109);
+    border-top: none;
+    background-color: #fff;
+}
