@@ -3,7 +3,7 @@ import TextArea from "../../../TextArea/TextArea";
 import Dropdown from "../../../Dropdown/Dropdown";
 import Input from "../../../Input/Input";
 
-export const inputValue = (state, conditionOptions, itemClicked, onDatePickerChange, inputValueSet) => {
+export const inputValue = (state, conditionOptions, itemClicked, onDatePickerChange, inputValueSet, textAreaValueSet) => {
     const { dropdownsIsActive } = state;
     const {  operator: { editor } } = conditionOptions;
 
@@ -105,11 +105,16 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
         case "textarea":
             return (
                 <div className="dropdown-container textarea-input">
+                    {console.log(this)}
                     <TextArea
-                        autoresize={true}
+                        autoresize={false}
                         maxlength={5000}
-                        value={conditionOptions.value}
+                        value={state.textAreaValue}
                         resize="vertical"
+                        onKeyDown={(e) => {
+                            console.log(e.target.value)
+                            textAreaValueSet({value: e.target.value})
+                        }}
                     />
                 </div>
             );
