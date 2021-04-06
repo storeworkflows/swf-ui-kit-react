@@ -19,6 +19,7 @@ class LookupField extends React.Component {
         this.getReferenceList = _.debounce(this.getReferenceList, 500);
         this.listHandleClick = this.listHandleClick.bind(this);
         this.referenceHandleClick = this.referenceHandleClick.bind(this);
+        this.deleteValue = this.deleteValue.bind(this);
         this.renderListPills = this.renderListPills.bind(this);
 
         this.onClick = this.onClick.bind(this);
@@ -140,8 +141,8 @@ class LookupField extends React.Component {
         this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString())
     }
 
-    deleteValue = ({label}) => {
-        const value = new Map(this.state.listRecords.values.map((v, i) => [i, v]));
+    deleteValue ({label}) {
+        const value = new Map(this.state.listRecords.value.map((v, i) => [i, v]));
         const displayValue = new Map(this.state.listRecords.displayValue.map((v ,i) => [v, i]));
 
         const id = displayValue.get(label);
