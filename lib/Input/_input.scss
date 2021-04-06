@@ -18,12 +18,8 @@
       padding: 0;
       transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms, transform 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms;
       margin: 0;
-
     }
 
-    label.--moved {
-      transform: translate(14px, -14px) scale(0.75);
-    }
 
     label.--focused {
       color: #007bff;

@@ -28,7 +28,7 @@ class LookupField extends React.Component {
         this.controllerRef = React.createRef();
         this.inputRef = React.createRef();
 
-        this.isList = this.props.type === "list";
+        this.isList = this.props.type === "glide_list";
 
         this.state = {
             records: [],
@@ -181,7 +181,7 @@ class LookupField extends React.Component {
 
         const showResults = loading || (loaded && focused);
 
-        const isList = type === "list";
+        const isList = type === "glide_list";
 
         return (
             visible ?
@@ -252,7 +252,7 @@ LookupField.propTypes = {
     declarativeUiActions: propTypes.object,
     label: propTypes.string,
     name: propTypes.string,
-    type: propTypes.oneOf(["reference", "list"]),
+    type: propTypes.oneOf(["reference", "glide_list"]),
     table: propTypes.string,
     tableRecordSysId: propTypes.string,
     readonly: propTypes.bool,
