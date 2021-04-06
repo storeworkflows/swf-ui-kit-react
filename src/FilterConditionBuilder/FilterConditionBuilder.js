@@ -705,7 +705,7 @@ export default class FilterCondition extends React.Component {
                                 </div>
                             </div>
                             <div className="templates">
-                                <FilterTemplates />
+                                {/* <FilterTemplates /> */}
                             </div>
                         </div>
                         {
