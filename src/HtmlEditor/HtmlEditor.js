@@ -44,7 +44,6 @@ export default class HtmlEditor extends React.Component {
 
     fetchRequest = async ({ url, params = {} }) => {
         let result;
-        console.log("params", params, "url", url)
         const response = await fetch(url, {
             ...params,
             credentials: 'same-origin',
@@ -57,7 +56,6 @@ export default class HtmlEditor extends React.Component {
         });
         const resultJson = await response.json();
         result = resultJson.result;
-        console.log(resultJson)
 
         return result;
     }
@@ -131,9 +129,7 @@ export default class HtmlEditor extends React.Component {
                         },
                         setup: editor => {
                             this.editor = editor;
-                            editor.on("init", () => {
-                                console.log({editor});
-                            })
+                            editor.on("init", () => {})
                         }
                     }}
                 />

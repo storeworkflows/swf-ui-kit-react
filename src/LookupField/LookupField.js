@@ -65,7 +65,7 @@ class LookupField extends React.Component {
                     field: this.props.name,
                     ignoreRefQual: false,
                     paginationLimit: 25,
-                    serializedChanges: "",
+                    serializedChanges: "{}",
                     sortBy: "",
                     sys_id: this.props.tableRecordSysId,
                     table: this.props.table
@@ -157,7 +157,7 @@ class LookupField extends React.Component {
         }
 
         this.controllerRef.current = new AbortController();
-        this.getReferenceList("");
+        !this.props.readonly && this.getReferenceList("**");
     }
 
     onBlur(event) {

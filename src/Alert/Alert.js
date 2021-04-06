@@ -26,8 +26,6 @@ class Alert extends React.Component {
 
             let contentEndX = content.getBoundingClientRect().y + content.clientHeight;
             let textEndX = text.getBoundingClientRect().y + text.clientHeight;
-
-            console.log(contentEndX<textEndX)
             this.setState({isOverflowed: contentEndX<textEndX})
         }
     }

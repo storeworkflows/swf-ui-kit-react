@@ -97,37 +97,11 @@ class Input extends React.Component {
             value: nextProps.value
         }
     }
-    // static getDerivedStateFromProps (nextProps) {
-    //     console.log("getDerivedStateFromProps")
-    //     console.log(nextProps.value)
-    //     // return {
-    //     //     value: nextProps.value
-    //     // }
-    // }
-    //
-    // componentWillReceiveProps(nextProps, nextContext) {
-    //     console.log("componentWillReceiveProps")
-    //     this.setState({
-    //         value: nextProps
-    //     })
-    // }
-    renderMessage(el){
-        const messageClasses = classnames(
-            el.className,
-            el.status,
-            "input-message"
-        );
 
-        let iconSize = el.iconSize ? el.iconSize : 16;
-        return  (
-            el.content
-                ?
-                <div className={messageClasses}>
-                    {el.icon && <Icon className="input-message-icon" icon={el.icon} customSize={iconSize}/> }
-                    <span className="input-message-content">{el.content}</span>
-                </div>
-                : null
-        )
+    componentWillReceiveProps(nextProps, nextContext) {
+        this.setState({
+            value: nextProps.value
+        })
     }
 
 
@@ -170,7 +144,8 @@ class Input extends React.Component {
             "inp-label": true,
             "--moved": _moved,
             "--focused": this.state?.focused,
-            "--invalid": this.state?.invalid
+            "--invalid": this.state?.invalid,
+            "--readonly": this.props.readonly
         });
 
         const requiredClasses = classnames({
