@@ -16,7 +16,7 @@ class Pill extends React.Component {
         if (this.props.onDelete === noop) {
             this.pillRef?.current?.remove()
         }
-        this.props.onDelete()
+        this.props.onDelete(this.props)
     }
 
     render() {

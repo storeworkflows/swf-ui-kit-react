@@ -37,8 +37,8 @@ class LookupField extends React.Component {
                 displayValue: this.isList ? "" : this.props.displayValue || ""
             },
             listRecords: {
-                value: this.props.value?.value?.split(",") ?? [],
-                displayValue: this.props.value?.displayValue?.split(",") ?? []
+                value: this.props.value?.split(",") ?? [],
+                displayValue: this.props.displayValue?.split(",") ?? []
             },
             searchValue: "",
             matchesCount: 0,
@@ -140,6 +140,24 @@ class LookupField extends React.Component {
         this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString())
     }
 
+    deleteValue = ({label}) => {
+        const value = new Map(this.state.listRecords.values.map((v, i) => [i, v]));
+        const displayValue = new Map(this.state.listRecords.displayValue.map((v ,i) => [v, i]));
+
+        const id = displayValue.get(label);
+        value.delete(id);
+        displayValue.delete(id);
+
+        const listRecords = {
+            value: Array.from(value.values()),
+            displayValue: Array.from(displayValue.keys())
+        }
+
+        this.setState({listRecords});
+
+        this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString());
+    }
+
     // componentDidUpdate(prevProps, prevState, snapshot) {
     //     const {loading, loaded, records} = this.state;
     //     console.log(records, loading, loaded);
@@ -167,7 +185,7 @@ class LookupField extends React.Component {
     renderListPills() {
         return (
             <Input.Start>{this.state.listRecords.displayValue.map((label) => <Pill label={label}
-                                                                                   canDismiss={true}/>)}</Input.Start>
+                                                                                   canDismiss={true} onDelete={this.deleteValue}/>)}</Input.Start>
         )
     }
 
