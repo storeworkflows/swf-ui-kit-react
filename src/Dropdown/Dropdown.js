@@ -87,7 +87,7 @@ class Dropdown extends React.Component {
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': 'calc(100% - 2px)'
+            'width': '100%'
         }
 
             return (
@@ -161,7 +161,7 @@ class Dropdown extends React.Component {
         return (
             visible ?
             <>
-                <div className={classnames(className, "swf-dropdown-container")}>
+                <div className={classnames(className, "swf-dropdown-main-container")}>
                     <input
                         type="hidden"
                         name={name}

@@ -16,11 +16,8 @@ class InfoMessage extends React.Component{
 
     setDelay(){
         const {delay} = this.props;
-        console.log(delay)
         if(delay)
-            setTimeout(() =>
-                    this.setState({content: undefined}) ,
-                delay);
+            setTimeout(() => this.setState({content: undefined}) , delay);
     }
 
 
@@ -63,6 +60,7 @@ class InfoMessage extends React.Component{
 InfoMessage.defaultProps = {
     status: "critical",
     className: {},
+    iconSize: 16
 }
 
 InfoMessage.propTypes = {

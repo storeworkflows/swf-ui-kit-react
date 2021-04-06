@@ -17,13 +17,6 @@ const downloadSuccess = async (data) => {
     }
 }
 
-const downloadFailed = async (error, delay) => {
-    let errorIcon = "exclamation-circle"
-    return {
-        systemMessages: [{content: error.toString(), icon: errorIcon, delay: delay}]
-    };
-}
-
 const uploadSuccess = (data, file) => {
     let resultFile = data.result;
     return{
@@ -33,7 +26,7 @@ const uploadSuccess = (data, file) => {
     };
 }
 
-const uploadError = (error, delay) => {
+const errorMessage = (error, delay) => {
     let errorIcon = "exclamation-circle"
     return{
         systemMessages: [{content: error.toString(), icon: errorIcon, delay: delay}]
@@ -56,8 +49,8 @@ export const downloadRequest = async (attachmentSysId, delay) => {
             const data = await response.json();
 
             if (!response.ok) {
-                const error = (data && data.message) || response.status;
-                return downloadFailed(error, delay)
+                const error = (data && data.message) || response.statusText;
+                return errorMessage(error, delay)
             }
             return downloadSuccess(data);
         } catch (error) {
@@ -87,8 +80,8 @@ export const uploadRequest = async (file, tableSysId, tableName, delay) => {
             const data = await response.json();
 
             if (!response.ok) {
-                const error = (data && data.message) || response.status;
-                return uploadError(error, delay)
+                const error = (data && data.message) || response.statusText;
+                return errorMessage(error, delay)
             }
             return uploadSuccess(data, file);
         } catch (error) {
@@ -97,7 +90,7 @@ export const uploadRequest = async (file, tableSysId, tableName, delay) => {
     }
 }
 
-export const deleteRequest = async (attachmentSysId, input) => {
+export const deleteRequest = async (attachmentSysId, input, delay) => {
     if (attachmentSysId) {
         let url = `/api/now/attachment/${attachmentSysId}`;
 
@@ -113,7 +106,8 @@ export const deleteRequest = async (attachmentSysId, input) => {
             const response = await fetch(url, requestOptions);
 
             if (!response.ok )
-                return {};
+                return errorMessage(response.statusText, delay);
+
             if (input)
                 input.value = "";
 

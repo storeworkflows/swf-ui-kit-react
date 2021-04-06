@@ -8,6 +8,8 @@ import {getFileExtensions} from "./utils";
 import File from "./File";
 import Button from "../Button/Button";
 import {downloadRequest, uploadRequest, deleteRequest} from "./_requests";
+import {GLOBAL_CONSTANTS} from "../Card/constants";
+import Preloader from "../Preloader/Preloader";
 
 class Attachment extends React.Component {
     constructor(props) {
@@ -21,7 +23,8 @@ class Attachment extends React.Component {
             systemMessages: [],
             tableName: tableName,
             tableSysId: tableSysId,
-            attachmentSysId: attachmentSysId
+            attachmentSysId: attachmentSysId,
+            readolny: false
         }
 
         this.containerClickedEvent = this.containerClickedEvent.bind(this);
@@ -41,9 +44,9 @@ class Attachment extends React.Component {
     }
 
     setFile(file){
-        if(!this.state.file) {
+        const {maxAttachmentSize, contentType, extensions, errorMessagesDelay, readonly, disabled} = this.props
+        if(!this.state.file && !this.state.readonly && !readonly && !disabled) {
             this.setBlur();
-            const {maxAttachmentSize, contentType, extensions} = this.props
             const {tableSysId, tableName} = this.state;
 
             let isFitSize = maxAttachmentSize ? file.size <= maxAttachmentSize : true;
@@ -52,7 +55,7 @@ class Attachment extends React.Component {
 
             let errorIcon = "exclamation-circle"
             let errorMessages = []
-            let delay = this.props.errorMessagesDelay;
+            let delay = errorMessagesDelay;
 
             if (!isFitType)
                 errorMessages.push({content: `Available types: ${contentType.join(', ')}`, icon: errorIcon, delay: delay})
@@ -75,15 +78,17 @@ class Attachment extends React.Component {
 
     async uploadFile(file) {
         const {tableSysId, tableName} = this.state;
+        this.setState({readonly: true});
         let updatedState = await uploadRequest(file, tableSysId, tableName, this.props.errorMessagesDelay);
         this.setState(updatedState);
+        this.setState({readonly: false});
 
     }
 
     async deleteFile(e) {
         this.stopEvent(e);
         const {attachmentSysId} = this.state;
-        let stateToUpdate = await deleteRequest(attachmentSysId, this.input)
+        let stateToUpdate = await deleteRequest(attachmentSysId, this.input, this.props.errorMessagesDelay)
         this.setState(stateToUpdate)
     }
 
@@ -159,8 +164,10 @@ class Attachment extends React.Component {
     }
 
     async componentDidMount() {
+        this.setState({readonly: true});
         let updatedState = await downloadRequest(this.state.attachmentSysId, this.props.errorMessagesDelay);
         this.setState(updatedState);
+        this.setState({readonly: false});
     }
 
     renderLabel() {
@@ -229,7 +236,7 @@ class Attachment extends React.Component {
         return (
             visible ?
                 <>
-                    <div>
+
                     <input
                         ref = {el => this.input = el}
                         type="file"
@@ -274,19 +281,16 @@ class Attachment extends React.Component {
                                         </div>
                                     </File.End>
                                 </File>
-                                : <span className={"attach-placeholder"}>
-                                 {placeholder ? placeholder : "Space for your file"}
-                                </span>
+                                : placeholder && <span className={"attach-placeholder"}>{placeholder}</span>
                             }
                         </div>
                         {this.renderMessages()}
-                    </div>
                     </div>
                 </>
                 : null
         );
     }
-};
+}
 
 
 Attachment.defaultProps = {
@@ -306,6 +310,7 @@ Attachment.defaultProps = {
     tableSysId: "8f51828adbc32c905884eb184b9619a5",
     tableName: "x_aaro2_teamwork_container",
     attachmentSysId: "76c68f4adb1ba4905884eb184b96190",
+    placeholder: "Space for your file"
     //e09faf12db9fe4905884eb184b9619c1
 };
 
