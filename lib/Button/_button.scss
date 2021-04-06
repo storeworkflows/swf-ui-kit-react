@@ -141,11 +141,18 @@
 
   &.disabled{
     background: #ededed;
+
     color: #666666;
     cursor: default;
 
+    color: #a5a5a5;
+    cursor: not-allowed;
+    border: none;
+
+
     .button-label{
-      cursor: default;
+      cursor: not-allowed;
+      color: inherit;
     }
   }
 
