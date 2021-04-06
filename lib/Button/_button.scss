@@ -142,10 +142,12 @@
   &.disabled{
     background: #ededed;
     color: #a5a5a5;
-    cursor: default;
+    cursor: not-allowed;
+    border: none;
 
     .button-label{
-      cursor: default;
+      cursor: not-allowed;
+      color: inherit;
     }
   }
 
