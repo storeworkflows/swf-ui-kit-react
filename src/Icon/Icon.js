@@ -63,6 +63,7 @@ class Icon extends React.Component {
             ref={elm => this.props.innerRef.current = elm}
             {...this.getAttrs(node.attributes)}
             style={this.getStyles()}
+            className={this.props.className}
         >
               {[ ...node.children ].map( (child, id) => {
                 return  <path {...this.getAttrs(child.attributes)} key = {id}/>
@@ -78,7 +79,7 @@ Icon.defaultProps = {
   icon: "",
   size: 'md',
   color: "",
-  className: "",
+  className: {},
   innerRef: React.createRef()
 }
 
@@ -87,9 +88,8 @@ Icon.propTypes = {
   size: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
   customSize: propTypes.number,
   color: propTypes.string,
-  className: propTypes.string,
+  className: propTypes.oneOfType([propTypes.object, propTypes.string]),
   innerRef: propTypes.object
-
 }
 
 export default Icon

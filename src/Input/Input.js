@@ -6,6 +6,7 @@ import findByType, {createSubComponent} from "../utils/findByType";
 import {noop} from "../utils";
 import propTypes from "prop-types";
 import Icon from "../Icon/Icon";
+import InfoMessage from "../InfoMessage/InfoMessage";
 
 const Start = () => null;
 const End = () => null;
@@ -82,7 +83,10 @@ class Input extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {invalid, manageInvalid} = this.props;
+        const {invalid, manageInvalid, value} = this.props;
+
+        if(prevProps.value!==value || value!==this.state.value)
+            this.setState({value: value})
 
         if(manageInvalid && this.state.invalid !== invalid)
             this.setState({invalid: invalid});
@@ -99,6 +103,7 @@ class Input extends React.Component {
             value: nextProps.value
         })
     }
+
 
 
     render() {
@@ -120,16 +125,18 @@ class Input extends React.Component {
             minlength,
             pattern,
             multiple,
-            message
+            message,
+            className
         } = this.props;
 
         const _hasLabel = label !== undefined;
         const _hasMessages = message.length > 0;
         const _moved = this.state.focused || value || this.state.hasStart;
 
-        const containerClasses = classnames({
+        const containerClasses = classnames( className,{
             "swf-form-group": true,
             "--invalid": this.state?.invalid,
+            "--readonly": this.props.readonly,
             [this.props.containerClass]: true
         })
 
@@ -139,6 +146,12 @@ class Input extends React.Component {
             "--focused": this.state?.focused,
             "--invalid": this.state?.invalid,
             "--readonly": this.props.readonly
+        });
+
+        const requiredClasses = classnames({
+            "inp-required": true,
+            "--focused": this.state?.focused,
+            "--invalid": this.state?.invalid
         });
 
         const inputClasses = classnames({
@@ -153,7 +166,13 @@ class Input extends React.Component {
         return (
             <>
                 <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
-                    {_hasLabel && <label htmlFor="name" className={labelClasses}>{label}{required && <Icon icon="asterisk" size="xs" />}</label>}
+
+                    {_hasLabel &&
+                        <span className={labelClasses}>
+                            <label htmlFor="name">{label}</label>
+                            { required && <Icon icon={'asterisk'} className={requiredClasses} customSize={7}/>}
+                        </span>
+                    }
                     <div className="input-group">
                         {this.renderStart()}
                         <input
@@ -179,41 +198,31 @@ class Input extends React.Component {
                             onInput={this.onInput}
                             onChange={this.props.onChange}
                             onFocus={(event) => {
-                                this.onFocus(event)
-                            }}
+                                   this.onFocus(event)
+                               }}
                             onBlur={(event) => {
-                                this.onBlur(event);
-                            }}
+                                   this.onBlur(event);
+                               }}
                             onInvalid={(e) => this.onInvalid(e)}
                         />
                         {this.renderEnd()}
                     </div>
                     {_hasMessages &&
-                    message.map((el) => {
-                        const _hasIcon = el.icon !== undefined && el.icon.length > 0;
-                        const _hasContent = el.content !== undefined && el.content.length > 0;
-
-                        const _exist = _hasIcon || _hasContent;
-                        return (
-                            _exist
-                                ?
-                                <div className={classnames(el.status)}>
-                                    {_hasIcon &&
-                                    <Icon icon={el.icon} size="sm"/>
-                                    }
-                                    {_hasContent &&
-                                    <span>{el.content}</span>
-                                    }
-                                </div>
-                                : null
-                        )
-                    })
+                        message.map((el) => {
+                            return <InfoMessage
+                                iconSize={el.iconSize}
+                                className={el.className}
+                                content={el.content}
+                                icon={el.icon}
+                                status={el.status}
+                            />
+                        })
                     }
                 </div>
             </>
         )
     }
-}
+};
 
 Input.Start = createSubComponent("Start");
 Input.End = createSubComponent("End");
@@ -237,7 +246,8 @@ Input.defaultProps = {
     onChange: noop,
     onBlur: noop,
     onFocus: noop,
-    onInvalid: noop
+    onInvalid: noop,
+    className: {}
 }
 
 Input.propTypes = {
@@ -254,7 +264,9 @@ Input.propTypes = {
     message: PropTypes.arrayOf(PropTypes.shape({
         status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
         content: PropTypes.string,
-        icon: PropTypes.string
+        icon: PropTypes.string,
+        className: propTypes.object,
+        iconSize: PropTypes.number
     })),
     multiple: PropTypes.bool,
     name: PropTypes.string,
@@ -278,7 +290,8 @@ Input.propTypes = {
     internalRef: PropTypes.oneOfType([
         propTypes.func,
         propTypes.shape({ current: propTypes.any })
-    ])
+    ]),
+    className:propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 export default Input;

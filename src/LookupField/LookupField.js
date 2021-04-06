@@ -8,6 +8,8 @@ import DeclarativeUIActions from "./DeclarativeUIActions";
 import Result from "./Result";
 import Pill from "../Pill/Pill";
 import Popover from "../Popover/Popover";
+import {noop} from "../utils";
+import PropTypes from "prop-types";
 
 class LookupField extends React.Component {
     constructor(props) {
@@ -73,7 +75,6 @@ class LookupField extends React.Component {
                 }
             });
             const json = await response.json();
-        //    console.log(json);
             const {
                 referenceDataList,
                 referenceRecentDataList,
@@ -139,14 +140,10 @@ class LookupField extends React.Component {
         this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString())
     }
 
-    componentDidMount() {
-       // console.log("input ref", this.inputRef)
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {loading, loaded, records} = this.state;
-       // console.log(records, loading, loaded);
-    }
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     const {loading, loaded, records} = this.state;
+    //     console.log(records, loading, loaded);
+    // }
 
     onClick(record) {
         const isReference = this.props?.type === "reference"
@@ -177,7 +174,8 @@ class LookupField extends React.Component {
     render() {
         const {matchesCount, records, loading, loaded, focused, referenceRecord} = this.state;
 
-        const {label, declarativeUiActions, type, name, readonly} = this.props;
+        const {label, declarativeUiActions, type, name, readonly,
+            invalid, required, onInvalid, message, visible} = this.props;
 
         const hasMatches = matchesCount > 0;
 
@@ -186,6 +184,7 @@ class LookupField extends React.Component {
         const isList = type === "list";
 
         return (
+            visible ?
             <>
                 <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}>
                     <Input
@@ -197,6 +196,10 @@ class LookupField extends React.Component {
                         name={name}
                         onInput={this.onChange}
                         readonly={readonly}
+                        onInvalid={onInvalid}
+                        invalid={invalid}
+                        required={required}
+                        message={message}
                     >
                         {isList && this.renderListPills()}
                         {/*<Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>*/}
@@ -223,6 +226,7 @@ class LookupField extends React.Component {
                     }
                 </div>
             </>
+                : null
         )
     }
 }
@@ -234,7 +238,11 @@ LookupField.defaultProps = {
     declarativeUiActions: [],
     type: "reference",
     readonly: false,
-    required: false
+    required: false,
+    invalid: false,
+    onInvalid: () => void 0,
+    message: [],
+    visible: true
 }
 
 LookupField.propTypes = {
@@ -249,23 +257,17 @@ LookupField.propTypes = {
     tableRecordSysId: propTypes.string,
     readonly: propTypes.bool,
     required: propTypes.bool,
-    content: propTypes.string
+    invalid: propTypes.bool,
+    onInvalid: propTypes.func,
+    message: PropTypes.arrayOf(PropTypes.shape({
+        status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        content: PropTypes.string,
+        icon: PropTypes.string,
+        className: propTypes.object,
+        iconSize: PropTypes.number
+    })),
+    visible: propTypes.bool
 }
-/*
-content = "d5640bdadbfb2300f0ee760a689619e6"
-					displayValue = "Viktor Bardakov - Admin"
-					label= "Creator"
-					mandatory= {false}
-					name= "opened_by"
-					onValueChange= {() => {}}
-					readonly = {false}s
-					required = {false}
-					table = "x_aaro2_teamwork_container"
-					tableRecordSysId = "e40fcb88db5be8505884eb184b96191b"
-					type = "reference"
-					value = "d5640bdadbfb2300f0ee760a689619e6"
- */
-
 
 
 export default LookupField

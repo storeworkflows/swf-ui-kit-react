@@ -4,6 +4,8 @@ import classnames from "classnames";
 
 import RadioOption from "./RadioOption.js"
 import {RADIO_BUTTONS_LAYOUT} from "./constants";
+import Icon from "../Icon/Icon";
+import RequiredLabel from "../RequiredLabel/RequiredLabel";
 
 class RadioButtons extends React.Component {
     constructor(props) {
@@ -19,18 +21,16 @@ class RadioButtons extends React.Component {
 
     optionClicked(option){
         const {manageValue, onChange} = this.props;
-        if(manageValue)
-            onChange(option)
-        else
+        if(!manageValue)
             this.setState({selectedValue: option.id});
+        onChange(option)
     }
 
-    optionInvalid(){
+    optionInvalid(e){
         const {manageInvalid, onInvalid} = this.props;
-        if(manageInvalid)
-            onInvalid()
-        else
+        if(!manageInvalid)
             this.setState({isInvalid: true});
+        onInvalid(e)
     }
 
     renderValue(option, name){
@@ -42,6 +42,7 @@ class RadioButtons extends React.Component {
             readonly,
             disabled
         } = option;
+
 
         let isChecked = this.state.selectedValue ? this.state.selectedValue === id : checked
         let isHorizontal = this.props.layout === RADIO_BUTTONS_LAYOUT.horizontal;
@@ -81,25 +82,36 @@ class RadioButtons extends React.Component {
             label,
             name,
             options,
-            required
+            required,
+            visible,
+            className,
+            labelClassName,
+            invalid
         } = this.props;
 
         return (
+            visible ?
             <>
-                <div className={"radio-buttons-container"}>
+                <div className={classnames(className, "radio-buttons-container")}>
                     <div className={classnames({
                                  "radio-buttons-header": true,
                                  "invalid": this.state.isInvalid
                              })}
                     >
-                        { label && <span className={"radio-buttons-label"}>{label}</span>}
-                        { required && <span className={"radio-buttons-required"}>*</span>}
+                        {(label || required) &&
+                            <RequiredLabel className={labelClassName}
+                                           invalid={invalid}
+                                           required={required}
+                                           label={label}
+                            />
+                        }
                     </div>
                     <div className={"group-of-radio-buttons"}>
                         {options.map((option) => this.renderValue(option, name))}
                     </div>
                 </div>
             </>
+                : null
         );
     }
 };
@@ -111,7 +123,12 @@ RadioButtons.defaultProps = {
     options: [],
     readonly: false,
     required: false,
-    manageInvalid: false
+    manageInvalid: false,
+    visible: true,
+    onChange: () => void 0,
+    onInvalid: () => void 0,
+    className: {},
+    labelClassName: {}
 };
 
 RadioButtons.propTypes = {
@@ -137,7 +154,10 @@ RadioButtons.propTypes = {
     required: propTypes.bool,
     value: propTypes.string,
     onChange: propTypes.func,
-    onInvalid: propTypes.func
+    onInvalid: propTypes.func,
+    visible: propTypes.bool,
+    className: propTypes.object,
+    labelClassName: propTypes.object
 }
 
 export default RadioButtons

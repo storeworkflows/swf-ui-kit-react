@@ -14,6 +14,7 @@ export {default as SmallCalendar} from "./SmallCalendar/SmallCalendar"
 export {default as DatePicker} from "./DatePicker/DatePicker"
 export {default as Accordion} from "./Accordion/Accordion"
 export {default as LabelValue} from "./LabelValue/LabelValue"
+export {default as Attachment} from "./Attachment/Attachment"
 
 export {default as Stepper} from "./Stepper/Stepper";
 export {default as LookupField} from "./LookupField/LookupField";
