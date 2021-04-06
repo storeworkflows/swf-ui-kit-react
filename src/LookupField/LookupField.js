@@ -138,7 +138,7 @@ class LookupField extends React.Component {
             loaded: false
         })
 
-        this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString())
+        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
     }
 
     deleteValue ({label}) {
@@ -156,7 +156,7 @@ class LookupField extends React.Component {
 
         this.setState({listRecords});
 
-        this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString());
+        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
     }
 
     // componentDidUpdate(prevProps, prevState, snapshot) {
