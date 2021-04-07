@@ -61,7 +61,9 @@ class Pill extends React.Component {
                         [`--${size}`]: true,
                         [`--${color}`]: true,
                         [classNames]: true
-                    })}>
+                    })}
+                    onClick={this.handleClick}
+                >
                     {showPillIcon && <div className="pill-icon">
                         {hasMember && <Avatar member={member} clickable={false}/>}
                         {hasIcon && <Icon icon={icon} size="sm"/>}
