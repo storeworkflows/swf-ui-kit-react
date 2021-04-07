@@ -23,7 +23,7 @@ export default class FilterCondition extends React.Component {
             conditionsArray: [],
             isSave: false,
             referenceTableFieldsData: {},
-            isFilterCollapsed: true,
+            isFilterOpened: this.props.collapsed,
             breadcrumbsItems: [{ label: 'All', conditionId: 'all' }],
             queryToSave: '',
             labelArr: [],
@@ -249,6 +249,12 @@ export default class FilterCondition extends React.Component {
                 case 'run':
                     // dispatch(FILTER_ACTIONS.QUERY_GENERATE.SUCCESSED, { value: resultQuery });
                     this.setState({ breadcrumbsItems })
+                    break;
+                case 'save':
+                    this.setState({
+                        queryToSave: resultQuery,
+                        isSave: !isSave
+                    });
                     break;
             }
         })
@@ -664,7 +670,7 @@ export default class FilterCondition extends React.Component {
 
 
     render() {
-        const { isFilterCollapsed, conditionsArray, tableFields, referenceTableFieldsData, labelArr, operatorArr, breadcrumbsItems, isSave } = this.state;
+        const { isFilterOpened, conditionsArray, tableFields, referenceTableFieldsData, labelArr, operatorArr, breadcrumbsItems, isSave } = this.state;
         const { table, user } = this.props;
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
@@ -674,11 +680,11 @@ export default class FilterCondition extends React.Component {
             <>
                 <div className="collapsed-filter-header">
                         <Button
-                            icon={isFilterCollapsed ? "funnel-fill" : "funnel"}
+                            icon={isFilterOpened ? "funnel-fill" : "funnel"}
                             size="md"
                             tooltipContent="Filter"
                             variant="tertiary"
-                            onClick={() => this.setState({ isFilterCollapsed: !isFilterCollapsed })}
+                            onClick={() => this.setState({ isFilterOpened: !isFilterOpened })}
                         />
                         <div className="breadcrumbs">
                             <FilterBreadcrumbs items={breadcrumbsItems} breadcrumbItemClicked={this.breadcrumbItemClicked} />
@@ -687,7 +693,7 @@ export default class FilterCondition extends React.Component {
                 <div className={
                     classnames({
                         "swf-filter-container": true,
-                        "--is-collapsed": isFilterCollapsed
+                        "--is-collapsed": isFilterOpened
                     })
                 }>
                     <div className="filter-header">
@@ -707,7 +713,7 @@ export default class FilterCondition extends React.Component {
                                             }
                                         }/>
                                 </div>
-                                {/* <div className="btn">
+                                <div className="btn">
                                     <Button label="Save" variant="secondary" size="md" customStyle={{
                                         "border-color": "rgb(172,180,181)",
                                         "hover-border-color": "rgb(172,180,181)",
@@ -715,7 +721,7 @@ export default class FilterCondition extends React.Component {
                                     }}
                                     onClick={this.saveToogle}
                                     />
-                                </div> */}
+                                </div>
                                 <div className="btn">
                                     <Button
                                         label="Clear all"
@@ -816,7 +822,7 @@ FilterCondition.defaultProps = {
     allowFields: [],
     blockFields: [],
     user: "",
-    collapsed: true,
+    opened: false,
     onSendQuery: () => void 0
 }
 
@@ -826,6 +832,6 @@ FilterCondition.propTypes = {
     user: propTypes.string,
     blockFields: propTypes.array,
     allowFields: propTypes.array,
-    collapsed: propTypes.bool,
+    opened: propTypes.bool,
     onSendQuery: propTypes.func
 }
