@@ -9,34 +9,43 @@ class Step extends React.Component {
     }
 
     render() {
-        const { step, iconColor, iconSize, hideLabel } = this.props;
+        const { step, iconColor, hideLabel } = this.props;
 
         return (
             <div className='step-container'>
                 <div className="step-body">
                     <div className="step-line --before"/>
-                    <div
+                    <svg
+                        viewBox="0 0 16 16"
                         className={classnames({
-                            'step-circle': true,
-                            [`--${step.progress}`]: step.progress
+                         'step-circle': true,
+                         [`--${step.progress}`]: step.progress
                         })}
                     >
-                        <div className="step-icon">
-                            {step.icon &&
-                            <Icon
-                                icon={step.icon}
-                                color={iconColor || 'white'}
-                                size={iconSize}
-                                customSize={typeof iconSize === 'number' ? iconSize : undefined}
-                            />
-                            }
-                        </div>
-                        <div className="step-label">
-                            <span>{!hideLabel && step.label}</span>
-                            <span className="step-sublabel">{!hideLabel && step.sublabel}</span>
-                        </div>
-                    </div>
+                        <circle
+                            cx="50%" cy="50%" r="50%"
+                            className={classnames({
+                                [`--${step.progress}`]: step.progress
+                            })}
+
+                        />
+                        <foreignObject x="25.25%" y="0" height="100%" width="50%">
+                            <div className="step-icon">
+                                {step.icon &&
+                                <Icon
+                                    icon={step.icon}
+                                    color={iconColor || 'white'}
+                                    zeroSize
+                                />
+                                }
+                            </div>
+                        </foreignObject>
+                    </svg>
                     <div className="step-line --after"/>
+                </div>
+                <div className="step-label">
+                    <span>{!hideLabel && step.label}</span>
+                    <span className="step-sublabel">{!hideLabel && step.sublabel}</span>
                 </div>
             </div>
         )

@@ -5,26 +5,28 @@ import RequiredLabel from "../RequiredLabel/RequiredLabel";
 import PropTypes from "prop-types";
 import InfoMessage from "../InfoMessage/InfoMessage";
 import {getFileExtensions} from "./utils";
-import File from "./File";
+import File from "./InnerComponents/File/File";
 import Button from "../Button/Button";
 import {downloadRequest, uploadRequest, deleteRequest} from "./_requests";
 import {GLOBAL_CONSTANTS} from "../Card/constants";
 import Preloader from "../Preloader/Preloader";
+import Loader from "./InnerComponents/Loader/Loader";
 
 class Attachment extends React.Component {
     constructor(props) {
         super(props);
 
-        const {invalid, tableName, tableSysId, attachmentSysId} = this.props;
+        const {invalid, tableName, tableSysId, attachmentSysId, value} = this.props;
         this.state = {
             invalid: invalid,
-            file: undefined,
+            file: value,
             focus: false,
             systemMessages: [],
             tableName: tableName,
             tableSysId: tableSysId,
             attachmentSysId: attachmentSysId,
-            readolny: false
+            activePreloader: true,
+            activeDeleting: false
         }
 
         this.containerClickedEvent = this.containerClickedEvent.bind(this);
@@ -32,8 +34,8 @@ class Attachment extends React.Component {
         this.onChangeEvent = this.onChangeEvent.bind(this);
         this.onDropEvent = this.onDropEvent.bind(this);
 
-        this.uploadFile = this.uploadFile.bind(this);
         this.downloadFile = this.downloadFile.bind(this);
+        this.uploadFile = this.uploadFile.bind(this);
         this.deleteFile = this.deleteFile.bind(this);
 
         this.setFocus = this.setFocus.bind(this);
@@ -71,25 +73,32 @@ class Attachment extends React.Component {
             }
             else if(this.input) {
                 this.input.value = "";
-                this.setState({ systemMessages: errorMessages})
+                this.setState({
+                    systemMessages: errorMessages,
+                    activePreloader: false
+                })
             }
         }
     }
 
     async uploadFile(file) {
         const {tableSysId, tableName} = this.state;
-        this.setState({readonly: true});
+        const {onValueChange} = this.props;
         let updatedState = await uploadRequest(file, tableSysId, tableName, this.props.errorMessagesDelay);
-        this.setState(updatedState);
-        this.setState({readonly: false});
 
+        this.setState(updatedState);
+        this.setState({activePreloader: false});
+
+        onValueChange({file: file, isLoaded: !(updatedState.systemMessages && updatedState.systemMessages.length>0)})
     }
 
     async deleteFile(e) {
         this.stopEvent(e);
+        this.setState({activeDeleting: true})
         const {attachmentSysId} = this.state;
         let stateToUpdate = await deleteRequest(attachmentSysId, this.input, this.props.errorMessagesDelay)
         this.setState(stateToUpdate)
+        this.setState({activeDeleting: false})
     }
 
     downloadFile(e){
@@ -118,7 +127,12 @@ class Attachment extends React.Component {
 
     setFocus(e){
         this.stopEvent(e);
-        this.setState({focus: true});
+
+        const {activePreloader, activeDeleting} = this.state;
+        const {disabled, readonly} = this.props;
+
+        if(!activePreloader && !activeDeleting && !disabled && !readonly)
+            this.setState({focus: true});
     }
 
     setBlur(e){
@@ -138,19 +152,29 @@ class Attachment extends React.Component {
 
     onChangeEvent(e){
         this.stopEvent(e);
+        this.setState({activePreloader: true })
         this.setFile(this.input?.files[0]);
     }
 
     onDropEvent(e){
         this.stopEvent(e);
-        this.setFile(e.dataTransfer.files[0]);
+        const {activePreloader, activeDeleting} = this.state;
+        const {disabled, readonly} = this.props;
+
+        if(!activePreloader && !activeDeleting && !disabled && !readonly)
+        {
+            this.setState({activePreloader: true})
+            this.setFile(e.dataTransfer.files[0]);
+        }
     }
 
     containerClickedEvent(e){
-        if(!this.state.file) {
+        const {file, activePreloader, activeDeleting} = this.state;
+        const {disabled, readonly} = this.props;
+
+        if(!file && !activePreloader && !activeDeleting && !disabled && !readonly) {
             this.setFocus(e);
             if(this.input) {
-                console.log(this.input)
                 this.input.click();
             }
         }
@@ -164,10 +188,9 @@ class Attachment extends React.Component {
     }
 
     async componentDidMount() {
-        this.setState({readonly: true});
         let updatedState = await downloadRequest(this.state.attachmentSysId, this.props.errorMessagesDelay);
         this.setState(updatedState);
-        this.setState({readonly: false});
+        this.setState({activePreloader: false});
     }
 
     renderLabel() {
@@ -206,6 +229,29 @@ class Attachment extends React.Component {
         )
     }
 
+    renderPreloader(){
+        return (
+            <Preloader
+                count={1}
+                items={[
+                    {
+                        width: "100%", height: "50%", repeat: 3, styles: [
+                            {width: "2rem", height: "2rem", borderRadius: "50%"},
+                            {width: "7rem", height: "1rem"},
+                            {width: "5rem", height: "0.5rem", marginTop: "1.7rem", marginLeft: "-7.1rem"}
+                        ]
+                    },
+                ]}
+                height="2.5rem"
+                width={"100%"}
+                flexDirectionGeneral="row"
+                blur="3rem"
+                background={false}
+                mainStyles={{margin: 0, padding: 0}}
+            />
+        )
+    };
+
     render() {
 
         const {
@@ -220,7 +266,7 @@ class Attachment extends React.Component {
             displayValue
         } = this.props;
 
-        const {invalid, file, focus} = this.state
+        const {invalid, file, focus, activePreloader, activeDeleting} = this.state
 
         let attachClasses =  classnames("attach-container", {
             "--focus": focus,
@@ -233,10 +279,12 @@ class Attachment extends React.Component {
             "font-size": '16px'
         }
 
+        let _isFile = !activePreloader && file;
+        let _isPlaceholder = !activePreloader && !file && placeholder;
+
         return (
             visible ?
                 <>
-
                     <input
                         ref = {el => this.input = el}
                         type="file"
@@ -249,43 +297,50 @@ class Attachment extends React.Component {
                         onInvalid={this.onInvalidEvent}
                         onChange={this.onChangeEvent}
                     />
-                    <div className={classnames("swf-attach-input", className)}>
-                        {this.renderLabel()}
-                        <div
-                            className={attachClasses}
-                            onDrop={this.onDropEvent}
-                            onDragEnter={this.setFocus}
-                            onDragOver={this.setFocus}
-                            onDragExit={this.setBlur}
-                            onDragLeave={this.setBlur}
-                            onClick={this.containerClickedEvent}
-                        >
 
-                            {file
-                                ? <File displayValue={displayValue} file={file}>
-                                    <File.End>
-                                        <div>
-                                            <Button icon={"x"}
-                                                    variant={"inherit"}
-                                                    size={"sm"}
-                                                    className={"file-button negative"}
-                                                    customStyle={negativeButtonStyle}
-                                                    onClick={this.deleteFile}
-                                            />
-                                            <Button icon={"download"}
-                                                    variant={"inherit"}
-                                                    className={"file-button positive"}
-                                                    size={"sm"}
-                                                    onClick={this.downloadFile}
-                                            />
-                                        </div>
-                                    </File.End>
-                                </File>
-                                : placeholder && <span className={"attach-placeholder"}>{placeholder}</span>
-                            }
+                        <div className={classnames("swf-attach-input", className)}>
+                            {this.renderLabel()}
+                                <div
+                                    className={attachClasses}
+                                    onDrop={this.onDropEvent}
+                                    onDragEnter={this.setFocus}
+                                    onDragOver={this.setFocus}
+                                    onDragExit={this.setBlur}
+                                    onDragLeave={this.setBlur}
+                                    onClick={this.containerClickedEvent}
+                                >
+                                    {activeDeleting && <Loader actionName={"Deleting"}/>}
+                                    {activePreloader && this.renderPreloader()}
+                                    {_isFile &&
+                                        <File displayValue={displayValue} file={file}>
+                                            {!readonly &&
+                                                <File.End>
+                                                    <div>
+                                                        <Button icon={"x"}
+                                                                variant={"inherit"}
+                                                                size={"sm"}
+                                                                className={"file-button negative"}
+                                                                customStyle={negativeButtonStyle}
+                                                                onClick={this.deleteFile}
+                                                                disabled={disabled}
+                                                        />
+                                                        <Button icon={"download"}
+                                                                variant={"inherit"}
+                                                                className={"file-button positive"}
+                                                                size={"sm"}
+                                                                onClick={this.downloadFile}
+                                                                disabled={disabled}
+                                                        />
+                                                    </div>
+                                                </File.End>
+                                            }
+                                        </File>
+                                    }
+                                    { _isPlaceholder && <span className={"attach-placeholder"}>{placeholder}</span> }
+                                </div>
+                            {this.renderMessages()}
                         </div>
-                        {this.renderMessages()}
-                    </div>
+
                 </>
                 : null
         );
@@ -297,7 +352,6 @@ Attachment.defaultProps = {
     disabled: false,
     invalid: false,
     manageInvalid: false,
-    manageValue: false,
     readonly: false,
     required: false,
     visible: true,
@@ -307,11 +361,6 @@ Attachment.defaultProps = {
     labelClassName: {},
     message: [],
     errorMessagesDelay: 4000,
-    tableSysId: "8f51828adbc32c905884eb184b9619a5",
-    tableName: "x_aaro2_teamwork_container",
-    attachmentSysId: "76c68f4adb1ba4905884eb184b96190",
-    placeholder: "Space for your file"
-    //e09faf12db9fe4905884eb184b9619c1
 };
 
 Attachment.propTypes = {
@@ -326,7 +375,6 @@ Attachment.propTypes = {
     onInvalid: propTypes.func,
     onValueChange: propTypes.func,
     manageInvalid: propTypes.bool,
-    manageValue: propTypes.bool,
 
     //description
     contentType: propTypes.arrayOf(propTypes.string),

@@ -10,14 +10,18 @@ class Icon extends React.Component {
     const {
       color,
       size,
-      customSize
+      customSize,
+      zeroSize
     } = this.props;
 
     let style = {}
-    let finalSize = (customSize) ? customSize : SIZE[size];
 
-    style.height = finalSize;
-    style.width = finalSize;
+    if (!zeroSize) {
+      const finalSize = (customSize) ? customSize : SIZE[size];
+
+      style.height = finalSize;
+      style.width = finalSize;
+    }
 
     if(color)
       style.color = color;
@@ -89,7 +93,8 @@ Icon.propTypes = {
   customSize: propTypes.number,
   color: propTypes.string,
   className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-  innerRef: propTypes.object
+  innerRef: propTypes.object,
+  zeroSize: propTypes.bool
 }
 
 export default Icon

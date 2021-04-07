@@ -30,6 +30,7 @@ icon | string
 size | "xs", "sm", "md", "lg", "xl", "xxl"
 customSize | number
 color | string
+zeroSize / boolean
 
 
 # Button

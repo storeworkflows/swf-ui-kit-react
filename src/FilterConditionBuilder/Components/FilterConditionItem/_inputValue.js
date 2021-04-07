@@ -15,7 +15,7 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
     switch (editor) {
         case "boolean":
             return (
-                <div className="dropdown-contaner boolean-dropdown">
+                <div className="dropdown-container boolean-dropdown">
                     <Dropdown
                         items={[{ "id": "true", "label": "true", "dropdown": "value" }, { "id": "false", "label": "false", "dropdown": "value" }]}
                         selectedItems={[conditionOptions.value]}
@@ -105,14 +105,12 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
         case "textarea":
             return (
                 <div className="dropdown-container textarea-input">
-                    {console.log(this)}
                     <TextArea
                         autoresize={false}
                         maxlength={5000}
-                        value={state.textAreaValue}
+                        value={conditionOptions.value}
                         resize="vertical"
                         onKeyDown={(e) => {
-                            console.log(e.target.value)
                             textAreaValueSet({value: e.target.value})
                         }}
                     />

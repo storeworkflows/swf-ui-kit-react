@@ -251,6 +251,7 @@ export default class FilterConditionItem extends React.Component {
 					operatorType === '^OR' ? <span className="condition-operator">OR</span> : ''
 			
                 }
+                {console.log(conditionObj.conditionOptions.fieldsDropdownData)}
                 <div className="dropdown-container">
                     <ExpandDropdown
                         expandIcon="arrow-right-circle"
@@ -263,6 +264,15 @@ export default class FilterConditionItem extends React.Component {
                     />
                 </div>
                 <div className="dropdown-container">
+                    {/* <ExpandDropdown
+                        expandIcon="arrow-right-circle"
+                        // selectedItem={this.state.selectedItem}
+                        selectedItems={conditionObj.conditionOptions.activeField}
+                        updateSelectedItem={(item) => this.itemClicked(item.clickedItem)}
+                        onItemSelected={(item) => this.props.onItemClicked(item)}
+                        placeholder={"--choose field--"}
+                        lists={[conditionObj.conditionOptions.operatorsArray]}
+                    /> */}
                     <Dropdown
                         items={!!conditionObj.conditionOptions.operatorsArray ? conditionObj.conditionOptions.operatorsArray : []}
                         selectedItems={conditionObj.conditionOptions.operator.operator ? [conditionObj.conditionOptions.operator.operator] : []}
@@ -291,7 +301,7 @@ export default class FilterConditionItem extends React.Component {
                     </div>
                 </>}
                 <div className="btn-container">
-                    <Button icon="x-circle" size="md" onClick={() => {
+                    <Button icon="x-circle" variant="tertiary" size="md" onClick={() => {
                         this.props.deleteCondition({currentConditionID: this.props.conditionID, globalConditionID: this.props.globalConditionID})
                     }}  />
                 </div>
