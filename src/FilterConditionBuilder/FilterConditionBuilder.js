@@ -34,6 +34,7 @@ export default class FilterCondition extends React.Component {
             tableFields: {
                 columns: {}
             },
+            query: this.props.query,
             operatorArr: [],
             clickedListIndex: null
         }
@@ -54,7 +55,8 @@ export default class FilterCondition extends React.Component {
 
     fetchTableDataSuccessed = ({result, properties}) => {
         let fieldsDataID = generateID();
-        const { query, blockFields, allowFileds } = properties;
+        const { blockFields, allowFileds } = properties;
+        const { query } = this.state;
         let fieldsDropdownData = getDropdownFieldsItems({ tableFields: result.columns, index: fieldsDataID, blockFields, allowFileds });
         let conditionsArray = [
             {
@@ -239,16 +241,14 @@ export default class FilterCondition extends React.Component {
 
             onSendQuery(resultQuery);
 
+            this.setState({
+                queryToSave: resultQuery,
+            }, () => console.log(this.state.queryToSave));
+
             switch (operation) {
                 case 'run':
                     // dispatch(FILTER_ACTIONS.QUERY_GENERATE.SUCCESSED, { value: resultQuery });
                     this.setState({ breadcrumbsItems })
-                    break;
-                case 'save':
-                    this.setState({
-                        queryToSave: resultQuery,
-                        isSave: !isSave
-                    });
                     break;
             }
         })
@@ -300,7 +300,7 @@ export default class FilterCondition extends React.Component {
     //     return valueAdditionalData;
     // }
 
-    componentDidMount() {
+    async componentDidMount() {
         // fetchTableData
         const { table } = this.props;
         const queryParams = {
@@ -309,9 +309,29 @@ export default class FilterCondition extends React.Component {
             sysparm_keywords: true
         };
 
-        fetchTableData(table, queryParams).then(result => {
+        console.log("zashlo")
+
+        await fetchTableData(table, queryParams).then(result => {
             this.fetchTableDataSuccessed({result, properties: this.props})
         })
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        if (prevState.query !== this.state.query)
+        {
+            const { table } = this.props;
+            const queryParams = {
+                sysparm_operators: true,
+                sysparm_get_extended_tables: true,
+                sysparm_keywords: true
+            };
+    
+            console.log("zashlo")
+    
+            await fetchTableData(table, queryParams).then(result => {
+                this.fetchTableDataSuccessed({result, properties: this.props})
+            })
+        }
     }
 
     addNewOperator = ({value, currentConditionID, globalConditionID}) => {
@@ -372,14 +392,11 @@ export default class FilterCondition extends React.Component {
 
     setConditionOptionsValue = ({value, conditionOptions, conditionOption}) => {
         const { editor } = conditionOptions.operator;
+        console.log(value)
         switch (editor) {
             case 'choice_multiple':
             case 'textarea':
-                let copyValue = conditionOptions.value;
-                copyValue = copyValue ? copyValue.split(',') : [];
-                copyValue.indexOf(value) < 0 ? copyValue.push(value) : copyValue.splice(copyValue.indexOf(value), 1);
-                copyValue = copyValue.join(',');
-                conditionOptions.value = copyValue;
+                conditionOptions.value = value;
                 return conditionOptions;
             case 'between_field':
             case 'relative_field':
@@ -440,6 +457,7 @@ export default class FilterCondition extends React.Component {
                 currentConditionInArr.conditionOptions = this.setConditionOptionsOperator({value, conditionOptions: copyConditionOptions, properCurrentConditionID, properGlobalConditionID})
                 break;
             case "value":
+                console.log(value)
                 currentConditionInArr.conditionOptions = this.setConditionOptionsValue({value, conditionOptions: copyConditionOptions, conditionOption});
                 break;
             case "valueAditionalData":
@@ -590,6 +608,11 @@ export default class FilterCondition extends React.Component {
         console.log(item)
     }
 
+    setQuery = ({query}) => {
+        console.log(query)
+        this.setState({query})
+    }
+
     deleteCondition = ({currentConditionID, globalConditionID}) => {
         const { conditionsArray } = this.state;
         const newConditionsArray = conditionsArray;
@@ -636,6 +659,8 @@ export default class FilterCondition extends React.Component {
         this.setState({isSave: !isSave})
     }
 
+
+
     render() {
         const { isFilterCollapsed, conditionsArray, tableFields, referenceTableFieldsData, labelArr, operatorArr, breadcrumbsItems, isSave } = this.state;
         const { table, user } = this.props;
@@ -659,7 +684,7 @@ export default class FilterCondition extends React.Component {
                 </div>
                 <div className={
                     classnames({
-                        "filter-container": true,
+                        "swf-filter-container": true,
                         "--is-collapsed": isFilterCollapsed
                     })
                 }>
@@ -680,7 +705,7 @@ export default class FilterCondition extends React.Component {
                                             }
                                         }/>
                                 </div>
-                                <div className="btn">
+                                {/* <div className="btn">
                                     <Button label="Save" variant="secondary" size="md" customStyle={{
                                         "border-color": "rgb(172,180,181)",
                                         "hover-border-color": "rgb(172,180,181)",
@@ -688,7 +713,7 @@ export default class FilterCondition extends React.Component {
                                     }}
                                     onClick={this.saveToogle}
                                     />
-                                </div>
+                                </div> */}
                                 <div className="btn">
                                     <Button
                                         label="Clear all"
@@ -704,7 +729,7 @@ export default class FilterCondition extends React.Component {
                                 </div>
                             </div>
                             <div className="templates">
-                                {/* <FilterTemplates /> */}
+                                <FilterTemplates setQuery={this.setQuery} table={table} />
                             </div>
                         </div>
                         {
@@ -754,6 +779,7 @@ export default class FilterCondition extends React.Component {
                                                                 onOperatorClicked={this.onOperatorClicked}
                                                                 setConditionOptions={this.setConditionOptions}
                                                                 fetchReferenceDataSuccessed={this.fetchReferenceDataSuccessed}
+                                                                key={condition.id}
                                                             />
                                                         </div>
                                                     )
@@ -766,7 +792,7 @@ export default class FilterCondition extends React.Component {
                         </div>
                         <div className="new-criteria">
                             <span className="title">or</span>
-                            <div className="button">
+                            <div>
                                 <Button
                                     label="New Criteria"
                                     variant="secondary"

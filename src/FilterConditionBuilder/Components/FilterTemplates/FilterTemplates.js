@@ -3,6 +3,7 @@ import * as React from "react";
 
 import { Button, Popover } from "../../../index";
 import PopoverContent from './PopoverContent/PopoverContent';
+import { fetchRequest, prepareQueryParams } from "../../utils/utils"; 
 
 export default class FilterTemplates extends React.Component {
     constructor(props) {
@@ -10,7 +11,10 @@ export default class FilterTemplates extends React.Component {
         this.state = {
             popoverToogle: false,
             popoverTarget: null,
-            btnRef: null
+            btnRef: null,
+            filterList: [],
+            filteredValues: [],
+            searchValue: "",
         }
     }
     
@@ -24,18 +28,27 @@ export default class FilterTemplates extends React.Component {
 
     componentDidMount  = async () => {
         const myHeaders = new Headers();
+        const { table, user } = this.props;
         myHeaders.append("X-UserToken", window.g_ck);
-        // myHeaders.append("Authorization", "Basic c3dmX2RldmVsb3Blcjpzd2ZfZGV2ZWxvcGVy")
+        const queryParams = {
+            sysparm_query: `table=${table}^userISEMPTY^ORuser=${user}`,
+            sysparm_fields: "filter,sys_id,sys_name,table,title,user,group"
+        }
 
-        await fetch(`${window.location.origin}/api/now/table/sys_filter`, {
-            method: "GET",
-            headers: myHeaders
-        })
-        .then(res => res.json())
-        .then(jsonRes => this.filterList = jsonRes.result)
+        const query = prepareQueryParams(queryParams)
+
+        await fetchRequest({url: `${window.location.origin}/api/now/table/sys_filter?${query}`, params: {
+            method: "GET"
+        }})
+        .then(res => this.setState({filterList: res}))
     }
 
-    
+    filterForFilterList = ({value}) => {
+        const { filterList } = this.state;
+        const searchValue = value.trim();
+        const filteredValues = filterList.filter(item => !!item.title.toLowerCase().match(searchValue.toLowerCase()));
+        this.setState({filteredValues, searchValue});
+    }
 
     render() {
         const btnStyles = {
@@ -44,7 +57,9 @@ export default class FilterTemplates extends React.Component {
             "active-text-color": "rgb(1,60,71)"
         }
 
-        const { popoverToogle, popoverTarget } = this.state;
+        const { setQuery } = this.props;
+        const { popoverToogle, popoverTarget, filterList, filteredValues, searchValue } = this.state;
+        const valuesToShow = (!!filteredValues.length || !!searchValue) ? filteredValues : filterList;
 
         return(
             <div>
@@ -53,7 +68,7 @@ export default class FilterTemplates extends React.Component {
                 </div>
                 {popoverToogle && popoverTarget && <Popover opened={popoverToogle} positionTarget={{current: popoverTarget}} hideTail={false} positions={[{"target":"bottom-end","content":"top-end"}]}>
                     <Popover.Content>
-                        <PopoverContent filterList={this.filterList} />
+                        <PopoverContent filterList={valuesToShow} setQuery={setQuery} onSearch={this.filterForFilterList} managePopover={this.managePopover} inputValue={searchValue} />
                     </Popover.Content>
                 </Popover>}
             </div>

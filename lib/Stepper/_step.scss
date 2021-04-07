@@ -1,16 +1,23 @@
 .step {
   &-container {
+    --box-shadow: 0 0 0 3px var(--circle-color);
+
     width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: start;
-    cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
+      cursor: pointer;
+
       .step-circle {
-        box-shadow: 0 0 0 2px var(--circle-color);
+        box-shadow: var(--box-shadow);
+
+        &.--partial {
+          border-width: 0;
+        }
       }
     }
 
@@ -56,7 +63,6 @@
 
   &-circle {
     background-color: transparent;
-    opacity: 0.25;
     border-radius: 50%;
     border: 2px solid var(--circle-color);
 
@@ -67,7 +73,7 @@
     align-items: center;
     justify-content: center;
 
-    transition: background-color 200ms ease, box-shadow 300ms ease, opacity 300ms ease;
+    transition: background-color 200ms ease, box-shadow 300ms ease, opacity 300ms ease, border-width 100ms;
   }
 
   &-icon {
@@ -88,7 +94,12 @@
 
   .step-circle {
     opacity: 1;
-    box-shadow: 0 0 0 2px var(--circle-color);
+    box-shadow: var(--box-shadow);
+
+    &.--partial {
+      border-width: 4px;
+      box-shadow: none;
+    }
   }
 
   .step-circle:not(.--none):not(.--partial) {
@@ -102,10 +113,6 @@
 
   .step-sublabel {
     text-shadow: -0.06ex 0 black, 0.06ex 0 black;
-  }
-
-  &.--disabled .step-circle {
-    opacity: 0.5;
   }
 }
 
@@ -123,9 +130,11 @@
   .step-circle:not(.--none):not(.--partial) {
     background-color: var(--circle-color);
   }
+}
 
-  &.--disabled .step-circle {
-    opacity: 0.5;
+.--disabled {
+  .step-circle {
+    opacity: 0.3;
   }
 }
 
@@ -168,10 +177,17 @@
   }
 }
 
-.stepper-item.--disabled .step-container:hover {
+.steps-item.--disabled .step-container:hover {
   cursor: default;
 
   .step-circle {
     box-shadow: none;
+  }
+}
+
+.steps-item.--selected .step-container:hover {
+  .step-circle.--partial {
+    box-shadow: none;
+    border-width: 4px;
   }
 }
