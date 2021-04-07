@@ -21,7 +21,28 @@
   }
 
   .dropdown-items-container{
-    max-height: 15rem;
+    display: flex;
+    flex-direction: row;
+    .dropdown-list-container {
+      display: flex;
+      flex-direction: column;
+      max-height: 300px;
+      &.--not-first {
+        border-left: 1px solid #becad6;
+      }
+      .swf-form-group {
+        .input-group {
+          .form-control {
+            border-radius: 0;
+            border: none;
+            border-bottom: 1px solid #becad6;
+            &:focus {
+              box-shadow: none;
+            }
+          }
+        }
+      }
+    }
     .dropdown-list {
       max-height: inherit;
       overflow-y: auto;
