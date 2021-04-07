@@ -183,6 +183,26 @@ class LookupField extends React.Component {
         this.setState({focused: false});
     }
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        const isList = nextProps.type === "glide_list";
+
+        if (isList) {
+            return this.setState({
+                listRecords: {
+                    value: nextProps.value?.split(",") ?? [],
+                    displayValue: nextProps.displayValue?.split(",") ?? []
+                },
+            })
+        }
+
+        return this.setState({
+            referenceRecord: {
+                sysId: nextProps.value || null,
+                displayValue: nextProps.displayValue || ""
+            }
+        })
+    }
+
     renderListPills() {
         return (
             <Input.Start>{this.state.listRecords.displayValue.map((label) => <Pill label={label}
