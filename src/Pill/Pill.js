@@ -9,10 +9,18 @@ class Pill extends React.Component {
     constructor(props) {
         super(props);
         this.removePill = this.removePill.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this.pillRef = React.createRef();
     }
 
-    removePill() {
+    handleClick () {
+        this.props.onClick(this.props);
+    }
+
+    removePill(e) {
+        e?.stopPropagation();
+        e?.preventDefault();
+
         if (this.props.onDelete === noop) {
             this.pillRef?.current?.remove()
         }
@@ -77,14 +85,15 @@ Pill.defaultProps = {
     disabled: false,
     icon: null,
     member: null,
-    label: "Test",
+    label: "",
     outline: false,
     size: "md",
     classNames: "",
     clickable: false,
     color: "default",
     deleteIcon: null,
-    onDelete: noop
+    onDelete: noop,
+    onClick: noop
 }
 
 Pill.propTypes = {
@@ -104,7 +113,8 @@ Pill.propTypes = {
     clickable: PropTypes.bool,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
     deleteIcon: PropTypes.string,
-    onDelete: PropTypes.func
+    onDelete: PropTypes.func,
+    onClick: PropTypes.func,
 }
 
 export default Pill

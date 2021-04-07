@@ -39,16 +39,18 @@ class Modal extends React.Component {
     }
 
     renderPopover() {
-        const {showPopover, popoverContent: {tagline, content, actions}} = this.props;
+        const {showPopover, popoverOpened, popoverContent: {tagline, content, actions}} = this.props;
 
         if (showPopover) {
             return (
-                <now-popover
+                <Popover
+                    hideTail={true}
+                    manageOpened={true}
+                    opened={popoverOpened}
+                    positionTarget={this.props.innerRef}
                     positions={[
-                        {
-                            "target": "bottom-end",
-                            "content": "top-end"
-                        }
+                        {target: "bottom-center", content: "top-center"},
+                        {target: "top-center", content: "bottom-center"}
                     ]}
                 >
                     <Button icon="x"
@@ -65,7 +67,7 @@ class Modal extends React.Component {
                         content={content}
                         actions={actions}
                     />
-                </now-popover>
+                </Popover>
             )
         }
 
