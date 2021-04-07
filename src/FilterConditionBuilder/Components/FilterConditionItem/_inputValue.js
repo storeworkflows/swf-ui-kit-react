@@ -15,7 +15,7 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
     switch (editor) {
         case "boolean":
             return (
-                <div className="dropdown-contaner boolean-dropdown">
+                <div className="dropdown-container boolean-dropdown">
                     <Dropdown
                         items={[{ "id": "true", "label": "true", "dropdown": "value" }, { "id": "false", "label": "false", "dropdown": "value" }]}
                         selectedItems={[conditionOptions.value]}

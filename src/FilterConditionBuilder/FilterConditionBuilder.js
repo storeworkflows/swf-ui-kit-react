@@ -701,7 +701,7 @@ export default class FilterCondition extends React.Component {
                                             {
                                                 "border-color": "rgb(15,67,55)",
                                                 "hover-border-color": "rgb(15,67,55)",
-                                                "active-border-color": "rgb(15,67,55)"
+                                                "active-border-color": "none"
                                             }
                                         }/>
                                 </div>
