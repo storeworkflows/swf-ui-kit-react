@@ -1,9 +1,9 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
-import Icon from "../Icon/Icon";
-import findByType, {createSubComponent} from "../utils/findByType";
-import {getIconByFileType} from "./utils";
+import Icon from "../../../Icon/Icon";
+import findByType, {createSubComponent} from "../../../utils/findByType";
+import {getIconByFileType} from "../../utils";
 
 const End = () => null;
 

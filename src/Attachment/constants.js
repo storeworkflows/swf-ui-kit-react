@@ -24,7 +24,7 @@ export const ATTACHMENT = {
     },
     IMAGE_ICON: {
         IMAGE: "file-earmark-image",
-        EXCEL: "file-earmark-spread",
+        EXCEL: "file-earmark-ruled",
         POWER_POINT: "file-earmark-ppt",
         PDF: "file-earmark-richtext",
         AUDIO: "file-earmark-music",
