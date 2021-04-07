@@ -302,7 +302,7 @@ export default class FilterCondition extends React.Component {
 
     async componentDidMount() {
         // fetchTableData
-        const { table } = this.props;
+        const { table, query } = this.props;
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -314,6 +314,8 @@ export default class FilterCondition extends React.Component {
         await fetchTableData(table, queryParams).then(result => {
             this.fetchTableDataSuccessed({result, properties: this.props})
         })
+        if (!!query)
+            this.generateQuery({operation: "run"})
     }
 
     async componentDidUpdate(prevProps, prevState) {
