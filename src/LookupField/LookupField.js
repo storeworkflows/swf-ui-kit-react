@@ -203,6 +203,26 @@ class LookupField extends React.Component {
         })
     }
 
+    static getDerivedStateFromState(nextProps) {
+        const isList = nextProps.type === "glide_list";
+
+        if (isList) {
+            return {
+                listRecords: {
+                    value: nextProps.value?.split(",") ?? [],
+                    displayValue: nextProps.displayValue?.split(",") ?? []
+                },
+            }
+        }
+
+        return {
+            referenceRecord: {
+                sysId: nextProps.value || null,
+                displayValue: nextProps.displayValue || ""
+            }
+        }
+    }
+
     renderListPills() {
         return (
             <Input.Start>{this.state.listRecords.displayValue.map((label) => <Pill label={label}
