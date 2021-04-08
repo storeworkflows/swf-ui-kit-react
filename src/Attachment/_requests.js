@@ -22,7 +22,8 @@ const uploadSuccess = (data, file) => {
     return{
         systemMessages: [],
         file: file,
-        attachmentSysId: resultFile.sys_id
+        attachmentSysId: resultFile.sys_id,
+        displayValue: resultFile.file_name
     };
 }
 
