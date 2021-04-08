@@ -1,6 +1,6 @@
 .step {
   &-container {
-    --box-shadow: 0 0 0 3px var(--circle-color);
+    --box-shadow: 0 0 0 2.5px var(--circle-color);
 
     width: 100%;
     display: flex;
@@ -16,7 +16,7 @@
         box-shadow: var(--box-shadow);
 
         &.--partial {
-          border-width: 0;
+          //border-width: 0;
         }
       }
     }
@@ -34,13 +34,14 @@
   }
 
   &-label {
-    position: absolute;
-    bottom: -30px;
-    max-width: 100%;
+    //position: absolute;
+    //bottom: -30px;
+    width: 100%;
     text-align: center;
     font-size: .8rem;
     padding-top: 8px;
     display: flex;
+
     flex-direction: column;
     color: var(--label-color);
     -webkit-user-select: none;
@@ -64,7 +65,6 @@
   &-circle {
     background-color: transparent;
     border-radius: 50%;
-    border: 2px solid var(--circle-color);
 
     width: var(--circle-size, 2rem);
     height: var(--circle-size, 2rem);
@@ -74,6 +74,11 @@
     justify-content: center;
 
     transition: background-color 200ms ease, box-shadow 300ms ease, opacity 300ms ease, border-width 100ms;
+
+    &.--done {
+      background-color: var(--circle-color);
+      padding: 2px;
+    }
   }
 
   &-icon {
@@ -97,7 +102,6 @@
     box-shadow: var(--box-shadow);
 
     &.--partial {
-      border-width: 4px;
       box-shadow: none;
     }
   }
@@ -132,12 +136,6 @@
   }
 }
 
-.--disabled {
-  .step-circle {
-    opacity: 0.3;
-  }
-}
-
 .--vertical {
  .step {
    &-container {
@@ -167,27 +165,40 @@
  }
 }
 
-.step-circle {
-  &.--partial {
-    border: 2px dashed var(--circle-color);
+.steps-item.--disabled {
+  .step-circle {
+    opacity: 0.3;
   }
+
+  .step-container:hover {
+    cursor: default;
+
+    .step-circle {
+      box-shadow: none;
+    }
+  }
+}
+
+circle {
+  fill: transparent;
+  stroke: var(--circle-color);
+  stroke-width: 2;
+  transition: stroke 300ms ease, stroke-width 300ms ease;
 
   &.--done {
-    background-color: var(--circle-color);
+    fill: var(--circle-color);
+    stroke: white;
+  }
+
+  &.--partial {
+    stroke-dasharray: 2, 2.125;
   }
 }
 
-.steps-item.--disabled .step-container:hover {
-  cursor: default;
+.steps-item.--selected circle {
+  stroke-width: 4;
 
-  .step-circle {
-    box-shadow: none;
-  }
-}
-
-.steps-item.--selected .step-container:hover {
-  .step-circle.--partial {
-    box-shadow: none;
-    border-width: 4px;
+  &.--done{
+    stroke: white;
   }
 }

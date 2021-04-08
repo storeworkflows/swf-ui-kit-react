@@ -3,7 +3,6 @@ import * as React from "react";
 
 import { Button, Popover } from "../../../index";
 import PopoverContent from './PopoverContent/PopoverContent';
-import { fetchRequest, prepareQueryParams } from "../../utils/utils"; 
 
 export default class FilterTemplates extends React.Component {
     constructor(props) {
@@ -12,7 +11,6 @@ export default class FilterTemplates extends React.Component {
             popoverToogle: false,
             popoverTarget: null,
             btnRef: null,
-            filterList: [],
             filteredValues: [],
             searchValue: "",
         }
@@ -26,25 +24,8 @@ export default class FilterTemplates extends React.Component {
         this.setState({popoverTarget: elem})
     }
 
-    componentDidMount  = async () => {
-        const myHeaders = new Headers();
-        const { table, user } = this.props;
-        myHeaders.append("X-UserToken", window.g_ck);
-        const queryParams = {
-            sysparm_query: `table=${table}^userISEMPTY^ORuser=${user}`,
-            sysparm_fields: "filter,sys_id,sys_name,table,title,user,group"
-        }
-
-        const query = prepareQueryParams(queryParams)
-
-        await fetchRequest({url: `${window.location.origin}/api/now/table/sys_filter?${query}`, params: {
-            method: "GET"
-        }})
-        .then(res => this.setState({filterList: res}))
-    }
-
     filterForFilterList = ({value}) => {
-        const { filterList } = this.state;
+        const { filterList } = this.props;
         const searchValue = value.trim();
         const filteredValues = filterList.filter(item => !!item.title.toLowerCase().match(searchValue.toLowerCase()));
         this.setState({filteredValues, searchValue});
@@ -57,8 +38,8 @@ export default class FilterTemplates extends React.Component {
             "active-text-color": "rgb(1,60,71)"
         }
 
-        const { setQuery } = this.props;
-        const { popoverToogle, popoverTarget, filterList, filteredValues, searchValue } = this.state;
+        const { setQuery, filterList } = this.props;
+        const { popoverToogle, popoverTarget, filteredValues, searchValue } = this.state;
         const valuesToShow = (!!filteredValues.length || !!searchValue) ? filteredValues : filterList;
 
         return(

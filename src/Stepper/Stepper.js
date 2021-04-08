@@ -89,7 +89,7 @@ class Stepper extends React.Component {
     }
 
     renderSteps() {
-        const { steps, hideLabels, palette: { icon }, iconSize, selectedItem } = this.props;
+        const { steps, hideLabels, palette: { icon }, selectedItem } = this.props;
 
         return (
             steps.map((step, index) => {
@@ -113,7 +113,6 @@ class Stepper extends React.Component {
                     >
                         <Step
                             iconColor={iconColor}
-                            iconSize={iconSize}
                             step={step}
                             hideLabel={hideLabels}
                             isSelected={isSelected}

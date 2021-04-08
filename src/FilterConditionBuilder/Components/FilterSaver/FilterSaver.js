@@ -54,7 +54,7 @@ class FilterSaver extends React.Component {
     }
 
     async handleSaveClicked() {
-        const { user, table, query } = this.props;
+        const { user, table, query, isFilterSaved } = this.props;
         const { filterTitle, radioValue, groupValue } = this.state;
         const filterData = {
             table,
@@ -65,6 +65,7 @@ class FilterSaver extends React.Component {
         };
         const response = await postFilter(filterData);
         const { result } = response;
+        result.sys_id ? isFilterSaved({isSaved: true}) : isFilterSaved({isSaved: false});
         if (result) {
             this.setState({
                 filterTitle: '',
