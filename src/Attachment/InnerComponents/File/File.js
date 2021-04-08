@@ -38,6 +38,7 @@ class File extends React.Component {
         )
 
         let sizeStr = `${(file.size/1000).toFixed(3)} Kb`
+
         return  <>
             <div className={fileClasses}>
                 <Icon

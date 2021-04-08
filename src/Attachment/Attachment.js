@@ -89,7 +89,7 @@ class Attachment extends React.Component {
         this.setState(updatedState);
         this.setState({activePreloader: false});
 
-        onValueChange({file: file, isLoaded: !(updatedState.systemMessages && updatedState.systemMessages.length>0)})
+        onValueChange(this.props.name, updatedState?.result?.sys_id, updatedState?.result?.file_name)
     }
 
     async deleteFile(e) {
