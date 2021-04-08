@@ -77,6 +77,8 @@
 
     .form-control--start {
       flex-wrap: wrap;
+      overflow: auto;
+      max-height: 10rem;
     }
 
     .form-control--start > * {

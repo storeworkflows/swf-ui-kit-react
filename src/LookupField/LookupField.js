@@ -146,8 +146,8 @@ class LookupField extends React.Component {
         const displayValue = new Map(this.state.listRecords.displayValue.map((v ,i) => [v, i]));
 
         const id = displayValue.get(label);
-        value.delete(id);
-        displayValue.delete(id);
+        value["delete"](id);
+        displayValue["delete"](label);
 
         const listRecords = {
             value: Array.from(value.values()),
@@ -203,7 +203,7 @@ class LookupField extends React.Component {
         })
     }
 
-    static getDerivedStateFromState(nextProps) {
+    static getDerivedStateFromProps(nextProps) {
         const isList = nextProps.type === "glide_list";
 
         if (isList) {
