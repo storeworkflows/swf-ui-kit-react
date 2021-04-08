@@ -23,8 +23,9 @@ export default class FilterCondition extends React.Component {
             conditionsArray: [],
             isSave: false,
             referenceTableFieldsData: {},
-            isFilterOpened: this.props.collapsed,
+            isFilterOpened: this.props.opened,
             breadcrumbsItems: [{ label: 'All', conditionId: 'all' }],
+            isFilterSaved: false,
             queryToSave: '',
             labelArr: [],
             alertData: {
@@ -36,7 +37,8 @@ export default class FilterCondition extends React.Component {
             },
             query: this.props.query,
             operatorArr: [],
-            clickedListIndex: null
+            clickedListIndex: null,
+            filterList: [],
         }
         // this.addNewOperator = this.addNewOperator.bind(this)
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
@@ -176,25 +178,28 @@ export default class FilterCondition extends React.Component {
          
     }
 
-    runButtonClicked = () => {
-        const { conditionsArray } = this.state;
-        let copyConditionArray = clone(conditionsArray);
-        copyConditionArray = copyConditionArray.map(globalCond => {
-            globalCond.relatedConditions.map(parentCond => {
-                parentCond.failed = false;
-                parentCond.relatedConditions.map(childCond => {
-                    childCond.failed = false;
-                    return childCond;
+    runButtonClicked = ({type}) => {
+        switch (type) {
+            case "run":
+            case "save":
+                const { conditionsArray } = this.state;
+                let copyConditionArray = clone(conditionsArray);
+                copyConditionArray = copyConditionArray.map(globalCond => {
+                globalCond.relatedConditions.map(parentCond => {
+                    parentCond.failed = false;
+                    parentCond.relatedConditions.map(childCond => {
+                        childCond.failed = false;
+                        return childCond;
+                    })
+                    return parentCond;
                 })
-                return parentCond;
-            })
-            return globalCond;
-        });
-        this.setState({
-            conditionsArray: copyConditionArray
-        });
-        // FILTER_ACTIONS.QUERY_GENERATE.STARTED
-        this.generateQuery({operation: "run"})
+                return globalCond;
+                });
+                this.setState({
+                    conditionsArray: copyConditionArray
+                });
+                this.generateQuery({operation: type})
+        }
     }
 
     generateQuery = ({ operation }) => {
@@ -239,72 +244,21 @@ export default class FilterCondition extends React.Component {
 
             if (error) return null;
 
-            onSendQuery(resultQuery);
-
-            this.setState({
-                queryToSave: resultQuery,
-            }, () => console.log(this.state.queryToSave));
-
             switch (operation) {
                 case 'run':
-                    // dispatch(FILTER_ACTIONS.QUERY_GENERATE.SUCCESSED, { value: resultQuery });
                     this.setState({ breadcrumbsItems })
+                    onSendQuery(resultQuery);
                     break;
                 case 'save':
+                    console.log("SAVE")
                     this.setState({
                         queryToSave: resultQuery,
                         isSave: !isSave
-                    });
+                    }, () => console.log(this.state.queryToSave, "queryToSave"));
                     break;
             }
         })
     }
-
-    // getValueAdditionalData = ({ tableFields, editor, field, globalID, currentID }) => {
-    //     let valueAdditionalData = [];
-    //     switch (editor) {
-    //         case 'choice_field_names':
-    //         case 'glide_date_equivalent':
-    //         case 'glide_date_comparative':
-    //             for (let key in tableFields) {
-    //                 if (tableFields[key].type === tableFields[field].type && JSON.stringify(tableFields[key]) !== JSON.stringify(tableFields[field])) {
-    //                     if (editor === 'glide_date_equivalent') {
-    //                         valueAdditionalData.push({ id: tableFields[key].name, label: tableFields[key].label, dropdown: 'value', type: 'glide_date_equivalent', index: '1' })
-    //                     } else if (editor === 'glide_date_comparative') {
-    //                         valueAdditionalData.push({ id: tableFields[key].name, label: tableFields[key].label, dropdown: 'value', type: 'glide_date_comparative', index: '3' })
-    //                     } else {
-    //                         valueAdditionalData.push({ id: tableFields[key].name, label: tableFields[key].label, dropdown: 'value' })
-    //                     }
-    //                 }
-    //             }
-    //             break;
-    
-    //         case 'choice':
-    //         case 'choice_multiple':
-    //             valueAdditionalData = tableFields[field].choices.map(choice => ({ id: choice.value, label: choice.label, dropdown: 'value' }));
-    //             break;
-    //         case 'choice_dynamic':
-    //             valueAdditionalData = tableFields[field].dynamic_choices.map(choice => ({ id: choice.value, label: choice.label, dropdown: 'value' }));
-    //             break;
-    //         case 'reference':
-    //             const queryParams = {
-    //                 sysparm_fields: `${tableFields[field].reference_display_field},sys_id`,
-    //                 sysparm_query: `nameISNOTEMPTY`
-    //             }
-    //             this.fetchReferenceData(tableFields[field].reference, queryParams)
-    //                 .then(res => {
-    //                     this.fetchReferenceDataSuccessed(res)
-    //                 })
-    //             this.setState({referenceFieldData: {
-    //                 field: tableFields[field],
-    //                 currentConditionID: currentID,
-    //                 globalConditionID: globalID
-    //             }})
-    //             break;
-    //     }
-
-    //     return valueAdditionalData;
-    // }
 
     async componentDidMount() {
         // fetchTableData
@@ -315,13 +269,16 @@ export default class FilterCondition extends React.Component {
             sysparm_keywords: true
         };
 
-        console.log("zashlo")
-
         await fetchTableData(table, queryParams).then(result => {
             this.fetchTableDataSuccessed({result, properties: this.props})
         })
         if (!!query)
             this.generateQuery({operation: "run"})
+        this.fetchFilterTemplates();
+    }
+
+    isFilterSaved = ({isSaved}) => {
+        this.setState({isFilterSaved: isSaved, isSave: !isSaved})
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -334,11 +291,13 @@ export default class FilterCondition extends React.Component {
                 sysparm_keywords: true
             };
     
-            console.log("zashlo")
-    
             await fetchTableData(table, queryParams).then(result => {
                 this.fetchTableDataSuccessed({result, properties: this.props})
             })
+        }
+        if (this.state.isFilterSaved) {
+            this.fetchFilterTemplates();
+            this.setState({isFilterSaved: false})
         }
     }
 
@@ -665,12 +624,41 @@ export default class FilterCondition extends React.Component {
     saveToogle = () => {
         const { isSave } = this.state;
         this.setState({isSave: !isSave})
+        this.runButtonClicked({type: "save"})
+    }
+
+    fetchFilterTemplates = async () => {
+        console.log("ZASHLO")
+        const myHeaders = new Headers();
+        const { table, user } = this.props;
+        myHeaders.append("X-UserToken", window.g_ck);
+        const queryParams = {
+            sysparm_query: `table=${table}^userISEMPTY^ORuser=${user}`,
+            sysparm_fields: "filter,sys_id,sys_name,table,title,user,group"
+        }
+
+        const query = prepareQueryParams(queryParams)
+
+        await fetchRequest({url: `${window.location.origin}/api/now/table/sys_filter?${query}`, params: {
+            method: "GET"
+        }})
+        .then(res => this.setState({filterList: res}))
     }
 
 
-
     render() {
-        const { isFilterOpened, conditionsArray, tableFields, referenceTableFieldsData, labelArr, operatorArr, breadcrumbsItems, isSave } = this.state;
+        const {
+            isFilterOpened,
+            conditionsArray,
+            tableFields,
+            referenceTableFieldsData,
+            labelArr,
+            operatorArr,
+            breadcrumbsItems,
+            isSave,
+            queryToSave,
+            filterList
+        } = this.state;
         const { table, user } = this.props;
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
@@ -701,10 +689,10 @@ export default class FilterCondition extends React.Component {
                             <div className="buttons">
                                 <div className="btn">
                                     <Button
-                                        label="Run"
+                                        label="Apply"
                                         variant="primary"
                                         size="md"
-                                        onClick={() => this.runButtonClicked()}
+                                        onClick={() => this.runButtonClicked({type: "run"})}
                                         customStyle={
                                             {
                                                 "border-color": "rgb(15,67,55)",
@@ -719,7 +707,7 @@ export default class FilterCondition extends React.Component {
                                         "hover-border-color": "rgb(172,180,181)",
                                         "active-border-color": "rgb(172,180,181)"
                                     }}
-                                    onClick={this.saveToogle}
+                                    onClick={() => this.saveToogle()}
                                     />
                                 </div>
                                 <div className="btn">
@@ -737,11 +725,11 @@ export default class FilterCondition extends React.Component {
                                 </div>
                             </div>
                             <div className="templates">
-                                <FilterTemplates setQuery={this.setQuery} table={table} />
+                                <FilterTemplates setQuery={this.setQuery} filterList={filterList} table={table} />
                             </div>
                         </div>
                         {
-                            isSave && <FilterSaver table={table} user={user} />
+                            isSave && <FilterSaver isFilterSaved={this.isFilterSaved} table={table} query={queryToSave} user={user} />
                         }
                     </div>
                     <div className="filter-body">
@@ -822,12 +810,12 @@ FilterCondition.defaultProps = {
     allowFields: [],
     blockFields: [],
     user: "",
-    opened: false,
+    opened: true,
     onSendQuery: () => void 0
 }
 
 FilterCondition.propTypes = {
-    table: propTypes.string,
+    table: propTypes.string.isRequired,
     query: propTypes.string,
     user: propTypes.string,
     blockFields: propTypes.array,
