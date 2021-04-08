@@ -43,8 +43,8 @@ export const downloadRequest = async (attachmentSysId, delay) => {
             credentials: 'same-origin',
             headers: {
                 'content-type': "application/json",
-                'X-Transaction-Source': window.transaction_source,
-                'X-UserToken': window.g_ck
+                'X-Transaction-Source': window?.transaction_source,
+                'X-UserToken': window?.g_ck
             }
         };
         try {
