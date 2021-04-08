@@ -87,7 +87,8 @@ class Dropdown extends React.Component {
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': '100%'
+            'width': '100%',
+            'max-height': '15rem'
         }
 
             return (
