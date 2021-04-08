@@ -158,8 +158,6 @@ class Popover extends React.Component {
             if(styles.maxWidth)
                 contentElement.children[0].style.maxWidth = styles.maxWidth;
 
-            console.log(targetDimensions, stylesInfo)
-
             if (!hideTail && stylesInfo.hasArrow) {
                 for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
                     contentElement.style.setProperty(key, value);
@@ -227,7 +225,8 @@ Popover.defaultProps = {
     positions: getAllPossibleVariants(),
     roundBorder: true,
     onTargetClick: () => void 0,
-    onOuterPopoverClicked: () => void 0
+    onOuterPopoverClicked: () => void 0,
+    fitTargetWidth: false
 }
 
 Popover.propTypes = {
@@ -245,7 +244,8 @@ Popover.propTypes = {
     onTargetClick: propTypes.func,
     onOuterPopoverClicked: propTypes.func,
     roundBorder: propTypes.bool,
-    contentStyles: propTypes.object
+    contentStyles: propTypes.object,
+    fitTargetWidth: propTypes.bool
 }
 
 export default Popover

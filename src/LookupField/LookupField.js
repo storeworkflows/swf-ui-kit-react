@@ -242,6 +242,11 @@ class LookupField extends React.Component {
 
         const isList = type === "glide_list";
 
+        let popoverStyles = {
+            'max-height': '20rem',
+            'width': `${this.inputRef?.current?.offsetWidth}px`
+        }
+
         return (
             visible ?
             <>
@@ -266,7 +271,6 @@ class LookupField extends React.Component {
                     {this.inputRef && this.inputRef.current &&
                         <Popover
                             hideTail={true}
-                            hideTail={true}
                             manageOpened={true}
                             opened={showResults}
                             positionTarget={this.inputRef}
@@ -274,11 +278,10 @@ class LookupField extends React.Component {
                                 {target: "bottom-center", content: "top-center"},
                                 {target: "top-center", content: "bottom-center"}
                                 ]}
-
+                            contentStyles={popoverStyles}
                         >
-                            {/*style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}*/}
                             <Popover.Content>
-                                <ul className="result" style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}>
+                                <ul className="result">
                                     {loading ? <span className="message">Loading...</span> : null}
                                     {loaded && !hasMatches ? <span className="message">No Results Found</span> : null}
                                     {loaded && <Result records={records} onClick={this.onClick}/>}
