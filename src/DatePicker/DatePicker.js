@@ -17,15 +17,16 @@ class DatePicker extends React.Component {
         super(props);
         const {value, format, opened, invalid, manageInvalid, onInvalid} = this.props;
 
-        let dateValue = value ? moment(value, format) : moment(new Date(), format);
-        let isInvalidValue = !dateValue.isValid();
+        let dateValue = value ? moment(value, format) : null;
+        let isInvalidValue = (value) ? !dateValue.isValid() : false;;
         let invalidValue = manageInvalid ? invalid : isInvalidValue;
+
         if(isInvalidValue)
             onInvalid(true)
 
         this.state = {
-            stringValue: dateValue.format(format),
-            currentDate: !isInvalidValue ? dateValue.toDate() : null,
+            stringValue: dateValue && dateValue.format(format),
+            currentDate: value && !isInvalidValue ? dateValue.toDate() : null,
             isOpened: opened,
             isInvalid: invalidValue
         }
@@ -211,6 +212,7 @@ class DatePicker extends React.Component {
 }
 
 DatePicker.defaultProps = {
+    value: new Date(),
     format: "YYYY-MM-DD",
     required: false,
     readonly: false,
