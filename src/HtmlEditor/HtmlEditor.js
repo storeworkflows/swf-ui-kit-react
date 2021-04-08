@@ -113,7 +113,7 @@ export default class HtmlEditor extends React.Component {
 
                             formdata.append('table_name', `ZZ_YYsys_attachment`);
                             formdata.append('table_sys_id', uuid);
-                            formdata.append('file', selectedFile);
+                            formdata.append('file', new File([selectedFile], blobInfo.filename()));
                             fetch(`/api/now/attachment/upload`, {
                                 method: "POST",
                                 credentials: 'same-origin',
