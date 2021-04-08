@@ -261,7 +261,7 @@ class Attachment extends React.Component {
             required,
             visible,
             className,
-            contentType,
+            extensions,
             placeholder,
             displayValue
         } = this.props;
@@ -292,7 +292,7 @@ class Attachment extends React.Component {
                         id={name}
                         required={required}
                         disabled={disabled}
-                        accept={contentType?.join(',')}
+                        accept={extensions?.join(',')}
                         hidden
                         onInvalid={this.onInvalidEvent}
                         onChange={this.onChangeEvent}
