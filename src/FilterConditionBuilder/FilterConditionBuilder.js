@@ -692,7 +692,7 @@ export default class FilterCondition extends React.Component {
                                         label="Apply"
                                         variant="primary"
                                         size="md"
-                                        onClick={() => this.runButtonClicked({operation: "run"})}
+                                        onClick={() => this.runButtonClicked({type: "run"})}
                                         customStyle={
                                             {
                                                 "border-color": "rgb(15,67,55)",
