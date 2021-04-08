@@ -1,4 +1,5 @@
 import {POPOVER} from "./constants";
+import { ResizeObserver } from 'resize-observer';
 const {ALIGNMENT, ARROW_SIZE, ARROW_ALIGN, NO_ARROW_POSITIONS, ARROW_SIDES, ARROW_SPACE, PADDING_SIZE} = POPOVER
 
 const verticalAlignment = [ALIGNMENT.TOP, ALIGNMENT.CENTER, ALIGNMENT.BOTTOM];
@@ -204,6 +205,7 @@ const getAvailableSize = (targetPosition, contentPosition, targetStart, targetSi
     let availableStart, availableEnd;
 
     let targetPos = targetStart + calculatePosition(targetPosition, alignment, targetSize);
+
     if(contentPosition === alignment[1]){
         let minValue = (windowEnd-targetPos) > (targetPos-windowStart) ? targetPos-windowStart : windowEnd-targetPos;
         availableEnd = targetPos+minValue;
@@ -323,5 +325,13 @@ export const getAllPossibleVariants = () => {
     return  result;
 }
 
+
+export const addResizeObserver = (el, onResizeAction) => {
+    const resizeObserver = new ResizeObserver(entries => {
+        onResizeAction(entries)
+    });
+
+    resizeObserver.observe(el);
+}
 
 

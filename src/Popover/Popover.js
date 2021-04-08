@@ -2,7 +2,7 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import findByType, {createSubComponent} from "../utils/findByType";
-import {getAllPossibleVariants, getPopoverStyle} from "./utils";
+import {addResizeObserver, getAllPossibleVariants, getPopoverStyle} from "./utils";
 import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 
@@ -44,10 +44,7 @@ class Popover extends React.Component {
                  ref={el => this.contentRef = el}
                  style={contentStyles}
             >
-                <div
-                    className={"popover-content-keeper"}
-                    onresize={this.contentResized()}
-                >
+                <div className={"popover-content-keeper"}>
                     {content}</div>
             </div>
         );
@@ -83,22 +80,10 @@ class Popover extends React.Component {
 
     }
 
-    async contentResized() {
-        const {opened, contentHeight} = this.state;
-        if (this.contentRef) {
-            let el = this.contentRef.children[0];
-            let curHeight = contentHeight;
-
-            await sleep(100);
-            curHeight = el.scrollHeight;
-            if (curHeight !== contentHeight) {
-                this.setState({contentHeight: curHeight})
-
-                this.resetStyles();
-                if (opened)
-                    this.setStylesToContent();
-            }
-        }
+     contentResized() {
+        this.resetStyles();
+        if (this.state.opened)
+            this.setStylesToContent();
     }
 
     changeOpenedState(){
@@ -148,7 +133,7 @@ class Popover extends React.Component {
         if(this.contentRef && this.targetRef) {
             const {positions, hideTail, roundBorder, contentStyles} = this.props;
 
-            let padding = contentStyles && contentStyles['padding'].split('px')[0] ;
+            let padding = contentStyles && contentStyles['padding'] && contentStyles['padding'].split('px')[0] ;
             let contentElement = this.contentRef;
             let targetDimensions = this.targetRef.getBoundingClientRect()
             let contentDimensions = contentElement.getBoundingClientRect();
@@ -173,6 +158,8 @@ class Popover extends React.Component {
             if(styles.maxWidth)
                 contentElement.children[0].style.maxWidth = styles.maxWidth;
 
+            console.log(targetDimensions, stylesInfo)
+
             if (!hideTail && stylesInfo.hasArrow) {
                 for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
                     contentElement.style.setProperty(key, value);
@@ -188,8 +175,8 @@ class Popover extends React.Component {
             contentElement.style.transform = `translate3d(0, 0, 0)`;
             contentElement.style.left =  0;
             contentElement.style.top = 0;
-            contentElement.children[0].style.maxHeight = contentElement.style.height || contentElement.style.maxHeight;
-            contentElement.children[0].style.maxWidth = contentElement.style.width || contentElement.style.maxWidth;
+            contentElement.children[0].style.maxHeight = contentElement.style.maxHeight || contentElement.style.height;
+            contentElement.children[0].style.maxWidth = contentElement.style.maxWidth || contentElement.style.width ;
             contentElement.style.margin = 0;
         }
     }
@@ -214,7 +201,10 @@ class Popover extends React.Component {
 
     componentDidMount() {
         document.addEventListener("click", e => this.documentClicked(e));
-        this.updateOpenedState(this.props.opened)
+        this.updateOpenedState(this.props.opened);
+
+        addResizeObserver(this.targetRef,this.contentResized);
+        addResizeObserver(this.contentRef.children[0].children[0], this.contentResized);
     }
 
     render() {

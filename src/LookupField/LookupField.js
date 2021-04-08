@@ -266,6 +266,7 @@ class LookupField extends React.Component {
                     {this.inputRef && this.inputRef.current &&
                         <Popover
                             hideTail={true}
+                            hideTail={true}
                             manageOpened={true}
                             opened={showResults}
                             positionTarget={this.inputRef}
@@ -273,7 +274,9 @@ class LookupField extends React.Component {
                                 {target: "bottom-center", content: "top-center"},
                                 {target: "top-center", content: "bottom-center"}
                                 ]}
+
                         >
+                            {/*style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}*/}
                             <Popover.Content>
                                 <ul className="result" style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}>
                                     {loading ? <span className="message">Loading...</span> : null}
