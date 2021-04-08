@@ -75,6 +75,10 @@ export const uploadRequest = async (file, tableSysId, tableName, delay) => {
         const requestOptions = {
             method: 'POST',
             credentials: 'same-origin',
+            headers: {
+                'X-Transaction-Source': window.transaction_source,
+                'X-UserToken': window.g_ck
+            },
             body: data
         };
 
@@ -102,6 +106,8 @@ export const deleteRequest = async (attachmentSysId, input, delay) => {
             credentials: 'same-origin',
             headers: {
                 'content-type': "application/json",
+                'X-Transaction-Source': window.transaction_source,
+                'X-UserToken': window.g_ck
             }
         };
 
