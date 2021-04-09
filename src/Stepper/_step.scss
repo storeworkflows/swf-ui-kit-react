@@ -191,13 +191,11 @@ circle {
   }
 
   &.--partial {
-    stroke-dasharray: 2, 2.125;
+    stroke-dasharray: 5, 2;
   }
 }
 
 .steps-item.--selected circle {
-  stroke-width: 4;
-
   &.--done{
     stroke: white;
   }

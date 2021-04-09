@@ -22,7 +22,8 @@ const uploadSuccess = (data, file) => {
     return{
         systemMessages: [],
         file: file,
-        attachmentSysId: resultFile.sys_id
+        attachmentSysId: resultFile.sys_id,
+        displayValue: resultFile.file_name
     };
 }
 
@@ -42,6 +43,8 @@ export const downloadRequest = async (attachmentSysId, delay) => {
             credentials: 'same-origin',
             headers: {
                 'content-type': "application/json",
+                'X-Transaction-Source': window?.transaction_source,
+                'X-UserToken': window?.g_ck
             }
         };
         try {
@@ -72,6 +75,10 @@ export const uploadRequest = async (file, tableSysId, tableName, delay) => {
         const requestOptions = {
             method: 'POST',
             credentials: 'same-origin',
+            headers: {
+                'X-Transaction-Source': window.transaction_source,
+                'X-UserToken': window.g_ck
+            },
             body: data
         };
 
@@ -99,6 +106,8 @@ export const deleteRequest = async (attachmentSysId, input, delay) => {
             credentials: 'same-origin',
             headers: {
                 'content-type': "application/json",
+                'X-Transaction-Source': window.transaction_source,
+                'X-UserToken': window.g_ck
             }
         };
 

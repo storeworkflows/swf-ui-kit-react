@@ -109,23 +109,25 @@ export default class HtmlEditor extends React.Component {
                             const selectedFile = blobInfo.blob();
                             const uuid = uuidv4().split("-").join("");
 
-                            let myHeaders = new Headers();
                             const formdata = new FormData();
 
-                            myHeaders.append("X-UserToken", window.g_ck);
                             formdata.append('table_name', `ZZ_YYsys_attachment`);
                             formdata.append('table_sys_id', uuid);
-                            formdata.append('file', selectedFile);
-                            fetch(`${window.location.origin}/api/now/attachment/upload`, {
+                            formdata.append('file', new File([selectedFile], blobInfo.filename()));
+                            fetch(`/api/now/attachment/upload`, {
                                 method: "POST",
-                                headers: myHeaders,
+                                credentials: 'same-origin',
+                                headers: {
+                                    'X-Transaction-Source': window.transaction_source,
+                                    'X-UserToken': window.g_ck
+                                },
                                 body: formdata
                             })
                             .then(res => {
                                 if (res.status === 201)
                                     return res.json();
                             })
-                            .then(resJson => success(window.location.origin + "/sys_attachment.do?sys_id=" + resJson.result.sys_id))
+                            .then(resJson => success("/sys_attachment.do?sys_id=" + resJson.result.sys_id))
                         },
                         setup: editor => {
                             this.editor = editor;
