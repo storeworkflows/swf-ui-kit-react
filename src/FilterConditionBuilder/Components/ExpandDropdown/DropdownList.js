@@ -36,10 +36,13 @@ export default class DropdownList extends React.Component {
                     "--not-first": listIndex > 0
                 })}>
                     <Input key={listIndex} autofocus={autofocus} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} />
+                    {/* <div className="swf-form-group">
+                        
+                    </div>
+                    <input type="text" autofocus={autofocus} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} /> */}
                     <div className="dropdown-list">
                         {valueToShow.map((item) => {
-                            const {id, label, disabled, table} = item;
-                            
+                            const {id, label, disabled, table, reference} = item;
                             return (
                                     <DropdownItem
                                         key={id + listIndex}
@@ -49,7 +52,7 @@ export default class DropdownList extends React.Component {
                                         disabled={this.props.disabled || disabled}
                                         isSelected={selectedItems[listIndex] === id}
                                         expandIcon={expandIcon}
-                                        reference={!!table}
+                                        reference={reference === "true"}
                                         listIndex={listIndex}
                                     />
                                 )
