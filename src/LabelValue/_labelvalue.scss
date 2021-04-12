@@ -2,4 +2,12 @@
   label{
     font-family: Arial;
   }
+
+  .label-value-content {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 160px;
+    height: 1em;
+    white-space: nowrap;
+  }
 }
