@@ -264,7 +264,7 @@ export default class FilterConditionItem extends React.Component {
                 <div className="dropdown-container">
                     <Dropdown
                         items={conditionObj.conditionOptions.operatorsArray}
-                        selectedItems={[conditionObj.conditionOptions.operator.operator]}
+                        selectedItems={!conditionObj.conditionOptions.operator.operator ? [""] : [conditionObj.conditionOptions.operator.operator]}
                         onItemSelected={(item) => this.itemClicked(item.clickedItem)}
                         select="single"
                         search="contains"
@@ -272,6 +272,7 @@ export default class FilterConditionItem extends React.Component {
                         variant="tertiary"
                         size="md"
                         disabled={!dropdownsIsActive.operation}
+                        manageSelectedItems={true}
                     />
                 </div>
                 {
