@@ -1,12 +1,11 @@
+import propTypes from "prop-types";
 import * as React from "react";
-import { Button } from "../../../index";
+
 import ExpandDropdown from "../ExpandDropdown/ExpandDropdown";
 import Dropdown from "../../../Dropdown/Dropdown"
-import propTypes from "prop-types";
-import FilterDropdown from "../FilterDropdown/FilterDropdown";
+import { GENERAL_UTILS } from "../../utils";
 import { inputValue } from "./_inputValue";
-import { v4 as uuidv4 } from "uuid";
-import { clone } from "../../utils/utils";
+import { Button } from "../../../index";
 
 
 export default class FilterConditionItem extends React.Component {
@@ -27,20 +26,6 @@ export default class FilterConditionItem extends React.Component {
         }
     }
 
-    // fetchTableData = async (table) => {
-    //     const endpoint = `${window.location.origin}/api/now/ui/meta/${table}`; //dev78490.service-now.com/
-    //     const queryParams = {
-    //         sysparm_operators: true,
-    //         sysparm_get_extended_tables: true,
-    //         sysparm_keywords: true
-    //     };
-    //     const query = prepareQueryParams(queryParams);
-    //     const url = `${endpoint}?${query}`
-    //     const params = {
-    //         method: "GET"
-    //     }
-    //     return await fetchRequest({url, params})
-    // }
     componentDidUpdate(prevProps) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
             this.fetchTableData();
@@ -165,7 +150,7 @@ export default class FilterConditionItem extends React.Component {
 
     updateSelectedItem = ({item, command, listIndex}) => {
         const { setConditionOptions } = this.props;
-        const items = this.state.selectedItem ? clone(this.state.selectedItem.items) : [];
+        const items = this.state.selectedItem ? GENERAL_UTILS.clone(this.state.selectedItem.items) : [];
         if (command === "push") {
             items.push(item);
             this.setState({selectedItem: {
@@ -232,14 +217,9 @@ export default class FilterConditionItem extends React.Component {
         const {
             operatorType,
             conditionObj,
-            tableFields,
-            referenceTableFieldsData,
-            labelArr,
-            operatorArr,
             getConditionsIDs,
             conditionID,
             globalConditionID,
-            getClickedListIndex
         } = this.props;
 
         const { dropdownsIsActive } = this.state; 
