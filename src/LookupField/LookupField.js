@@ -271,7 +271,7 @@ class LookupField extends React.Component {
                         message={message}
                     >
                         {isList && this.renderListPills()}
-                        <Input.End>{!isList && referenceRecord.displayValue && <Button icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/>}</Input.End>
+                        {!isList && referenceRecord.value && <Input.End><Button icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/></Input.End>}
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover
