@@ -632,7 +632,7 @@ export default class FilterCondition extends React.Component {
         const { table, user } = this.props;
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
-        columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})))
+        columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})));
         return (
             <>
                 <div className="collapsed-filter-header">
