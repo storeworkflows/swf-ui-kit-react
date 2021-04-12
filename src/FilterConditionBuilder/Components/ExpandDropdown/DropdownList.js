@@ -14,6 +14,12 @@ export default class DropdownList extends React.Component {
             searchValue: "",
             filteredList: [],
         }
+        this.inputRef = null;
+    }
+
+    componentDidMount() {
+        if (!!this.inputRef)
+            setTimeout(() => this.inputRef.focus(), 100)
     }
 
     onSearch = ({value}) => {
@@ -35,14 +41,14 @@ export default class DropdownList extends React.Component {
                     "dropdown-list-container": true,
                     "--not-first": listIndex > 0
                 })}>
-                    <Input key={listIndex} autofocus={autofocus} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} />
-                    {/* <div className="swf-form-group">
-                        
+                    <div className="swf-form-group">
+                        <div className="input-group">
+                            <input type="text" ref={elem => !this.inputRef ? this.inputRef = elem : () => void 0} className="form-control" autoFocus={true} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} />
+                        </div>
                     </div>
-                    <input type="text" autofocus={autofocus} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} /> */}
                     <div className="dropdown-list">
                         {valueToShow.map((item) => {
-                            const {id, label, disabled, table, reference} = item;
+                            const {id, label, disabled, reference} = item;
                             return (
                                     <DropdownItem
                                         key={id + listIndex}
