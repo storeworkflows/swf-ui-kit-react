@@ -1,12 +1,12 @@
-import * as React from "react";
-import propTypes from "prop-types";
 import classnames from "classnames";
+import { v4 as uuidv4 } from 'uuid';
+import propTypes from "prop-types";
+import * as React from "react";
 
+import {calculateScroll, getItemById} from "./utils";
+import Popover from "../../../Popover/Popover";
 import DropdownList from "./DropdownList";
 import Icon from "../../../Icon/Icon"
-import Popover from "../../../Popover/Popover";
-import {calculateScroll, getItemById} from "./utils";
-import { v4 as uuidv4 } from 'uuid';
 
 class ExpandDropdown extends React.Component {
 
@@ -47,15 +47,9 @@ class ExpandDropdown extends React.Component {
     itemSelected({id, dropdownClicked, listIndex}){
         const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem} = this.props;
 
-        let processedItems;
         let items = this.props.lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
         const currentSelectedIds = this.state.selectedItems;
-
-        // if (selectedItem && selectedItem.items) {
-        //     processedItems = selectedItem.items.filter(item => item.listIndex < listIndex);
-        // }
-        // if (processedItems) {
         
         updateSelectedItem({item, command: "push"})
         if (selectedItem.items) {
@@ -156,10 +150,7 @@ class ExpandDropdown extends React.Component {
         const {
             disabled,
             placeholder,
-            items,
             name,
-            expandIcon,
-            referenceTableFieldsData,
             selectedItem
         } = this.props;
 

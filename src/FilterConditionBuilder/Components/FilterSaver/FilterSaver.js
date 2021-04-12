@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { fetchGroupList, postFilter } from './Requests';
 import { Input, RadioButtons, Button, Dropdown } from '../../../index';
+import { fetchGroupList, postFilter } from './Requests';
 
 class FilterSaver extends React.Component {
     constructor(props) {

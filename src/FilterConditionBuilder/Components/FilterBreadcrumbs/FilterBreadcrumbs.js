@@ -1,6 +1,7 @@
-import * as React from "react";
-import FilterBreadcrumbItem from "./FilterBreadCrumbItem/FilterBreadcrumbItem";
 import {v4 as uuidv4} from "uuid";
+import * as React from "react";
+
+import FilterBreadcrumbItem from "./FilterBreadCrumbItem/FilterBreadcrumbItem";
 
 export default class FilterBreadcrumbs extends React.Component {
     constructor(props) {
