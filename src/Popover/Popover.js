@@ -158,8 +158,6 @@ class Popover extends React.Component {
             if(styles.maxWidth)
                 contentElement.children[0].style.maxWidth = styles.maxWidth;
 
-            console.log(targetDimensions, stylesInfo)
-
             if (!hideTail && stylesInfo.hasArrow) {
                 for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
                     contentElement.style.setProperty(key, value);

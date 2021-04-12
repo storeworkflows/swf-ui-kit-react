@@ -547,7 +547,6 @@ export default class FilterCondition extends React.Component {
     }
 
     setQuery = ({query}) => {
-        console.log(query)
         this.setState({query})
     }
 
