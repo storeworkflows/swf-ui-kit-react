@@ -6,8 +6,8 @@
   .label-value-content {
     text-overflow: ellipsis;
     overflow: hidden;
-    width: 160px;
-    height: 1em;
+    max-width: 300px;
     white-space: nowrap;
+    font-size: 1rem;
   }
 }
