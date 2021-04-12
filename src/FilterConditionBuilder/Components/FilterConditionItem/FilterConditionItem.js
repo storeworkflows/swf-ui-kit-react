@@ -242,21 +242,19 @@ export default class FilterConditionItem extends React.Component {
             getClickedListIndex
         } = this.props;
 
-        // conditionObj.conditionOptions.operatorsArray = operatorArr.map(operator => ({...operator, id: uuidv4().split("-").join("")}));
-        const { columns } = tableFields;
-        const columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0).map(column => ({...column, id: column.name, reference: column.reference || ""}));
+        const { dropdownsIsActive } = this.state; 
+
         return (
             <div className="condition-wrapper" onClick={() => getConditionsIDs({currentConditionID: conditionID, globalConditionID})}>
                 {
 					operatorType === '^OR' ? <span className="condition-operator">OR</span> : ''
 			
                 }
-                {console.log(conditionObj.conditionOptions.fieldsDropdownData)}
                 <div className="dropdown-container">
                     <ExpandDropdown
                         expandIcon="arrow-right-circle"
-                        selectedItem={this.state.selectedItem}
-                        selectedItems={conditionObj.conditionOptions.activeField}
+                        selectedItem={conditionObj.conditionOptions.fieldItems}
+                        selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items.map(item => item.id) : []}
                         updateSelectedItem={this.updateSelectedItem}
                         onItemSelected={(item) => this.props.onItemClicked(item)}
                         placeholder={"--choose field--"}
@@ -264,25 +262,16 @@ export default class FilterConditionItem extends React.Component {
                     />
                 </div>
                 <div className="dropdown-container">
-                    {/* <ExpandDropdown
-                        expandIcon="arrow-right-circle"
-                        // selectedItem={this.state.selectedItem}
-                        selectedItems={conditionObj.conditionOptions.activeField}
-                        updateSelectedItem={(item) => this.itemClicked(item.clickedItem)}
-                        onItemSelected={(item) => this.props.onItemClicked(item)}
-                        placeholder={"--choose field--"}
-                        lists={[conditionObj.conditionOptions.operatorsArray]}
-                    /> */}
                     <Dropdown
-                        items={!!conditionObj.conditionOptions.operatorsArray ? conditionObj.conditionOptions.operatorsArray : []}
-                        selectedItems={conditionObj.conditionOptions.operator.operator ? [conditionObj.conditionOptions.operator.operator] : []}
+                        items={conditionObj.conditionOptions.operatorsArray}
+                        selectedItems={[conditionObj.conditionOptions.operator.operator]}
                         onItemSelected={(item) => this.itemClicked(item.clickedItem)}
                         select="single"
                         search="contains"
                         placeholder={"--choose operator--"}
                         variant="tertiary"
                         size="md"
-                        disabled={!conditionObj.conditionOptions.operatorsArray}
+                        disabled={!dropdownsIsActive.operation}
                     />
                 </div>
                 {

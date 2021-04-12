@@ -70,6 +70,7 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
                         type="text"
                         value={conditionOptions.value}
                         onInput={(e) => inputValueSet({value: e.target.value, type: editor, index: 0})}
+                        autofocus={true}
                     />
                 </div>
             );

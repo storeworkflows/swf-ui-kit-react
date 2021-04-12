@@ -6,7 +6,7 @@ import FilterSaver from "./Components/FilterSaver/FilterSaver";
 
 import FilterBreadcrumbs from "./Components/FilterBreadcrumbs/FilterBreadcrumbs";
 
-import { generateID, getDropdownFieldsItems, getOperators, generateCurrentConditionQuery, fetchTableData, fetchRequest, prepareQueryParams, clone, getTrendData, parseConditionValue, getValueAdditionalData } from "./utils/utils"
+import { generateID, test, getDropdownFieldsItems, getOperators, generateCurrentConditionQuery, _findOperator, fetchTableData, fetchRequest, prepareQueryParams, clone, getTrendData, parseConditionValue, getValueAdditionalData } from "./utils/utils"
 
 import { Button } from "../index";
 import Dropdown from "./Components/ExpandDropdown/ExpandDropdown" 
@@ -42,7 +42,8 @@ export default class FilterCondition extends React.Component {
         }
         // this.addNewOperator = this.addNewOperator.bind(this)
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
-        this.parseConditionValue = parseConditionValue.bind(this)
+        this.parseConditionValue = parseConditionValue.bind(this);
+        this.test = test.bind(this);
     }
 
     fetchReferenceTableDataSuccessed = ({result, properties}) => {
@@ -55,7 +56,7 @@ export default class FilterCondition extends React.Component {
     }
     //
 
-    fetchTableDataSuccessed = ({result, properties}) => {
+    fetchTableDataSuccessed = async ({result, properties}) => {
         let fieldsDataID = generateID();
         const { blockFields, allowFileds } = properties;
         const { query } = this.state;
@@ -144,29 +145,27 @@ export default class FilterCondition extends React.Component {
             })
 
             let operators = getOperators(result.columns);
-            conditionsArray = conditionsArray.map(globalCond => {
-                globalCond.relatedConditions = globalCond.relatedConditions.map(parentCond => {
-
+            conditionsArray = await Promise.all(conditionsArray.map(async globalCond => {
+                globalCond.relatedConditions = await Promise.all(globalCond.relatedConditions.map(async parentCond => {
                     let params = { condition: parentCond.condition, operators, tableFields: result.columns, globalID: globalCond.id, currentID: parentCond.id }
-                    let conditionOptions = this.parseConditionValue(params);
+                    let conditionOptions = parentCond.condition.slice(0, parentCond.condition.indexOf(_findOperator(parentCond.condition, operators))).split(".").length > 1 ? await this.test(params) : this.parseConditionValue(params);
                     parentCond = {
                         ...parentCond,
-                        conditionOptions
+                        conditionOptions,
                     }
 
-                    parentCond.relatedConditions = parentCond.relatedConditions.map(childCond => {
-
+                    parentCond.relatedConditions = await Promise.all(parentCond.relatedConditions.map(async childCond => {
                         let params = { condition: childCond.condition, operators, tableFields: result.columns, globalID: globalCond.id, currentID: childCond.id }
-                        let conditionOptions = this.parseConditionValue(params);
+                        let conditionOptions = childCond.condition.slice(0, childCond.condition.indexOf(_findOperator(childCond.condition, operators))).split(".").length > 1 ? await this.test(params) : this.parseConditionValue(params);
                         return {
                             ...childCond,
-                            conditionOptions
+                            conditionOptions,
                         }
-                    })
+                    }))
                     return parentCond;
-                })
+                }))
                 return globalCond;
-            })
+            }))
         }
         this.setState({
             tableFields: result,
@@ -244,17 +243,17 @@ export default class FilterCondition extends React.Component {
 
             if (error) return null;
 
+            onSendQuery(resultQuery);
+
             switch (operation) {
                 case 'run':
                     this.setState({ breadcrumbsItems })
-                    onSendQuery(resultQuery);
                     break;
                 case 'save':
-                    console.log("SAVE")
                     this.setState({
                         queryToSave: resultQuery,
                         isSave: !isSave
-                    }, () => console.log(this.state.queryToSave, "queryToSave"));
+                    });
                     break;
             }
         })
@@ -269,8 +268,8 @@ export default class FilterCondition extends React.Component {
             sysparm_keywords: true
         };
 
-        await fetchTableData(table, queryParams).then(result => {
-            this.fetchTableDataSuccessed({result, properties: this.props})
+        await fetchTableData(table, queryParams).then(async result => {
+            await this.fetchTableDataSuccessed({result, properties: this.props})
         })
         if (!!query)
             this.generateQuery({operation: "run"})
@@ -278,7 +277,7 @@ export default class FilterCondition extends React.Component {
     }
 
     isFilterSaved = ({isSaved}) => {
-        this.setState({isFilterSaved: isSaved, isSave: !isSaved})
+        this.setState({isFilterSaved: isSaved, isSave: false});
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -317,8 +316,7 @@ export default class FilterCondition extends React.Component {
                 break;
             case '^OR':
                 let currentConditionIndexInArr = newConditionsArray[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-                let parentConditionOptions = { ...newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].conditionOptions };
-                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: generateID(), condition: '', operator: value, conditionOptions: { ...parentConditionOptions, operator: { operator: '', editior: '' }, value: '' } })
+                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: generateID(), condition: '', operator: value, conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }})
                 this.setState({conditionsArray: newConditionsArray});
                 break;
             case '^NQ':
@@ -359,7 +357,6 @@ export default class FilterCondition extends React.Component {
 
     setConditionOptionsValue = ({value, conditionOptions, conditionOption}) => {
         const { editor } = conditionOptions.operator;
-        console.log(value)
         switch (editor) {
             case 'choice_multiple':
             case 'textarea':
@@ -424,7 +421,6 @@ export default class FilterCondition extends React.Component {
                 currentConditionInArr.conditionOptions = this.setConditionOptionsOperator({value, conditionOptions: copyConditionOptions, properCurrentConditionID, properGlobalConditionID})
                 break;
             case "value":
-                console.log(value)
                 currentConditionInArr.conditionOptions = this.setConditionOptionsValue({value, conditionOptions: copyConditionOptions, conditionOption});
                 break;
             case "valueAditionalData":
@@ -506,7 +502,7 @@ export default class FilterCondition extends React.Component {
     onItemClicked = (item) => {
         const { clickedItem, isReferenceClicked } = item;
         const { labelArr, currentConditionID, globalConditionID, conditionsArray } = this.state;
-        
+
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -528,27 +524,6 @@ export default class FilterCondition extends React.Component {
             this.setConditionOptions({value: items.selectedItems, conditionOption: "field"})
 
         }
-        // {setConditionOptions}
-
-
-
-        // let currentCondition = condArrClone.find(globalCondition => globalCondition.id === globalConditionID).relatedConditions.find(currentCondition => currentCondition.id === currentConditionID);
-        // const currentConditionIndexInArr = condArrClone[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-        // if (currentConditionIndexInArr > -1) {
-        //     currentCondition.conditionOptions.fieldItems = items.selectedItems;
-        // } else {
-        //     condArrClone[globalConditionIndexInArr].relatedConditions.forEach((cond) => {
-        //         cond.relatedConditions.forEach((cond) => {
-        //             if (cond.id === currentConditionID) {
-        //                 cond.conditionOptions.fieldItems = items.selectedItems;
-        //             }
-        //         })
-        //     })
-        // }
-        // this.setState({conditionsArray: condArrClone})
-        // console.log(newCondArr, conditionsArray)
-        
-        
     }
 
     breadcrumbItemClicked = ({data, operation}) => {
@@ -569,10 +544,6 @@ export default class FilterCondition extends React.Component {
                 deletedItems.forEach(item => this.deleteCondition({currentConditionID: item.conditionId, globalConditionID: item.globalConditionId}));
                 break;
         }
-    }
-
-    onOperatorClicked = (item) => {
-        console.log(item)
     }
 
     setQuery = ({query}) => {
@@ -628,7 +599,6 @@ export default class FilterCondition extends React.Component {
     }
 
     fetchFilterTemplates = async () => {
-        console.log("ZASHLO")
         const myHeaders = new Headers();
         const { table, user } = this.props;
         myHeaders.append("X-UserToken", window.g_ck);
@@ -663,7 +633,6 @@ export default class FilterCondition extends React.Component {
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
         columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})))
-        // console.log("%c%s", "color: green", "REACT Filter Condition State", this.state)
         return (
             <>
                 <div className="collapsed-filter-header">
@@ -775,7 +744,6 @@ export default class FilterCondition extends React.Component {
                                                                 onOperatorClicked={this.onOperatorClicked}
                                                                 setConditionOptions={this.setConditionOptions}
                                                                 fetchReferenceDataSuccessed={this.fetchReferenceDataSuccessed}
-                                                                key={condition.id}
                                                             />
                                                         </div>
                                                     )
