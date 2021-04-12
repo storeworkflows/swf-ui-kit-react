@@ -1,6 +1,6 @@
 import * as React from "react";
+
 import { Input } from "../../../../index";
-import fetch from "cross-fetch"
 
 export default class PopoverContent extends React.Component {
     constructor(props) {

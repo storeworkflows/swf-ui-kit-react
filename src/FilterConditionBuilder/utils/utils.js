@@ -1,79 +1,7 @@
 import fetch from 'cross-fetch';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
-
-export const getTrendData = (item) => {
-    let trendData = [];
-    switch (item) {
-        case 'dayofweek':
-            trendData = moment.weekdays().map(day => ({ id: day.toLowerCase(), label: day, dropdown: 'value', type: 'trend_field', index: '2' }));
-            break;
-        case 'month':
-            trendData = moment.months().map(month => ({ id: month.toLowerCase().slice(0, 3), label: month, dropdown: 'value', type: 'trend_field', index: '2' }));
-            break;
-        case 'quarter':
-            for (let i = 1; i < 5; i++) {
-                trendData.push({ id: `${i}`, label: `Quarter${i}`, dropdown: 'value', type: 'trend_field', index: '2' })
-            }
-            break;
-        case 'year':
-            for (let i = moment().year() - 20; i < moment().year() + 10; i++) {
-                trendData.push({ id: `${i}`, label: i, dropdown: 'value', type: 'trend_field', index: '2' })
-            }
-            break;
-        case 'week':
-            for (let i = 0; i < 54; i++) {
-                trendData.push({ id: `${i}`, label: `Week${i}`, dropdown: 'value', type: 'trend_field', index: '2' })
-            }
-            break;
-        case 'hour':
-            for (let i = 0; i < 24; i++) {
-                if (i === 0) {
-                    trendData.push({ id: `${i}`, label: 'Midnight hour', dropdown: 'value', type: 'trend_field', index: '2' })
-                } else if (i < 12) {
-                    trendData.push({ id: `${i}`, label: `${i} am hour`, dropdown: 'value', type: 'trend_field', index: '2' })
-                } else if (i === 12) {
-                    trendData.push({ id: `${i}`, label: 'Noon hour', dropdown: 'value', type: 'trend_field', index: '2' })
-                } else {
-                    trendData.push({ id: `${i}`, label: `${i - 12} pm hour`, dropdown: 'value', type: 'trend_field', index: '2' })
-                }
-            }
-            break;
-    }
-    return trendData;
-}
-
-export const generateID = () => `f${(+new Date).toString(16)}`;
-
-export const getOperators = (tableFields) => {
-    let operators = [];
-    for (let key in tableFields) {
-        if (tableFields[key].operators) {
-            let arr = tableFields[key].operators.map(el => el.operator)
-            operators.push(...arr)
-        }
-    }
-    operators = Array.from(new Set(operators));
-    operators.sort((cur, next) => next.length - cur.length);
-    return operators;
-
-}
-
-
-
-export const clone = item => JSON.parse(JSON.stringify(item));
-
-export const _findOperator = (condition, operators) => {
-    let operator = '';
-    for (let i = 0; i < operators.length; i++) {
-        if (condition.indexOf(operators[i]) > -1) {
-            operator = operators[i];
-            break;
-        }
-    }
-
-    return operator;
-}
+import {REQUEST_UTILS, GENERAL_UTILS, DATA_UTILS} from "./index";
 
 export const getValueAdditionalData = function({ tableFields, editor, field, globalID, currentID }) {
     let valueAdditionalData = [];
@@ -106,7 +34,7 @@ export const getValueAdditionalData = function({ tableFields, editor, field, glo
                 sysparm_fields: `${tableFields[field].reference_display_field},sys_id`,
                 sysparm_query: `nameISNOTEMPTY`
             }
-            fetchReferenceData(tableFields[field].reference, queryParams)
+            REQUEST_UTILS.fetchReferenceData({table: tableFields[field].reference, queryParams})
                 .then(res => {
                     this.fetchReferenceDataSuccessed(res)
                 })
@@ -119,11 +47,6 @@ export const getValueAdditionalData = function({ tableFields, editor, field, glo
     }
 
     return valueAdditionalData;
-}
-
-export const fetchReferenceDataSuccessed = (state, result) => {
-    const { referenceFieldData } = state;
-    let valueVields = result.map(field => ({id: field.sys_id, label: field[referenceFieldData.field.reference_display_field], dropdown: "value"}));
 }
 
 const _getValue = (value, operator, editor) => {
@@ -190,16 +113,16 @@ const _getValue = (value, operator, editor) => {
                                 
                     
             
-    export const test = async function({ condition, operators, tableFields, globalID, currentID }) {
-        let operator = _findOperator(condition, operators);
+    export const parseConditionValueWithRef = async function({ condition, operators, tableFields, globalID, currentID }) {
+        let operator = GENERAL_UTILS.findOperator(condition, operators);
         let lastTableFields;
         let field = '', value = '', editor = "", valueAdditionalData = [], fieldItems = [], fieldsDropdownData = [];
-        let fieldsDataID = generateID();
+        let fieldsDataID = GENERAL_UTILS.generateID();
         let referenceField = condition.slice(0, condition.indexOf(operator)).split(".");
-        let fields = clone(referenceField);
+        let fields = GENERAL_UTILS.clone(referenceField);
         const isReferenceField = referenceField.length > 1;
         if (isReferenceField) {
-            let dropdownFields = [{items: getDropdownFieldsItems({tableFields: tableFields, index: fieldsDataID, listIndex: 0})}];
+            let dropdownFields = [{items: DATA_UTILS.getDropdownFieldsItems({tableFields: tableFields, index: fieldsDataID, listIndex: 0})}];
             let fieldsData = {[fieldsDataID]: tableFields}
             let nextData = tableFields[referenceField[0]];
             referenceField = referenceField.reverse();
@@ -215,19 +138,18 @@ const _getValue = (value, operator, editor) => {
             value = condition.slice(allFields.length + operator.length);
             let i = 1;
             for await (let key of referenceField) {
-                fieldsDataID = generateID();
-                await fetchTableData(nextData.reference, queryParams)
+                fieldsDataID = GENERAL_UTILS.generateID();
+                await REQUEST_UTILS.fetchTableData({table: nextData.reference, queryParams})
                     .then(res => {
                         fieldsData = {...fieldsData, [fieldsDataID]: res.columns}
                         nextData = res.columns[key];
                         lastTableFields = res.columns;
-                        dropdownFields.push({items: getDropdownFieldsItems({tableFields: Object.values(res.columns), index: fieldsDataID, listIndex: i})});
+                        dropdownFields.push({items: DATA_UTILS.getDropdownFieldsItems({tableFields: Object.values(res.columns), index: fieldsDataID, listIndex: i})});
                         i++;
                     })
             }
             fieldsDropdownData = dropdownFields;
             let dataForFieldItems = fieldsDropdownData.map(field => field.items);
-            // fieldItems = fields.map(fieldName => ({ ...dataForFieldItems.map(field => field.find(data => data.id === fieldName)), dropdownClick: false}));
 
             i = 0;
             for (let key of dataForFieldItems) {
@@ -245,7 +167,7 @@ const _getValue = (value, operator, editor) => {
                 value: fieldItems.map(field => field.id).join("."),
                 items: fieldItems
             }
-            valueAdditionalData = editor === "trend_field" ? getTrendData(value['1']) : this.getValueAdditionalData({ lastTableFields, editor, field, globalID, currentID });
+            valueAdditionalData = editor === "trend_field" ? DATA_UTILS.getTrendData(value['1']) : this.getValueAdditionalData({ tableFields: lastTableFields, editor, field: lastField, globalID, currentID });
 
             return {
                 field,
@@ -262,9 +184,9 @@ const _getValue = (value, operator, editor) => {
         }
     }
     export const parseConditionValue = function({ condition, operators, tableFields, globalID, currentID }) {
-        let operator = _findOperator(condition, operators);
+        let operator = GENERAL_UTILS.findOperator(condition, operators);
         let field = '', value = '', editor = "", valueAdditionalData = [], fieldItems = [], fieldsDropdownData = [];
-        let fieldsDataID = generateID();
+        let fieldsDataID = GENERAL_UTILS.generateID();
         if (!operator) {
             field = condition;
             operator = '';
@@ -276,7 +198,7 @@ const _getValue = (value, operator, editor) => {
             value = _getValue(value, operator, editor);
         }
         let fields = field.split('.');
-        fieldsDropdownData = getDropdownFieldsItems({ tableFields, index: fieldsDataID });
+        fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields, index: fieldsDataID });
         fieldItems = fields.map(fieldName => ({ ...fieldsDropdownData.find(data => data.id === fieldName), listIndex: 0, dropdownClick: false }));
         fieldItems = {
             label: tableFields[field].label,
@@ -285,7 +207,7 @@ const _getValue = (value, operator, editor) => {
         }
     let operatorsArray = tableFields[field].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
     if (editor === 'trend_field') {
-        valueAdditionalData = getTrendData(value['1']);
+        valueAdditionalData = DATA_UTILS.getTrendData(value['1']);
     }
     
     return {
@@ -420,101 +342,19 @@ export const generateCurrentConditionQuery = (conditionData, operation, breadcru
     return { conditionQuery: conditionQuery || false, breadcrumbItem }
 }
 
-export const getDropdownFieldsItems = ({ tableFields, index, blockFields, allowFileds, listIndex }) => {
-    let dropdownFields = [];
-    let fieldsLabelCount = {};
 
-    for (let key in tableFields) {
-        fieldsLabelCount[tableFields[key].label]
-            ? fieldsLabelCount[tableFields[key].label].push(tableFields[key].name)
-            : fieldsLabelCount[tableFields[key].label] = [tableFields[key].name];
+// export const fetchProjects = async () => {
+//     const endpoint = `${GLOBAL_CONSTANTS.API.PREFIX}record_information`;
+//     const queryParams = {
+//         table: GLOBAL_CONSTANTS.TABLES.CONTAINER,
+//         query: sysparm_query,
+//         sysparm_fields: 'type,state,short_description,start,end,opened_by,number,sys_id,assigned_to,watch_list'
+//     }
+//     const query = REQUEST_UTILS.prepareQueryParams(queryParams);
+//     const url = `${endpoint}?${query}`;
+//     const params = {
+//         method: "GET",
+//     };
 
-        if (tableFields[key].operators) {
-            if (blockFields && blockFields.length) {
-                !blockFields.find(name => tableFields[key].name === name) && dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference || '' });
-            } else if (allowFileds && allowFileds.length) {
-                allowFileds.find(name => tableFields[key].name === name) && dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference || '' });
-            } else {
-                dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, listIndex, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference || '' });
-            }
-
-        }
-    }
-    dropdownFields.sort((cur, next) => cur.label.localeCompare(next.label));
-
-    dropdownFields.forEach((field, index) => {
-        if (fieldsLabelCount[field.label].length > 1) {
-            dropdownFields[index].label = `${field.label} (${field.id})`;
-            // if (listIndex) dropdownFields[index].listIndex = listIndex;
-        }
-    });
-
-    return dropdownFields;
-}
-
-export const columnsObjToArr = ({columns}) => {
-    const id = uuidv4().split("-").join("");
-    return Object.values(columns).map(column => ({...column, id: `${column.name}${id}`, reference: column.reference || ""}))
-}
-
-export const fetchTableData = async (table, queryParams) => {
-    const endpoint = `${window.location.origin}/api/now/ui/meta/${table}`; //dev78490.service-now.com/
-    const query = queryParams ? prepareQueryParams(queryParams) : "";
-    const url = `${endpoint}?${query}`
-    const params = {
-        method: "GET"
-    }
-    return await fetchRequest({url, params})
-}
-
-
-export const fetchReferenceData = async (table, queryParams) => {
-    const endpoint = `${window.location.origin}/api/now/table/${table}`; //dev78490.service-now.com/
-
-    const query = queryParams ? prepareQueryParams(queryParams) : "";
-    const url = `${endpoint}?${query}`;
-    const params = {
-        method: "GET"
-    }
-    return await fetchRequest({url, params})
-}
-
-export const fetchRequest = async ({ url, params = {} }) => {
-    let result;
-    try {
-        const response = await fetch(url, {
-            ...params,
-            credentials: 'same-origin',
-            headers: {
-                'content-type': "application/json",
-                'X-Transaction-Source': window.transaction_source,
-                'X-UserToken': window.g_ck
-            },
-        });
-        const resultJson = await response.json();
-        result = resultJson.result;
-    } catch (e) {
-        console.error(e)
-    }
-    return result;
-}
-
-export const prepareQueryParams = (obj) => Object.keys(obj)
-    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(obj[k]))
-    .join('&');
-
-export const fetchProjects = async () => {
-    const endpoint = `${GLOBAL_CONSTANTS.API.PREFIX}record_information`;
-    const queryParams = {
-        table: GLOBAL_CONSTANTS.TABLES.CONTAINER,
-        query: sysparm_query,
-        sysparm_fields: 'type,state,short_description,start,end,opened_by,number,sys_id,assigned_to,watch_list'
-    }
-    const query = prepareQueryParams(queryParams);
-    const url = `${endpoint}?${query}`;
-    const params = {
-        method: "GET",
-    };
-
-    return await fetchRequest({ url, params })
-}
+//     return await  REQUEST_UTILS.fetchRequest({ url, params })
+// }

@@ -1,9 +1,7 @@
-import * as React from "react";
 import classnames from "classnames";
+import * as React from "react";
 
-import { Input } from "../../../index";
 import DropdownItem from "./DropdownItem";
-import ReactDOM from "react-dom";
 
 export default class DropdownList extends React.Component {
     constructor(props) {
@@ -31,7 +29,7 @@ export default class DropdownList extends React.Component {
     }
 
     render() {
-        const { items, expandIcon, selectedItems, onSelectAction, listIndex, autofocus } = this.props;
+        const { items, expandIcon, selectedItems, onSelectAction, listIndex } = this.props;
         const { searchValue, filteredList } = this.state;
 
         const valueToShow = (!!searchValue && !!filteredList.length) ? filteredList : items;
