@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
 import {query} from "./datasource";
 import _ from "lodash";
-import {Input} from "../index";
+import {Button, Input} from "../index";
 import DeclarativeUIActions from "./DeclarativeUIActions";
 import Result from "./Result";
 import Pill from "../Pill/Pill";
@@ -230,6 +230,16 @@ class LookupField extends React.Component {
         )
     }
 
+    clearValue = () => {
+        this.setState({
+            referenceList: {
+                value: "",
+                displayValue: ""
+            }
+        });
+        this.props.onValueChange(this.props.name, "", "");
+    }
+
     render() {
         const {matchesCount, records, loading, loaded, focused, referenceRecord} = this.state;
 
@@ -241,6 +251,10 @@ class LookupField extends React.Component {
         const showResults = loading || (loaded && focused);
 
         const isList = type === "glide_list";
+
+        const hasValue = Boolean(referenceRecord.sysId);
+
+        const showDeleteButton = !isList && hasValue && !readonly;
 
         return (
             visible ?
@@ -261,7 +275,7 @@ class LookupField extends React.Component {
                         message={message}
                     >
                         {isList && this.renderListPills()}
-                        {/*<Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>*/}
+                        {!readonly && <Input.End>{showDeleteButton && <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/>}</Input.End> }
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover

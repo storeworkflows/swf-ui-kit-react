@@ -3,7 +3,6 @@ import fetch from "cross-fetch";
 
 const downloadSuccess = async (data) => {
     let receivedFile = data.result;
-    console.log(data.result);
     return{
         file: {
             name: receivedFile.file_name,
