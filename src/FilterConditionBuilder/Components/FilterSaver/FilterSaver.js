@@ -107,6 +107,7 @@ class FilterSaver extends React.Component {
                         label="Filter title"
                         value={filterTitle}
                         onInput={this.handleInputTitle}
+                        autofocus={true}
                     />
                 </div>
 

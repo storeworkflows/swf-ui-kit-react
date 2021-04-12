@@ -6,6 +6,7 @@ import DropdownList from "./DropdownList";
 import Icon from "../../../Icon/Icon"
 import Popover from "../../../Popover/Popover";
 import {calculateScroll, getItemById} from "./utils";
+import { v4 as uuidv4 } from 'uuid';
 
 class ExpandDropdown extends React.Component {
 
@@ -48,9 +49,8 @@ class ExpandDropdown extends React.Component {
 
         let processedItems;
         let items = this.props.lists[listIndex].items;
-        let item = {...items.find(item => item.id === id), listIndex};
+        let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
         const currentSelectedIds = this.state.selectedItems;
-        // console.log(selectedItem.items)
 
         // if (selectedItem && selectedItem.items) {
         //     processedItems = selectedItem.items.filter(item => item.listIndex < listIndex);
@@ -97,9 +97,10 @@ class ExpandDropdown extends React.Component {
         this.setState({containerWidth: width});
     }
 
-    renderItems() {
+    renderItems({autofocus}) {
         const {expandIcon, lists} = this.props;
         const {opened, selectedItems} = this.state;
+        let key = uuidv4();
 
         let listStyles = {
             '--popover-border-radius': '0 0 0.5rem 0.5rem',
@@ -130,30 +131,20 @@ class ExpandDropdown extends React.Component {
                             }
                         >
                             {lists.map((list, index) => (
-                                <DropdownList
-                                    onSelectAction={this.itemSelected}
-                                    items={list.items}
-                                    selectedItems={selectedItems}
-                                    expandIcon={expandIcon}
-                                    listIndex={index}
-                                />
-                            ))}
-                            {/* <DropdownList
-                                onSelectAction={this.itemSelected}
-                                items={items}
-                                selectedItems={selectedItems}
-                                expandIcon={expandIcon}
-                            />
-                            {!!referenceTableFieldsData.length && referenceTableFieldsData.map(refItems => {
-                                return (
-                                    <DropdownList
-                                        onSelectAction={this.itemSelected}
-                                        items={refItems}
-                                        selectedItems={selectedItems}
-                                        expandIcon={expandIcon}
-                                    />
+                                opened && (
+                                    <>
+                                        <DropdownList
+                                            onSelectAction={this.itemSelected}
+                                            items={list.items}
+                                            selectedItems={selectedItems}
+                                            expandIcon={expandIcon}
+                                            listIndex={index}
+                                            autofocus={autofocus}
+                                            key={index + uuidv4().split("-").join("")}
+                                        />
+                                    </>
                                 )
-                            })} */}
+                            ))}
                         </div>
                     </Popover.Content>
                 </Popover>
@@ -211,35 +202,7 @@ class ExpandDropdown extends React.Component {
                                 customSize={12} />
                         </div>
                     </button>
-                    {this.dropdownRef && this.renderItems()}
-                    
-                    {/* {this.dropdownRef && 
-                                    <>
-                                        <DropdownList
-                                            dropdownRef={this.dropdownRef}
-                                            onDropdownClicked={this.dropdownClicked}
-                                            opened={opened}
-                                            onOpened={this.props.onOpened}
-                                            ref={(ref) => ReactDOM.findDOMNode(ref) ? this.itemsContainerRef = ReactDOM.findDOMNode(ref).getElementsByClassName("dropdown-items-container")[0] : () => void(0)}
-                                            onSelectAction={this.itemSelected}
-                                            items={items}
-                                            selectedItems={selectedItems}
-                                            expandIcon={expandIcon}
-                                        />
-                                        <DropdownList
-                                            dropdownRef={this.dropdownRef}
-                                            onDropdownClicked={this.dropdownClicked}
-                                            opened={opened}
-                                            appearance={this.itemsContainerRef ? {"left": `${this.itemsContainerRef.offsetWidth}`} : ""}
-                                            onOpened={this.props.onOpened}
-                                            // ref={(ref) => ReactDOM.findDOMNode(ref) ? this.itemsContainerRef = ReactDOM.findDOMNode(ref).getElementsByClassName("dropdown-items-container")[0] : () => void(0)}
-                                            onSelectAction={this.itemSelected}
-                                            items={items}
-                                            selectedItems={selectedItems}
-                                            expandIcon={expandIcon}
-                                        />
-                                    </>
-                                        } */}
+                    {(this.dropdownRef && this.state.opened) && this.renderItems({autofocus: true})}
                 </div>
             </>
         )
