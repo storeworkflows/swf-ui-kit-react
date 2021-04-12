@@ -201,7 +201,6 @@ const _getValue = (value, operator, editor) => {
         if (isReferenceField) {
             let dropdownFields = [{items: getDropdownFieldsItems({tableFields: tableFields, index: fieldsDataID, listIndex: 0})}];
             let fieldsData = {[fieldsDataID]: tableFields}
-            console.log
             let nextData = tableFields[referenceField[0]];
             referenceField = referenceField.reverse();
             referenceField.pop();

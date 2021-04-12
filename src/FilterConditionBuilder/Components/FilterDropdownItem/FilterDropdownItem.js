@@ -29,7 +29,7 @@ export default class FilterDropdownItem extends React.Component {
                 <div className="dropdown-item__label">
                     {column.label}
                 </div>
-                {!!column.reference && <div className="dropdown-item__reference-icon">
+                {!!column.type === "reference" && <div className="dropdown-item__reference-icon">
                     <Icon icon={isItemActive ?  "arrow-right-circle-fill" : "arrow-right-circle"} size="sm" color={isItemActive && "rgb(23,100,82)"} />
                 </div>}
             </div>
