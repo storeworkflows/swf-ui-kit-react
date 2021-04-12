@@ -254,6 +254,8 @@ class LookupField extends React.Component {
 
         const hasValue = Boolean(referenceRecord.sysId);
 
+        const showDeleteButton = !isList && hasValue && !readonly;
+
         return (
             visible ?
             <>
@@ -273,7 +275,7 @@ class LookupField extends React.Component {
                         message={message}
                     >
                         {isList && this.renderListPills()}
-                        {!isList && hasValue && <Input.End><Button icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/></Input.End>}
+                        <Input.End>{showDeleteButton && <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/>}</Input.End>
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover
