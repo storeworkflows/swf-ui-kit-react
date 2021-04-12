@@ -13,7 +13,7 @@ export default class PopoverContent extends React.Component {
             <div className="filter-templates">
                 <div className="popover-header">
                     <p className="header-title">All filters</p>
-                    <Input name="filterSearch" value={inputValue} onInput={(e) => onSearch({value: e.target.value})} placeholder="Search for Filter" step="any" />
+                    <Input autofocus={true} name="filterSearch" value={inputValue} onInput={(e) => onSearch({value: e.target.value})} placeholder="Search for Filter" step="any" />
                 </div>
                 {filterList.length > 0 ? <div className="filter-list">
                     {filterList.map(filterInfo => (
