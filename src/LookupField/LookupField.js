@@ -252,6 +252,8 @@ class LookupField extends React.Component {
 
         const isList = type === "glide_list";
 
+        const hasValue = Boolean(referenceRecord.sysId);
+
         return (
             visible ?
             <>
@@ -271,7 +273,7 @@ class LookupField extends React.Component {
                         message={message}
                     >
                         {isList && this.renderListPills()}
-                        {!isList && referenceRecord.value && <Input.End><Button icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/></Input.End>}
+                        {!isList && hasValue && <Input.End><Button icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/></Input.End>}
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover
