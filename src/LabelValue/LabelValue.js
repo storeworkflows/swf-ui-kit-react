@@ -76,6 +76,8 @@ LabelValue.Value = createSubComponent("Value");
 
 LabelValue.defaultProps = {
     className: {},
+    labelClassName: {},
+    valueClassName: {},
     inline: false,
     onClick: () => void 0,
     importantLabel: true,
@@ -84,9 +86,9 @@ LabelValue.defaultProps = {
 
 LabelValue.propTypes = {
     label: propTypes.string,
-    className: propTypes.object,
-    labelClassName: propTypes.object,
-    valueClassName: propTypes.string,
+    className: propTypes.oneOfType([propTypes.string, propTypes.object]),
+    labelClassName: propTypes.oneOfType([propTypes.string, propTypes.object]),
+    valueClassName: propTypes.oneOfType([propTypes.string, propTypes.object]),
     onClick: propTypes.func,
     inline: propTypes.bool,
     value: propTypes.string,
