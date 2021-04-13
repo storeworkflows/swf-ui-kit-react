@@ -1,6 +1,7 @@
 import classnames from "classnames";
 import { v4 as uuidv4 } from 'uuid';
 import propTypes from "prop-types";
+import ReactDOM from "react-dom";
 import * as React from "react";
 
 import {calculateScroll, getItemById} from "./utils";
@@ -45,11 +46,12 @@ class ExpandDropdown extends React.Component {
     }
 
     itemSelected({id, dropdownClicked, listIndex}){
-        const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem, lists} = this.props;
+        const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem} = this.props;
 
-        let items = lists[listIndex].items;
+        let items = this.props.lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
         const currentSelectedIds = this.state.selectedItems;
+        console.log(currentSelectedIds)
         
         updateSelectedItem({item, command: "push"})
         if (selectedItem.items) {
@@ -135,6 +137,7 @@ class ExpandDropdown extends React.Component {
                                             listIndex={index}
                                             autofocus={autofocus}
                                             key={index + uuidv4().split("-").join("")}
+                                            // ref={elem => ReactDOM.findDOMNode(elem).scrollIntoView()}
                                         />
                                     </>
                                 )

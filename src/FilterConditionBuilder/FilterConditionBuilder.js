@@ -32,6 +32,7 @@ export default class FilterCondition extends React.Component {
             isFilterSaved: false,
             queryToSave: '',
             labelArr: [],
+            selectedItems: [],
             alertData: {
                 active: false,
                 positive: true
@@ -232,7 +233,9 @@ export default class FilterCondition extends React.Component {
                 breadcrumbItem.label = breadcrumbItem.label.trim();
                 breadcrumbsItems.push(breadcrumbItem);
             })
+            console.log(resultQuery)
             if (error) return null;
+            console.log(resultQuery)
 
             onSendQuery(resultQuery);
 
@@ -388,7 +391,8 @@ export default class FilterCondition extends React.Component {
         let globalConditionInArrInd = copyConditionArray.findIndex(cond => cond.id === properGlobalConditionID);
         let currentConditionInArrInd = copyConditionArray[globalConditionInArrInd].relatedConditions.findIndex(cond => cond.id === properCurrentConditionID);
         let currentConditionInArr;
-        let copyConditionOptions
+        let copyConditionOptions;
+        console.log("THIS", value, conditionOption)
         if (currentConditionInArrInd > -1) {
             currentConditionInArr = copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd];
             copyConditionOptions = { ...copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd].conditionOptions };
@@ -421,6 +425,7 @@ export default class FilterCondition extends React.Component {
                 break;
 
         }
+        console.log("setConditionOptions", copyConditionArray);
         this.setState({conditionsArray: copyConditionArray})
     }
 
@@ -434,6 +439,7 @@ export default class FilterCondition extends React.Component {
         const { referenceFieldData, conditionsArray } = this.state;
         let valueFields = result.map(field => ({id: field.sys_id, label: field[referenceFieldData.field.reference_display_field], dropdown: "value"}));
         const copyConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: valueFields, conditionOption: "valueAditionalData", currentConditionID: referenceFieldData.currentConditionID, globalConditionID: referenceFieldData.globalConditionID, conditionsArray});
+        console.log("fetchReferenceDataSuccessed", copyConditionsArray)
         this.setState({conditionsArray: copyConditionsArray})
     }
 
@@ -469,6 +475,8 @@ export default class FilterCondition extends React.Component {
         deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
         let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
 
+        console.log("value", value)
+
         return conditionOptions = {
             ...conditionOptions,
             field: value.value,
@@ -484,6 +492,7 @@ export default class FilterCondition extends React.Component {
     onItemClicked = (item) => {
         const { clickedItem, isReferenceClicked } = item;
         const { labelArr, currentConditionID, globalConditionID, conditionsArray } = this.state;
+        let newConditionsArray;
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -493,18 +502,22 @@ export default class FilterCondition extends React.Component {
         let itemsArr = [];
         itemsArr.push(clickedItem)
         items = {conditionId: currentConditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: itemsArr, label: clickedItem.label, value: clickedItem.id}, firstOperator: clickedItem.firstOperator};
+        console.log("onItemClicked-1", conditionsArray);
         (clickedItem.dropdownClicked) ? (REQUEST_UTILS.fetchTableData({table: clickedItem.table, queryParams})
             .then(res => {
                 items = {...items, result: res.columns};
-                const newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items, globalConditionID, currentConditionID, conditionOption: "fieldsData", conditionsArray});
+                newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items, globalConditionID, currentConditionID, conditionOption: "fieldsData", conditionsArray});
+                console.log("onItemClicked0", newConditionsArray)
                 this.setState({conditionsArray: newConditionsArray})
             })) : noop;
         let condArrClone = GENERAL_UTILS.clone(conditionsArray)
         const globalConditionIndexInArr = condArrClone.findIndex(cond => cond.id === globalConditionID);
         
         if (!clickedItem.dropdownClicked) {
-            let newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID, conditionOption: "field", conditionsArray})
-            this.setState({conditionsArray: newConditionsArray}, () => this.setConditionOptions({value: clickedItem.firstOperator, conditionOption: "operator", currentConditionID, globalConditionID}))
+            newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID, conditionOption: "field", conditionsArray})
+            console.log("onItemClicked1", newConditionsArray)
+            this.setState({conditionsArray: newConditionsArray})
+            // , () => this.setConditionOptions({value: clickedItem.firstOperator, conditionOption: "operator", currentConditionID, globalConditionID})
         }
     }
 
@@ -578,7 +591,6 @@ export default class FilterCondition extends React.Component {
         this.runButtonClicked({type: "save"})
     }
 
-
     render() {
         const {
             isFilterOpened,
@@ -593,6 +605,8 @@ export default class FilterCondition extends React.Component {
             filterList
         } = this.state;
         const { table, user } = this.props;
+    console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
+
         return (
             <>
                 <div className="collapsed-filter-header">

@@ -9,7 +9,8 @@ export const CONDITION_OPTIONS_UTILS = {
         let globalConditionInArrInd = copyConditionArray.findIndex(cond => cond.id === properGlobalConditionID);
         let currentConditionInArrInd = copyConditionArray[globalConditionInArrInd].relatedConditions.findIndex(cond => cond.id === properCurrentConditionID);
         let currentConditionInArr;
-        let copyConditionOptions
+        let copyConditionOptions;
+        console.log("UTILS", value, conditionOption)
         if (currentConditionInArrInd > -1) {
             currentConditionInArr = copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd];
             copyConditionOptions = { ...copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd].conditionOptions };
@@ -30,6 +31,7 @@ export const CONDITION_OPTIONS_UTILS = {
                 break;
             case "fieldsData":
                 currentConditionInArr.conditionOptions = this.setConditionOptionsFieldData({conditionOptions: copyConditionOptions, value});
+                console.log(currentConditionInArr)
                 break;
             case "operator":
                 currentConditionInArr.conditionOptions = this.setConditionOptionsOperator({value, conditionOptions: copyConditionOptions, properCurrentConditionID, properGlobalConditionID})

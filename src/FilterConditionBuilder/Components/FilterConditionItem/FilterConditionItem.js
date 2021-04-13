@@ -151,6 +151,7 @@ export default class FilterConditionItem extends React.Component {
     updateSelectedItem = ({item, command, listIndex}) => {
         const { setConditionOptions } = this.props;
         const items = this.state.selectedItem ? GENERAL_UTILS.clone(this.state.selectedItem.items) : [];
+        console.log(command)
         if (command === "push") {
             items.push(item);
             this.setState({selectedItem: {
