@@ -24,8 +24,6 @@ class TextLink extends React.Component {
             { "underline": underline }
         )
 
-        console.log(openWindows ? "_blank" : "_self")
-
         return (
                 <a href={href}
                    download={download}
