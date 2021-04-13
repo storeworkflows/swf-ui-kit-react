@@ -51,7 +51,6 @@ class ExpandDropdown extends React.Component {
         let items = this.props.lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
         const currentSelectedIds = this.state.selectedItems;
-        console.log(currentSelectedIds)
         
         updateSelectedItem({item, command: "push"})
         if (selectedItem.items) {

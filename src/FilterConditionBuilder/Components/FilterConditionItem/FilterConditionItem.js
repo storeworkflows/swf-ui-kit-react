@@ -151,7 +151,7 @@ export default class FilterConditionItem extends React.Component {
     updateSelectedItem = ({item, command, listIndex}) => {
         const { setConditionOptions } = this.props;
         const items = this.state.selectedItem ? GENERAL_UTILS.clone(this.state.selectedItem.items) : [];
-        console.log(command)
+
         if (command === "push") {
             items.push(item);
             this.setState({selectedItem: {
@@ -225,7 +225,6 @@ export default class FilterConditionItem extends React.Component {
 
         const { dropdownsIsActive } = this.state; 
         const isBtnsRender = (!!conditionObj.conditionOptions.value || conditionObj.conditionOptions.operator.editor === "none");
-        console.log()
         return (
             <div className="condition-wrapper" onClick={() => getConditionsIDs({currentConditionID: conditionID, globalConditionID})}>
                 {
@@ -234,7 +233,7 @@ export default class FilterConditionItem extends React.Component {
                 <div className="dropdown-container">
                     <ExpandDropdown
                         expandIcon="arrow-right-circle"
-                        selectedItem={conditionObj.conditionOptions.fieldItems}
+                        selectedItem={this.state.selectedItem}
                         selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items.map(item => item.id) : []}
                         updateSelectedItem={this.updateSelectedItem}
                         onItemSelected={(item) => this.props.onItemClicked(item)}

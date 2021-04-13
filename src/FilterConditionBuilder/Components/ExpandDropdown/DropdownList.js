@@ -54,7 +54,7 @@ export default class DropdownList extends React.Component {
                                         id={id}
                                         label={label}
                                         disabled={this.props.disabled || disabled}
-                                        isSelected={selectedItems[listIndex] === id}
+                                        isSelected={selectedItems.includes(id)}
                                         expandIcon={expandIcon}
                                         reference={reference === "true"}
                                         listIndex={listIndex}
