@@ -12,11 +12,11 @@ export const DATA_UTILS = {
 
             if (tableFields[key].operators) {
                 if (blockFields && blockFields.length) {
-                    !blockFields.find(name => tableFields[key].name === name) && dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference || '' });
+                    !blockFields.find(name => tableFields[key].name === name) && dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference, firstOperator:  {operator: tableFields[key].operators[0].operator, editor: tableFields[key].operators[0].advancedEditor} || '' });
                 } else if (allowFileds && allowFileds.length) {
-                    allowFileds.find(name => tableFields[key].name === name) && dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference || '' });
+                    allowFileds.find(name => tableFields[key].name === name) && dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference, firstOperator:  {operator: tableFields[key].operators[0].operator, editor: tableFields[key].operators[0].advancedEditor} || '' });
                 } else {
-                    dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, listIndex, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference || '' });
+                    dropdownFields.push({ id: tableFields[key].name, label: `${tableFields[key].label}`, dropdown: 'field', index, listIndex, reference: `${tableFields[key].type === 'reference'}`, table: tableFields[key].reference, firstOperator:  {operator: tableFields[key].operators[0].operator, editor: tableFields[key].operators[0].advancedEditor} || '' });
                 }
 
             }
@@ -28,7 +28,6 @@ export const DATA_UTILS = {
                 dropdownFields[index].label = `${field.label} (${field.id})`;
             }
         });
-
         return dropdownFields;
     },
     getValueAdditionalData: ({ tableFields, editor, field, globalID, currentID }) => {

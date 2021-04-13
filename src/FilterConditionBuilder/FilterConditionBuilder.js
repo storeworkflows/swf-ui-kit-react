@@ -468,6 +468,7 @@ export default class FilterCondition extends React.Component {
         deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
         deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
         let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
+
         return conditionOptions = {
             ...conditionOptions,
             field: value.value,
@@ -483,7 +484,6 @@ export default class FilterCondition extends React.Component {
     onItemClicked = (item) => {
         const { clickedItem, isReferenceClicked } = item;
         const { labelArr, currentConditionID, globalConditionID, conditionsArray } = this.state;
-
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -492,7 +492,7 @@ export default class FilterCondition extends React.Component {
         let items = {};
         let itemsArr = [];
         itemsArr.push(clickedItem)
-        items = {conditionId: currentConditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: itemsArr, label: clickedItem.label, value: clickedItem.id}};
+        items = {conditionId: currentConditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: itemsArr, label: clickedItem.label, value: clickedItem.id}, firstOperator: clickedItem.firstOperator};
         (clickedItem.dropdownClicked) ? (REQUEST_UTILS.fetchTableData({table: clickedItem.table, queryParams})
             .then(res => {
                 items = {...items, result: res.columns};
@@ -503,8 +503,8 @@ export default class FilterCondition extends React.Component {
         const globalConditionIndexInArr = condArrClone.findIndex(cond => cond.id === globalConditionID);
         
         if (!clickedItem.dropdownClicked) {
-            const newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID, conditionOption: "field", conditionsArray})
-            this.setState({conditionsArray: newConditionsArray})
+            let newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID, conditionOption: "field", conditionsArray})
+            this.setState({conditionsArray: newConditionsArray}, () => this.setConditionOptions({value: clickedItem.firstOperator, conditionOption: "operator", currentConditionID, globalConditionID}))
         }
     }
 
@@ -593,9 +593,6 @@ export default class FilterCondition extends React.Component {
             filterList
         } = this.state;
         const { table, user } = this.props;
-        const { columns } = tableFields;
-        let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
-        columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})));
         return (
             <>
                 <div className="collapsed-filter-header">

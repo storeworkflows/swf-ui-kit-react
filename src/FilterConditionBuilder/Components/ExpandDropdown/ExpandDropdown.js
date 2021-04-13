@@ -45,9 +45,9 @@ class ExpandDropdown extends React.Component {
     }
 
     itemSelected({id, dropdownClicked, listIndex}){
-        const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem} = this.props;
+        const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem, lists} = this.props;
 
-        let items = this.props.lists[listIndex].items;
+        let items = lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
         const currentSelectedIds = this.state.selectedItems;
         
