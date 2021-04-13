@@ -1,12 +1,11 @@
+import propTypes from "prop-types";
 import * as React from "react";
-import { Button } from "../../../index";
+
 import ExpandDropdown from "../ExpandDropdown/ExpandDropdown";
 import Dropdown from "../../../Dropdown/Dropdown"
-import propTypes from "prop-types";
-import FilterDropdown from "../FilterDropdown/FilterDropdown";
+import { GENERAL_UTILS } from "../../utils";
 import { inputValue } from "./_inputValue";
-import { v4 as uuidv4 } from "uuid";
-import { clone } from "../../utils/utils";
+import { Button } from "../../../index";
 
 
 export default class FilterConditionItem extends React.Component {
@@ -27,20 +26,6 @@ export default class FilterConditionItem extends React.Component {
         }
     }
 
-    // fetchTableData = async (table) => {
-    //     const endpoint = `${window.location.origin}/api/now/ui/meta/${table}`; //dev78490.service-now.com/
-    //     const queryParams = {
-    //         sysparm_operators: true,
-    //         sysparm_get_extended_tables: true,
-    //         sysparm_keywords: true
-    //     };
-    //     const query = prepareQueryParams(queryParams);
-    //     const url = `${endpoint}?${query}`
-    //     const params = {
-    //         method: "GET"
-    //     }
-    //     return await fetchRequest({url, params})
-    // }
     componentDidUpdate(prevProps) {
         if (JSON.stringify(prevProps) !== JSON.stringify(this.props))
             this.fetchTableData();
@@ -165,7 +150,7 @@ export default class FilterConditionItem extends React.Component {
 
     updateSelectedItem = ({item, command, listIndex}) => {
         const { setConditionOptions } = this.props;
-        const items = this.state.selectedItem ? clone(this.state.selectedItem.items) : [];
+        const items = this.state.selectedItem ? GENERAL_UTILS.clone(this.state.selectedItem.items) : [];
         if (command === "push") {
             items.push(item);
             this.setState({selectedItem: {
@@ -232,31 +217,24 @@ export default class FilterConditionItem extends React.Component {
         const {
             operatorType,
             conditionObj,
-            tableFields,
-            referenceTableFieldsData,
-            labelArr,
-            operatorArr,
             getConditionsIDs,
             conditionID,
             globalConditionID,
-            getClickedListIndex
         } = this.props;
 
-        // conditionObj.conditionOptions.operatorsArray = operatorArr.map(operator => ({...operator, id: uuidv4().split("-").join("")}));
-        const { columns } = tableFields;
-        const columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0).map(column => ({...column, id: column.name, reference: column.reference || ""}));
+        const { dropdownsIsActive } = this.state; 
+
         return (
             <div className="condition-wrapper" onClick={() => getConditionsIDs({currentConditionID: conditionID, globalConditionID})}>
                 {
 					operatorType === '^OR' ? <span className="condition-operator">OR</span> : ''
 			
                 }
-                {console.log(conditionObj.conditionOptions.fieldsDropdownData)}
                 <div className="dropdown-container">
                     <ExpandDropdown
                         expandIcon="arrow-right-circle"
-                        selectedItem={this.state.selectedItem}
-                        selectedItems={conditionObj.conditionOptions.activeField}
+                        selectedItem={conditionObj.conditionOptions.fieldItems}
+                        selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items.map(item => item.id) : []}
                         updateSelectedItem={this.updateSelectedItem}
                         onItemSelected={(item) => this.props.onItemClicked(item)}
                         placeholder={"--choose field--"}
@@ -264,25 +242,17 @@ export default class FilterConditionItem extends React.Component {
                     />
                 </div>
                 <div className="dropdown-container">
-                    {/* <ExpandDropdown
-                        expandIcon="arrow-right-circle"
-                        // selectedItem={this.state.selectedItem}
-                        selectedItems={conditionObj.conditionOptions.activeField}
-                        updateSelectedItem={(item) => this.itemClicked(item.clickedItem)}
-                        onItemSelected={(item) => this.props.onItemClicked(item)}
-                        placeholder={"--choose field--"}
-                        lists={[conditionObj.conditionOptions.operatorsArray]}
-                    /> */}
                     <Dropdown
-                        items={!!conditionObj.conditionOptions.operatorsArray ? conditionObj.conditionOptions.operatorsArray : []}
-                        selectedItems={conditionObj.conditionOptions.operator.operator ? [conditionObj.conditionOptions.operator.operator] : []}
+                        items={conditionObj.conditionOptions.operatorsArray}
+                        selectedItems={!conditionObj.conditionOptions.operator.operator ? [""] : [conditionObj.conditionOptions.operator.operator]}
                         onItemSelected={(item) => this.itemClicked(item.clickedItem)}
                         select="single"
                         search="contains"
                         placeholder={"--choose operator--"}
                         variant="tertiary"
                         size="md"
-                        disabled={!conditionObj.conditionOptions.operatorsArray}
+                        disabled={!dropdownsIsActive.operation}
+                        manageSelectedItems={true}
                     />
                 </div>
                 {

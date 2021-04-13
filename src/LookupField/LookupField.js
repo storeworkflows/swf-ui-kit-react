@@ -3,7 +3,7 @@ import propTypes from "prop-types";
 import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
 import {query} from "./datasource";
 import _ from "lodash";
-import {Input} from "../index";
+import {Button, Input} from "../index";
 import DeclarativeUIActions from "./DeclarativeUIActions";
 import Result from "./Result";
 import Pill from "../Pill/Pill";
@@ -230,6 +230,16 @@ class LookupField extends React.Component {
         )
     }
 
+    clearValue = () => {
+        this.setState({
+            referenceList: {
+                value: "",
+                displayValue: ""
+            }
+        });
+        this.props.onValueChange(this.props.name, "", "");
+    }
+
     render() {
         const {matchesCount, records, loading, loaded, focused, referenceRecord} = this.state;
 
@@ -242,10 +252,9 @@ class LookupField extends React.Component {
 
         const isList = type === "glide_list";
 
-        let popoverStyles = {
-            'max-height': '20rem',
-            'width': `${this.inputRef?.current?.offsetWidth}px`
-        }
+        const hasValue = Boolean(referenceRecord.sysId);
+
+        const showDeleteButton = !isList && hasValue && !readonly;
 
         return (
             visible ?
@@ -266,10 +275,11 @@ class LookupField extends React.Component {
                         message={message}
                     >
                         {isList && this.renderListPills()}
-                        {/*<Input.End><DeclarativeUIActions declarativeUiActions={declarativeUiActions} record={referenceRecord}/></Input.End>*/}
+                        {!readonly && <Input.End>{showDeleteButton && <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/>}</Input.End> }
                     </Input>
                     {this.inputRef && this.inputRef.current &&
                         <Popover
+                            hideTail={true}
                             hideTail={true}
                             manageOpened={true}
                             opened={showResults}
@@ -278,10 +288,11 @@ class LookupField extends React.Component {
                                 {target: "bottom-center", content: "top-center"},
                                 {target: "top-center", content: "bottom-center"}
                                 ]}
-                            contentStyles={popoverStyles}
+
                         >
+                            {/*style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}*/}
                             <Popover.Content>
-                                <ul className="result">
+                                <ul className="result" style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}>
                                     {loading ? <span className="message">Loading...</span> : null}
                                     {loaded && !hasMatches ? <span className="message">No Results Found</span> : null}
                                     {loaded && <Result records={records} onClick={this.onClick}/>}

@@ -14,7 +14,6 @@ class Loader extends React.Component {
             let parentEl = this.loaderRef.parentElement.parentElement;
             if(parentEl){
                 let styles = getComputedStyle(parentEl)
-                console.log(parentEl.offsetHeight, styles.paddingTop.split('px')[0], styles.paddingBottom.split('px')[0])
                 this.loaderRef.style.minHeight = `${parentEl.offsetHeight - styles.paddingTop.split('px')[0] - styles.paddingBottom.split('px')[0]}px`;
 
             }

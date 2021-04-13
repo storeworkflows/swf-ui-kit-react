@@ -1,8 +1,8 @@
-import * as React from "react";
-import propTypes from "prop-types";
 import classnames from "classnames";
+import propTypes from "prop-types";
+import * as React from "react";
+
 import Icon from "../../../Icon/Icon";
-import ReactDOM from "react-dom";
 
 class DropdownItem extends React.Component {
 

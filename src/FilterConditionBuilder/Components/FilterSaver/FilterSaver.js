@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { fetchGroupList, postFilter } from './Requests';
 import { Input, RadioButtons, Button, Dropdown } from '../../../index';
+import { fetchGroupList, postFilter } from './Requests';
 
 class FilterSaver extends React.Component {
     constructor(props) {
@@ -107,6 +107,7 @@ class FilterSaver extends React.Component {
                         label="Filter title"
                         value={filterTitle}
                         onInput={this.handleInputTitle}
+                        autofocus={true}
                     />
                 </div>
 

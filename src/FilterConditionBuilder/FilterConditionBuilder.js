@@ -1,19 +1,23 @@
 import classnames from "classnames";
 import propTypes from "prop-types";
 import * as React from "react";
-import FilterDropdown from "./Components/FilterDropdown/FilterDropdown";
-import FilterSaver from "./Components/FilterSaver/FilterSaver";
 
-import FilterBreadcrumbs from "./Components/FilterBreadcrumbs/FilterBreadcrumbs";
-
-import { generateID, getDropdownFieldsItems, getOperators, generateCurrentConditionQuery, fetchTableData, fetchRequest, prepareQueryParams, clone, getTrendData, parseConditionValue, getValueAdditionalData } from "./utils/utils"
-
-import { Button } from "../index";
-import Dropdown from "./Components/ExpandDropdown/ExpandDropdown" 
 import FilterConditionItem from "./Components/FilterConditionItem/FilterConditionItem";
+import FilterBreadcrumbs from "./Components/FilterBreadcrumbs/FilterBreadcrumbs";
 import FilterTemplates from "./Components/FilterTemplates/FilterTemplates";
-import fetch from "cross-fetch";
-import FilterDropdownList from "./Components/FilterDropdownList/FilterDropdownList";
+import FilterSaver from "./Components/FilterSaver/FilterSaver";
+import { Button } from "../index";
+import {
+    generateCurrentConditionQuery,
+    parseConditionValueWithRef,
+    getValueAdditionalData,
+    parseConditionValue,
+    getTrendData,
+} from "./utils/utils"
+
+import { REQUEST_UTILS, CONDITION_OPTIONS_UTILS, GENERAL_UTILS, DATA_UTILS } from "./utils";
+
+import { noop } from "../utils"
 
 export default class FilterCondition extends React.Component {
     constructor(props) {
@@ -40,34 +44,28 @@ export default class FilterCondition extends React.Component {
             clickedListIndex: null,
             filterList: [],
         }
-        // this.addNewOperator = this.addNewOperator.bind(this)
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
-        this.parseConditionValue = parseConditionValue.bind(this)
+        this.parseConditionValue = parseConditionValue.bind(this);
+        this.parseConditionValueWithRef = parseConditionValueWithRef.bind(this);
     }
 
-    fetchReferenceTableDataSuccessed = ({result, properties}) => {
-
-    }
-
-    //
     getClickedListIndex = ({index}) => {
         this.setState({clickedListIndex: index});
     }
-    //
 
-    fetchTableDataSuccessed = ({result, properties}) => {
-        let fieldsDataID = generateID();
+    fetchTableDataSuccessed = async ({result, properties}) => {
+        let fieldsDataID = GENERAL_UTILS.generateID();
         const { blockFields, allowFileds } = properties;
         const { query } = this.state;
-        let fieldsDropdownData = getDropdownFieldsItems({ tableFields: result.columns, index: fieldsDataID, blockFields, allowFileds });
+        let fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: result.columns, index: fieldsDataID, blockFields, allowFileds });
         let conditionsArray = [
             {
-                id: generateID(),
+                id: GENERAL_UTILS.generateID(),
                 condition: "",
                 operator: "",
                 relatedConditions: [
                     {
-                        id: generateID() + 1,
+                        id: GENERAL_UTILS.generateID() + 1,
                         condition: "",
                         operator: "",
                         conditionOptions: {
@@ -105,7 +103,7 @@ export default class FilterCondition extends React.Component {
                     break;
                 }
                 conditionsArray[conditionsArray.length - 1].condition = copyQuery.slice(position, operatorPosition);
-                conditionsArray.push({ id: generateID() + operatorPosition, condition: '', operator: '^NQ', relatedConditions: [{ id: generateID() + operatorPosition + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: result.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] })
+                conditionsArray.push({ id: GENERAL_UTILS.generateID() + operatorPosition, condition: '', operator: '^NQ', relatedConditions: [{ id: GENERAL_UTILS.generateID() + operatorPosition + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: result.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] })
                 position = operatorPosition + 3;
             }
             conditionsArray.map((globalCondition) => {
@@ -132,41 +130,40 @@ export default class FilterCondition extends React.Component {
                     }
 
                     if (operatorPosition === copyQuery.indexOf('^OR', position)) {
-                        globalCondition.relatedConditions[globalCondition.relatedConditions.length - 1].relatedConditions.push({ id: generateID() + operatorPosition, condition: '', operator: '^OR' });
+                        globalCondition.relatedConditions[globalCondition.relatedConditions.length - 1].relatedConditions.push({ id: GENERAL_UTILS.generateID() + operatorPosition, condition: '', operator: '^OR' });
                         position = operatorPosition + 3;
                         lastOperator = '^OR';
                     } else {
-                        globalCondition.relatedConditions.push({ id: generateID() + operatorPosition, condition: '', operator: '^', relatedConditions: [] });
+                        globalCondition.relatedConditions.push({ id: GENERAL_UTILS.generateID() + operatorPosition, condition: '', operator: '^', relatedConditions: [] });
                         position = operatorPosition + 1;
                         lastOperator = '^';
                     }
                 }
             })
 
-            let operators = getOperators(result.columns);
-            conditionsArray = conditionsArray.map(globalCond => {
-                globalCond.relatedConditions = globalCond.relatedConditions.map(parentCond => {
-
-                    let params = { condition: parentCond.condition, operators, tableFields: result.columns, globalID: globalCond.id, currentID: parentCond.id }
-                    let conditionOptions = this.parseConditionValue(params);
+            let operators = DATA_UTILS.getOperators({tableFields: result.columns});
+            conditionsArray = await Promise.all(conditionsArray.map(async globalCond => {
+                globalCond.relatedConditions = await Promise.all(globalCond.relatedConditions.map(async parentCond => {
+                    let condition = parentCond.condition.replace("OR", "");
+                    let params = { condition: condition, operators, tableFields: result.columns, globalID: globalCond.id, currentID: parentCond.id }
+                    let conditionOptions = condition.slice(0, condition.indexOf(GENERAL_UTILS.findOperator(condition, operators))).split(".").length > 1 ? await this.parseConditionValueWithRef(params) : this.parseConditionValue(params);
                     parentCond = {
                         ...parentCond,
-                        conditionOptions
+                        conditionOptions,
                     }
 
-                    parentCond.relatedConditions = parentCond.relatedConditions.map(childCond => {
-
+                    parentCond.relatedConditions = await Promise.all(parentCond.relatedConditions.map(async childCond => {
                         let params = { condition: childCond.condition, operators, tableFields: result.columns, globalID: globalCond.id, currentID: childCond.id }
-                        let conditionOptions = this.parseConditionValue(params);
+                        let conditionOptions = childCond.condition.slice(0, childCond.condition.indexOf(GENERAL_UTILS.findOperator(childCond.condition, operators))).split(".").length > 1 ? await this.parseConditionValueWithRef(params) : this.parseConditionValue(params);
                         return {
                             ...childCond,
-                            conditionOptions
+                            conditionOptions,
                         }
-                    })
+                    }))
                     return parentCond;
-                })
+                }))
                 return globalCond;
-            })
+            }))
         }
         this.setState({
             tableFields: result,
@@ -174,16 +171,12 @@ export default class FilterCondition extends React.Component {
         })
     }
 
-    setOperatorsArray = ({result}) => {
-         
-    }
-
     runButtonClicked = ({type}) => {
         switch (type) {
             case "run":
             case "save":
                 const { conditionsArray } = this.state;
-                let copyConditionArray = clone(conditionsArray);
+                let copyConditionArray = GENERAL_UTILS.clone(conditionsArray);
                 copyConditionArray = copyConditionArray.map(globalCond => {
                 globalCond.relatedConditions.map(parentCond => {
                     parentCond.failed = false;
@@ -222,7 +215,6 @@ export default class FilterCondition extends React.Component {
                 } else if (operation === 'run' && !curCondition && !parentCond.conditionOptions.field && conditionsArray.length === 1 && globalCond.relatedConditions.length === 1 && !parentCond.relatedConditions.length) {
                     resultQuery = '';
                 } else {
-                    // dispatch(FILTER_ACTIONS.QUERY_GENERATE.FAILED, { globalConditionID: globalCond.id, currentConditionID: parentCond.id });
                     error = true;
                 }
 
@@ -234,51 +226,50 @@ export default class FilterCondition extends React.Component {
                     if (curCondition) {
                         resultQuery += curCondition;
                     } else {
-                        // dispatch(FILTER_ACTIONS.QUERY_GENERATE.FAILED, { globalConditionID: globalCond.id, currentConditionID: childCond.id });
                         error = true;
                     }
                 })
                 breadcrumbItem.label = breadcrumbItem.label.trim();
                 breadcrumbsItems.push(breadcrumbItem);
             })
-
             if (error) return null;
+
+            onSendQuery(resultQuery);
 
             switch (operation) {
                 case 'run':
-                    this.setState({ breadcrumbsItems })
-                    onSendQuery(resultQuery);
+                    let isBreadcrumbFalse = !!breadcrumbsItems.find(item => !item.label)
+                    !isBreadcrumbFalse ? this.setState({ breadcrumbsItems }) : noop
                     break;
                 case 'save':
-                    console.log("SAVE")
                     this.setState({
                         queryToSave: resultQuery,
                         isSave: !isSave
-                    }, () => console.log(this.state.queryToSave, "queryToSave"));
+                    });
                     break;
             }
         })
     }
 
     async componentDidMount() {
-        // fetchTableData
-        const { table, query } = this.props;
+        const { table, query, user } = this.props;
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
             sysparm_keywords: true
         };
 
-        await fetchTableData(table, queryParams).then(result => {
-            this.fetchTableDataSuccessed({result, properties: this.props})
+        await REQUEST_UTILS.fetchTableData({table, queryParams}).then(async result => {
+            await this.fetchTableDataSuccessed({result, properties: this.props})
         })
         if (!!query)
             this.generateQuery({operation: "run"})
-        this.fetchFilterTemplates();
+        REQUEST_UTILS.fetchFilterTemplates({table, user})
+            .then(res => this.setState({filterList: res}));
     }
 
     isFilterSaved = ({isSaved}) => {
-        this.setState({isFilterSaved: isSaved, isSave: !isSaved})
+        this.setState({isFilterSaved: isSaved, isSave: false});
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -291,12 +282,14 @@ export default class FilterCondition extends React.Component {
                 sysparm_keywords: true
             };
     
-            await fetchTableData(table, queryParams).then(result => {
+            await REQUEST_UTILS.fetchTableData({table, queryParams}).then(result => {
                 this.fetchTableDataSuccessed({result, properties: this.props})
-            })
+            });
         }
         if (this.state.isFilterSaved) {
-            this.fetchFilterTemplates();
+            const { table, user } = this.props;
+            REQUEST_UTILS.fetchFilterTemplates({table, user})
+                .then(res => this.setState({filterList: res}));
             this.setState({isFilterSaved: false})
         }
     }
@@ -305,24 +298,23 @@ export default class FilterCondition extends React.Component {
         const { conditionsArray, tableFields } = this.state;
         const newConditionsArray = conditionsArray;
         const globalConditionIndexInArr = conditionsArray.findIndex(cond => cond.id === globalConditionID)
-        const fieldsDataID = generateID();
+        const fieldsDataID = GENERAL_UTILS.generateID();
         const { blockFields, allowFields } = this.props;
-        const fieldsDropdownData = getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID, blockFields, allowFields });
+        const fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID, blockFields, allowFields });
         switch(value) {
             case "^":
-                newConditionsArray[globalConditionIndexInArr].relatedConditions.push({ id: generateID(), condition: '', operator: value, conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] });
+                newConditionsArray[globalConditionIndexInArr].relatedConditions.push({ id: GENERAL_UTILS.generateID(), condition: '', operator: value, conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] });
                 this.setState({
                     conditionsArray: newConditionsArray
                 })
                 break;
             case '^OR':
                 let currentConditionIndexInArr = newConditionsArray[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-                let parentConditionOptions = { ...newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].conditionOptions };
-                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: generateID(), condition: '', operator: value, conditionOptions: { ...parentConditionOptions, operator: { operator: '', editior: '' }, value: '' } })
+                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: GENERAL_UTILS.generateID(), condition: '', operator: value, conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }})
                 this.setState({conditionsArray: newConditionsArray});
                 break;
             case '^NQ':
-                newConditionsArray.push({id: generateID(), condition: '', operator: value, relatedConditions: [{ id: generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }]});
+                newConditionsArray.push({id: GENERAL_UTILS.generateID(), condition: '', operator: value, relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }]});
                 this.setState({conditionsArray: newConditionsArray})
             }
     }
@@ -330,18 +322,17 @@ export default class FilterCondition extends React.Component {
     clearAll = ({value}) => {
         if (value === "delete-filter") {
             const { tableFields } = this.state;
-            const fieldsDataID = generateID();
+            const fieldsDataID = GENERAL_UTILS.generateID();
             const { blockFields, allowFileds } = this.props;
-            const fieldsDropdownData = getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID, blockFields, allowFileds });
+            const fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID, blockFields, allowFileds });
             this.setState({
-                conditionsArray: [{ id: generateID(), condition: '', operator: '', relatedConditions: [{ id: generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }],
+                conditionsArray: [{ id: GENERAL_UTILS.generateID(), condition: '', operator: '', relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }],
                 isSave: false,
                 breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]
             })
         }
     }
 
-//
     setConditionOptionsOperator = ({value, conditionOptions}) => {
         const { activeField, activeFieldsData } = conditionOptions;
         const { currentConditionID, globalConditionID } = this.state;
@@ -359,7 +350,6 @@ export default class FilterCondition extends React.Component {
 
     setConditionOptionsValue = ({value, conditionOptions, conditionOption}) => {
         const { editor } = conditionOptions.operator;
-        console.log(value)
         switch (editor) {
             case 'choice_multiple':
             case 'textarea':
@@ -376,7 +366,7 @@ export default class FilterCondition extends React.Component {
                 return conditionOptions;
             case 'trend_field':
                 if (value.index == 1) {
-                    conditionOptions.valueAdditionalData = getTrendData(value.value);
+                    conditionOptions.valueAdditionalData = DATA_UTILS.getTrendData(value.value);
                 }
                 if (!conditionOptions.value) {
                     conditionOptions.value = {};
@@ -394,7 +384,7 @@ export default class FilterCondition extends React.Component {
 
         const properCurrentConditionID = currentConditionID ? currentConditionID : this.state.currentConditionID;
         const properGlobalConditionID = globalConditionID ? globalConditionID : this.state.globalConditionID;
-        let copyConditionArray = clone(conditionsArray);
+        let copyConditionArray = GENERAL_UTILS.clone(conditionsArray);
         let globalConditionInArrInd = copyConditionArray.findIndex(cond => cond.id === properGlobalConditionID);
         let currentConditionInArrInd = copyConditionArray[globalConditionInArrInd].relatedConditions.findIndex(cond => cond.id === properCurrentConditionID);
         let currentConditionInArr;
@@ -415,7 +405,7 @@ export default class FilterCondition extends React.Component {
         }
         switch (conditionOption) {
             case "field":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsField({conditionOptions: copyConditionOptions, value}); // nenada
+                currentConditionInArr.conditionOptions = this.setConditionOptionsField({conditionOptions: copyConditionOptions, value});
                 break;
             case "fieldsData":
                 currentConditionInArr.conditionOptions = this.setConditionOptionsFieldData({conditionOptions: copyConditionOptions, value});
@@ -424,7 +414,6 @@ export default class FilterCondition extends React.Component {
                 currentConditionInArr.conditionOptions = this.setConditionOptionsOperator({value, conditionOptions: copyConditionOptions, properCurrentConditionID, properGlobalConditionID})
                 break;
             case "value":
-                console.log(value)
                 currentConditionInArr.conditionOptions = this.setConditionOptionsValue({value, conditionOptions: copyConditionOptions, conditionOption});
                 break;
             case "valueAditionalData":
@@ -440,28 +429,18 @@ export default class FilterCondition extends React.Component {
 
         return conditionOptions;
     }
-    
-    fetchReferenceData = async (table, queryParams) => {
-        const endpoint = `${window.location.origin}/api/now/table/${table}`; //dev78490.service-now.com/
-    
-        const query = queryParams ? prepareQueryParams(queryParams) : "";
-        const url = `${endpoint}?${query}`;
-        const params = {
-            method: "GET"
-        }
-        return await fetchRequest({url, params})
-    }
 
     fetchReferenceDataSuccessed = (result) => {
-        const { referenceFieldData } = this.state;
+        const { referenceFieldData, conditionsArray } = this.state;
         let valueFields = result.map(field => ({id: field.sys_id, label: field[referenceFieldData.field.reference_display_field], dropdown: "value"}));
-        this.setConditionOptions({value: valueFields, conditionOption: "valueAditionalData", currentConditionID: referenceFieldData.currentConditionID, globalConditionID: referenceFieldData.globalConditionID});
+        const copyConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: valueFields, conditionOption: "valueAditionalData", currentConditionID: referenceFieldData.currentConditionID, globalConditionID: referenceFieldData.globalConditionID, conditionsArray});
+        this.setState({conditionsArray: copyConditionsArray})
     }
 
 
     setConditionOptionsFieldData = ({conditionOptions, value}) => {
-        const fieldsDataID = generateID();
-        const newFieldsDropdownData = getDropdownFieldsItems({tableFields: value.result, index: fieldsDataID});
+        const fieldsDataID = GENERAL_UTILS.generateID();
+        const newFieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({tableFields: value.result, index: fieldsDataID});
         if (value.listIndex < conditionOptions.fieldsDropdownData.length - 1) {
             let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(value.listIndex + 1);
             deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
@@ -474,13 +453,11 @@ export default class FilterCondition extends React.Component {
         return conditionOptions;
     } 
 
-// 
 
     getConditionsIDs = ({currentConditionID, globalConditionID}) => {
         this.setState({currentConditionID, globalConditionID})
     } 
-
-// 
+ 
 
     setConditionOptionsField = ({conditionOptions, value}) => {
         const { fieldsData } = conditionOptions;
@@ -506,7 +483,7 @@ export default class FilterCondition extends React.Component {
     onItemClicked = (item) => {
         const { clickedItem, isReferenceClicked } = item;
         const { labelArr, currentConditionID, globalConditionID, conditionsArray } = this.state;
-        
+
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -516,39 +493,19 @@ export default class FilterCondition extends React.Component {
         let itemsArr = [];
         itemsArr.push(clickedItem)
         items = {conditionId: currentConditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: itemsArr, label: clickedItem.label, value: clickedItem.id}};
-        (clickedItem.dropdownClicked) ? (fetchTableData(clickedItem.table, queryParams)
+        (clickedItem.dropdownClicked) ? (REQUEST_UTILS.fetchTableData({table: clickedItem.table, queryParams})
             .then(res => {
                 items = {...items, result: res.columns};
-                this.setConditionOptions({value: items, globalConditionID, currentConditionID, conditionOption: "fieldsData"})
-            })) : () => void(0)
-        let condArrClone = clone(conditionsArray)
+                const newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items, globalConditionID, currentConditionID, conditionOption: "fieldsData", conditionsArray});
+                this.setState({conditionsArray: newConditionsArray})
+            })) : noop;
+        let condArrClone = GENERAL_UTILS.clone(conditionsArray)
         const globalConditionIndexInArr = condArrClone.findIndex(cond => cond.id === globalConditionID);
         
         if (!clickedItem.dropdownClicked) {
-            this.setConditionOptions({value: items.selectedItems, conditionOption: "field"})
-
+            const newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID, conditionOption: "field", conditionsArray})
+            this.setState({conditionsArray: newConditionsArray})
         }
-        // {setConditionOptions}
-
-
-
-        // let currentCondition = condArrClone.find(globalCondition => globalCondition.id === globalConditionID).relatedConditions.find(currentCondition => currentCondition.id === currentConditionID);
-        // const currentConditionIndexInArr = condArrClone[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-        // if (currentConditionIndexInArr > -1) {
-        //     currentCondition.conditionOptions.fieldItems = items.selectedItems;
-        // } else {
-        //     condArrClone[globalConditionIndexInArr].relatedConditions.forEach((cond) => {
-        //         cond.relatedConditions.forEach((cond) => {
-        //             if (cond.id === currentConditionID) {
-        //                 cond.conditionOptions.fieldItems = items.selectedItems;
-        //             }
-        //         })
-        //     })
-        // }
-        // this.setState({conditionsArray: condArrClone})
-        // console.log(newCondArr, conditionsArray)
-        
-        
     }
 
     breadcrumbItemClicked = ({data, operation}) => {
@@ -561,7 +518,6 @@ export default class FilterCondition extends React.Component {
                 this.deleteCondition({currentConditionID: data.conditionId, globalConditionID: data.globalConditionId});
                 break;
             case "remove-subsequent":
-                // let newBreadcrumbsItems = clone(breadcrumbsItems);
                 let deletedItems = (itemIndex === 0) ? breadcrumbsItems.splice(1) : breadcrumbsItems.splice(itemIndex + 1);
                 
                 this.setState({breadcrumbsItems});
@@ -571,12 +527,7 @@ export default class FilterCondition extends React.Component {
         }
     }
 
-    onOperatorClicked = (item) => {
-        console.log(item)
-    }
-
     setQuery = ({query}) => {
-        console.log(query)
         this.setState({query})
     }
 
@@ -611,9 +562,9 @@ export default class FilterCondition extends React.Component {
 
         if (newConditionsArray.length === 1 && path === newConditionsArray) {
             const { tableFields } = this.state;
-            let fieldsDataID = generateID();
-            let fieldsDropdownData = getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID });
-            this.setState({conditionsArray: [{ id: generateID(), condition: '', operator: '', relatedConditions: [{ id: generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }]})
+            let fieldsDataID = GENERAL_UTILS.generateID();
+            let fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID });
+            this.setState({conditionsArray: [{ id: GENERAL_UTILS.generateID(), condition: '', operator: '', relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }]})
         } else {
             path.splice(indexToDelete, 1)
             newConditionsArray.relatedConditions = path
@@ -625,24 +576,6 @@ export default class FilterCondition extends React.Component {
         const { isSave } = this.state;
         this.setState({isSave: !isSave})
         this.runButtonClicked({type: "save"})
-    }
-
-    fetchFilterTemplates = async () => {
-        console.log("ZASHLO")
-        const myHeaders = new Headers();
-        const { table, user } = this.props;
-        myHeaders.append("X-UserToken", window.g_ck);
-        const queryParams = {
-            sysparm_query: `table=${table}^userISEMPTY^ORuser=${user}`,
-            sysparm_fields: "filter,sys_id,sys_name,table,title,user,group"
-        }
-
-        const query = prepareQueryParams(queryParams)
-
-        await fetchRequest({url: `${window.location.origin}/api/now/table/sys_filter?${query}`, params: {
-            method: "GET"
-        }})
-        .then(res => this.setState({filterList: res}))
     }
 
 
@@ -662,8 +595,7 @@ export default class FilterCondition extends React.Component {
         const { table, user } = this.props;
         const { columns } = tableFields;
         let columnsArr = Object.values(columns).sort((a, b) => a.label < b.label ? -1 : 0);
-        columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})))
-        // console.log("%c%s", "color: green", "REACT Filter Condition State", this.state)
+        columnsArr.length && (columnsArr = columnsArr.map(column => ({...column, id: column.name})));
         return (
             <>
                 <div className="collapsed-filter-header">
@@ -775,7 +707,6 @@ export default class FilterCondition extends React.Component {
                                                                 onOperatorClicked={this.onOperatorClicked}
                                                                 setConditionOptions={this.setConditionOptions}
                                                                 fetchReferenceDataSuccessed={this.fetchReferenceDataSuccessed}
-                                                                key={condition.id}
                                                             />
                                                         </div>
                                                     )
@@ -811,7 +742,7 @@ FilterCondition.defaultProps = {
     blockFields: [],
     user: "",
     opened: true,
-    onSendQuery: () => void 0
+    onSendQuery: noop
 }
 
 FilterCondition.propTypes = {

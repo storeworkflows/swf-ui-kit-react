@@ -1,7 +1,6 @@
-import * as React from "react";
 import classnames from "classnames";
+import * as React from "react";
 
-import { Input } from "../../../index";
 import DropdownItem from "./DropdownItem";
 
 export default class DropdownList extends React.Component {
@@ -11,8 +10,14 @@ export default class DropdownList extends React.Component {
             opened: this.props.opened,
             selectedItems: this.props.selectedItems,
             searchValue: "",
-            filteredList: []
+            filteredList: [],
         }
+        this.inputRef = null;
+    }
+
+    componentDidMount() {
+        if (!!this.inputRef)
+            setTimeout(() => this.inputRef.focus(), 100)
     }
 
     onSearch = ({value}) => {
@@ -28,28 +33,30 @@ export default class DropdownList extends React.Component {
         const { searchValue, filteredList } = this.state;
 
         const valueToShow = (!!searchValue && !!filteredList.length) ? filteredList : items;
-
         return (
             <>
                 <div className={classnames({
                     "dropdown-list-container": true,
                     "--not-first": listIndex > 0
                 })}>
-                    <Input placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} />
+                    <div className="swf-form-group">
+                        <div className="input-group">
+                            <input type="text" ref={elem => !this.inputRef ? this.inputRef = elem : () => void 0} className="form-control" autoFocus={true} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} />
+                        </div>
+                    </div>
                     <div className="dropdown-list">
                         {valueToShow.map((item) => {
-                            const {id, label, disabled, table} = item;
-                            
+                            const {id, label, disabled, reference} = item;
                             return (
                                     <DropdownItem
-                                        key = {id}
+                                        key={id + listIndex}
                                         onSelectAction={onSelectAction}
                                         id={id}
                                         label={label}
                                         disabled={this.props.disabled || disabled}
-                                        isSelected={selectedItems.includes(id)}
+                                        isSelected={selectedItems[listIndex] === id}
                                         expandIcon={expandIcon}
-                                        reference={!!table}
+                                        reference={reference === "true"}
                                         listIndex={listIndex}
                                     />
                                 )
