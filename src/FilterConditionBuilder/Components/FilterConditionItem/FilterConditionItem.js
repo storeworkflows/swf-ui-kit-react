@@ -223,12 +223,12 @@ export default class FilterConditionItem extends React.Component {
         } = this.props;
 
         const { dropdownsIsActive } = this.state; 
-
+        const isBtnsRender = (!!conditionObj.conditionOptions.value || conditionObj.conditionOptions.operator.editor === "none");
+        console.log()
         return (
             <div className="condition-wrapper" onClick={() => getConditionsIDs({currentConditionID: conditionID, globalConditionID})}>
                 {
 					operatorType === '^OR' ? <span className="condition-operator">OR</span> : ''
-			
                 }
                 <div className="dropdown-container">
                     <ExpandDropdown
@@ -244,7 +244,7 @@ export default class FilterConditionItem extends React.Component {
                 <div className="dropdown-container">
                     <Dropdown
                         items={conditionObj.conditionOptions.operatorsArray}
-                        selectedItems={!conditionObj.conditionOptions.operator.operator ? [""] : [conditionObj.conditionOptions.operator.operator]}
+                        selectedItems={[conditionObj.conditionOptions.operator.operator]}
                         onItemSelected={(item) => this.itemClicked(item.clickedItem)}
                         select="single"
                         search="contains"
@@ -258,7 +258,7 @@ export default class FilterConditionItem extends React.Component {
                 {
                     inputValue(this.state, conditionObj.conditionOptions, this.itemClicked, this.onDatePickerChange, this.inputValueSet, this.textAreaValueSet)
                 }
-                {operatorType !== "^OR" && <>
+                {(operatorType !== "^OR" && isBtnsRender) && <>
                     <div className="btn-container">
                         <Button label="and" size="md"  onClick={() => {
                             this.props.addNewOperator({value: "^", currentConditionID: this.props.conditionID, globalConditionID: this.props.globalConditionID})
