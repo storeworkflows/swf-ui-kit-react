@@ -13,7 +13,6 @@ class Modal extends React.Component {
         this.expand = this.expand.bind(this);
         this.desktopButtons = this.desktopButtons.bind(this);
         this.mobileButtons = this.mobileButtons.bind(this);
-        this.renderPopover = this.renderPopover.bind(this);
 
         this.state = {
             currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT,
