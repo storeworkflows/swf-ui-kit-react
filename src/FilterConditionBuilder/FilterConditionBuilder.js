@@ -32,7 +32,10 @@ export default class FilterCondition extends React.Component {
             isFilterSaved: false,
             queryToSave: '',
             labelArr: [],
-            selectedItems: [],
+            selectedItem: {
+                items: [],
+                label: ""
+            },
             alertData: {
                 active: false,
                 positive: true
@@ -339,7 +342,7 @@ export default class FilterCondition extends React.Component {
         const { activeField, activeFieldsData } = conditionOptions;
         const { currentConditionID, globalConditionID } = this.state;
         let valueAdditionalData = [];
-        valueAdditionalData = this.getValueAdditionalData({ state: this.state, tableFields: activeFieldsData, editor: value.editor, field: activeField, currentID: currentConditionID, globalID: globalConditionID});
+        valueAdditionalData = activeField ? this.getValueAdditionalData({ state: this.state, tableFields: activeFieldsData, editor: value.editor, field: activeField, currentID: currentConditionID, globalID: globalConditionID}) : [];
         conditionOptions = {
             ...conditionOptions,
             operator: value,
@@ -407,7 +410,7 @@ export default class FilterCondition extends React.Component {
         }
         switch (conditionOption) {
             case "field":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsField({conditionOptions: copyConditionOptions, value});
+                currentConditionInArr.conditionOptions = this.setConditionOptionsField({conditionOptions: copyConditionOptions, value, properCurrentConditionID, properGlobalConditionID});
                 break;
             case "fieldsData":
                 currentConditionInArr.conditionOptions = this.setConditionOptionsFieldData({conditionOptions: copyConditionOptions, value});
@@ -442,6 +445,7 @@ export default class FilterCondition extends React.Component {
 
     setConditionOptionsFieldData = ({conditionOptions, value}) => {
         const fieldsDataID = GENERAL_UTILS.generateID();
+        let copyConditionOptions;
         const newFieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({tableFields: value.result, index: fieldsDataID});
         if (value.listIndex < conditionOptions.fieldsDropdownData.length - 1) {
             let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(value.listIndex + 1);
@@ -451,8 +455,10 @@ export default class FilterCondition extends React.Component {
         conditionOptions.fieldsDropdownData.push({ items: newFieldsDropdownData });
         conditionOptions.fieldsData[fieldsDataID] = value.result;
         conditionOptions.fieldItems = value.selectedItems;
+        copyConditionOptions = conditionOptions;
+        copyConditionOptions = this.setConditionOptionsOperator({value: { operator: '', editor: '' }, conditionOptions: copyConditionOptions});
 
-        return conditionOptions;
+        return copyConditionOptions;
     } 
 
 
@@ -469,48 +475,20 @@ export default class FilterCondition extends React.Component {
         let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(currentValueIndex + 1);
         deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
         deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
-        let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
-
-
-        return conditionOptions = {
+        let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation', editor: operation.advancedEditor }));
+        let copyConditionOptions = {
             ...conditionOptions,
             field: value.value,
             fieldItems: value,
-            operator: { operator: '', editor: '' },
+            operator: { operator: operatorsArray[0].id, editor: operatorsArray[0].editor },
             value: '',
             operatorsArray,
             activeFieldsData: { ...currentFieldsData },
             activeField: currentValue
-        }
-    }
-
-    onItemClicked = (item) => {
-        const { clickedItem, isReferenceClicked } = item;
-        const { labelArr, currentConditionID, globalConditionID, conditionsArray } = this.state;
-        let newConditionsArray;
-        const queryParams = {
-            sysparm_operators: true,
-            sysparm_get_extended_tables: true,
-            sysparm_keywords: true
         };
-        let items = {};
-        let itemsArr = [];
-        itemsArr.push(clickedItem)
-        items = {conditionId: currentConditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: itemsArr, label: clickedItem.label, value: clickedItem.id}, firstOperator: clickedItem.firstOperator};
-        (clickedItem.dropdownClicked) ? (REQUEST_UTILS.fetchTableData({table: clickedItem.table, queryParams})
-            .then(res => {
-                items = {...items, result: res.columns};
-                newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items, globalConditionID, currentConditionID, conditionOption: "fieldsData", conditionsArray});
-                this.setState({conditionsArray: newConditionsArray})
-            })) : noop;
-        let condArrClone = GENERAL_UTILS.clone(conditionsArray)
-        const globalConditionIndexInArr = condArrClone.findIndex(cond => cond.id === globalConditionID);
-        
-        if (!clickedItem.dropdownClicked) {
-            newConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID, conditionOption: "field", conditionsArray})
-            this.setState({conditionsArray: newConditionsArray}, () => this.setConditionOptions({value: clickedItem.firstOperator, conditionOption: "operator", currentConditionID, globalConditionID}))
-            // , () => this.setConditionOptions({value: clickedItem.firstOperator, conditionOption: "operator", currentConditionID, globalConditionID})
-        }
+        copyConditionOptions = this.setConditionOptionsOperator({value: { operator: operatorsArray[0].id, editor: operatorsArray[0].editor }, conditionOptions: copyConditionOptions});
+
+        return copyConditionOptions;
     }
 
     breadcrumbItemClicked = ({data, operation}) => {
@@ -597,7 +575,6 @@ export default class FilterCondition extends React.Component {
             filterList
         } = this.state;
         const { table, user } = this.props;
-    console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
 
         return (
             <>
@@ -701,7 +678,6 @@ export default class FilterCondition extends React.Component {
                                                                 operatorType={condition.operator}
                                                                 addNewOperator={this.addNewOperator}
                                                                 deleteCondition={this.deleteCondition}
-                                                                onItemClicked={this.onItemClicked}
                                                                 referenceTableFieldsData={referenceTableFieldsData}
                                                                 labelArr={labelArr}
                                                                 operatorArr={operatorArr}
@@ -710,6 +686,7 @@ export default class FilterCondition extends React.Component {
                                                                 onOperatorClicked={this.onOperatorClicked}
                                                                 setConditionOptions={this.setConditionOptions}
                                                                 fetchReferenceDataSuccessed={this.fetchReferenceDataSuccessed}
+                                                                selectedItem={condition.conditionOptions.fieldItems}
                                                             />
                                                         </div>
                                                     )

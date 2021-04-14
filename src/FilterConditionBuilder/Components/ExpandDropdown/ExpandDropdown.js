@@ -157,7 +157,7 @@ class ExpandDropdown extends React.Component {
         } = this.props;
 
         const {selectedItems, opened} = this.state;
-        let hasSelected = selectedItems && (selectedItems.length > 0 );
+        let hasSelected = selectedItems && (selectedItems.length > 0 ) && !!selectedItem.label;
         let hasLabel = hasSelected || placeholder;
 
         let buttonClasses = classnames({
