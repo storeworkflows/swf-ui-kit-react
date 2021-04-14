@@ -9,7 +9,8 @@ export const CONDITION_OPTIONS_UTILS = {
         let globalConditionInArrInd = copyConditionArray.findIndex(cond => cond.id === properGlobalConditionID);
         let currentConditionInArrInd = copyConditionArray[globalConditionInArrInd].relatedConditions.findIndex(cond => cond.id === properCurrentConditionID);
         let currentConditionInArr;
-        let copyConditionOptions
+        let copyConditionOptions;
+
         if (currentConditionInArrInd > -1) {
             currentConditionInArr = copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd];
             copyConditionOptions = { ...copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd].conditionOptions };
@@ -52,12 +53,13 @@ export const CONDITION_OPTIONS_UTILS = {
         let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(currentValueIndex + 1);
         deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
         deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
-        let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
+        let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation', editor: operation.advancedEditor }));
+
         return conditionOptions = {
             ...conditionOptions,
             field: value.value,
             fieldItems: value,
-            operator: { operator: '', editor: '' },
+            operator: { operator: operatorsArray[0].id, editor: operatorsArray[0].editor },
             value: '',
             operatorsArray,
             activeFieldsData: { ...currentFieldsData },
