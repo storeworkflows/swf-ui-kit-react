@@ -118,7 +118,7 @@
 
     &.--desktop-content {
       grid-template-areas:
-            ". main-buttons"
+            "additional-buttons main-buttons"
             "header-content header-content";
       grid-template-rows: 1.5rem;
     }
