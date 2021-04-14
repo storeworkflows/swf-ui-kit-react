@@ -248,7 +248,7 @@ export default class FilterConditionItem extends React.Component {
                     <ExpandDropdown
                         expandIcon="arrow-right-circle"
                         selectedItem={this.props.selectedItem}
-                        selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items.map(item => item.id) : []}
+                        selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items : []}
                         updateSelectedItem={this.updateSelectedItem}
                         onItemSelected={(item) => this.onItemClicked(item)}
                         placeholder={"--choose field--"}
