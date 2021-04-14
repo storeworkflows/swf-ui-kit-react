@@ -94,10 +94,12 @@ class FilterSaver extends React.Component {
             isAdmin
         } = this.state;
 
+        const { query } = this.props;
+
         const radioValues = !isAdmin ? this.radioOptions : ['Me'];
         const radioOptions = this._getRadioOptions(radioValues);
 
-        const isButtonDisabled = !filterTitle || (radioValue === 'Group' && !groupValue);
+        const isButtonDisabled = !filterTitle || (radioValue === 'Group' && !groupValue) || !query;
 
         return (
             <div className="filter-saver">

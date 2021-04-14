@@ -47,6 +47,8 @@ export default class DropdownList extends React.Component {
                     <div className="dropdown-list">
                         {valueToShow.map((item) => {
                             const {id, label, disabled, reference} = item;
+                            
+
                             return (
                                     <DropdownItem
                                         key={id + listIndex}
@@ -54,10 +56,11 @@ export default class DropdownList extends React.Component {
                                         id={id}
                                         label={label}
                                         disabled={this.props.disabled || disabled}
-                                        isSelected={selectedItems[listIndex] === id}
+                                        isSelected={selectedItems[listIndex] ? selectedItems[listIndex].id === id : false}
                                         expandIcon={expandIcon}
                                         reference={reference === "true"}
                                         listIndex={listIndex}
+                                        isDropdown={selectedItems[listIndex] ? (selectedItems[listIndex].dropdownClicked && selectedItems[listIndex].id === id) : false}
                                     />
                                 )
                         })}

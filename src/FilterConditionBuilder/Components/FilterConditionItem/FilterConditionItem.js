@@ -3,9 +3,10 @@ import * as React from "react";
 
 import ExpandDropdown from "../ExpandDropdown/ExpandDropdown";
 import Dropdown from "../../../Dropdown/Dropdown"
-import { GENERAL_UTILS } from "../../utils";
+import { GENERAL_UTILS, REQUEST_UTILS } from "../../utils";
 import { inputValue } from "./_inputValue";
 import { Button } from "../../../index";
+import { noop } from "../../../utils";
 
 
 export default class FilterConditionItem extends React.Component {
@@ -19,7 +20,9 @@ export default class FilterConditionItem extends React.Component {
                 operation: false,
                 value: false
             },
-            selectedItem: this.props.conditionObj.conditionOptions.fieldItems,
+            selectedItem: {
+                items: []
+            },
             dropdownFields: [],
             operators: [],
             textAreaValue: ""
@@ -57,7 +60,7 @@ export default class FilterConditionItem extends React.Component {
 
     itemClicked = (item) => {
         const { activeField } = this.state;
-        const { conditionID, globalConditionID, setConditionOptions } = this.props;
+        const { setConditionOptions } = this.props;
         if (item.dropdown === "operation") {
             let activeOperator = activeField.operators.find(({ operator }) => operator === item.id)
 
@@ -148,30 +151,42 @@ export default class FilterConditionItem extends React.Component {
         }})
     }
 
+    onItemClicked = (item) => {
+        const { clickedItem } = item;
+        const { setConditionOptions, conditionID, globalConditionID } = this.props
+        const { selectedItem } = this.state;
+        const queryParams = {
+            sysparm_operators: true,
+            sysparm_get_extended_tables: true,
+            sysparm_keywords: true
+        };
+        let items = {};
+        let itemsArr = [];
+        itemsArr.push(clickedItem)
+        items = {conditionId: conditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: selectedItem.items, label: selectedItem.items.map(item => item.label).join(" . "), value: selectedItem.items.map(item => item.id).join(".")}, firstOperator: clickedItem.firstOperator};
+        (clickedItem.dropdownClicked) ? (REQUEST_UTILS.fetchTableData({table: clickedItem.table, queryParams})
+            .then(res => {
+                items = {...items, result: res.columns};
+                setConditionOptions({value: items, globalConditionID, currentConditionID: conditionID, conditionOption: "fieldsData"});
+            })) : noop;
+
+        if (!clickedItem.dropdownClicked) {
+            setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID: conditionID, conditionOption: "field"})
+        }
+    }
+
     updateSelectedItem = ({item, command, listIndex}) => {
-        const { setConditionOptions } = this.props;
-        const items = this.state.selectedItem ? GENERAL_UTILS.clone(this.state.selectedItem.items) : [];
+        const { selectedItem: { items } } = this.state;
+
         if (command === "push") {
             items.push(item);
-            this.setState({selectedItem: {
-                items,
-                label: items.map(item => item.label).join(" . "),
-                value: items.map(item => item.id).join(".")
-            }}, () => setConditionOptions({value: this.state.selectedItem, conditionOption: "field"}));}
-        else if (command === "rewrite") {
-            this.setState({selectedItem: {
-                items: [item],
-                label: item.label,
-                value: item.id
-            }});
+            this.setState({ selectedItem: { items } });
+        } else if (command === "rewrite") {
+            this.setState({ selectedItem: { items: [item] } });
         } else if (command === "same_list_index") {
             items.splice(listIndex, items.length)
             items.push(item);
-            this.setState({selectedItem: {
-                items,
-                label: items.map(item => item.label).join(" . "),
-                value: items.map(item => item.id).join(".")
-            }}, () => setConditionOptions({value: this.state.selectedItem, conditionOption: "field"}));
+            this.setState({ selectedItem: { items } });
         }
     }
 
@@ -224,7 +239,6 @@ export default class FilterConditionItem extends React.Component {
 
         const { dropdownsIsActive } = this.state; 
         const isBtnsRender = (!!conditionObj.conditionOptions.value || conditionObj.conditionOptions.operator.editor === "none");
-        console.log()
         return (
             <div className="condition-wrapper" onClick={() => getConditionsIDs({currentConditionID: conditionID, globalConditionID})}>
                 {
@@ -233,10 +247,10 @@ export default class FilterConditionItem extends React.Component {
                 <div className="dropdown-container">
                     <ExpandDropdown
                         expandIcon="arrow-right-circle"
-                        selectedItem={conditionObj.conditionOptions.fieldItems}
-                        selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items.map(item => item.id) : []}
+                        selectedItem={this.props.selectedItem}
+                        selectedItems={conditionObj.conditionOptions.fieldItems ? conditionObj.conditionOptions.fieldItems.items : []}
                         updateSelectedItem={this.updateSelectedItem}
-                        onItemSelected={(item) => this.props.onItemClicked(item)}
+                        onItemSelected={(item) => this.onItemClicked(item)}
                         placeholder={"--choose field--"}
                         lists={conditionObj.conditionOptions.fieldsDropdownData}
                     />

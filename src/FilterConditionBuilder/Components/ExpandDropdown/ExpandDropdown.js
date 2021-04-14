@@ -1,6 +1,7 @@
 import classnames from "classnames";
 import { v4 as uuidv4 } from 'uuid';
 import propTypes from "prop-types";
+import ReactDOM from "react-dom";
 import * as React from "react";
 
 import {calculateScroll, getItemById} from "./utils";
@@ -45,11 +46,11 @@ class ExpandDropdown extends React.Component {
     }
 
     itemSelected({id, dropdownClicked, listIndex}){
-        const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem, lists} = this.props;
+        const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem} = this.props;
 
-        let items = lists[listIndex].items;
+        let items = this.props.lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
-        const currentSelectedIds = this.state.selectedItems;
+        const currentSelectedIds = this.state.selectedItems.map(item => item.id);
         
         updateSelectedItem({item, command: "push"})
         if (selectedItem.items) {
@@ -92,8 +93,8 @@ class ExpandDropdown extends React.Component {
     }
 
     renderItems({autofocus}) {
-        const {expandIcon, lists} = this.props;
-        const {opened, selectedItems} = this.state;
+        const {expandIcon, lists, selectedItems} = this.props;
+        const {opened} = this.state;
         let key = uuidv4();
 
         let listStyles = {
@@ -135,6 +136,7 @@ class ExpandDropdown extends React.Component {
                                             listIndex={index}
                                             autofocus={autofocus}
                                             key={index + uuidv4().split("-").join("")}
+                                            // ref={elem => ReactDOM.findDOMNode(elem).scrollIntoView()}
                                         />
                                     </>
                                 )
@@ -155,7 +157,7 @@ class ExpandDropdown extends React.Component {
         } = this.props;
 
         const {selectedItems, opened} = this.state;
-        let hasSelected = selectedItems && (selectedItems.length > 0 );
+        let hasSelected = selectedItems && (selectedItems.length > 0 ) && !!selectedItem.label;
         let hasLabel = hasSelected || placeholder;
 
         let buttonClasses = classnames({
@@ -167,7 +169,6 @@ class ExpandDropdown extends React.Component {
             "dropdown-label": true,
             "placeholder": !hasSelected
         })
-
         return (
             <>
                 <div className={"swf-expand-dropdown-container"}
