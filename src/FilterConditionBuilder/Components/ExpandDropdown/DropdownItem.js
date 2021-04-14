@@ -8,13 +8,9 @@ class DropdownItem extends React.Component {
 
     constructor(props) {
         super(props);
-        this.itemSelected = this.itemSelected.bind(this);
-        this.state = {
-            expanded: false
-        }
     }
 
-    itemSelected({dropdownClicked}) {
+    itemSelected = ({dropdownClicked}) => {
         const {id, disabled, onSelectAction, listIndex} = this.props;
 
         if(!disabled)
@@ -30,10 +26,9 @@ class DropdownItem extends React.Component {
             label,
             disabled,
             isSelected,
-            reference
+            reference,
+            isDropdown
         } = this.props;
-
-        const { expanded } = this.state;
 
         return (
             <>
@@ -44,7 +39,6 @@ class DropdownItem extends React.Component {
                })}
                     onClick={(e) => {
                         this.itemSelected({dropdownClicked: false});
-                        this.setState({expanded: false})
                         e.stopPropagation();
                     }}
                     data-key={id}
@@ -52,9 +46,8 @@ class DropdownItem extends React.Component {
                    {label}
                    {(expandIcon && !!reference) && <div onClick={(e) => {
                             this.itemSelected({dropdownClicked: true});
-                            this.setState({expanded: true})
                             e.stopPropagation();
-                       }}><Icon icon={(expanded && isSelected) ? `${expandIcon}-fill` : expandIcon} size="sm" /></div>}
+                       }}><Icon icon={(isDropdown) ? `${expandIcon}-fill` : expandIcon} size="sm" /></div>}
                </div>
             </>
         )

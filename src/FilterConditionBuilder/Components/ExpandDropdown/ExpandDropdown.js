@@ -50,7 +50,7 @@ class ExpandDropdown extends React.Component {
 
         let items = this.props.lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
-        const currentSelectedIds = this.state.selectedItems;
+        const currentSelectedIds = this.state.selectedItems.map(item => item.id);
         
         updateSelectedItem({item, command: "push"})
         if (selectedItem.items) {
@@ -93,8 +93,8 @@ class ExpandDropdown extends React.Component {
     }
 
     renderItems({autofocus}) {
-        const {expandIcon, lists} = this.props;
-        const {opened, selectedItems} = this.state;
+        const {expandIcon, lists, selectedItems} = this.props;
+        const {opened} = this.state;
         let key = uuidv4();
 
         let listStyles = {
@@ -169,7 +169,6 @@ class ExpandDropdown extends React.Component {
             "dropdown-label": true,
             "placeholder": !hasSelected
         })
-
         return (
             <>
                 <div className={"swf-expand-dropdown-container"}
