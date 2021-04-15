@@ -43,7 +43,8 @@ export default class FilterTemplates extends React.Component {
 
         return(
             <div>
-                <div className="popoverTarget" ref={this.findTarget}>
+                <div className="popoverTarget" ref={elm => this.findTarget.current = elm}>
+                    ​​​​​​​​
                     <Button label="Filters" onClick={this.managePopover} ref={e => this.btnRef = e} customStyle={btnStyles} variant="tertiary" />
                 </div>
                 {popoverToogle && popoverTarget && <Popover opened={popoverToogle} positionTarget={{current: popoverTarget}} hideTail={false} positions={[{"target":"bottom-end","content":"top-end"}]}>

@@ -12,7 +12,6 @@ import {
     parseConditionValueWithRef,
     getValueAdditionalData,
     parseConditionValue,
-    getTrendData,
 } from "./utils/utils"
 
 import { REQUEST_UTILS, CONDITION_OPTIONS_UTILS, GENERAL_UTILS, DATA_UTILS } from "./utils";
@@ -426,6 +425,7 @@ export default class FilterCondition extends React.Component {
                 break;
 
         }
+
         this.setState({conditionsArray: copyConditionArray})
     }
 

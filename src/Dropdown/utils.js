@@ -10,7 +10,7 @@ export const  getItemById  = (id, items) => {
 export const getDisplayValue = (selectedItems, items, placeholder) => {
     switch (true){
         case (selectedItems?.length === 1):
-            return getItemById(selectedItems[0], items).label;
+            return getItemById(selectedItems[0], items)?.label;
         case (selectedItems?.length>1):
             return `${selectedItems.length} items selected`;
         case (placeholder !== undefined):

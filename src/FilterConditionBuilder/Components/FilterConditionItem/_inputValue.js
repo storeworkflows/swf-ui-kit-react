@@ -24,6 +24,7 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
                         placeholder="--choose value--"
                         variant="tertiary"
                         size="md"
+                        manageSelectedItems={true}
                         onItemSelected={(item) => dropdownValueHandle({item: item.clickedItem})}
                     />
                 </div>
