@@ -39,7 +39,7 @@ export default class FilterBreadcrumbItem extends React.Component {
                     <span
                         className="bread-arrow"
                         aria-describedby="tooltipArrow"
-                        ref={this.setArrowTargetRef}
+                        ref={elm => this.setArrowTargetRef.current = elm}
                         onClick={() => this.breadcrumbItemClicked(itemData, "remove-next")}
                     >
                         &gt;
@@ -56,7 +56,7 @@ export default class FilterBreadcrumbItem extends React.Component {
                     <span
                         className="label"
                         aria-describedby="tooltipLabel"
-                        ref={this.setLabelTargetRef}
+                        ref={elm => this.setLabelTargetRef.current = elm}
                         onClick={() => this.breadcrumbItemClicked(itemData, "remove-subsequent")}
                     >
                         {itemData.label}
