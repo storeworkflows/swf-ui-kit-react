@@ -49,162 +49,104 @@ export const getValueAdditionalData = function({ tableFields, editor, field, glo
     return valueAdditionalData;
 }
 
-const _getValue = (value, operator, editor) => {
-    let resultValue;
-    switch (editor) {
-        case 'between_field':
-            resultValue = {};
-            value = value.split('@');
-            value.forEach((val, index) => {
-                let sliceFrom = val.indexOf("('") + 2;
-                resultValue[index] = val.slice(sliceFrom, sliceFrom + 10);
-            })
-            break;
-        case 'relative_field':
-            resultValue = {};
-            value = value.split('@');
-            resultValue['0'] = value[0] === 'GT' ? 'after' : 'before';
-            resultValue['1'] = value[3];
-            resultValue['2'] = value[1];
-            resultValue['3'] = value[2];
-            break;
-        case 'glide_duration':
-            resultValue = {};
-            value = value.slice(value.indexOf("('") + 2);
-            resultValue['0'] = value.slice(0, value.indexOf(' '));
-            value = value.slice(resultValue['0'].length + 1, value.indexOf("')")).split(':');
-            value.forEach((val, index) => {
-                resultValue[index + 1] = val;
-            })
-            break;
-            case 'glide_date_choice':
-                value = value.slice(value.indexOf("('") + 2);
-                resultValue = value.slice(0, value.indexOf("'"));
-                break;
-            case 'trend_field':
-                resultValue = {};
-                resultValue['2'] = { label: value.slice(0, value.indexOf("@")) };
-                value = value.slice(value.indexOf("('") + 1, value.indexOf("')") + 1).split(',');
-                value = value.map(val => val.replace(/\'/g, ''));
-                resultValue['0'] = value[2];
-                resultValue['1'] = value[0];
-                resultValue['2'].id = value[1];
-                break;
-            case 'glide_date_equivalent':
-                resultValue = {};
-                value = value.split('@');
-                resultValue['0'] = value[1];
-                resultValue['1'] = value[0];
-                break;
-            case 'glide_date_comparative':
-                resultValue = {};
-                value = value.split('@');
-                resultValue['0'] = value[3];
-                resultValue['1'] = value[1];
-                resultValue['2'] = value[2];
-                resultValue['3'] = value[0];
-                break;
-                default:
-                    resultValue = value;
-                }
-                
-                return resultValue;
-            }
                                 
-                    
+// done        
             
-    export const parseConditionValueWithRef = async function({ condition, operators, tableFields, globalID, currentID }) {
-        let operator = GENERAL_UTILS.findOperator(condition, operators);
-        let lastTableFields;
-        let field = '', value = '', editor = "", valueAdditionalData = [], fieldItems = [], fieldsDropdownData = [];
-        let fieldsDataID = GENERAL_UTILS.generateID();
-        let referenceField = condition.slice(0, condition.indexOf(operator)).split(".");
-        let fields = GENERAL_UTILS.clone(referenceField);
-        const isReferenceField = referenceField.length > 1;
-        if (isReferenceField) {
-            let dropdownFields = [{items: DATA_UTILS.getDropdownFieldsItems({tableFields: tableFields, index: fieldsDataID, listIndex: 0})}];
-            let fieldsData = {[fieldsDataID]: tableFields}
-            let nextData = tableFields[referenceField[0]];
-            referenceField = referenceField.reverse();
-            referenceField.pop();
-            referenceField = referenceField.reverse();
-            const queryParams = {
-                sysparm_operators: true,
-                sysparm_get_extended_tables: true,
-                sysparm_keywords: true
-            };
-            let lastField = '';
-            let allFields = condition.slice(0, condition.indexOf(operator));
-            value = condition.slice(allFields.length + operator.length);
-            let i = 1;
-            for await (let key of referenceField) {
-                fieldsDataID = GENERAL_UTILS.generateID();
-                await REQUEST_UTILS.fetchTableData({table: nextData.reference, queryParams})
-                    .then(res => {
-                        fieldsData = {...fieldsData, [fieldsDataID]: res.columns}
-                        nextData = res.columns[key];
-                        lastTableFields = res.columns;
-                        dropdownFields.push({items: DATA_UTILS.getDropdownFieldsItems({tableFields: Object.values(res.columns), index: fieldsDataID, listIndex: i})});
-                        i++;
-                    })
-            }
-            fieldsDropdownData = dropdownFields;
-            let dataForFieldItems = fieldsDropdownData.map(field => field.items);
-
-            i = 0;
-            for (let key of dataForFieldItems) {
-                fieldItems = [...fieldItems, { ...key.find(data => fields[i] === data.id), dropdownClicked: i < dataForFieldItems.length - 1}];
-                i++;
-            }
-            field = fieldItems.map(field => field.id).join(".");
-            lastField = field.split(".");
-            lastField = lastField[lastField.length - 1];
-            editor = lastTableFields[lastField].operators.find(op => op.operator === operator).advancedEditor;
-            let operatorsArray = lastTableFields[lastField].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
-            value = _getValue(value, operator, editor)
-            fieldItems = {
-                label: fieldItems.map(field => field.label).join(" . "),
-                value: fieldItems.map(field => field.id).join("."),
-                items: fieldItems
-            }
-            valueAdditionalData = editor === "trend_field" ? DATA_UTILS.getTrendData(value['1']) : this.getValueAdditionalData({ tableFields: lastTableFields, editor, field: lastField, globalID, currentID });
-
-            return {
-                field,
-                operator: { operator, editor },
-                value,
-                operatorsArray,
-                valueAdditionalData,
-                fieldItems,
-                fieldsData,
-                fieldsDropdownData,
-                activeFieldsData: lastTableFields,
-                activeField: fieldItems.items[fieldItems.items.length - 1].id
-            };
+export const parseConditionValueWithRef = async function({ condition, operators, tableFields, globalID, currentID }) {
+    let operator = GENERAL_UTILS.findOperator(condition, operators);
+    let lastTableFields;
+    let field = '', value = '', editor = "", valueAdditionalData = [], fieldItems = [], fieldsDropdownData = [];
+    let fieldsDataID = GENERAL_UTILS.generateID();
+    let referenceField = condition.slice(0, condition.indexOf(operator)).split(".");
+    let fields = GENERAL_UTILS.clone(referenceField);
+    const isReferenceField = referenceField.length > 1;
+    if (isReferenceField) {
+        let dropdownFields = [{items: DATA_UTILS.getDropdownFieldsItems({tableFields: tableFields, index: fieldsDataID, listIndex: 0})}];
+        let fieldsData = {[fieldsDataID]: tableFields}
+        let nextData = tableFields[referenceField[0]];
+        referenceField = referenceField.reverse();
+        referenceField.pop();
+        referenceField = referenceField.reverse();
+        const queryParams = {
+            sysparm_operators: true,
+            sysparm_get_extended_tables: true,
+            sysparm_keywords: true
+        };
+        let lastField = '';
+        let allFields = condition.slice(0, condition.indexOf(operator));
+        value = condition.slice(allFields.length + operator.length);
+        let i = 1;
+        for await (let key of referenceField) {
+            fieldsDataID = GENERAL_UTILS.generateID();
+            await REQUEST_UTILS.fetchTableData({table: nextData.reference, queryParams})
+                .then(res => {
+                    fieldsData = {...fieldsData, [fieldsDataID]: res.columns}
+                    nextData = res.columns[key];
+                    lastTableFields = res.columns;
+                    dropdownFields.push({items: DATA_UTILS.getDropdownFieldsItems({tableFields: Object.values(res.columns), index: fieldsDataID, listIndex: i})});
+                    i++;
+                })
         }
-    }
-    export const parseConditionValue = function({ condition, operators, tableFields, globalID, currentID }) {
-        let operator = GENERAL_UTILS.findOperator(condition, operators);
-        let field = '', value = '', editor = "", valueAdditionalData = [], fieldItems = [], fieldsDropdownData = [];
-        let fieldsDataID = GENERAL_UTILS.generateID();
-        if (!operator) {
-            field = condition;
-            operator = '';
-        } else {
-            field = condition.slice(0, condition.indexOf(operator));
-            value = condition.slice(field.length + operator.length);
-            editor = tableFields[field].operators.find(op => op.operator === operator).advancedEditor;
-            valueAdditionalData = this.getValueAdditionalData({ tableFields, editor, field, globalID, currentID });
-            value = _getValue(value, operator, editor);
+        fieldsDropdownData = dropdownFields;
+        let dataForFieldItems = fieldsDropdownData.map(field => field.items);
+
+        i = 0;
+        for (let key of dataForFieldItems) {
+            fieldItems = [...fieldItems, { ...key.find(data => fields[i] === data.id), dropdownClicked: i < dataForFieldItems.length - 1}];
+            i++;
         }
-        let fields = field.split('.');
-        fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields, index: fieldsDataID });
-        fieldItems = fields.map(fieldName => ({ ...fieldsDropdownData.find(data => data.id === fieldName), listIndex: 0, dropdownClick: false }));
+        field = fieldItems.map(field => field.id).join(".");
+        lastField = field.split(".");
+        lastField = lastField[lastField.length - 1];
+        editor = lastTableFields[lastField].operators.find(op => op.operator === operator).advancedEditor;
+        let operatorsArray = lastTableFields[lastField].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
+        value = DATA_UTILS.getValue({value, editor})
         fieldItems = {
-            label: tableFields[field].label,
-            value: field,
+            label: fieldItems.map(field => field.label).join(" . "),
+            value: fieldItems.map(field => field.id).join("."),
             items: fieldItems
         }
+        valueAdditionalData = editor === "trend_field" ? DATA_UTILS.getTrendData(value['1']) : this.getValueAdditionalData({ tableFields: lastTableFields, editor, field: lastField, globalID, currentID });
+
+        return {
+            field,
+            operator: { operator, editor },
+            value,
+            operatorsArray,
+            valueAdditionalData,
+            fieldItems,
+            fieldsData,
+            fieldsDropdownData,
+            activeFieldsData: lastTableFields,
+            activeField: fieldItems.items[fieldItems.items.length - 1].id
+        };
+    }
+}
+
+// done
+
+export const parseConditionValue = function({ condition, operators, tableFields, globalID, currentID }) {
+    let operator = GENERAL_UTILS.findOperator(condition, operators);
+    let field = '', value = '', editor = "", valueAdditionalData = [], fieldItems = [], fieldsDropdownData = [];
+    let fieldsDataID = GENERAL_UTILS.generateID();
+    if (!operator) {
+        field = condition;
+        operator = '';
+    } else {
+        field = condition.slice(0, condition.indexOf(operator));
+        value = condition.slice(field.length + operator.length);
+        editor = tableFields[field].operators.find(op => op.operator === operator).advancedEditor;
+        valueAdditionalData = this.getValueAdditionalData({ tableFields, editor, field, globalID, currentID });
+        value = DATA_UTILS.getValue({value, editor});
+    }
+    let fields = field.split('.');
+    fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields, index: fieldsDataID });
+    fieldItems = fields.map(fieldName => ({ ...fieldsDropdownData.find(data => data.id === fieldName), listIndex: 0, dropdownClick: false }));
+    fieldItems = {
+        label: tableFields[field].label,
+        value: field,
+        items: fieldItems
+    }
     let operatorsArray = tableFields[field].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation' }));
     if (editor === 'trend_field') {
         valueAdditionalData = DATA_UTILS.getTrendData(value['1']);
@@ -285,7 +227,7 @@ export const generateCurrentConditionQuery = (conditionData, operation, breadcru
                 conditionQuery ? valueLabel = value : '';
         }
         if (conditionQuery) {
-            let conditionOperatorLabel = operatorsArray.find(op => op.id === operator).label;
+            let conditionOperatorLabel = (editor === "none") ? operatorsArray.find(op => op.id === operator).label : operator;
             if (fieldItems.items[fieldItems.items.length - 1].reference === 'true' && valueAdditionalData.length) {
                 valueLabel = valueAdditionalData.find(val => val.id === valueLabel).label
             }
@@ -341,20 +283,3 @@ export const generateCurrentConditionQuery = (conditionData, operation, breadcru
 
     return { conditionQuery: conditionQuery || false, breadcrumbItem }
 }
-
-
-// export const fetchProjects = async () => {
-//     const endpoint = `${GLOBAL_CONSTANTS.API.PREFIX}record_information`;
-//     const queryParams = {
-//         table: GLOBAL_CONSTANTS.TABLES.CONTAINER,
-//         query: sysparm_query,
-//         sysparm_fields: 'type,state,short_description,start,end,opened_by,number,sys_id,assigned_to,watch_list'
-//     }
-//     const query = REQUEST_UTILS.prepareQueryParams(queryParams);
-//     const url = `${endpoint}?${query}`;
-//     const params = {
-//         method: "GET",
-//     };
-
-//     return await  REQUEST_UTILS.fetchRequest({ url, params })
-// }
