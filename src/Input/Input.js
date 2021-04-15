@@ -7,6 +7,7 @@ import {noop} from "../utils";
 import propTypes from "prop-types";
 import Icon from "../Icon/Icon";
 import InfoMessage from "../InfoMessage/InfoMessage";
+import _ from "lodash"
 
 const Start = () => null;
 const End = () => null;
@@ -85,24 +86,12 @@ class Input extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {invalid, manageInvalid, value} = this.props;
 
-        if(prevProps.value!==value || value!==this.state.value)
+        if(!_.isEqual(prevProps.value, value) || !_.isEqual(value, this.state.value))
             this.setState({value: value})
 
         if(manageInvalid && this.state.invalid !== invalid)
             this.setState({invalid: invalid});
     }
-
-    // static getDerivedStateFromProps (nextProps) {
-    //     return {
-    //         value: nextProps.value
-    //     }
-    // }
-    //
-    // componentWillReceiveProps(nextProps, nextContext) {
-    //     this.setState({
-    //         value: nextProps.value
-    //     })
-    // }
 
     render() {
         const {
