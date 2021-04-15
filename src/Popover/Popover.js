@@ -82,7 +82,7 @@ class Popover extends React.Component {
             this.setStylesToContent();
     }
 
-    changeOpenedState(){
+    changeOpenedState(e){
         const {manageOpened} = this.props;
         let currentState = this.state.opened;
 
@@ -98,7 +98,7 @@ class Popover extends React.Component {
         const {opened} = this.state;
 
         if(isPointInsideTheElement(this.targetRef, e.clientX, e.clientY)) {
-            this.changeOpenedState();
+            this.changeOpenedState(e);
             onTargetClick({value: manageOpened ? opened : !opened})
         }
     }
@@ -119,8 +119,8 @@ class Popover extends React.Component {
 
             if(isOutsideContent && isOutsideTarget) {
                 if(!manageOpened)
-                    this.changeOpenedState();
-                onOuterPopoverClicked();
+                    this.changeOpenedState(event);
+                onOuterPopoverClicked(event);
             }
         }
     }

@@ -23,7 +23,7 @@ class Checkbox extends React.Component {
 
     onChangeAction(e){
         e?.preventDefault();
-        e?.stopPropagation();
+       // e?.stopPropagation();
         const {manageChecked, onChange, readonly, disabled, label, name, value} = this.props;
         const currentValue = this.state.checkedValue;
 

@@ -80,7 +80,7 @@ class DatePicker extends React.Component {
         onInvalid(isInvalid);
     }
 
-    openCalendar(){
+    openCalendar(event){
         const {manageOpened, onOpen, format} = this.props;
         const {isOpened, stringValue} = this.state;
 
@@ -101,7 +101,7 @@ class DatePicker extends React.Component {
             this.setState({isOpened: openState});
         }
 
-        onOpen(openState)
+        onOpen({openState, event})
     }
 
     componentDidUpdate() {

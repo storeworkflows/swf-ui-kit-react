@@ -25,7 +25,9 @@ class SmallCalendar extends React.Component {
 
     }
 
-    setDate(day, isActive){
+    setDate(day, isActive, e){
+        e?.stopPropagation();
+
         const {openedDate} = this.state;
         const {onSelected} = this.props;
         let newSelected;
@@ -89,7 +91,7 @@ class SmallCalendar extends React.Component {
                     "active": isActive,
                     "selected": isSelected
                 })}
-                 onClick={() =>  this.setDate(dayNumber, isActive)}
+                 onClick={(e) =>  this.setDate(dayNumber, isActive, e)}
                  key={key}
             >
                 {day}
