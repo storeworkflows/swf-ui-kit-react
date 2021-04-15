@@ -8,11 +8,6 @@ import Icon from "../../../Icon/Icon";
 class DropdownListHeader extends React.Component {
     constructor(props) {
         super(props);
-        this.searchRef = React.createRef();
-    }
-
-    componentDidMount() {
-        !!this.searchRef.current ? setTimeout(() => this.searchRef.current.focus(), 100) : () => void 0;
     }
 
     render() {
@@ -22,7 +17,7 @@ class DropdownListHeader extends React.Component {
             <div className="dropdown-list__header">
                 <div className="swf-form-group">
                     <div className="input-group">
-                        <input type="text" className="form-control" ref={this.searchRef} autoFocus={true} placeholder="Search" value={searchValue} onChange={(e) => onSearch({value: e.target.value})} />
+                        <input type="text" className="form-control" autoFocus={true} placeholder="Search" value={searchValue} onChange={(e) => onSearch({value: e.target.value})} />
                     </div>
                 </div>
                 {(selectedItem) && <div className="header-breadcrumbs">
