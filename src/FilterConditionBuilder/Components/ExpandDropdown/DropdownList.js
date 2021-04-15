@@ -9,10 +9,7 @@ export default class DropdownList extends React.Component {
         this.state = {
             opened: this.props.opened,
             selectedItems: this.props.selectedItems,
-            searchValue: "",
-            filteredList: [],
         }
-        this.inputRef = null;
     }
 
     componentDidMount() {
@@ -20,35 +17,18 @@ export default class DropdownList extends React.Component {
             setTimeout(() => this.inputRef.focus(), 100)
     }
 
-    onSearch = ({value}) => {
-        const { items } = this.props;
-        const searchValue = value.trim();
-        const filteredList = items.filter(item => !!item.label.toLowerCase().match(searchValue.toLowerCase()));
-
-        this.setState({searchValue, filteredList})
-    }
-
     render() {
         const { items, expandIcon, selectedItems, onSelectAction, listIndex } = this.props;
-        const { searchValue, filteredList } = this.state;
-
-        const valueToShow = (!!searchValue && !!filteredList.length) ? filteredList : items;
         return (
             <>
                 <div className={classnames({
                     "dropdown-list-container": true,
                     "--not-first": listIndex > 0
                 })}>
-                    <div className="swf-form-group">
-                        <div className="input-group">
-                            <input type="text" ref={elem => !this.inputRef ? this.inputRef = elem : () => void 0} className="form-control" autoFocus={true} placeholder="Search" value={searchValue} onChange={(e) => this.onSearch({value: e.target.value})} />
-                        </div>
-                    </div>
                     <div className="dropdown-list">
-                        {valueToShow.map((item) => {
+                        {!!items.length ? items.map((item) => {
                             const {id, label, disabled, reference} = item;
                             
-
                             return (
                                     <DropdownItem
                                         key={id + listIndex}
@@ -63,7 +43,7 @@ export default class DropdownList extends React.Component {
                                         isDropdown={selectedItems[listIndex] ? (selectedItems[listIndex].dropdownClicked && selectedItems[listIndex].id === id) : false}
                                     />
                                 )
-                        })}
+                        }): <div className="no-search-results">No Results</div>}
                     </div>
                 </div>
             </>

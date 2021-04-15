@@ -3,7 +3,7 @@ import * as React from "react";
 
 import ExpandDropdown from "../ExpandDropdown/ExpandDropdown";
 import Dropdown from "../../../Dropdown/Dropdown"
-import { GENERAL_UTILS, REQUEST_UTILS } from "../../utils";
+import { REQUEST_UTILS } from "../../utils";
 import { inputValue } from "./_inputValue";
 import { Button } from "../../../index";
 import { noop } from "../../../utils";
@@ -54,7 +54,7 @@ export default class FilterConditionItem extends React.Component {
     }
 
     textAreaValueSet = ({value}) => {
-        const { conditionID, globalConditionID, setConditionOptions } = this.props;
+        const { setConditionOptions } = this.props;
         this.setState({textAreaValue: value}, () => setConditionOptions({ value: this.state.textAreaValue.replace(/\s/g, ""), conditionOption: "value"}))
     }
 
@@ -64,11 +64,19 @@ export default class FilterConditionItem extends React.Component {
         if (item.dropdown === "operation") {
             let activeOperator = activeField.operators.find(({ operator }) => operator === item.id)
 
-            this.valueInputActivation()
+            // setConditionOptions({
+            //     value: { operator: "", editor: "" },
+            //     conditionOption: "operator"
+            // })
+            this.valueInputDeactivation()
             setConditionOptions({
                 value: { operator: item.id, editor: activeOperator.advancedEditor },
                 conditionOption: "operator"
             })
+            // setConditionOptions({
+            //     value: "",
+            //     conditionOption: "value"
+            // })
         }
         if (item.dropdown === "value") {
             const { conditionObj: { conditionOptions } } = this.props;
@@ -123,6 +131,16 @@ export default class FilterConditionItem extends React.Component {
         })
     }
 
+    valueInputDeactivation = () => {
+        this.setState({
+            dropdownsIsActive: {
+                field: true,
+                operation: true,
+                value: false
+            }
+        })
+    }
+
     fetchTableData = () => {
         const {conditionObj} = this.props;
         const { activeFieldsData, activeField } = conditionObj.conditionOptions;
@@ -137,7 +155,8 @@ export default class FilterConditionItem extends React.Component {
                         if (activeField) {
                             this.operatorsActivation()
                         }
-                    })
+                    }
+            )
         }
     }
 
@@ -149,6 +168,16 @@ export default class FilterConditionItem extends React.Component {
         this.setState({selectedItem: {
             items: this.props.conditionObj.selectedItem.items
         }})
+    }
+
+    operatorsDeactivation = () => {
+        this.setState({
+            dropdownsIsActive: {
+                field: true,
+                operation: false,
+                value: false
+            }
+        })
     }
 
     onItemClicked = (item) => {
@@ -166,11 +195,13 @@ export default class FilterConditionItem extends React.Component {
         items = {conditionId: conditionID, globalConditionID, listIndex: clickedItem.listIndex, selectedItems: {items: selectedItem.items, label: selectedItem.items.map(item => item.label).join(" . "), value: selectedItem.items.map(item => item.id).join(".")}, firstOperator: clickedItem.firstOperator};
         (clickedItem.dropdownClicked) ? (REQUEST_UTILS.fetchTableData({table: clickedItem.table, queryParams})
             .then(res => {
+                this.operatorsDeactivation()
                 items = {...items, result: res.columns};
                 setConditionOptions({value: items, globalConditionID, currentConditionID: conditionID, conditionOption: "fieldsData"});
             })) : noop;
 
         if (!clickedItem.dropdownClicked) {
+            this.operatorsActivation();
             setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID: conditionID, conditionOption: "field"})
         }
     }
@@ -207,7 +238,7 @@ export default class FilterConditionItem extends React.Component {
         setConditionOptions({value: valueForContainer, conditionOption: "value"})
     }
 
-    itemDropdownHandle = ({value, type, index}) => {
+    itemDropdownHandle = () => {
         const { conditionObj: { conditionOptions } } = this.props;
         let valueForContainer;
         switch (conditionOptions.operator.editor) {
@@ -270,7 +301,7 @@ export default class FilterConditionItem extends React.Component {
                     />
                 </div>
                 {
-                    inputValue(this.state, conditionObj.conditionOptions, this.itemClicked, this.onDatePickerChange, this.inputValueSet, this.textAreaValueSet)
+                    dropdownsIsActive.value && inputValue(this.state, conditionObj.conditionOptions, this.itemClicked, this.onDatePickerChange, this.inputValueSet, this.textAreaValueSet)
                 }
                 {(operatorType !== "^OR" && isBtnsRender) && <>
                     <div className="btn-container">
