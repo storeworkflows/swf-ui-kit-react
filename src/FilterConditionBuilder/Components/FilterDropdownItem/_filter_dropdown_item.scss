@@ -1,6 +1,6 @@
 .dropdown-item {
     display: grid;
-    grid-template-columns: 7fr 1fr;
+    grid-template-columns: 7fr 16px;
     cursor: pointer;
     &:hover {
         background-color: rgb(217,235,238);
