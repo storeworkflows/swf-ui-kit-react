@@ -14,6 +14,7 @@ class HighlightedValue extends React.Component {
     }
     render() {
         const {
+            roundBorder,
             className,
             showIcon,
             onClick,
@@ -29,7 +30,9 @@ class HighlightedValue extends React.Component {
             `--${size}`,
             `--${variant}`,
             color,
-            className
+            className, {
+                "--round": roundBorder
+            }
         )
 
         let iconSize = this.getIconSize(size, icon);
@@ -58,10 +61,12 @@ HighlightedValue.defaultProps = {
     showIcon: false,
     size: "md",
     variant: "primary",
-    color: "critical"
+    color: "critical",
+    roundBorder: true
 }
 
 HighlightedValue.propTypes = {
+    roundBorder:propTypes.bool,
     label: propTypes.string,
     className: propTypes.oneOfType([propTypes.string, propTypes.object]),
     onClick: propTypes.func,
