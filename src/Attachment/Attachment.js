@@ -66,7 +66,7 @@ class Attachment extends React.Component {
             if (!isFitExtensions)
                 errorMessages.push({content: `Available extensions: ${extensions.join(', ')}`, icon: errorIcon, delay: delay})
             if(!tableSysId || !tableName)
-                errorMessages.push({content: `Can't upload file`, icon: errorIcon, delay: delay})
+                errorMessages.push({content: `Can't get access to table`, icon: errorIcon, delay: delay})
 
             if (errorMessages.length === 0){
                 this.uploadFile(file)

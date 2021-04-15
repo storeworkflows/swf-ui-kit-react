@@ -126,5 +126,67 @@ export const DATA_UTILS = {
                 break;
         }
         return trendData;
-    }
+    },
+    getValue: ({value, editor}) => {
+        let resultValue;
+        switch (editor) {
+            case 'between_field':
+                resultValue = {};
+                value = value.split('@');
+                value.forEach((val, index) => {
+                    let sliceFrom = val.indexOf("('") + 2;
+                    resultValue[index] = val.slice(sliceFrom, sliceFrom + 10);
+                })
+                break;
+            case 'relative_field':
+                resultValue = {};
+                value = value.split('@');
+                resultValue['0'] = value[0] === 'GT' ? 'after' : 'before';
+                resultValue['1'] = value[3];
+                resultValue['2'] = value[1];
+                resultValue['3'] = value[2];
+                break;
+            case 'glide_duration':
+                resultValue = {};
+                value = value.slice(value.indexOf("('") + 2);
+                resultValue['0'] = value.slice(0, value.indexOf(' '));
+                value = value.slice(resultValue['0'].length + 1, value.indexOf("')")).split(':');
+                value.forEach((val, index) => {
+                    resultValue[index + 1] = val;
+                })
+                break;
+            case 'glide_date_choice':
+                value = value.slice(value.indexOf("('") + 2);
+                resultValue = value.slice(0, value.indexOf("'"));
+                break;
+            case 'trend_field':
+                resultValue = {};
+                resultValue['2'] = { label: value.slice(0, value.indexOf("@")) };
+                value = value.slice(value.indexOf("('") + 1, value.indexOf("')") + 1).split(',');
+                value = value.map(val => val.replace(/\'/g, ''));
+                resultValue['0'] = value[2];
+                resultValue['1'] = value[0];
+                resultValue['2'].id = value[1];
+                break;
+            case 'glide_date_equivalent':
+                resultValue = {};
+                value = value.split('@');
+                resultValue['0'] = value[1];
+                resultValue['1'] = value[0];
+                break;
+            case 'glide_date_comparative':
+                resultValue = {};
+                value = value.split('@');
+                resultValue['0'] = value[3];
+                resultValue['1'] = value[1];
+                resultValue['2'] = value[2];
+                resultValue['3'] = value[0];
+                break;
+            default:
+                resultValue = value;
+        }
+                    
+        return resultValue;
+    },
+    
 }

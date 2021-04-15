@@ -6,10 +6,6 @@ import {addResizeObserver, getAllPossibleVariants, getPopoverStyle} from "./util
 import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 class Popover extends React.Component {
     constructor(props) {
         super(props);
@@ -225,7 +221,8 @@ Popover.defaultProps = {
     positions: getAllPossibleVariants(),
     roundBorder: true,
     onTargetClick: () => void 0,
-    onOuterPopoverClicked: () => void 0
+    onOuterPopoverClicked: () => void 0,
+    fitTargetWidth: false
 }
 
 Popover.propTypes = {
@@ -243,7 +240,8 @@ Popover.propTypes = {
     onTargetClick: propTypes.func,
     onOuterPopoverClicked: propTypes.func,
     roundBorder: propTypes.bool,
-    contentStyles: propTypes.object
+    contentStyles: propTypes.object,
+    fitTargetWidth: propTypes.bool
 }
 
 export default Popover

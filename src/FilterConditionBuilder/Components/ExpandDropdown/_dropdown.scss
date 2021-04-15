@@ -8,6 +8,53 @@
   .popover-content-keeper {
     max-width: none !important;
     max-height: none !important;
+    overflow: unset;
+    .dropdown-list__header {
+      display: flex;
+      border-bottom: 1px solid #becad6;
+      max-width: 800px;
+      .header-breadcrumbs {
+        display: flex;
+        align-items: center;
+        cursor: default;
+        flex-wrap: wrap;
+        border-left: 1px solid #becad6;
+        .header-breadcrumbs_item {
+          display: flex;
+          align-items: center;
+          &.--first-item {
+            padding-left: .5rem;
+          }
+          .header-breadcrumbs_item-label {
+            &:hover {
+              color: #1e856d;
+              cursor: pointer;
+            }
+          }
+          .header-breadcrumbs_item-arrow-container {
+            display: flex;
+            align-content: center;
+            padding: 2px;
+            &:hover {
+              color: #1e856d;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+    .swf-form-group {
+      max-width: 250px;
+      .input-group {
+        .form-control {
+          border-radius: 0;
+          border: none;
+          &:focus {
+            box-shadow: none;
+          }
+        }
+      }
+    }
   }
   .dropdown-label {
     margin-right: 0.5rem;
@@ -24,30 +71,28 @@
   .dropdown-items-container{
     display: flex;
     flex-direction: row;
+    overflow: auto;
     .dropdown-list-container {
       display: flex;
       flex-direction: column;
       max-height: 300px;
+      min-height: 300px;
       &.--not-first {
         border-left: 1px solid #becad6;
       }
-      .swf-form-group {
-        .input-group {
-          .form-control {
-            border-radius: 0;
-            border: none;
-            border-bottom: 1px solid #becad6;
-            &:focus {
-              box-shadow: none;
-            }
-          }
-        }
+      .no-search-results {
+        display: flex;
+        align-items: center;
+        padding: 5em;
+        height: 300px;
       }
+      
     }
     .dropdown-list {
       max-height: inherit;
       overflow-y: auto;
       min-width: max-content;
+      width: 250px;
     }
   }
 

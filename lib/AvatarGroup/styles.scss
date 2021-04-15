@@ -4,7 +4,7 @@
   --height-m: 2.2rem;
   --height-l: 2.7rem;
   --color: #fff;
-  --border-color: #fff;
+  --alert-border-color: #fff;
 
   .avatar-multiple {
     .additional-members {
@@ -21,7 +21,7 @@
     }
 
     & > p {
-      box-shadow: 0 0 0 2pt var(--border-color);
+      box-shadow: 0 0 0 2pt var(--alert-border-color);
     }
 
     &:hover {
@@ -79,6 +79,6 @@
   }
 
   .avatar {
-    --color-for-border: var(--border-color);
+    --color-for-border: var(--alert-border-color);
   }
 }
