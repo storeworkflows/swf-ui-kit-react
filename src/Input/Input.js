@@ -196,13 +196,14 @@ class Input extends React.Component {
                         {this.renderEnd()}
                     </div>
                     {_hasMessages &&
-                        message.map((el) => {
+                        message.map((el, index) => {
                             return <InfoMessage
                                 iconSize={el.iconSize}
                                 className={el.className}
                                 content={el.content}
                                 icon={el.icon}
                                 status={el.status}
+                                key={index}
                             />
                         })
                     }
@@ -251,7 +252,7 @@ Input.propTypes = {
     maxlength: PropTypes.number,
     minlength: PropTypes.number,
     message: PropTypes.arrayOf(PropTypes.shape({
-        status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
         content: PropTypes.string,
         icon: PropTypes.string,
         className: propTypes.object,

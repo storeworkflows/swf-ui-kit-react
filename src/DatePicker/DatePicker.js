@@ -242,7 +242,7 @@ DatePicker.propTypes = {
     manageInvalid: propTypes.bool,
     manageValue: propTypes.bool,
     message: PropTypes.arrayOf(PropTypes.shape({
-        status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
         content: PropTypes.string,
         icon: PropTypes.string,
         className: propTypes.object,

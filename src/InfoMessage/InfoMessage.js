@@ -58,13 +58,13 @@ class InfoMessage extends React.Component{
 
 
 InfoMessage.defaultProps = {
-    status: "critical",
+    status: "red",
     className: {},
     iconSize: 16
 }
 
 InfoMessage.propTypes = {
-    status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+    status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
     content: PropTypes.string,
     icon: PropTypes.string,
     className: propTypes.object,

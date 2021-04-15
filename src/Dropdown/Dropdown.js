@@ -266,7 +266,7 @@ const dropdownSection = propTypes.shape({
 });
 
 const messageItem = propTypes.shape({
-    status: propTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+    status: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
     content: propTypes.string,
     icon: propTypes.string,
     className: propTypes.object,

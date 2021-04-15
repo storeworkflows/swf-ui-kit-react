@@ -118,7 +118,7 @@ class Alert extends React.Component {
             content,
             header,
             icon,
-            status,
+            color,
             textLinkProps,
             onTextLinkClicked
         } = this.props;
@@ -126,7 +126,7 @@ class Alert extends React.Component {
         const {isOverflowed, oneLineText, expanded, visible} = this.state
 
 
-        const mainContainerClasses = classnames( status, {
+        const mainContainerClasses = classnames( color, {
             "swf-alert-container": true,
             "--alignCenter": !isOverflowed && !expanded,
             "--overflowed": isOverflowed,
@@ -179,22 +179,16 @@ class Alert extends React.Component {
                                 {`Show ${showLabel}`}
                             </Button>}
                     </div>
-
-                    {isButtonWithText
-                        ?
-                        <Button  className={"alert-button"}
-                                 label={ action.label || (action.type === "acknowledge" ? "Ok" : "Open")}
-                                 onClick={this.buttonClicked}
-                                 variant={"inherit"}
-                        />
-                        :
-                        <Button  className={"alert-button dismiss"}
-                                 icon={"x"}
-                                 size={"lg"}
-                                 variant={"inherit"}
-                                 onClick={this.buttonClicked}
-                        />
-                    }
+                    <Button  className={classnames("alert-button", {"dismiss": !isButtonWithText})}
+                             label={ isButtonWithText ?
+                                 (action.label || (action.type === "acknowledge" ? "Ok" : "Open"))
+                                 : undefined
+                             }
+                             icon={ !isButtonWithText ? "x" : undefined}
+                             size={ isButtonWithText ? "md" : "lg"}
+                             onClick={this.buttonClicked}
+                             variant={"inherit"}
+                    />
                 </div>
             </>
                 : null
@@ -205,7 +199,7 @@ class Alert extends React.Component {
 Alert.defaultProps = {
     expanded: false,
     manageExpanded: false,
-    status: "info",
+    color: "blue",
     onExpandAction: () => void 0,
     action: { type: "dismiss" },
     onTextLinkClicked: () => void 0,
@@ -227,7 +221,7 @@ Alert.propTypes = {
     header: propTypes.string,
     icon: propTypes.string,
     manageExpanded: propTypes.bool,
-    status: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue" , "low"]),
+    color: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
     textLinkProps: propTypes.shape({
         label: propTypes.string,
         href: propTypes.string,
