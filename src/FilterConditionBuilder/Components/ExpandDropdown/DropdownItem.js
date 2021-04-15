@@ -44,7 +44,7 @@ class DropdownItem extends React.Component {
                     data-key={id}
                >
                    {label}
-                   {(expandIcon && !!reference) && <div onClick={(e) => {
+                   {(expandIcon && !!reference) && <div style={{display: "flex", alignSelf: "center"}} onClick={(e) => {
                             this.itemSelected({dropdownClicked: true});
                             e.stopPropagation();
                        }}><Icon icon={(isDropdown) ? `${expandIcon}-fill` : expandIcon} size="sm" /></div>}
