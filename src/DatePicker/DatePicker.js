@@ -31,8 +31,7 @@ class DatePicker extends React.Component {
             isInvalid: invalidValue
         }
 
-        this.inputRef = null;
-
+        this.inputRef = React.createRef();
 
         this.renderInput = this.renderInput.bind(this);
         this.changeValue = this.changeValue.bind(this);
@@ -81,7 +80,7 @@ class DatePicker extends React.Component {
         onInvalid(isInvalid);
     }
 
-    openCalendar(){
+    openCalendar(event){
         const {manageOpened, onOpen, format} = this.props;
         const {isOpened, stringValue} = this.state;
 
@@ -102,7 +101,7 @@ class DatePicker extends React.Component {
             this.setState({isOpened: openState});
         }
 
-        onOpen(openState)
+        onOpen({openState, event})
     }
 
     componentDidUpdate() {
@@ -131,12 +130,15 @@ class DatePicker extends React.Component {
 
     componentDidMount() {
         if(this.inputRef && this.inputRef.current){
+
             let inputEl = this.inputRef.current.querySelector('input');
             inputEl.onclick = (e) =>
-                inputEl.selectionStart = inputEl.selectionEnd = this.state.stringValue.length;
+                inputEl.selectionStart = inputEl.selectionEnd =
+                    (this.state.stringValue === null) ? 0 : this.state.stringValue.length;
 
             inputEl.onkeydown = (e) =>
-                setTimeout(()=>{ inputEl.selectionStart = inputEl.selectionEnd = this.state.stringValue.length; }, 0);
+                setTimeout(()=>{ inputEl.selectionStart = inputEl.selectionEnd =
+                    (this.state.stringValue === null) ? 0 : this.state.stringValue.length; }, 0);
         }
     }
 
@@ -144,8 +146,7 @@ class DatePicker extends React.Component {
         const {label, format, message, required, name, className} = this.props;
         const {stringValue, isInvalid} = this.state
 
-        return (
-            <Input
+        return  <Input
                 label={label}
                 placeholder={(label) ? "" : format}
                 value={stringValue}
@@ -165,8 +166,7 @@ class DatePicker extends React.Component {
                         onClick={this.openCalendar}
                     />
                 </Input.End>
-            </Input>
-        )
+        </Input>
     }
 
 
@@ -183,12 +183,13 @@ class DatePicker extends React.Component {
             {target: "center-start", content: "center-end"},
         ]
 
+        let refExist = this.inputRef && this.inputRef.current;
+
         return (
             visible ?
-            <>
-                <div ref = {el => this.inputRef = {current: el}}>
+                <div ref = {el => this.inputRef.current =  el}>
                     { this.renderInput() }
-                    { this.inputRef &&
+                    { refExist &&
                         <Popover
                             hideTail={true}
                             manageOpened={true}
@@ -206,7 +207,6 @@ class DatePicker extends React.Component {
                         </Popover>
                     }
                 </div>
-            </>
             : null
         )
     }
@@ -232,7 +232,7 @@ DatePicker.defaultProps = {
 DatePicker.propTypes = {
     name: propTypes.string,
     label: propTypes.string,
-    value: propTypes.string,
+    value: propTypes.oneOfType([propTypes.string, propTypes.object]),
     format: propTypes.string,
     required: propTypes.bool,
     readonly: propTypes.bool,

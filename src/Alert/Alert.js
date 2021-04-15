@@ -24,8 +24,8 @@ class Alert extends React.Component {
             visible: this.props.visible
         }
 
-        this.contentRef = null;
-        this.textRef = null;
+        this.contentRef = React.createRef();
+        this.textRef = React.createRef();
     }
 
     setDelay(){
@@ -71,9 +71,9 @@ class Alert extends React.Component {
 
     defineSizes(){
         const {header, content} = this.props;
-        if(this.contentRef && this.textRef){
-            let contentRef = this.contentRef;
-            let text = this.textRef;
+        if(this.contentRef.current && this.textRef.current){
+            let contentRef = this.contentRef.current;
+            let text = this.textRef.current;
 
             let onlyHeader = header && !content;
             let oneLineText = !header && text.getBoundingClientRect().height < 32;
@@ -152,11 +152,11 @@ class Alert extends React.Component {
                     {icon && <Icon className={"alert-icon"} icon = {icon}/>}
 
                     <div className={"alert-content"}
-                         ref = { el => this.contentRef = el}
+                         ref = { el => this.contentRef.current = el}
                     >
                         {header && <div className={"alert-header"}>{header}</div>}
                         {content &&
-                            <div ref = { el => this.textRef = el}
+                            <div ref = { el => this.textRef.current = el}
                                  className={textStyles}>
                                 <p className={"alert-text"} >{content} {
                                     textLinkProps &&
@@ -227,7 +227,7 @@ Alert.propTypes = {
     header: propTypes.string,
     icon: propTypes.string,
     manageExpanded: propTypes.bool,
-    status: propTypes.oneOf(["critical" , "high" , "moderate" , "warning" , "info" , "positive" , "low"]),
+    status: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue" , "low"]),
     textLinkProps: propTypes.shape({
         label: propTypes.string,
         href: propTypes.string,
