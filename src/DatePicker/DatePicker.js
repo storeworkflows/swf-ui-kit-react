@@ -33,6 +33,7 @@ class DatePicker extends React.Component {
 
         this.inputRef = null;
 
+
         this.renderInput = this.renderInput.bind(this);
         this.changeValue = this.changeValue.bind(this);
         this.openCalendar = this.openCalendar.bind(this);

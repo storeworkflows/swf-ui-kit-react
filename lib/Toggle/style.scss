@@ -10,8 +10,8 @@
   --active-border-color: rgb(23, 100, 82);
   --active-background-color: rgb(30, 133, 109);
 
-  --border-color: rgb(172, 180, 181);
-  --background-color: rgb(228, 230, 231);
+  --alert-border-color: rgb(172, 180, 181);
+  --alert-background-color: rgb(228, 230, 231);
 
   --circle-border-color: rgb(172, 180, 181);
   --circle-background: white;
@@ -52,7 +52,7 @@
 
 /* The slider */
 .slider {
-  background-color: var(--background-color);
+  background-color: var(--alert-background-color);
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -61,7 +61,7 @@
   bottom: 0;
   -webkit-transition: .1s;
   transition: .1s;
-  border: var(--border-size) solid var(--border-color);
+  border: var(--border-size) solid var(--alert-border-color);
   border-radius: 34px;
 }
 

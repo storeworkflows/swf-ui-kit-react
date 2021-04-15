@@ -31,7 +31,6 @@ class File extends React.Component {
             icon
         } = this.props;
 
-
         const fileClasses = classnames(
             className,
             "swf-file"
