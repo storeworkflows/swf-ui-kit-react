@@ -37,7 +37,7 @@ class Input extends React.Component {
             "--invalid": this.state?.invalid
         })
 
-        if (!start || start.length<1) return null;
+        if (!start || start.length < 1) return null;
 
         !this.state.hasStart && this.setState({hasStart: true})
 
@@ -92,19 +92,17 @@ class Input extends React.Component {
             this.setState({invalid: invalid});
     }
 
-    static getDerivedStateFromProps (nextProps) {
-        return {
-            value: nextProps.value
-        }
-    }
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState({
-            value: nextProps.value
-        })
-    }
-
-
+    // static getDerivedStateFromProps (nextProps) {
+    //     return {
+    //         value: nextProps.value
+    //     }
+    // }
+    //
+    // componentWillReceiveProps(nextProps, nextContext) {
+    //     this.setState({
+    //         value: nextProps.value
+    //     })
+    // }
 
     render() {
         const {
