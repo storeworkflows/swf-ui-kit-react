@@ -256,7 +256,7 @@ class LookupField extends React.Component {
 
         const showDeleteButton = !isList && hasValue && !readonly;
 
-        const count = listRecords.value.length;
+        const count = listRecords.displayValue.length;
 
         return (
             visible ?
