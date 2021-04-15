@@ -38,8 +38,8 @@ class LookupField extends React.Component {
                 displayValue: this.isList ? "" : this.props.displayValue || ""
             },
             listRecords: {
-                value: this.props.value?.split(",") ?? [],
-                displayValue: this.props.displayValue?.split(",") ?? []
+                value: this.props.value?.split(",").filter(Boolean) ?? [],
+                displayValue: this.props.displayValue?.split(",").filter(Boolean) ?? []
             },
             searchValue: "",
             matchesCount: 0,
