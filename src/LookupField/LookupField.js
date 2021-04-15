@@ -38,8 +38,8 @@ class LookupField extends React.Component {
                 displayValue: this.isList ? "" : this.props.displayValue || ""
             },
             listRecords: {
-                value: this.props.value?.split(",") ?? [],
-                displayValue: this.props.displayValue?.split(",") ?? []
+                value: this.props.value?.split(",").filter(Boolean) || [],
+                displayValue: this.props.displayValue?.split(",").filter(Boolean) || []
             },
             searchValue: "",
             matchesCount: 0,
@@ -241,7 +241,7 @@ class LookupField extends React.Component {
     }
 
     render() {
-        const {matchesCount, records, loading, loaded, focused, referenceRecord} = this.state;
+        const {matchesCount, records, loading, loaded, focused, referenceRecord, listRecords} = this.state;
 
         const {label, declarativeUiActions, type, name, readonly,
             invalid, required, onInvalid, message, visible} = this.props;
@@ -256,6 +256,8 @@ class LookupField extends React.Component {
 
         const showDeleteButton = !isList && hasValue && !readonly;
 
+        const count = listRecords.displayValue.length;
+
         return (
             visible ?
             <>
@@ -265,7 +267,7 @@ class LookupField extends React.Component {
                         className="swf-reference--input"
                         value={referenceRecord.displayValue}
                         containerClass={isList ? "list-field-group" : ""}
-                        label={label}
+                        label={`${label} ${isList ? count + " selected" : ""}`}
                         name={name}
                         onInput={this.onChange}
                         readonly={readonly}

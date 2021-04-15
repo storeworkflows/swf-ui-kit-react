@@ -13,7 +13,6 @@ class Modal extends React.Component {
         this.expand = this.expand.bind(this);
         this.desktopButtons = this.desktopButtons.bind(this);
         this.mobileButtons = this.mobileButtons.bind(this);
-        this.renderPopover = this.renderPopover.bind(this);
 
         this.state = {
             currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT,
@@ -38,58 +37,6 @@ class Modal extends React.Component {
         this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.FULL});
     }
 
-    renderPopover() {
-        const {showPopover, popoverOpened, popoverContent: {tagline, content, actions}} = this.props;
-
-        if (showPopover) {
-            return (
-                <Popover
-                    hideTail={true}
-                    manageOpened={true}
-                    opened={popoverOpened}
-                    positionTarget={this.props.innerRef}
-                    positions={[
-                        {target: "bottom-center", content: "top-center"},
-                        {target: "top-center", content: "bottom-center"}
-                    ]}
-                >
-                    <Button icon="x"
-                            variant="tertiary"
-                            bare={true}
-                            size="md"
-                            slot="trigger"
-                            configAria={{"button": {"aria-label": "Close"}}}
-                            tooltipContent="Close"
-                    />
-                    <now-template-card-omnichannel
-                        slot="content"
-                        tagline={tagline}
-                        content={content}
-                        actions={actions}
-                    />
-                </Popover>
-            )
-        }
-
-        return (
-            <Button icon="x"
-                    innerRef={this.props.closeRef}
-                    variant="tertiary"
-                    bare={true}
-                    size="md"
-                    slot="trigger"
-                    configAria={{"button": {"aria-label": "Close"}}}
-                    tooltipContent="Close"
-                    onClick={() => {
-                        if (!this.props.manageOpened) {
-                            this.setState({openModal: false});
-                        }
-                        this.props.onClose();
-                    }}
-            />
-        )
-    }
-
     desktopButtons() {
         const {showPrint} = this.props;
         const isFullSize = this.state.currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
@@ -107,12 +54,12 @@ class Modal extends React.Component {
                 {/*/>*/}
                 {
                     showPrint && isFullSize && <Button icon="printer"
-                                          variant="tertiary"
-                                          bare={true}
-                                          size="md"
-                                          configAria={{"button": {"aria-label": "Print"}}}
-                                          tooltipContent={"Print"}
-                                          onClick={() => window.print()}
+                                                       variant="tertiary"
+                                                       bare={true}
+                                                       size="md"
+                                                       configAria={{"button": {"aria-label": "Print"}}}
+                                                       tooltipContent={"Print"}
+                                                       onClick={() => window.print()}
                     />
                 }
                 <Button icon={isFullSize ? "arrows-angle-contract" : "arrows-angle-expand"}
@@ -123,7 +70,21 @@ class Modal extends React.Component {
                         tooltipContent={isFullSize ? "Collapse" : "Expand"}
                         onClick={() => this.setState({currentStatus: status})}
                 />
-                {this.renderPopover()}
+                <Button icon="x"
+                        innerRef={this.props.closeRef}
+                        variant="tertiary"
+                        bare={true}
+                        size="md"
+                        slot="trigger"
+                        configAria={{"button": {"aria-label": "Close"}}}
+                        tooltipContent="Close"
+                        onClick={() => {
+                            if (!this.props.manageOpened) {
+                                this.setState({openModal: false});
+                            }
+                            this.props.onClose();
+                        }}
+                />
             </>
         )
     }
@@ -186,18 +147,15 @@ class Modal extends React.Component {
                             "--desktop-content": !isMobile && headerElements === 2,
                             "--desktop": !isMobile && headerElements === 3
                         })}>
+                            <div className="additional-buttons">
+                                {findByType(this.props.children, "Buttons")}
+                            </div>
                             <div className="main-buttons">
                                 {isMobile ? this.mobileButtons() : this.desktopButtons()}
                             </div>
                             <div className="header-content">
                                 {findByType(this.props.children, "Header")}
                             </div>
-                            {
-                                headerElements === 3 ? <div className="additional-buttons">
-                                    {!isMobile && findByType(this.props.children, "HeaderButtons")}
-                                </div> : ""
-                            }
-
                         </div>
                         <div
                             className="modal-body"
@@ -235,8 +193,8 @@ class Modal extends React.Component {
     }
 }
 
+Modal.Buttons = createSubComponent("Buttons");
 Modal.Header = createSubComponent("Header");
-Modal.HeaderButtons = createSubComponent("HeaderButtons");
 Modal.Body = createSubComponent("Body");
 Modal.Footer = createSubComponent("Footer");
 

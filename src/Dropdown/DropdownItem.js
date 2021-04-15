@@ -1,6 +1,7 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
+import Icon from "../Icon/Icon";
 
 class DropdownItem extends React.Component {
 
@@ -26,14 +27,15 @@ class DropdownItem extends React.Component {
 
     render() {
 
-        const { id, label, disabled, isSelected, className } = this.props;
+        const { id, label, disabled, isSelected, className, sublabel, number, icon } = this.props;
 
         let classes = classnames(
             className,
-            "dropdown-item",
+            "swf-dropdown-item",
             {
                 "disabled": disabled,
-                "selected": isSelected
+                "selected": isSelected,
+                "--no-icon": !icon
             });
 
         return (
@@ -43,7 +45,16 @@ class DropdownItem extends React.Component {
                     data-key={id}
                     ref = {el => this.itemRef = el}
                >
-                   {label}
+                   {icon && <Icon
+                       className={"item-element item-start"}
+                       icon={icon}
+                       customSize={20}
+                   />}
+                   <div className={"text-items"}>
+                       <label className={"label"}>{label}</label>
+                       {sublabel && <div className={"sublabel"}>{sublabel}</div>}
+                   </div>
+                   {number && <span className={"item-element item-end"}>{number}</span>}
                </div>
             </>
         )
@@ -67,7 +78,10 @@ DropdownItem.propTypes = {
     onSelectAction: propTypes.func,
     isSelected: propTypes.bool,
     showOnMount: propTypes.bool,
-    className: propTypes.object
+    className: propTypes.object,
+    sublabel: propTypes.string,
+    number: propTypes.number,
+    icon: propTypes.string,
 }
 
 export default DropdownItem

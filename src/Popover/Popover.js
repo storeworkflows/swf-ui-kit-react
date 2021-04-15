@@ -6,10 +6,6 @@ import {addResizeObserver, getAllPossibleVariants, getPopoverStyle} from "./util
 import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 class Popover extends React.Component {
     constructor(props) {
         super(props);
@@ -86,7 +82,7 @@ class Popover extends React.Component {
             this.setStylesToContent();
     }
 
-    changeOpenedState(){
+    changeOpenedState(e){
         const {manageOpened} = this.props;
         let currentState = this.state.opened;
 
@@ -102,7 +98,7 @@ class Popover extends React.Component {
         const {opened} = this.state;
 
         if(isPointInsideTheElement(this.targetRef, e.clientX, e.clientY)) {
-            this.changeOpenedState();
+            this.changeOpenedState(e);
             onTargetClick({value: manageOpened ? opened : !opened})
         }
     }
@@ -123,8 +119,8 @@ class Popover extends React.Component {
 
             if(isOutsideContent && isOutsideTarget) {
                 if(!manageOpened)
-                    this.changeOpenedState();
-                onOuterPopoverClicked();
+                    this.changeOpenedState(event);
+                onOuterPopoverClicked(event);
             }
         }
     }
@@ -225,7 +221,8 @@ Popover.defaultProps = {
     positions: getAllPossibleVariants(),
     roundBorder: true,
     onTargetClick: () => void 0,
-    onOuterPopoverClicked: () => void 0
+    onOuterPopoverClicked: () => void 0,
+    fitTargetWidth: false
 }
 
 Popover.propTypes = {
@@ -243,7 +240,8 @@ Popover.propTypes = {
     onTargetClick: propTypes.func,
     onOuterPopoverClicked: propTypes.func,
     roundBorder: propTypes.bool,
-    contentStyles: propTypes.object
+    contentStyles: propTypes.object,
+    fitTargetWidth: propTypes.bool
 }
 
 export default Popover

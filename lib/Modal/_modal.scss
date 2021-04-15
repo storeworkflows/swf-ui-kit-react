@@ -111,14 +111,14 @@
 
     &.--desktop {
       grid-template-areas:
-            ". main-buttons"
-            "header-content additional-buttons";
+            "additional-buttons main-buttons"
+            "header-content";
       grid-template-rows: 1.5rem;
     }
 
     &.--desktop-content {
       grid-template-areas:
-            ". main-buttons"
+            "additional-buttons main-buttons"
             "header-content header-content";
       grid-template-rows: 1.5rem;
     }

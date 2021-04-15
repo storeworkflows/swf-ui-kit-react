@@ -176,6 +176,7 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
 
      style.top = `${top}px`;
     style.left = `${left}px`;
+
     style.transform = getTransform(contentPosition, updatedContentSizes.width, updatedContentSizes.height).stringValue;
     style.maxWidth = `${updatedContentSizes.width - padding*2}px`;
     style.maxHeight = `${updatedContentSizes.height - padding*2}px`;
@@ -220,8 +221,8 @@ const getAvailableSize = (targetPosition, contentPosition, targetStart, targetSi
 
     let availableSize = availableEnd - availableStart;
     return {
-        size: (contentSize + margin + padding*2)>availableSize ? availableSize - margin: contentSize,
-        needCut: (contentSize + margin + padding*2)>availableSize
+        size: (contentSize + margin)>availableSize ? availableSize - margin: contentSize,
+        needCut: (contentSize + margin)>availableSize
     }
 }
 

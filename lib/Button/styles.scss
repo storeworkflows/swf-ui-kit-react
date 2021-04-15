@@ -4,7 +4,7 @@
   --hover-base-color: var(--base-color); //repit base-color
   --active-base-color: var(--base-color); //repit base-color
 
-  --border-color: var(--base-color);
+  --alert-border-color: var(--base-color);
   --hover-border-color: var(--hover-base-color);
   --active-border-color: var(--active-base-color); //repit hover-border-color
 
@@ -126,7 +126,7 @@
   min-height: 10px;
   background: var(--base-color);
   color: var(--text-color);
-  border: var(--border-style) var(--border-color) var(--border-width);
+  border: var(--border-style) var(--alert-border-color) var(--border-width);
   border-radius: var(--border-radius);
 
   height: var(--height);

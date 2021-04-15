@@ -1,10 +1,10 @@
 .swf-dropdown-main-container{
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
   display: inline-block;
   position: relative;
   width: 10rem;
 
   --dropdown-padding: 0.5rem;
-
 
   .dropdown-label {
     margin-right: 0.5rem;
@@ -62,31 +62,101 @@
       }
     }
 
-    .dropdown-item {
+    .swf-dropdown-item{
+      display: grid;
+      width: 100%;
+      flex-wrap: wrap;
+      align-items: stretch;
+
+      grid-template-columns: max-content 1fr max-content;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       padding: 0.25rem 0.5rem;
       cursor: pointer;
-      font: 400 1rem Arial;
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+      font-size: 1rem;
+
+      --main-color: black;
+      --main-disabled-color: rgba(16, 16, 16, 0.5);
+      --main-selected-color: rgb(30, 133, 109);
+      --detail-color: #555;
+
+      --current-color: var(--main-color);
+      --current-details-color: var(--detail-color);
+
+
+      &.--no-icon{
+        grid-template-columns: 1fr max-content;
+      }
+
+      .text-items{
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        margin: auto 0;
+      }
+
+      .item-element{
+        border: none;
+        text-align: center;
+        align-items: center;
+        white-space: nowrap;
+      }
+
 
       &.disabled {
         cursor: default;
-        color: rgba(16, 16, 16, 0.3);
+        --current-color: var(--main-disabled-color);
+        --current-details-color: var(--main-disabled-color);
       }
 
       &.selected{
+        cursor: pointer;
         color: rgb(30, 133, 109);
+        --current-color: var(--main-selected-color);
+        --current-details-color: var(--main-selected-color);
       }
+
+      color: var(--current-color);
+
+      .sublabel{
+        color: var(--current-details-color);
+        font-size: 0.8rem;
+      }
+
+      .item-start{
+        margin: auto 0.5rem auto 0;
+      }
+
+      .item-end{
+        right: 0;
+        margin: auto 0 auto 0.5rem;
+        color: var(--current-details-color);
+        font-size: 0.8rem;
+      }
+
     }
 
-    .dropdown-item:hover {
-      color: rgb(30, 133, 109);
+    .swf-dropdown-item:hover {
+      --current-color: var(--main-selected-color);
+      --current-details-color: var(--main-selected-color);
       background: rgb(227, 227, 227);
 
       &.disabled {
-        color: rgba(16, 16, 16, 0.3);
+        --current-color: var(--main-disabled-color);
+        --current-details-color: var(--main-disabled-color);
         background: transparent;
+      }
+
+      color: var(--current-color);
+
+      .sublabel{
+        color: var(--current-details-color);
+      }
+
+      .item-end{
+        color: var(--current-details-color);
       }
     }
 
