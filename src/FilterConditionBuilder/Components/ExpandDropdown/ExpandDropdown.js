@@ -103,10 +103,10 @@ class ExpandDropdown extends React.Component {
         const searchValue = value.trim();
         const filteredList = lists.map((list, index) => {
             return {
-                items: [...[selectedItems[index]].filter(item => item), ...list.items.filter((item) => !!item.label.toLowerCase().match(searchValue.toLowerCase()) && (selectedItems[index] && selectedItems[index].id !== item.id))]
+                items: [...[selectedItems[index]].filter(item => item && (selectedItems[index].id !== item.id)), ...list.items.filter(item => (!!item.label.toLowerCase().match(searchValue.toLowerCase())))]
             }
         });
-
+        
         this.setState({searchValue, filteredList});
     }
 
