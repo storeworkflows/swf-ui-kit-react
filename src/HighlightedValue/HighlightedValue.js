@@ -61,7 +61,7 @@ HighlightedValue.defaultProps = {
     showIcon: false,
     size: "md",
     variant: "primary",
-    color: "critical",
+    color: "red",
     roundBorder: true
 }
 
@@ -74,7 +74,7 @@ HighlightedValue.propTypes = {
     showIcon: propTypes.bool,
     size: propTypes.oneOf(["sm", "md", "lg"]),
     variant: propTypes.oneOf(["primary", "secondary", "tertiary"]),
-    color: propTypes.oneOf(["critical", "high", "warning", "moderate", "positive", "info", "low"])
+    color: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"])
 }
 
 export default HighlightedValue

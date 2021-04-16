@@ -1,34 +1,37 @@
 .highlighted-value-container{
+  ////yellow #FFEB3B 255, 235, 59
+  ////grey-blue #607D8B 96, 125, 139
+  //  // green #4CAF50 76, 175, 80
+  //  // red #f44336 244, 67, 54
+  //  //grey #9E9E9E 158, 158, 158
+  //  //blue #2196F3 33, 150, 243
   color: white;
   --highlighted-background-color: 0, 0, 0;
 
-  &.critical{
-    --highlighted-background-color: 255,0, 0;
+  &.red{
+    --highlighted-background-color: 244, 67, 54;
   }
 
-  &.high{
-    --highlighted-background-color: 255,69,0;
+  &.yellow{
+    --highlighted-background-color: 255, 235, 59;
   }
 
-  &.moderate{
-    --highlighted-background-color: 138, 43, 226;
+  &.green{
+    --highlighted-background-color: 76, 175, 80;
   }
 
-  &.warning{
-    --highlighted-background-color: 255,165,0;
+  &.blue{
+    --highlighted-background-color: 33, 150, 243;
   }
 
-  &.info{
-    --highlighted-background-color: 100, 149, 237;
+  &.grey-blue{
+    --highlighted-background-color: 96, 125, 139;
   }
 
-  &.positive{
-    --highlighted-background-color: 0,128,0;
+  &.grey{
+    --highlighted-background-color: 158, 158, 158;
   }
 
-  &.low{
-    --highlighted-background-color: 128,128,128;
-  }
 
   &.--sm{
     --highlighted-text-size: 0.7rem

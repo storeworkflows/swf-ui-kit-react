@@ -33,6 +33,7 @@ class DatePicker extends React.Component {
 
         this.inputRef = React.createRef();
 
+        this.onBlur = this.onBlur.bind(this);
         this.renderInput = this.renderInput.bind(this);
         this.changeValue = this.changeValue.bind(this);
         this.openCalendar = this.openCalendar.bind(this);
@@ -104,6 +105,16 @@ class DatePicker extends React.Component {
         onOpen({openState, event})
     }
 
+    onBlur(e){
+        let sameParent = e.target?.parentElement === e.relatedTarget?.parentElement?.parentElement;
+
+        if(!this.state.isOpened) {
+            console.log("blur", e.target, e.relatedTarget)
+            console.log(e.target.parentElement, e.relatedTarget.parentElement.parentElement)
+            console.log()
+        }
+    }
+
     componentDidUpdate() {
         const {manageInvalid, manageOpened, manageValue, opened, invalid, value, format} = this.props
         const {isInvalid, isOpened, stringValue} = this.state;
@@ -158,6 +169,7 @@ class DatePicker extends React.Component {
                 message = {message}
                 required={required}
                 className={className}
+                onBlur={this.onBlur}
             >
                 <Input.End>
                     <Button
