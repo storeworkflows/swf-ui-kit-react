@@ -16,7 +16,7 @@ export const getDisplayValue = (selectedItems = [], items = [], placeholder = ""
 
 export const getCorrectSelected = (items, selectedItems) => {
     if(items && selectedItems)
-        return selectedItems.filter(el => (getItemById(el, items) !== undefined))
+        return selectedItems.filter(el => getItemById(el, items))
 
     return [];
 }

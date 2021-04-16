@@ -317,8 +317,8 @@ Dropdown.propTypes = {
     itemClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
 
     //todo
-    icon: propTypes.string,
-    search: propTypes.oneOf(["none", "managed", "initial", "contains"]),
+    //icon: propTypes.string,
+    //search: propTypes.oneOf(["none", "managed", "initial", "contains"]),
 }
 
 export default Dropdown

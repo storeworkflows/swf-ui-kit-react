@@ -5,7 +5,8 @@
   //  // red #f44336 244, 67, 54
   //  //grey #9E9E9E 158, 158, 158
   //  //blue #2196F3 33, 150, 243
-  color: white;
+  display: inline-flex;
+  background: white;
   --highlighted-background-color: 0, 0, 0;
 
   &.red{
@@ -45,38 +46,51 @@
     --highlighted-text-size: 1.1rem
   }
 
-  &.--primary{
-    background: rgba(var(--highlighted-background-color), 1)
-  }
-
-  &.--secondary{
-    color: rgba(var(--highlighted-background-color), 1);
-    background: rgba(var(--highlighted-background-color), 0.35);
-
-  }
-
-  &.--tertiary{
-    color: rgba(var(--highlighted-background-color), 0.95);
-    background: rgba(var(--highlighted-background-color), 0.16);
-  }
-
-  display: inline-flex;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-  font-size: var(--highlighted-text-size);
-  line-height: 1.5;
-
-  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
-  width: fit-content;
-
   &.--round{
     border-radius: 0.5rem;
   }
 
-  span{
-    margin: auto;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-size: var(--highlighted-text-size);
+
+  width: fit-content;
+  overflow: hidden;
+
+  .highlighted-color-container {
+    width: inherit;
+    height: inherit;
+    display: flex;
+
+    line-height: 1.5;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+
+    &.--round{
+      border-radius: 0.5rem;
+    }
+
+    span{
+      margin: auto;
+    }
+
+    .highlighted-icon{
+      margin: auto 0.3rem auto 0;
+    }
+
+    color: white;
+    &.--primary {
+      background: rgba(var(--highlighted-background-color), 1)
+    }
+
+    &.--secondary {
+      color: rgba(0, 0, 0, 0.6);
+      background: rgba(var(--highlighted-background-color), 0.45);
+
+    }
+
+    &.--tertiary {
+      color: rgba(var(--highlighted-background-color), 1);
+      background: rgba(var(--highlighted-background-color), 0.2);
+    }
   }
 
-  .highlighted-icon{
-    margin: auto 0.3rem auto 0;
-  }
 }

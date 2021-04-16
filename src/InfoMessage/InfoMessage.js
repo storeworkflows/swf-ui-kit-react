@@ -13,7 +13,6 @@ class InfoMessage extends React.Component{
         }
 
         this.timer = null;
-
         this.setDelay = this.setDelay.bind(this);
     }
 
