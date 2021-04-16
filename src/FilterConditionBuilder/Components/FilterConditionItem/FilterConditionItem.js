@@ -53,9 +53,16 @@ export default class FilterConditionItem extends React.Component {
         }
     }
 
-    textAreaValueSet = ({value}) => {
+    prepareTextAreaValue = ({value}) => {
         const { setConditionOptions } = this.props;
-        this.setState({textAreaValue: value}, () => setConditionOptions({ value: this.state.textAreaValue.replace(/\s/g, ""), conditionOption: "value"}))
+        let string = value.trim().split(" ").filter(Boolean).join(" ");
+        string = !!string.match("\n") ? string.split(/\n|\s/).filter(Boolean).join(",") : string
+
+        setConditionOptions({value: string, conditionOption: "value"});
+    }
+    
+    textAreaValueSet = ({value}) => {
+        this.setState({ textAreaValue: value }, () => this.prepareTextAreaValue({ value: this.state.textAreaValue }));
     }
 
     itemClicked = (item) => {
@@ -223,16 +230,18 @@ export default class FilterConditionItem extends React.Component {
 
     inputValueSet = ({value, type, index}) => {
         const { setConditionOptions } = this.props;
+        // let inputValue = value.trim().split(" ").filter(Boolean).join(" ")
+        let inputValue = value;
         let valueForContainer;
         switch (type) {
             case 'between_field':
             case 'relative-field':
             case 'glide_duration':
             case 'glide_date_comparative':
-                valueForContainer = { value, index };
+                valueForContainer = { inputValue, index };
                 break;
             default:
-                valueForContainer = value;
+                valueForContainer = inputValue;
         }
 
         setConditionOptions({value: valueForContainer, conditionOption: "value"})

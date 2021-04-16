@@ -110,7 +110,7 @@ export const inputValue = (state, conditionOptions, itemClicked, onDatePickerCha
                     <TextArea
                         autoresize={false}
                         maxlength={5000}
-                        value={conditionOptions.value}
+                        value={state.textAreaValue}
                         resize="vertical"
                         onKeyDown={(e) => {
                             textAreaValueSet({value: e.target.value})

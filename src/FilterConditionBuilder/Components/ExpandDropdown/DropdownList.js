@@ -12,11 +12,6 @@ export default class DropdownList extends React.Component {
         }
     }
 
-    componentDidMount() {
-        if (!!this.inputRef)
-            setTimeout(() => this.inputRef.focus(), 100)
-    }
-
     render() {
         const { items, expandIcon, selectedItems, onSelectAction, listIndex } = this.props;
         return (

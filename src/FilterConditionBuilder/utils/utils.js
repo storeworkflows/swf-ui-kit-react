@@ -227,7 +227,7 @@ export const generateCurrentConditionQuery = (conditionData, operation, breadcru
                 conditionQuery ? valueLabel = value : '';
         }
         if (conditionQuery) {
-            let conditionOperatorLabel = (editor === "none") ? operatorsArray.find(op => op.id === operator).label : operator;
+            let conditionOperatorLabel = (editor === "none" || !operator.match(/\W/)) ? operatorsArray.find(op => op.id === operator).label : operator;
             if (fieldItems.items[fieldItems.items.length - 1].reference === 'true' && valueAdditionalData.length) {
                 valueLabel = valueAdditionalData.find(val => val.id === valueLabel).label
             }

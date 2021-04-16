@@ -8,16 +8,22 @@ import Icon from "../../../Icon/Icon";
 class DropdownListHeader extends React.Component {
     constructor(props) {
         super(props);
+        this.inputRef = React.createRef();
+    }
+
+    componentDidMount() {
+        if (this.inputRef.current)
+            setTimeout(() => this.inputRef.current.focus(), 100);
     }
 
     render() {
-        const {searchValue, onSearch, selectedItem, itemSelected} = this.props;
+        const { searchValue, onSearch, selectedItem, itemSelected, searchBarWidth } = this.props;
 
         return(
             <div className="dropdown-list__header">
-                <div className="swf-form-group">
+                <div className="swf-form-group" style={{maxWidth: searchBarWidth}}>
                     <div className="input-group">
-                        <input type="text" className="form-control" autoFocus={true} placeholder="Search" value={searchValue} onChange={(e) => onSearch({value: e.target.value})} />
+                        <input type="text" className="form-control" autoFocus={true} ref={elm => this.inputRef.current = elm} placeholder="Search" value={searchValue} onChange={(e) => onSearch({value: e.target.value})} />
                     </div>
                 </div>
                 {(selectedItem) && <div className="header-breadcrumbs">

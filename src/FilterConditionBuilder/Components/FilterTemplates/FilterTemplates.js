@@ -13,15 +13,13 @@ export default class FilterTemplates extends React.Component {
             filteredValues: [],
             searchValue: "",
         }
+        this.popoverTarget = React.createRef();
     }
-    
+
     managePopover = () => {
         this.setState({popoverToogle: !this.state.popoverToogle});
     }
 
-    findTarget = (elem) => {
-        this.setState({popoverTarget: elem})
-    }
 
     filterForFilterList = ({value}) => {
         const { filterList } = this.props;
@@ -38,16 +36,16 @@ export default class FilterTemplates extends React.Component {
         }
 
         const { setQuery, filterList } = this.props;
-        const { popoverToogle, popoverTarget, filteredValues, searchValue } = this.state;
+        const { popoverToogle, filteredValues, searchValue } = this.state;
         const valuesToShow = (!!filteredValues.length || !!searchValue) ? filteredValues : filterList;
 
         return(
             <div>
-                <div className="popoverTarget" ref={elm => this.findTarget.current = elm}>
+                <div className="popoverTarget" ref={elm => this.popoverTarget.current = elm}>
                     ​​​​​​​​
                     <Button label="Filters" onClick={this.managePopover} ref={e => this.btnRef = e} customStyle={btnStyles} variant="tertiary" />
                 </div>
-                {popoverToogle && popoverTarget && <Popover opened={popoverToogle} positionTarget={{current: popoverTarget}} hideTail={false} positions={[{"target":"bottom-end","content":"top-end"}]}>
+                {popoverToogle && this.popoverTarget.current && <Popover manageOpened={true} opened={popoverToogle} positionTarget={this.popoverTarget} hideTail={false} positions={[{"target":"bottom-end","content":"top-end"}]}>
                     <Popover.Content>
                         <PopoverContent filterList={valuesToShow} setQuery={setQuery} onSearch={this.filterForFilterList} managePopover={this.managePopover} inputValue={searchValue} />
                     </Popover.Content>
