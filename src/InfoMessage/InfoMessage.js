@@ -11,18 +11,25 @@ class InfoMessage extends React.Component{
         this.state = {
             content: this.props.content
         }
+
+        this.timer = null;
+
         this.setDelay = this.setDelay.bind(this);
     }
 
     setDelay(){
         const {delay} = this.props;
         if(delay)
-            setTimeout(() => this.setState({content: undefined}) , delay);
+            this.timer = setTimeout(() => this.setState({content: undefined}) , delay);
     }
 
 
     componentDidMount() {
         this.setDelay();
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.timer);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
