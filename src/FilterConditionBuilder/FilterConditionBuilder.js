@@ -277,6 +277,8 @@ export default class FilterCondition extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
+        if (prevProps.table !== this.props.table)
+            this.setState({query: "", breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]})
         if (prevState.query !== this.state.query || prevProps.table !== this.props.table)
         {
             const { table } = this.props;
@@ -289,7 +291,6 @@ export default class FilterCondition extends React.Component {
             await REQUEST_UTILS.fetchTableData({table, queryParams}).then(result => {
                 this.fetchTableDataSuccessed({result, properties: this.props})
             });
-            console.log("BAD")
         }
         if (this.state.isFilterSaved) {
             const { table, user } = this.props;
