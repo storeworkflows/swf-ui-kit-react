@@ -22,7 +22,6 @@ export default class FilterTemplates extends React.Component {
 
     findTarget = (elem) => {
         this.popoverTarget.current = elem;
-        console.log(this.popoverTarget)
     }
 
     filterForFilterList = ({value}) => {
