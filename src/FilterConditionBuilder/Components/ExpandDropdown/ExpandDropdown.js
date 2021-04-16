@@ -53,8 +53,7 @@ class ExpandDropdown extends React.Component {
     getFirstListRef = ({elm, index}) => {
         if (index === 0 && !this.firstListRef.current) {
             this.firstListRef.current = elm;
-            !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}, () => console.log(this.state)) : () => void 0;
-            console.dir(this.firstListRef.current);
+            !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}) : () => void 0;
         }
     }
 
