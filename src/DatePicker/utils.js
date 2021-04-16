@@ -78,3 +78,25 @@ export const isPointInsideTheElement = (element, pointX, pointY) => {
 
     return insideY && insideX
 }
+
+export const getErrorOnInvalidMinValue = (current, min) => {
+    if(current && min) {
+        let currentDate = new Date(current);
+        let minDate = new Date(min);
+
+        if (currentDate < minDate)
+            return {content: `Date should be bigger than ${min}`, icon: "exclamation-circle", delay: 5000};
+    }
+    return undefined;
+}
+
+export const getErrorOnInvalidMaxValue = (current, max) => {
+    if(current && max) {
+        let currentDate = new Date(current);
+        let minDate = new Date(max);
+
+        if (currentDate > minDate)
+            return {content: `Date should be smaller than ${max}`, icon: "exclamation-circle", delay: 5000};
+    }
+    return undefined;
+}

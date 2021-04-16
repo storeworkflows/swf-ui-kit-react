@@ -198,11 +198,7 @@ class Input extends React.Component {
                     {_hasMessages &&
                         message.map((el, index) => {
                             return (el && <InfoMessage
-                                iconSize={el.iconSize}
-                                className={el.className}
-                                content={el.content}
-                                icon={el.icon}
-                                status={el.status}
+                                {...el}
                                 key={index}
                             />)
                         })
@@ -256,7 +252,8 @@ Input.propTypes = {
         content: PropTypes.string,
         icon: PropTypes.string,
         className: propTypes.object,
-        iconSize: PropTypes.number
+        iconSize: PropTypes.number,
+        delay: propTypes.number
     })),
     multiple: PropTypes.bool,
     name: PropTypes.string,
