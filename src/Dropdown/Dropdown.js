@@ -158,19 +158,21 @@ class Dropdown extends React.Component {
             message,
             className,
             labelClassName,
-            visible
+            visible,
+            hideCaret
         } = this.props;
 
         const {selectedItems, opened, invalid} = this.state;
 
         let hasSelected = selectedItems && (selectedItems.length > 0 );
-        let hasLabel = hasSelected || placeholder;
+        //let hasLabel = hasSelected || placeholder;
 
         let buttonClasses = classnames({
             "dropdown-button" : true,
             "opened": opened,
             "disabled": disabled,
-            "invalid": invalid
+            "invalid": invalid,
+            "hideCaret": hideCaret
         })
 
         let labelClasses = classnames({
@@ -202,14 +204,14 @@ class Dropdown extends React.Component {
                             className={buttonClasses}
                             ref = {el => this.dropdownRef.current =  el}
                         >
-                            { hasLabel &&
-                                <span className={labelClasses}>
-                                    {getDisplayValue(selectedItems, items, placeholder)}
-                                </span>
+                            <span className={labelClasses}>
+                                {getDisplayValue(selectedItems, items, placeholder)}
+                            </span>
+                            {!hideCaret &&
+                                <Icon className={"dropdown-caret"}
+                                      icon={"caret-down-fill"}
+                                      customSize={12}/>
                             }
-                            <Icon className={"dropdown-caret"}
-                                  icon={"caret-down-fill"}
-                                  customSize={12} />
                         </button>
                     {this.dropdownRef?.current && this.renderItems()}
                     {message.map(el => {return <InfoMessage {...el}/>}) }
@@ -239,7 +241,8 @@ Dropdown.defaultProps = {
     onOpened: () => void 0,
     onInvalid: () => void 0,
     onItemSelected: () => void 0,
-    select: DROPDOWN.SELECT.SINGLE
+    select: DROPDOWN.SELECT.SINGLE,
+    hideCaret: false
 }
 
 const dropdownItem = propTypes.shape({
@@ -290,12 +293,14 @@ Dropdown.propTypes = {
     message: propTypes.arrayOf(messageItem),
 
     //display characteristic
+    select: propTypes.oneOf([DROPDOWN.SELECT.NONE, DROPDOWN.SELECT.SINGLE, DROPDOWN.SELECT.MULTI]),
     visible: propTypes.bool,
     scrollToSelected: propTypes.bool,
     opened: propTypes.bool,
     disabled: propTypes.bool,
     invalid: propTypes.bool,
     required: propTypes.bool,
+    hideCaret: propTypes.bool,
 
     //action props
     manageOpened: propTypes.bool,
@@ -312,11 +317,8 @@ Dropdown.propTypes = {
     itemClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
 
     //todo
-    hideCaret: propTypes.bool,
     icon: propTypes.string,
     search: propTypes.oneOf(["none", "managed", "initial", "contains"]),
-    select: propTypes.oneOf([DROPDOWN.SELECT.NONE, DROPDOWN.SELECT.SINGLE, DROPDOWN.SELECT.MULTI]),
-
 }
 
 export default Dropdown

@@ -197,14 +197,14 @@ class Input extends React.Component {
                     </div>
                     {_hasMessages &&
                         message.map((el, index) => {
-                            return <InfoMessage
+                            return (el && <InfoMessage
                                 iconSize={el.iconSize}
                                 className={el.className}
                                 content={el.content}
                                 icon={el.icon}
                                 status={el.status}
                                 key={index}
-                            />
+                            />)
                         })
                     }
                 </div>
