@@ -256,7 +256,8 @@ export default class FilterCondition extends React.Component {
     }
 
     async componentDidMount() {
-        const { table, query, user } = this.props;
+        const { table, user } = this.props;
+        const { query } = this.state;
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
