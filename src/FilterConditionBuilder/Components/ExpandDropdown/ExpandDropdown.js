@@ -1,6 +1,7 @@
 import classnames from "classnames";
 import { v4 as uuidv4 } from 'uuid';
 import propTypes from "prop-types";
+import ReactDOM from "react-dom";
 import * as React from "react";
 
 import {calculateScroll, getItemById} from "./utils";
@@ -30,6 +31,7 @@ class ExpandDropdown extends React.Component {
 
         this.dropdownRef = null;
         this.itemsContainerRef = null;
+        this.firstListRef = React.createRef();
     }
 
     dropdownClicked(){
@@ -46,6 +48,14 @@ class ExpandDropdown extends React.Component {
         
         if(onOpened)
             onOpened({ opened: currentOpened});
+    }
+
+    getFirstListRef = ({elm, index}) => {
+        if (index === 0 && !this.firstListRef.current) {
+            this.firstListRef.current = elm;
+            !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}, () => console.log(this.state)) : () => void 0;
+            console.dir(this.firstListRef.current);
+        }
     }
 
     itemSelected({id, dropdownClicked, listIndex}){
@@ -112,7 +122,7 @@ class ExpandDropdown extends React.Component {
 
     renderItems({autofocus}) {
         const {expandIcon, lists, selectedItems, selectedItem} = this.props;
-        const {opened, filteredList, searchValue} = this.state;
+        const {opened, filteredList, searchValue, clientWidth} = this.state;
         let key = uuidv4();
 
         let listStyles = {
@@ -135,7 +145,7 @@ class ExpandDropdown extends React.Component {
                     contentStyles={listStyles}
                 >
                     <Popover.Content>
-                        <DropdownListHeader onSearch={this.onSearch} searchValue={searchValue} selectedItem={selectedItem.items} itemSelected={this.itemSelected} />
+                        <DropdownListHeader onSearch={this.onSearch} searchBarWidth={clientWidth} searchValue={searchValue} selectedItem={selectedItem.items} itemSelected={this.itemSelected} />
                         
                         <div
                             className={"dropdown-items-container"}
@@ -150,6 +160,7 @@ class ExpandDropdown extends React.Component {
                                 opened && (
                                     <>
                                         <DropdownList
+                                            ref={elm => this.getFirstListRef({elm: ReactDOM.findDOMNode(elm), index})}
                                             onSelectAction={this.itemSelected}
                                             items={list.items}
                                             selectedItems={selectedItems}
@@ -157,6 +168,7 @@ class ExpandDropdown extends React.Component {
                                             listIndex={index}
                                             autofocus={autofocus}
                                             key={index + uuidv4().split("-").join("")}
+                                            getFirstListRef={this.getFirstListRef}
                                         />
                                     </>
                                 )

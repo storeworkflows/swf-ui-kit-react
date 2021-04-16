@@ -230,16 +230,18 @@ export default class FilterConditionItem extends React.Component {
 
     inputValueSet = ({value, type, index}) => {
         const { setConditionOptions } = this.props;
+        // let inputValue = value.trim().split(" ").filter(Boolean).join(" ")
+        let inputValue = value;
         let valueForContainer;
         switch (type) {
             case 'between_field':
             case 'relative-field':
             case 'glide_duration':
             case 'glide_date_comparative':
-                valueForContainer = { value, index };
+                valueForContainer = { inputValue, index };
                 break;
             default:
-                valueForContainer = value;
+                valueForContainer = inputValue;
         }
 
         setConditionOptions({value: valueForContainer, conditionOption: "value"})

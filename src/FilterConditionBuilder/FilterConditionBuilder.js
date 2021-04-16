@@ -277,7 +277,7 @@ export default class FilterCondition extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        if (prevState.query !== this.state.query)
+        if (prevState.query !== this.state.query || prevProps.table !== this.props.table)
         {
             const { table } = this.props;
             const queryParams = {
@@ -289,6 +289,7 @@ export default class FilterCondition extends React.Component {
             await REQUEST_UTILS.fetchTableData({table, queryParams}).then(result => {
                 this.fetchTableDataSuccessed({result, properties: this.props})
             });
+            console.log("BAD")
         }
         if (this.state.isFilterSaved) {
             const { table, user } = this.props;
