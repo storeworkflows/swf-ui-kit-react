@@ -199,7 +199,7 @@ class DatePicker extends React.Component {
 
             this.setState({
                 stringValue: newStr,
-                currentDate: dateValue.isValid() ? dateValue.toDate() : null,
+                currentDate: dateValue?.isValid() ? dateValue.toDate() : null,
                 invalid: invalidValue
             })
         }
