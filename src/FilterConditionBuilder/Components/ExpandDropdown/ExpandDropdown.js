@@ -51,7 +51,7 @@ class ExpandDropdown extends React.Component {
     }
 
     getFirstListRef = ({elm, index}) => {
-        if (index === 0 && !this.firstListRef.current) {
+        if (index === 0 && !this.firstListRef.current && !!elm) {
             this.firstListRef.current = elm;
             !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}) : () => void 0;
         }
@@ -112,7 +112,7 @@ class ExpandDropdown extends React.Component {
         const searchValue = value.trim();
         const filteredList = lists.map((list, index) => {
             return {
-                items: [...[selectedItems[index]].filter(item => item && (selectedItems[index].id !== item.id)), ...list.items.filter(item => (!!item.label.toLowerCase().match(searchValue.toLowerCase())))]
+                items: [...[selectedItems[index]].filter(Boolean), ...list.items.filter(item => (!!item.label.toLowerCase().match(searchValue.toLowerCase())))]
             }
         });
         

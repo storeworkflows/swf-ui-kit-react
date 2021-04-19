@@ -13,7 +13,7 @@ class DropdownListHeader extends React.Component {
 
     componentDidMount() {
         if (this.inputRef.current)
-            setTimeout(() => this.inputRef.current.focus(), 100);
+            setTimeout(() => this.inputRef.current.focus(), 200);
     }
 
     render() {
