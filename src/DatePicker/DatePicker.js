@@ -74,7 +74,7 @@ class DatePicker extends React.Component {
                     onValueSet({value: newDateString});
                 }
             }
-        this.setState({stringValue: newDateString})
+        !manageValue && this.setState({stringValue: newDateString})
         onValueChange({oldValue: stringValue, input: input, newValue: newDateString});
        // } else
         //    onValueChange({oldValue: stringValue, input: input});
@@ -190,7 +190,7 @@ class DatePicker extends React.Component {
         if(manageOpened && opened!==isOpened)
             this.setState({isOpened: opened});
 
-        if(manageValue && (value!==prevProps.value || stringValue!==value))
+        if(manageValue && (value!==prevProps.value))
         {
             let dateValue = value ? moment(value, format) : null;
             let newStr = dateValue && dateValue.format(format);
