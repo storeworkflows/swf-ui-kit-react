@@ -279,6 +279,7 @@ export default class FilterCondition extends React.Component {
 
     async componentDidUpdate(prevProps, prevState) {
         if (prevProps.table !== this.props.table) {
+            const { onSendQuery } = this.props;
             this.setState({query: "", breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]});
             onSendQuery("");
         }
