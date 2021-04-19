@@ -15,6 +15,8 @@ class Tooltip extends React.Component {
 
         this.renderContent = this.renderContent.bind(this);
         this.targetHovered = this.targetHovered.bind(this);
+
+        this.timer = null;
     }
 
     renderContent = () => {
@@ -31,7 +33,7 @@ class Tooltip extends React.Component {
 
     targetHovered = () => {
         if(!this.state.opened) {
-            setTimeout(() =>
+            this.timer = setTimeout(() =>
                     this.setState({opened: false}) ,
                     this.props.delay);
 
@@ -50,6 +52,10 @@ class Tooltip extends React.Component {
             target.current.onmouseover = () => this.targetHovered();
             this.setState({targetElement : target});
         }
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.timer);
     }
 
 

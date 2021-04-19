@@ -26,12 +26,13 @@ class Alert extends React.Component {
 
         this.contentRef = React.createRef();
         this.textRef = React.createRef();
+        this.timer = null;
     }
 
     setDelay(){
         const {delay, onCloseAction, manageVisibility} = this.props;
         if(delay) {
-            setTimeout(() => {
+            this.timer = setTimeout(() => {
                 if (!manageVisibility)
                     this.setState({visible: false});
                 onCloseAction();
@@ -88,6 +89,10 @@ class Alert extends React.Component {
     componentDidMount() {
        this.defineSizes();
        this.setDelay();
+    }
+
+    componentWillUnmount() {
+        clearTimeout(this.timer);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {

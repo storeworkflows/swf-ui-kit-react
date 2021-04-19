@@ -28,7 +28,6 @@ class HighlightedValue extends React.Component {
         const classes = classnames(
             "highlighted-value-container",
             `--${size}`,
-            `--${variant}`,
             color,
             className, {
                 "--round": roundBorder
@@ -39,16 +38,23 @@ class HighlightedValue extends React.Component {
 
         return (
             <>
-                <div
-                    className={classes}
-                    onClick={onClick}
-                >
-                    {showIcon && <Icon
-                        className="highlighted-icon"
-                        icon={icon? icon : "circle-fill"}
-                        customSize={iconSize}
-                    />}
-                    {label && <span>{label}</span>}
+                <div className={classes}>
+                    <div
+                        className={classnames(
+                            "highlighted-color-container",
+                            `--${variant}`, {
+                                "--round": roundBorder
+                            }
+                        )}
+                        onClick={onClick}
+                    >
+                        {showIcon && <Icon
+                            className="highlighted-icon"
+                            icon={icon? icon : "circle-fill"}
+                            customSize={iconSize}
+                        />}
+                        {label && <span>{label}</span>}
+                    </div>
                 </div>
             </>
         )
