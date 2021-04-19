@@ -52,7 +52,7 @@ class ExpandDropdown extends React.Component {
 
     getFirstListRef = ({elm, index}) => {
         if (index === 0 && !this.firstListRef.current && !!elm) {
-            this.firstListRef.current = elm;
+            this.firstListRef.current = ReactDOM.findDOMNode(elm);
             !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}) : () => void 0;
         }
     }
@@ -159,7 +159,7 @@ class ExpandDropdown extends React.Component {
                                 opened && (
                                     <>
                                         <DropdownList
-                                            ref={elm => this.getFirstListRef({elm: ReactDOM.findDOMNode(elm), index})}
+                                            ref={elm => this.getFirstListRef({elm, index})}
                                             onSelectAction={this.itemSelected}
                                             items={list.items}
                                             selectedItems={selectedItems}
