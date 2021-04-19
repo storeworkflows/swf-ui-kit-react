@@ -26,7 +26,8 @@ class ExpandDropdown extends React.Component {
             selectedItem: this.props.selectedItem,
             searchValue: "",
             filteredList: [],
-            clickedFields: []
+            clickedFields: [],
+            clientWidth: 0
         }
 
         this.dropdownRef = null;
@@ -50,11 +51,16 @@ class ExpandDropdown extends React.Component {
             onOpened({ opened: currentOpened});
     }
 
-    getFirstListRef = ({elm, index}) => {
-        if (index === 0 && !this.firstListRef.current && !!elm) {
-            this.firstListRef.current = ReactDOM.findDOMNode(elm);
-            !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}) : () => void 0;
-        }
+    // getFirstListRef = ({elm, index}) => {
+    //     if (index === 0 && !this.firstListRef.current && !!elm) {
+    //         this.firstListRef.current = elm;
+    //         !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}) : () => void 0;
+    //     }
+    // }
+
+    getWidth = ({elm}) => {
+        if (this.state.clientWidth !== elm.clientWidth)
+            this.setState({clientWidth: elm.clientWidth})
     }
 
     itemSelected({id, dropdownClicked, listIndex}){
@@ -159,7 +165,6 @@ class ExpandDropdown extends React.Component {
                                 opened && (
                                     <>
                                         <DropdownList
-                                            ref={elm => this.getFirstListRef({elm, index})}
                                             onSelectAction={this.itemSelected}
                                             items={list.items}
                                             selectedItems={selectedItems}
@@ -167,7 +172,7 @@ class ExpandDropdown extends React.Component {
                                             listIndex={index}
                                             autofocus={autofocus}
                                             key={index + uuidv4().split("-").join("")}
-                                            getFirstListRef={this.getFirstListRef}
+                                            getWidth={this.getWidth}
                                         />
                                     </>
                                 )
