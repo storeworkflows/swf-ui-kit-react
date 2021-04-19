@@ -190,7 +190,7 @@ class DatePicker extends React.Component {
         if(manageOpened && opened!==isOpened)
             this.setState({isOpened: opened});
 
-        if(manageValue && (value!==prevProps.value || !value))
+        if(manageValue && (value!==prevProps.value || stringValue!==value))
         {
             let dateValue = value ? moment(value, format) : null;
             let newStr = dateValue && dateValue.format(format);
