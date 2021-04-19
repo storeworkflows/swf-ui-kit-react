@@ -223,8 +223,9 @@ export const generateCurrentConditionQuery = (conditionData, operation, breadcru
                 valueLabel = '';
                 break;
             default:
-                conditionQuery = value ? `${field}${operator}${value}` : '';
-                conditionQuery ? valueLabel = value : '';
+                let str = value.trim().split(" ").filter(Boolean).join(" ");
+                conditionQuery = str ? `${field}${operator}${str}` : '';
+                conditionQuery ? valueLabel = str : '';
         }
         if (conditionQuery) {
             let conditionOperatorLabel = (editor === "none" || !operator.match(/\W/)) ? operatorsArray.find(op => op.id === operator).label : operator;
