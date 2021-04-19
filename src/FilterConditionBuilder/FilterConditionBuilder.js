@@ -278,8 +278,10 @@ export default class FilterCondition extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        if (prevProps.table !== this.props.table)
-            this.setState({query: "", breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]})
+        if (prevProps.table !== this.props.table) {
+            this.setState({query: "", breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]});
+            onSendQuery("");
+        }
         if (prevState.query !== this.state.query || prevProps.table !== this.props.table)
         {
             const { table } = this.props;
@@ -317,7 +319,9 @@ export default class FilterCondition extends React.Component {
                 break;
             case '^OR':
                 let currentConditionIndexInArr = newConditionsArray[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: GENERAL_UTILS.generateID(), condition: '', operator: value, conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }})
+                let parrentConditionOptions = newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].conditionOptions;
+                const { activeField, activeFieldsData, field, fieldItems, operator, operatorsArray, fieldsData, valueAdditionalData } = parrentConditionOptions;
+                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: GENERAL_UTILS.generateID(), condition: '', operator: value, conditionOptions: { operator, field, value: '', activeField, operatorsArray, activeFieldsData, fieldItems, fieldsData, fieldsDropdownData: parrentConditionOptions.fieldsDropdownData, valueAdditionalData}})
                 this.setState({conditionsArray: newConditionsArray});
                 break;
             case '^NQ':
@@ -578,6 +582,8 @@ export default class FilterCondition extends React.Component {
             filterList
         } = this.state;
         const { table, user } = this.props;
+
+        // console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
 
         return (
             <>

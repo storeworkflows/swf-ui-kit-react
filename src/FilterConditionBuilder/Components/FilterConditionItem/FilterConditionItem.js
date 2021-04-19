@@ -145,7 +145,7 @@ export default class FilterConditionItem extends React.Component {
                 operation: true,
                 value: false
             }
-        })
+        }, () => this.valueInputActivation())
     }
 
     fetchTableData = () => {
