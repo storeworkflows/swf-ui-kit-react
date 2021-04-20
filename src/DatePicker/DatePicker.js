@@ -206,6 +206,7 @@ class DatePicker extends React.Component {
             >
                 <Input.End>
                     <Button
+                        className={"datepicker-button"}
                         icon={"calendar"}
                         variant={"tertiary"}
                         onClick={this.openCalendar}
@@ -228,19 +229,18 @@ class DatePicker extends React.Component {
             {target: "center-start", content: "center-end"},
         ]
 
-        let refExist = this.inputRef && this.inputRef.current;
-
+        let popoverTarget = this.inputRef?.current?.getElementsByClassName("input-group")[0]
         return (
             visible ?
                 <div ref = {el => this.inputRef.current =  el}>
                     { this.renderInput() }
-                    { refExist &&
+                    { popoverTarget &&
                         <Popover
                             hideTail={true}
                             manageOpened={true}
                             opened={isOpened}
                             positions={calendarPositions}
-                            positionTarget={this.inputRef}
+                            positionTarget={{current: popoverTarget}}
                             onOuterPopoverClicked={this.openCalendar}
                         >
                             <Popover.Content>
