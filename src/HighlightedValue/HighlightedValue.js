@@ -28,7 +28,6 @@ class HighlightedValue extends React.Component {
         const classes = classnames(
             "highlighted-value-container",
             `--${size}`,
-            `--${variant}`,
             color,
             className, {
                 "--round": roundBorder
@@ -39,16 +38,23 @@ class HighlightedValue extends React.Component {
 
         return (
             <>
-                <div
-                    className={classes}
-                    onClick={onClick}
-                >
-                    {showIcon && <Icon
-                        className="highlighted-icon"
-                        icon={icon? icon : "circle-fill"}
-                        customSize={iconSize}
-                    />}
-                    {label && <span>{label}</span>}
+                <div className={classes}>
+                    <div
+                        className={classnames(
+                            "highlighted-color-container",
+                            `--${variant}`, {
+                                "--round": roundBorder
+                            }
+                        )}
+                        onClick={onClick}
+                    >
+                        {showIcon && <Icon
+                            className="highlighted-icon"
+                            icon={icon? icon : "circle-fill"}
+                            customSize={iconSize}
+                        />}
+                        {label && <span>{label}</span>}
+                    </div>
                 </div>
             </>
         )
@@ -61,7 +67,7 @@ HighlightedValue.defaultProps = {
     showIcon: false,
     size: "md",
     variant: "primary",
-    color: "critical",
+    color: "red",
     roundBorder: true
 }
 
@@ -74,7 +80,7 @@ HighlightedValue.propTypes = {
     showIcon: propTypes.bool,
     size: propTypes.oneOf(["sm", "md", "lg"]),
     variant: propTypes.oneOf(["primary", "secondary", "tertiary"]),
-    color: propTypes.oneOf(["critical", "high", "warning", "moderate", "positive", "info", "low"])
+    color: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"])
 }
 
 export default HighlightedValue

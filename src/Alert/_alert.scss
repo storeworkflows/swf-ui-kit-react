@@ -1,45 +1,37 @@
 .swf-alert-container{
-//yellow #FFEB3B 255, 235, 59
-//grey-blue #607D8B 96, 125, 139
-  // green #4CAF50 76, 175, 80
-  // red #f44336 244, 67, 54
-  //grey #9E9E9E 158, 158, 158
-  //blue #2196F3 33, 150, 243
 
   &.yellow{
-    --alert-background-color: rgba(255, 235, 59, 0.4);
-    --alert-border-color: #FFEB3B;
+    --alert-background-color: #fffbc9;
+    --alert-border-color: #fcd200;
   }
 
-  &.high{
-    --alert-background-color: rgb(245, 222, 189);
-    --alert-border-color: orangered;
+  &.red{
+    --alert-background-color: #fcdddc;
+    --alert-border-color: #f44336;
   }
 
-  &.moderate{
-    --alert-background-color: rgb(212, 213, 243);
-    --alert-border-color: blueviolet;
+  &.green{
+    --alert-background-color: #e0ffe2;
+    --alert-border-color: #4CAF50;
   }
 
-  &.warning{
-    --alert-background-color: rgb(242, 237, 179);
-    --alert-border-color: orange;
+  &.blue{
+    --alert-background-color: #dceefc;
+    --alert-border-color: #2196F3;
   }
 
-  &.info{
-    --alert-background-color: #c3dff2;
-    --alert-border-color: cornflowerblue;
+  &.grey-blue{
+    //grey-blue #607D8B 96, 125, 139
+    --alert-background-color: #d3e1e8;
+    --alert-border-color: #607D8B;
   }
 
-  &.positive{
-    --alert-background-color:  rgb(201, 224, 202);
-    --alert-border-color: green;
+  &.grey{
+    //grey #9E9E9E 158, 158, 158
+    --alert-background-color:  #e8e8e8;
+    --alert-border-color: #9E9E9E;
   }
 
-  &.low{
-    --alert-background-color: rgb(243, 243, 243);
-    --alert-border-color: grey;
-  }
 
   background: var(--alert-background-color);
   font-family: Roboto, Helvetica, Arial, sans-serif;
@@ -93,8 +85,8 @@
   }
 
   .alert-button{
-    background: rgba(255, 255, 255, 0.4);
-    --hover-base-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.5);
+    --hover-base-color: rgba(255, 255, 255, 0.7);
     border-color: var(--alert-border-color);
     //color: var(--alert-border-color);
     --border-width: 0px;

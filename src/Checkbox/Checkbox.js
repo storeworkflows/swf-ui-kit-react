@@ -30,11 +30,12 @@ class Checkbox extends React.Component {
         let newValue = (currentValue==="indeterminate") || !currentValue;
         let canChange = !readonly && !disabled;
 
-        if(!manageChecked && canChange)
+        if(!manageChecked && canChange){
             this.setState({ checkedValue: newValue });
+            onChange({value: newValue, valueName: value, label: label, name: name});
+        } else
+            onChange({value: currentValue, valueName: value, label: label, name: name});
 
-
-        onChange({value: currentValue, valueName: value, label: label, name: name});
     }
 
     onInvalidAction(e){
@@ -130,17 +131,15 @@ class Checkbox extends React.Component {
                             onChange={ (e) => {e.preventDefault(); e.stopPropagation();}}
                             onClick={ (e) => {e.preventDefault(); e.stopPropagation();}}
                         />
-                        <div className={"checkbox-container"}>
-                            <div className={"checkbox-information"} >
-                                {value &&
-                                    <RequiredLabel
-                                        htmlFor={name}
-                                        className={"checkbox-label"}
-                                        required={inlineRequired}
-                                        label={value}
-                                    />
-                                }
-                            </div>
+                        <div className={"checkbox-information"} >
+                            {value &&
+                                <RequiredLabel
+                                    htmlFor={name}
+                                    className={"checkbox-label"}
+                                    required={inlineRequired}
+                                    label={value}
+                                />
+                            }
                         </div>
                     </div>
                 </div>
@@ -159,10 +158,8 @@ Checkbox.defaultProps = {
     readonly: false,
     required: false,
     visible: true,
-    className: {},
     onInvalid: () => void 0,
     onChange: () => void 0,
-    labelClassName: {},
     inlineRequired: false
 };
 

@@ -93,7 +93,7 @@ class TextArea extends React.Component {
 
 TextArea.defaultProps = {
     autoresize: false,
-    autofocus: true,
+    autofocus: false,
     className: "",
     onChange: () => void 0,
     onKeyDown: () => void 0,

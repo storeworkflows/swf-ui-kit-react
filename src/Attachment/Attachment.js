@@ -384,7 +384,7 @@ Attachment.propTypes = {
     name: propTypes.string,
     maxAttachmentSize: propTypes.number,
     message: PropTypes.arrayOf(PropTypes.shape({
-        status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+        status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
         content: PropTypes.string,
         icon: PropTypes.string,
         className: propTypes.object,

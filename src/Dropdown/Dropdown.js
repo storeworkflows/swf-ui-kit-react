@@ -30,8 +30,8 @@ class Dropdown extends React.Component {
             selectedItems: getCorrectSelected(items, selectedItems)
         }
 
-        this.dropdownRef = null;
-        this.itemsContainerRef = null;
+        this.dropdownRef = React.createRef();
+        this.itemsContainerRef = React.createRef();
     }
 
     onInvalid(e){
@@ -62,11 +62,10 @@ class Dropdown extends React.Component {
                     currentSelectedIds = (currentSelectedIds[0] === id) ? [] : [id];
                     break;
                 case DROPDOWN.SELECT.MULTI:
-                    let findItemIndex = currentSelectedIds.indexOf(id);
-                    if(findItemIndex === -1)
-                        currentSelectedIds.push(id);
+                    if(currentSelectedIds.includes(id))
+                         currentSelectedIds = currentSelectedIds.filter(currentId => currentId !== id);
                     else
-                        currentSelectedIds.splice(findItemIndex, 1);
+                        currentSelectedIds.push(id);
                     break;
                 default:
                     currentSelectedIds = [];
@@ -75,7 +74,7 @@ class Dropdown extends React.Component {
             this.setState({ selectedItems: currentSelectedIds});
         }
 
-        if(!manageOpened)
+        if(!manageOpened && select !==DROPDOWN.SELECT.MULTI)
             this.setState({opened: false})
 
         onItemSelected({
@@ -124,10 +123,9 @@ class Dropdown extends React.Component {
                     <Popover.Content>
                         <div
                             className={"dropdown-items-container"}
-                            ref = {el => this.itemsContainerRef = el}
+                            ref = {el => this.itemsContainerRef.current = el}
                         >
-                            {opened &&
-                                items.map((item) => {
+                            {   items.map((item) => {
                                     const {id, label, disabled} = item;
 
                                     return <DropdownItem
@@ -137,7 +135,7 @@ class Dropdown extends React.Component {
                                         label={label}
                                         disabled={this.props.disabled || disabled}
                                         isSelected={selectedItems.includes(id)}
-                                        showOnMount = {scrollToSelected}
+                                        showOnMount = {scrollToSelected && id === selectedItems[0]}
                                         className={itemClassName}
                                     />
                                 })
@@ -160,19 +158,21 @@ class Dropdown extends React.Component {
             message,
             className,
             labelClassName,
-            visible
+            visible,
+            hideCaret
         } = this.props;
 
         const {selectedItems, opened, invalid} = this.state;
 
         let hasSelected = selectedItems && (selectedItems.length > 0 );
-        let hasLabel = hasSelected || placeholder;
+        //let hasLabel = hasSelected || placeholder;
 
         let buttonClasses = classnames({
             "dropdown-button" : true,
             "opened": opened,
             "disabled": disabled,
-            "invalid": invalid
+            "invalid": invalid,
+            "hideCaret": hideCaret
         })
 
         let labelClasses = classnames({
@@ -202,18 +202,18 @@ class Dropdown extends React.Component {
                             onClick={this.dropdownClicked}
                             disabled={disabled}
                             className={buttonClasses}
-                            ref = {el => this.dropdownRef =  {current: el}}
+                            ref = {el => this.dropdownRef.current =  el}
                         >
-                            { hasLabel &&
-                                <span className={labelClasses}>
-                                    {getDisplayValue(selectedItems, items, placeholder)}
-                                </span>
+                            <span className={labelClasses}>
+                                {getDisplayValue(selectedItems, items, placeholder)}
+                            </span>
+                            {!hideCaret &&
+                                <Icon className={"dropdown-caret"}
+                                      icon={"caret-down-fill"}
+                                      customSize={12}/>
                             }
-                            <Icon className={"dropdown-caret"}
-                                  icon={"caret-down-fill"}
-                                  customSize={12} />
                         </button>
-                    {this.dropdownRef && this.renderItems()}
+                    {this.dropdownRef?.current && this.renderItems()}
                     {message.map(el => {return <InfoMessage {...el}/>}) }
                 </div>
             </>
@@ -241,7 +241,8 @@ Dropdown.defaultProps = {
     onOpened: () => void 0,
     onInvalid: () => void 0,
     onItemSelected: () => void 0,
-    select: DROPDOWN.SELECT.MULTI
+    select: DROPDOWN.SELECT.SINGLE,
+    hideCaret: false
 }
 
 const dropdownItem = propTypes.shape({
@@ -266,7 +267,7 @@ const dropdownSection = propTypes.shape({
 });
 
 const messageItem = propTypes.shape({
-    status: propTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
+    status: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
     content: propTypes.string,
     icon: propTypes.string,
     className: propTypes.object,
@@ -292,12 +293,14 @@ Dropdown.propTypes = {
     message: propTypes.arrayOf(messageItem),
 
     //display characteristic
+    select: propTypes.oneOf([DROPDOWN.SELECT.NONE, DROPDOWN.SELECT.SINGLE, DROPDOWN.SELECT.MULTI]),
     visible: propTypes.bool,
     scrollToSelected: propTypes.bool,
     opened: propTypes.bool,
     disabled: propTypes.bool,
     invalid: propTypes.bool,
     required: propTypes.bool,
+    hideCaret: propTypes.bool,
 
     //action props
     manageOpened: propTypes.bool,
@@ -314,11 +317,8 @@ Dropdown.propTypes = {
     itemClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
 
     //todo
-    hideCaret: propTypes.bool,
-    icon: propTypes.string,
-    search: propTypes.oneOf(["none", "managed", "initial", "contains"]),
-    select: propTypes.oneOf([DROPDOWN.SELECT.NONE, DROPDOWN.SELECT.SINGLE, DROPDOWN.SELECT.MULTI]),
-
+    //icon: propTypes.string,
+    //search: propTypes.oneOf(["none", "managed", "initial", "contains"]),
 }
 
 export default Dropdown

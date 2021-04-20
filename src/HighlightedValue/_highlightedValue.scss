@@ -1,34 +1,32 @@
 .highlighted-value-container{
-  color: white;
+  display: inline-flex;
+  background: white;
   --highlighted-background-color: 0, 0, 0;
 
-  &.critical{
-    --highlighted-background-color: 255,0, 0;
+  &.red{
+    --highlighted-background-color: 244, 67, 54;
   }
 
-  &.high{
-    --highlighted-background-color: 255,69,0;
+  &.yellow{
+    --highlighted-background-color: 255, 235, 59;
   }
 
-  &.moderate{
-    --highlighted-background-color: 138, 43, 226;
+  &.green{
+    --highlighted-background-color: 76, 175, 80;
   }
 
-  &.warning{
-    --highlighted-background-color: 255,165,0;
+  &.blue{
+    --highlighted-background-color: 33, 150, 243;
   }
 
-  &.info{
-    --highlighted-background-color: 100, 149, 237;
+  &.grey-blue{
+    --highlighted-background-color: 96, 125, 139;
   }
 
-  &.positive{
-    --highlighted-background-color: 0,128,0;
+  &.grey{
+    --highlighted-background-color: 158, 158, 158;
   }
 
-  &.low{
-    --highlighted-background-color: 128,128,128;
-  }
 
   &.--sm{
     --highlighted-text-size: 0.7rem
@@ -42,38 +40,51 @@
     --highlighted-text-size: 1.1rem
   }
 
-  &.--primary{
-    background: rgba(var(--highlighted-background-color), 1)
-  }
-
-  &.--secondary{
-    color: rgba(var(--highlighted-background-color), 1);
-    background: rgba(var(--highlighted-background-color), 0.35);
-
-  }
-
-  &.--tertiary{
-    color: rgba(var(--highlighted-background-color), 0.95);
-    background: rgba(var(--highlighted-background-color), 0.16);
-  }
-
-  display: inline-flex;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-  font-size: var(--highlighted-text-size);
-  line-height: 1.5;
-
-  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
-  width: fit-content;
-
   &.--round{
     border-radius: 0.5rem;
   }
 
-  span{
-    margin: auto;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  font-size: var(--highlighted-text-size);
+
+  width: fit-content;
+  overflow: hidden;
+
+  .highlighted-color-container {
+    width: inherit;
+    height: inherit;
+    display: flex;
+
+    line-height: 1.5;
+    padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+
+    &.--round{
+      border-radius: 0.5rem;
+    }
+
+    span{
+      margin: auto;
+    }
+
+    .highlighted-icon{
+      margin: auto 0.3rem auto 0;
+    }
+
+    color: white;
+    &.--primary {
+      background: rgba(var(--highlighted-background-color), 1)
+    }
+
+    &.--secondary {
+      color: rgba(0, 0, 0, 0.6);
+      background: rgba(var(--highlighted-background-color), 0.45);
+
+    }
+
+    &.--tertiary {
+      color: rgba(var(--highlighted-background-color), 1);
+      background: rgba(var(--highlighted-background-color), 0.2);
+    }
   }
 
-  .highlighted-icon{
-    margin: auto 0.3rem auto 0;
-  }
 }
