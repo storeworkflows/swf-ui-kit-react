@@ -51,13 +51,6 @@ class ExpandDropdown extends React.Component {
             onOpened({ opened: currentOpened});
     }
 
-    // getFirstListRef = ({elm, index}) => {
-    //     if (index === 0 && !this.firstListRef.current && !!elm) {
-    //         this.firstListRef.current = elm;
-    //         !!this.firstListRef.current ? this.setState({clientWidth: this.firstListRef.current.clientWidth}) : () => void 0;
-    //     }
-    // }
-
     getWidth = ({elm}) => {
         if (this.state.clientWidth !== elm.clientWidth)
             this.setState({clientWidth: elm.clientWidth})
@@ -65,7 +58,6 @@ class ExpandDropdown extends React.Component {
 
     itemSelected({id, dropdownClicked, listIndex}){
         const {manageSelectedItems, onItemSelected, manageOpened, updateSelectedItem, selectedItem} = this.props;
-        const {clickedFields} = this.state;
         let items = this.props.lists[listIndex].items;
         let item = {...items.find(item => item.id === id), listIndex, dropdownClicked};
         const currentSelectedIds = this.state.selectedItems.map(item => item.id);
@@ -118,7 +110,13 @@ class ExpandDropdown extends React.Component {
         const searchValue = value.trim();
         const filteredList = lists.map((list, index) => {
             return {
-                items: [...[selectedItems[index]].filter(Boolean), ...list.items.filter(item => (!!item.label.toLowerCase().match(searchValue.toLowerCase())))]
+                items: [
+                    ...[selectedItems[index]].filter(Boolean),
+                    ...list.items.filter(item => {
+                        let itemsToReturn = !!selectedItems[index] ? !!item.label.toLowerCase().match(searchValue.toLowerCase()) && selectedItems[index].id !== item.id : (!!item.label.toLowerCase().match(searchValue.toLowerCase()))
+                        return itemsToReturn
+                    })
+                ]
             }
         });
         

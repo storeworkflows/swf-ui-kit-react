@@ -8,15 +8,15 @@ import FilterTemplates from "./Components/FilterTemplates/FilterTemplates";
 import FilterSaver from "./Components/FilterSaver/FilterSaver";
 import { Button } from "../index";
 import {
-    generateCurrentConditionQuery,
     parseConditionValueWithRef,
     getValueAdditionalData,
     parseConditionValue,
 } from "./utils/utils"
 
-import { REQUEST_UTILS, CONDITION_OPTIONS_UTILS, GENERAL_UTILS, DATA_UTILS } from "./utils";
+import { REQUEST_UTILS, CONDITION_OPTIONS_UTILS, GENERAL_UTILS, DATA_UTILS, QUERY_UTILS } from "./utils";
+import { BUTTONS_EFFECTS } from "./effects";
 
-import { noop } from "../utils"
+import { noop } from "../utils";
 
 export default class FilterCondition extends React.Component {
     constructor(props) {
@@ -50,10 +50,7 @@ export default class FilterCondition extends React.Component {
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
         this.parseConditionValue = parseConditionValue.bind(this);
         this.parseConditionValueWithRef = parseConditionValueWithRef.bind(this);
-    }
-
-    getClickedListIndex = ({index}) => {
-        this.setState({clickedListIndex: index});
+        this.clickBtn = BUTTONS_EFFECTS.clickBtn.bind(this);
     }
 
     fetchTableDataSuccessed = async ({result, properties}) => {
@@ -174,90 +171,9 @@ export default class FilterCondition extends React.Component {
         })
     }
 
-    runButtonClicked = ({type}) => {
-        switch (type) {
-            case "run":
-            case "save":
-                const { conditionsArray } = this.state;
-                let copyConditionArray = GENERAL_UTILS.clone(conditionsArray);
-                copyConditionArray = copyConditionArray.map(globalCond => {
-                globalCond.relatedConditions.map(parentCond => {
-                    parentCond.failed = false;
-                    parentCond.relatedConditions.map(childCond => {
-                        childCond.failed = false;
-                        return childCond;
-                    })
-                    return parentCond;
-                })
-                return globalCond;
-                });
-                this.setState({
-                    conditionsArray: copyConditionArray
-                });
-                this.generateQuery({operation: type})
-        }
-    }
-
-    generateQuery = ({ operation }) => {
-        const { conditionsArray, isSave } = this.state;
-        const { onSendQuery } = this.props;
-
-        let resultQuery = "";
-        let error = false;
-        let breadcrumbsItems = [{ label: "All", conditionId: "all"}];
-        conditionsArray.forEach(globalCond => {
-            resultQuery += globalCond.operator;
-            globalCond.relatedConditions.forEach((parentCond, index) => {
-                resultQuery += parentCond.operator;
-                let breadcrumbItem = { label: `${globalCond.operator && index === 0 ? 'or' : ''}`, conditionId: parentCond.id, globalConditionId: globalCond.id };
-                let generatedCondition = generateCurrentConditionQuery(parentCond, operation, breadcrumbItem)
-                let curCondition = generatedCondition.conditionQuery;
-                breadcrumbItem = generatedCondition.breadcrumbItem;
-                if (curCondition) {
-                    resultQuery += curCondition;
-                } else if (operation === 'run' && !curCondition && !parentCond.conditionOptions.field && conditionsArray.length === 1 && globalCond.relatedConditions.length === 1 && !parentCond.relatedConditions.length) {
-                    resultQuery = '';
-                } else {
-                    error = true;
-                }
-
-                parentCond.relatedConditions.forEach(childCond => {
-                    resultQuery += childCond.operator;
-                    let generatedCondition = generateCurrentConditionQuery(childCond, operation, breadcrumbItem);
-                    let curCondition = generatedCondition.conditionQuery;
-                    breadcrumbItem = generatedCondition.breadcrumbItem;
-                    if (curCondition) {
-                        resultQuery += curCondition;
-                    } else {
-                        error = true;
-                    }
-                })
-                breadcrumbItem.label = breadcrumbItem.label.trim();
-                breadcrumbsItems.push(breadcrumbItem);
-            })
-
-            if (error) return null;
-
-            onSendQuery(resultQuery);
-
-            switch (operation) {
-                case 'run':
-                    let isBreadcrumbFalse = !!breadcrumbsItems.find(item => !item.label)
-                    !isBreadcrumbFalse ? this.setState({ breadcrumbsItems }) : noop
-                    break;
-                case 'save':
-                    this.setState({
-                        queryToSave: resultQuery,
-                        isSave: !isSave
-                    });
-                    break;
-            }
-        })
-    }
-
     async componentDidMount() {
-        const { table, user } = this.props;
-        const { query } = this.state;
+        const { table, user, onSendQuery } = this.props;
+        const { query, conditionsArray, isSave } = this.state;
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -265,10 +181,12 @@ export default class FilterCondition extends React.Component {
         };
 
         await REQUEST_UTILS.fetchTableData({table, queryParams}).then(async result => {
-            await this.fetchTableDataSuccessed({result, properties: this.props})
-        })
+            await this.fetchTableDataSuccessed({result, properties: this.props});
+        });
+
         if (!!query)
-            this.generateQuery({operation: "run"})
+            QUERY_UTILS.generateQuery({ payload: { conditionsArray, onSendQuery, isSave, operation: "run" } });
+
         REQUEST_UTILS.fetchFilterTemplates({table, user})
             .then(res => this.setState({filterList: res}));
     }
@@ -280,11 +198,12 @@ export default class FilterCondition extends React.Component {
     async componentDidUpdate(prevProps, prevState) {
         if (prevProps.table !== this.props.table) {
             const { onSendQuery } = this.props;
+
             this.setState({query: "", breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]});
             onSendQuery("");
         }
-        if (prevState.query !== this.state.query || prevProps.table !== this.props.table)
-        {
+
+        if (prevState.query !== this.state.query || prevProps.table !== this.props.table) {
             const { table } = this.props;
             const queryParams = {
                 sysparm_operators: true,
@@ -293,55 +212,16 @@ export default class FilterCondition extends React.Component {
             };
     
             await REQUEST_UTILS.fetchTableData({table, queryParams}).then(result => {
-                this.fetchTableDataSuccessed({result, properties: this.props})
+                this.fetchTableDataSuccessed({result, properties: this.props});
             });
         }
+
         if (this.state.isFilterSaved) {
             const { table, user } = this.props;
+
             REQUEST_UTILS.fetchFilterTemplates({table, user})
                 .then(res => this.setState({filterList: res}));
-            this.setState({isFilterSaved: false})
-        }
-    }
-
-    addNewOperator = ({value, currentConditionID, globalConditionID}) => {
-        const { conditionsArray, tableFields } = this.state;
-        const newConditionsArray = conditionsArray;
-        const globalConditionIndexInArr = conditionsArray.findIndex(cond => cond.id === globalConditionID)
-        const fieldsDataID = GENERAL_UTILS.generateID();
-        const { blockFields, allowFields } = this.props;
-        const fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID, blockFields, allowFields });
-        switch(value) {
-            case "^":
-                newConditionsArray[globalConditionIndexInArr].relatedConditions.push({ id: GENERAL_UTILS.generateID(), condition: '', operator: value, conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] });
-                this.setState({
-                    conditionsArray: newConditionsArray
-                })
-                break;
-            case '^OR':
-                let currentConditionIndexInArr = newConditionsArray[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-                let parrentConditionOptions = newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].conditionOptions;
-                const { activeField, activeFieldsData, field, fieldItems, operator, operatorsArray, fieldsData, valueAdditionalData } = parrentConditionOptions;
-                newConditionsArray[globalConditionIndexInArr].relatedConditions[currentConditionIndexInArr].relatedConditions.push({ id: GENERAL_UTILS.generateID(), condition: '', operator: value, conditionOptions: { operator, field, value: '', activeField, operatorsArray, activeFieldsData, fieldItems, fieldsData, fieldsDropdownData: parrentConditionOptions.fieldsDropdownData, valueAdditionalData}})
-                this.setState({conditionsArray: newConditionsArray});
-                break;
-            case '^NQ':
-                newConditionsArray.push({id: GENERAL_UTILS.generateID(), condition: '', operator: value, relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }]});
-                this.setState({conditionsArray: newConditionsArray})
-            }
-    }
-
-    clearAll = ({value}) => {
-        if (value === "delete-filter") {
-            const { tableFields } = this.state;
-            const fieldsDataID = GENERAL_UTILS.generateID();
-            const { blockFields, allowFileds } = this.props;
-            const fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID, blockFields, allowFileds });
-            this.setState({
-                conditionsArray: [{ id: GENERAL_UTILS.generateID(), condition: '', operator: '', relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }],
-                isSave: false,
-                breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]
-            })
+            this.setState({isFilterSaved: false});
         }
     }
 
@@ -349,6 +229,7 @@ export default class FilterCondition extends React.Component {
         const { activeField, activeFieldsData } = conditionOptions;
         const { currentConditionID, globalConditionID } = this.state;
         let valueAdditionalData = [];
+
         valueAdditionalData = activeField ? this.getValueAdditionalData({ state: this.state, tableFields: activeFieldsData, editor: value.editor, field: activeField, currentID: currentConditionID, globalID: globalConditionID}) : [];
         conditionOptions = {
             ...conditionOptions,
@@ -362,6 +243,7 @@ export default class FilterCondition extends React.Component {
 
     setConditionOptionsValue = ({value, conditionOptions, conditionOption}) => {
         const { editor } = conditionOptions.operator;
+
         switch (editor) {
             case 'choice_multiple':
             case 'textarea':
@@ -374,15 +256,16 @@ export default class FilterCondition extends React.Component {
             case 'glide_date_comparative':
                 if (!conditionOptions.value)
                     conditionOptions.value = {};
+
                 conditionOptions.value[value.index] = value.value;
                 return conditionOptions;
             case 'trend_field':
-                if (value.index == 1) {
+                if (value.index == 1)
                     conditionOptions.valueAdditionalData = DATA_UTILS.getTrendData(value.value);
-                }
-                if (!conditionOptions.value) {
+
+                if (!conditionOptions.value)
                     conditionOptions.value = {};
-                }
+
                 conditionOptions.value[value.index] = value.value;
                 return conditionOptions;
             default:
@@ -404,8 +287,7 @@ export default class FilterCondition extends React.Component {
         if (currentConditionInArrInd > -1) {
             currentConditionInArr = copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd];
             copyConditionOptions = { ...copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd].conditionOptions };
-        }
-        else {
+        } else {
             copyConditionArray[globalConditionInArrInd].relatedConditions.forEach((cond, parentInd) => {
                 cond.relatedConditions.forEach((cond, childInd) => {
                     if (cond.id === properCurrentConditionID) {
@@ -431,7 +313,6 @@ export default class FilterCondition extends React.Component {
             case "valueAditionalData":
                 currentConditionInArr.conditionOptions = this.setConditionOptionsValueAdditional({value, conditionOptions: copyConditionOptions})
                 break;
-
         }
 
         this.setState({conditionsArray: copyConditionArray})
@@ -446,7 +327,14 @@ export default class FilterCondition extends React.Component {
     fetchReferenceDataSuccessed = (result) => {
         const { referenceFieldData, conditionsArray } = this.state;
         let valueFields = result.map(field => ({id: field.sys_id, label: field[referenceFieldData.field.reference_display_field], dropdown: "value"}));
-        const copyConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({value: valueFields, conditionOption: "valueAditionalData", currentConditionID: referenceFieldData.currentConditionID, globalConditionID: referenceFieldData.globalConditionID, conditionsArray});
+        const copyConditionsArray = CONDITION_OPTIONS_UTILS.setConditionOptions({
+            value: valueFields,
+            conditionOption: "valueAditionalData",
+            currentConditionID: referenceFieldData.currentConditionID,
+            globalConditionID: referenceFieldData.globalConditionID,
+            conditionsArray
+        });
+
         this.setState({conditionsArray: copyConditionsArray})
     }
 
@@ -455,11 +343,13 @@ export default class FilterCondition extends React.Component {
         const fieldsDataID = GENERAL_UTILS.generateID();
         let copyConditionOptions;
         const newFieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({tableFields: value.result, index: fieldsDataID});
+
         if (value.listIndex < conditionOptions.fieldsDropdownData.length - 1) {
             let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(value.listIndex + 1);
             deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
             deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
         }
+
         conditionOptions.fieldsDropdownData.push({ items: newFieldsDropdownData });
         conditionOptions.fieldsData[fieldsDataID] = value.result;
         conditionOptions.fieldItems = value.selectedItems;
@@ -474,15 +364,12 @@ export default class FilterCondition extends React.Component {
         this.setState({currentConditionID, globalConditionID})
     } 
  
-
     setConditionOptionsField = ({conditionOptions, value}) => {
         const { fieldsData } = conditionOptions;
         let currentFieldsData = fieldsData[value.items[value.items.length - 1].index];
         let currentValue = value.items[value.items.length - 1].id;
         let currentValueIndex = conditionOptions.fieldsDropdownData.findIndex(data => data.items[0].index === value.items[value.items.length - 1].index);
         let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(currentValueIndex + 1);
-        deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
-        deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
         let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation', editor: operation.advancedEditor }));
         let copyConditionOptions = {
             ...conditionOptions,
@@ -494,93 +381,26 @@ export default class FilterCondition extends React.Component {
             activeFieldsData: { ...currentFieldsData },
             activeField: currentValue
         };
+
+        deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
+        deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
         copyConditionOptions = this.setConditionOptionsOperator({value: { operator: operatorsArray[0].id, editor: operatorsArray[0].editor }, conditionOptions: copyConditionOptions});
 
         return copyConditionOptions;
-    }
-
-    breadcrumbItemClicked = ({data, operation}) => {
-        const { breadcrumbsItems } = this.state;
-        let itemIndex = breadcrumbsItems.findIndex(breadcrumb => breadcrumb.conditionId === data.conditionId);
-        switch (operation) {
-            case "remove-next":
-                breadcrumbsItems.splice(itemIndex, 1);
-                this.setState({breadcrumbsItems});
-                this.deleteCondition({currentConditionID: data.conditionId, globalConditionID: data.globalConditionId});
-                break;
-            case "remove-subsequent":
-                let deletedItems = (itemIndex === 0) ? breadcrumbsItems.splice(1) : breadcrumbsItems.splice(itemIndex + 1);
-                
-                this.setState({breadcrumbsItems});
-                
-                deletedItems.forEach(item => this.deleteCondition({currentConditionID: item.conditionId, globalConditionID: item.globalConditionId}));
-                break;
-        }
     }
 
     setQuery = ({query}) => {
         this.setState({query})
     }
 
-    deleteCondition = ({currentConditionID, globalConditionID}) => {
-        const { conditionsArray } = this.state;
-        const newConditionsArray = conditionsArray;
-        const globalConditionIndexInArr = newConditionsArray.findIndex(cond => cond.id === globalConditionID);
-        const currentConditionIndexInArr = newConditionsArray[globalConditionIndexInArr].relatedConditions.findIndex(cond => cond.id === currentConditionID);
-        let path = [];
-        let indexToDelete;
-        if (currentConditionIndexInArr > -1) {
-            path = newConditionsArray[globalConditionIndexInArr].relatedConditions;
-            indexToDelete = currentConditionIndexInArr;
-            if (newConditionsArray[globalConditionIndexInArr].relatedConditions.length === 1) {
-                path = newConditionsArray;
-                indexToDelete = globalConditionIndexInArr;
-            } else if (currentConditionIndexInArr === 0) {
-                path[1].operator = ""
-                newConditionsArray[globalConditionIndexInArr].relatedConditions[1].operator = path[1].operator
-                this.setState({conditionsArray: newConditionsArray})
-            }
-        } else {
-            newConditionsArray[globalConditionIndexInArr].relatedConditions.forEach((parentCond, pIndex) => {
-                parentCond.relatedConditions.forEach((childCond, chIndex) => {
-                    if (childCond.id === currentConditionID) {
-                        path = newConditionsArray[globalConditionIndexInArr].relatedConditions[pIndex].relatedConditions;
-                        indexToDelete = chIndex;
-                    }
-                })
-            });
-        }
-
-        if (newConditionsArray.length === 1 && path === newConditionsArray) {
-            const { tableFields } = this.state;
-            let fieldsDataID = GENERAL_UTILS.generateID();
-            let fieldsDropdownData = DATA_UTILS.getDropdownFieldsItems({ tableFields: tableFields.columns, index: fieldsDataID });
-            this.setState({conditionsArray: [{ id: GENERAL_UTILS.generateID(), condition: '', operator: '', relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }]})
-        } else {
-            path.splice(indexToDelete, 1)
-            newConditionsArray.relatedConditions = path
-            this.setState({conditionsArray: newConditionsArray})
-        }
-    }
-
-    saveToogle = () => {
-        const { isSave } = this.state;
-        this.setState({isSave: !isSave})
-        this.runButtonClicked({type: "save"})
-    }
-
     render() {
         const {
             isFilterOpened,
             conditionsArray,
-            tableFields,
-            referenceTableFieldsData,
-            labelArr,
-            operatorArr,
             breadcrumbsItems,
             isSave,
             queryToSave,
-            filterList
+            filterList,
         } = this.state;
         const { table, user } = this.props;
 
@@ -594,10 +414,10 @@ export default class FilterCondition extends React.Component {
                             size="md"
                             tooltipContent="Filter"
                             variant="tertiary"
-                            onClick={() => this.setState({ isFilterOpened: !isFilterOpened })}
+                            onClick={() => this.clickBtn({ action: "filterToogle" })}
                         />
                         <div className="breadcrumbs">
-                            <FilterBreadcrumbs items={breadcrumbsItems} breadcrumbItemClicked={this.breadcrumbItemClicked} />
+                            <FilterBreadcrumbs items={breadcrumbsItems} clickBtn={this.clickBtn} />
                         </div>
                 </div>
                 <div className={
@@ -614,7 +434,7 @@ export default class FilterCondition extends React.Component {
                                         label="Apply"
                                         variant="primary"
                                         size="md"
-                                        onClick={() => this.runButtonClicked({type: "run"})}
+                                        onClick={() => this.clickBtn({ action: "applyQuery", payload: { type: "run" } })}
                                         customStyle={
                                             {
                                                 "border-color": "rgb(15,67,55)",
@@ -629,7 +449,7 @@ export default class FilterCondition extends React.Component {
                                         "hover-border-color": "rgb(172,180,181)",
                                         "active-border-color": "rgb(172,180,181)"
                                     }}
-                                    onClick={() => this.saveToogle()}
+                                    onClick={() => this.clickBtn({ action: "toogleSave" })}
                                     />
                                 </div>
                                 <div className="btn">
@@ -642,7 +462,7 @@ export default class FilterCondition extends React.Component {
                                             "hover-border-color": "rgb(172,180,181)",
                                             "active-border-color": "rgb(172,180,181)"
                                         }}
-                                        onClick={() => this.clearAll({value: "delete-filter"})}
+                                        onClick={() => this.clickBtn({action: "clearAll"})}
                                     />
                                 </div>
                             </div>
@@ -680,22 +500,14 @@ export default class FilterCondition extends React.Component {
                                                             "failed": condition.failed
                                                         })} key={condition.id}>
                                                             <FilterConditionItem
-                                                                tableFields={tableFields}
                                                                 conditionObj={condition}
                                                                 conditionID={condition.id}
                                                                 globalConditionID={globalCondition.id}
                                                                 globalCondition={globalCondition}
                                                                 operatorType={condition.operator}
-                                                                addNewOperator={this.addNewOperator}
-                                                                deleteCondition={this.deleteCondition}
-                                                                referenceTableFieldsData={referenceTableFieldsData}
-                                                                labelArr={labelArr}
-                                                                operatorArr={operatorArr}
+                                                                clickBtn={this.clickBtn}
                                                                 getConditionsIDs={this.getConditionsIDs}
-                                                                getClickedListIndex={this.getClickedListIndex}
-                                                                onOperatorClicked={this.onOperatorClicked}
                                                                 setConditionOptions={this.setConditionOptions}
-                                                                fetchReferenceDataSuccessed={this.fetchReferenceDataSuccessed}
                                                                 selectedItem={condition.conditionOptions.fieldItems}
                                                             />
                                                         </div>
@@ -714,7 +526,7 @@ export default class FilterCondition extends React.Component {
                                     label="New Criteria"
                                     variant="secondary"
                                     size="md"
-                                    onClick={() => this.addNewOperator({value: "^NQ"})}
+                                    onClick={() => this.clickBtn({ action: "addNewOperator", payload: { value: "^NQ", currentConditionID: this.state.currentConditionID, globalConditionID: this.state.globalConditionID } })}
                                 />
                             </div>
                         </div>

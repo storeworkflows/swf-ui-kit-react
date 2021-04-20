@@ -109,5 +109,180 @@ export const QUERY_UTILS = {
             };
         }
     },
+    generateCurrentConditionQuery: ({ payload }) => {
+        const { conditionData, operation, breadcrumbItem } = payload;
+        const { conditionOptions: { field, operator: { operator, editor }, value, fieldItems, operatorsArray, valueAdditionalData } } = conditionData;
+        let conditionQuery = '';
+        if (field && operator && operation === 'run') {
+            let valueLabel;
+            switch (editor) {
+                case 'between_field':
+                    conditionQuery = (value['0']
+                        && value['1']) ? `${field}${operator}javascript:gs.dateGenerate('${value['0']}','00:00:00')@javascript:gs.dateGenerate('${value['1']}','23:59:59')` : '';
+                    conditionQuery ? valueLabel = `${value['0']} and ${value['1']}` : '';
+                    break;
+                case 'relative_field':
+                    let currentOperator = value['0'] === 'before' ? 'RELATIVELT' : 'RELATIVEGT';
+                    value['1'] = value['1'] || '0';
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2']
+                        && value['3']) ? `${field}${currentOperator}@${value['2']}@${value['3']}@${value['1']}` : '';
+                    conditionQuery ? valueLabel = `${value['0']} ${value['1']} ${value['2']} ${value['3']}` : '';
+                    break;
+                case 'glide_duration':
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2']
+                        && value['3']) ? `${field}${operator}javascript:gs.getDurationDate('${value['0']} ${value['1']}:${value['2']}:${value['3']}')` : '';
+                    conditionQuery ? valueLabel = `${value['0']} ${value['1']}:${value['2']}:${value['3']}` : '';
+                    break;
+                case 'glide_date_choice':
+                    conditionQuery = (value) ? `${field}${operator}${value}@javascript:gs.dateGenerate('${value}','start')@javascript:gs.dateGenerate('${value}','end')` : '';
+                    conditionQuery ? valueLabel = value : '';
+                    break;
+                case 'trend_field':
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2'].label
+                        && value['2'].id) ? `${field}${operator}${value['2'].label}@javascript:gs.datePart('${value['1']}','${value['2'].id}','${value['0']}')` : '';
+                    conditionQuery ? valueLabel = `@javascript:gs.datePart('${value['1']}','${value['2'].id}','${value['0']}')` : '';
+                    break;
+                case 'glide_date_equivalent':
+                    conditionQuery = (value['0']
+                        && value['1']) ? `${field}${operator}${value['1']}@${value['0']}` : '';
+                    conditionQuery ? valueLabel = `${value['1']} ${value['0']}` : '';
+                    break;
+                case 'glide_date_comparative':
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2']
+                        && value['3']) ? `${field}${operator}${value['3']}@${value['1']}@${value['2']}@${value['0']}` : '';
+                    conditionQuery ? valueLabel = `${value['0']} ${value['1']} ${value['2']} ${value['3']}` : '';
+                    break;
+                case 'none':
+                    conditionQuery = `${field}${operator}`;
+                    valueLabel = '';
+                    break;
+                default:
+                    let str = value.trim().split(" ").filter(Boolean).join(" ");
+                    conditionQuery = str ? `${field}${operator}${str}` : '';
+                    conditionQuery ? valueLabel = str : '';
+            }
+            if (conditionQuery) {
+                let conditionOperatorLabel = (editor === "none" || !operator.match(/\W/)) ? operatorsArray.find(op => op.id === operator).label : operator;
+                if (fieldItems.items[fieldItems.items.length - 1].reference === 'true' && valueAdditionalData.length) {
+                    valueLabel = valueAdditionalData.find(val => val.id === valueLabel).label
+                }
+                breadcrumbItem.label = `${breadcrumbItem.label}${conditionData.operator === '^OR' ? ' .or. ' : ''} ${fieldItems.label} ${conditionOperatorLabel} ${valueLabel}`;
+            }
+        } else if (field && operation === 'save') {
+            switch (editor) {
+                case 'between_field':
+                    conditionQuery = (value['0']
+                        && value['1']) ? `${field}${operator}javascript:gs.dateGenerate('${value['0']}','00:00:00')@javascript:gs.dateGenerate('${value['1']}','23:59:59')` : '';
+                    break;
+                case 'relative_field':
+                    let currentOperator = value['0'] === 'before' ? 'RELATIVELT' : 'RELATIVEGT';
+                    value['1'] = value['1'] || '0';
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2']
+                        && value['3']) ? `${field}${currentOperator}@${value['2']}@${value['3']}@${value['1']}` : '';
+                    break;
+                case 'glide_duration':
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2']
+                        && value['3']) ? `${field}${operator}javascript:gs.getDurationDate('${value['0']} ${value['1']}:${value['2']}:${value['3']}')` : '';
+                    break;
+                case 'glide_date_choice':
+                    conditionQuery = (value) ? `${field}${operator}${value}@javascript:gs.dateGenerate('${value}','start')@javascript:gs.dateGenerate('${value}','end')` : '';
+                    break;
+                case 'trend_field':
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2'].label
+                        && value['2'].id) ? `${field}${operator}${value['2'].label}@javascript:gs.datePart('${value['1']}','${value['2'].id}','${value['0']}')` : '';
+                    break;
+                case 'glide_date_equivalent':
+                    conditionQuery = (value['0']
+                        && value['1']) ? `${field}${operator}${value['1']}@${value['0']}` : '';
+                    break;
+                case 'glide_date_comparative':
+                    conditionQuery = (value['0']
+                        && value['1']
+                        && value['2']
+                        && value['3']) ? `${field}${operator}${value['3']}@${value['1']}@${value['2']}@${value['0']}` : '';
+                    break;
+                case 'none':
+                    conditionQuery = `${field}${operator}`;
+                    break;
+                default:
+                    conditionQuery = `${field}${operator}${value}`;
+            }
+            conditionQuery = conditionQuery || `${field}${operator}`;
+        }
 
+        return { conditionQuery: conditionQuery || false, breadcrumbItem }
+    },
+    generateQuery: ({ payload }) => {
+        const { conditionsArray, isSave, onSendQuery, operation } = payload;
+
+        let valueToReturn;
+
+        let resultQuery = "";
+        let error = false;
+        let breadcrumbsItems = [{ label: "All", conditionId: "all"}];
+
+        conditionsArray.forEach(globalCond => {
+            resultQuery += globalCond.operator;
+            globalCond.relatedConditions.forEach((parentCond, index) => {
+                resultQuery += parentCond.operator;
+                let breadcrumbItem = { label: `${globalCond.operator && index === 0 ? 'or' : ''}`, conditionId: parentCond.id, globalConditionId: globalCond.id };
+                let generatedCondition = QUERY_UTILS.generateCurrentConditionQuery({ payload: { conditionData: parentCond, operation, breadcrumbItem } })
+                let curCondition = generatedCondition.conditionQuery;
+                breadcrumbItem = generatedCondition.breadcrumbItem;
+                if (curCondition) {
+                    resultQuery += curCondition;
+                } else if (operation === 'run' && !curCondition && !parentCond.conditionOptions.field && conditionsArray.length === 1 && globalCond.relatedConditions.length === 1 && !parentCond.relatedConditions.length) {
+                    resultQuery = '';
+                } else {
+                    error = true;
+                }
+
+                parentCond.relatedConditions.forEach(childCond => {
+                    resultQuery += childCond.operator;
+                    let generatedCondition = QUERY_UTILS.generateCurrentConditionQuery({ payload: { conditionData:  childCond, operation, breadcrumbItem }});
+                    let curCondition = generatedCondition.conditionQuery;
+                    breadcrumbItem = generatedCondition.breadcrumbItem;
+                    if (curCondition) {
+                        resultQuery += curCondition;
+                    } else {
+                        error = true;
+                    }
+                })
+                breadcrumbItem.label = breadcrumbItem.label.trim();
+                breadcrumbsItems.push(breadcrumbItem);
+            })
+
+            if (error) return null;
+
+            onSendQuery(resultQuery);
+
+            switch (operation) {
+                case 'run':
+                    let isBreadcrumbFalse = !!breadcrumbsItems.find(item => !item.label)
+
+                    if(!isBreadcrumbFalse)
+                        valueToReturn = { breadcrumbsItems };
+                    break;
+                case 'save':
+                    valueToReturn = { queryToSave: resultQuery, isSave: !isSave };
+                    break;
+            }
+        })
+        
+        return valueToReturn;
+    }
 };

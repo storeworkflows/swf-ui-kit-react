@@ -13,7 +13,6 @@ export default class FilterConditionItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableFields: {},
             activeField: "",
             dropdownsIsActive: {
                 field: true,
@@ -70,20 +69,11 @@ export default class FilterConditionItem extends React.Component {
         const { setConditionOptions } = this.props;
         if (item.dropdown === "operation") {
             let activeOperator = activeField.operators.find(({ operator }) => operator === item.id)
-
-            // setConditionOptions({
-            //     value: { operator: "", editor: "" },
-            //     conditionOption: "operator"
-            // })
             this.valueInputDeactivation()
             setConditionOptions({
                 value: { operator: item.id, editor: activeOperator.advancedEditor },
                 conditionOption: "operator"
             })
-            // setConditionOptions({
-            //     value: "",
-            //     conditionOption: "value"
-            // })
         }
         if (item.dropdown === "value") {
             const { conditionObj: { conditionOptions } } = this.props;
@@ -156,7 +146,6 @@ export default class FilterConditionItem extends React.Component {
             let activeFieldFromObj = activeFieldsData[activeField] || [""];
 
             this.setState({
-                tableFields: activeFieldsData,
                 activeField: activeFieldFromObj
             }, () => {
                         if (activeField) {
@@ -230,7 +219,6 @@ export default class FilterConditionItem extends React.Component {
 
     inputValueSet = ({value, type, index}) => {
         const { setConditionOptions } = this.props;
-        // let inputValue = value.trim().split(" ").filter(Boolean).join(" ")
         let inputValue = value;
         let valueForContainer;
         switch (type) {
@@ -275,6 +263,8 @@ export default class FilterConditionItem extends React.Component {
             getConditionsIDs,
             conditionID,
             globalConditionID,
+            clickBtn,
+            conditionsArray,
         } = this.props;
 
         const { dropdownsIsActive } = this.state; 
@@ -315,18 +305,18 @@ export default class FilterConditionItem extends React.Component {
                 {(operatorType !== "^OR" && isBtnsRender) && <>
                     <div className="btn-container">
                         <Button label="and" size="md"  onClick={() => {
-                            this.props.addNewOperator({value: "^", currentConditionID: this.props.conditionID, globalConditionID: this.props.globalConditionID})
+                            clickBtn({action: "addNewOperator", payload: { value: "^", currentConditionID: conditionID, globalConditionID }});
                         }} />
                     </div>
                     <div className="btn-container">
                         <Button label="or" size="md" onClick={() => {
-                            this.props.addNewOperator({value: "^OR", currentConditionID: this.props.conditionID, globalConditionID: this.props.globalConditionID})
+                            clickBtn({action: "addNewOperator", payload: { value: "^OR", currentConditionID: conditionID, globalConditionID }});
                         }} />
                     </div>
                 </>}
                 <div className="btn-container">
                     <Button icon="x-circle" variant="tertiary" size="md" onClick={() => {
-                        this.props.deleteCondition({currentConditionID: this.props.conditionID, globalConditionID: this.props.globalConditionID})
+                        clickBtn({action: "deleteCondition", payload: { conditionsArray, globalConditionID, currentConditionID: conditionID }})
                     }}  />
                 </div>
             </div>
@@ -335,7 +325,6 @@ export default class FilterConditionItem extends React.Component {
 }
 
 FilterConditionItem.defaultProps = {
-    tableFields: {},
     conditionObj: {},
     conditionID: "",
     globalConditionID: "",
@@ -343,10 +332,8 @@ FilterConditionItem.defaultProps = {
 }
 
 FilterConditionItem.propTypes = {
-    tableFields: propTypes.object,
     conditionObj: propTypes.object,
     conditionID: propTypes.string,
     globalConditionID: propTypes.string,
     operatorType: propTypes.string,
-    addNewOperator: propTypes.func
 }
