@@ -103,16 +103,19 @@ class DatePicker extends React.Component {
     }
 
     invalidInput(errors = [], date){
+        const {isInvalid, errorMessages} = this.state;
         const {manageInvalid, onInvalid} = this.props;
-        let isInvalid = errors.length>0;
+        let isInvalidCurrent = errors.length>0;
 
         if(!manageInvalid) {
             this.setState({
-                isInvalid: isInvalid,
+                isInvalid: isInvalidCurrent,
                 errorMessages: errors
             });
         }
-        onInvalid({isInvalid: errors.length>0, errors: errors, date: date});
+
+        if(!_.isEqual(errorMessages.sort(), errors.sort()))
+            onInvalid({isInvalid: isInvalidCurrent, errors: errors, date: date});
     }
 
     openCalendar(event){
