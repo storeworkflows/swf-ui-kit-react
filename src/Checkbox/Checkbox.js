@@ -131,17 +131,15 @@ class Checkbox extends React.Component {
                             onChange={ (e) => {e.preventDefault(); e.stopPropagation();}}
                             onClick={ (e) => {e.preventDefault(); e.stopPropagation();}}
                         />
-                        <div className={"checkbox-container"}>
-                            <div className={"checkbox-information"} >
-                                {value &&
-                                    <RequiredLabel
-                                        htmlFor={name}
-                                        className={"checkbox-label"}
-                                        required={inlineRequired}
-                                        label={value}
-                                    />
-                                }
-                            </div>
+                        <div className={"checkbox-information"} >
+                            {value &&
+                                <RequiredLabel
+                                    htmlFor={name}
+                                    className={"checkbox-label"}
+                                    required={inlineRequired}
+                                    label={value}
+                                />
+                            }
                         </div>
                     </div>
                 </div>
@@ -160,10 +158,8 @@ Checkbox.defaultProps = {
     readonly: false,
     required: false,
     visible: true,
-    className: {},
     onInvalid: () => void 0,
     onChange: () => void 0,
-    labelClassName: {},
     inlineRequired: false
 };
 

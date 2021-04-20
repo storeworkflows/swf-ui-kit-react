@@ -24,7 +24,7 @@ class DatePicker extends React.Component {
         let isInvalidValue = (value) ? !dateValue.isValid() : false;
         let invalidValue = manageInvalid ? invalid : isInvalidValue;
 
-        if (isInvalidValue)
+        if(isInvalidValue)
             onInvalid(true)
 
         this.state = {
@@ -46,21 +46,48 @@ class DatePicker extends React.Component {
         this.checkIsInvalid = this.checkIsInvalid.bind(this);
     }
 
-    changeValue(e) {
+    changeValue(e){
         e.preventDefault();
         let input = e.nativeEvent.data;
         const {format, manageValue, onValueChange, manageInvalid, onValueSet, min, max} = this.props;
         const {stringValue} = this.state;
 
 
-        //  if(!manageValue) {
-        let newDateString = addCharToDate(format, stringValue, input);
+      //  if(!manageValue) {
+            let newDateString = addCharToDate(format, stringValue, input);
 
-        if (moment(newDateString, format, true).isValid()) {
-            let minError = getErrorOnBoundaryValue(newDateString, min);
-            let maxError = getErrorOnBoundaryValue(newDateString, max, false);
+            if(moment(newDateString, format, true).isValid()) {
+                let minError =  getErrorOnBoundaryValue(newDateString, min, format);
+                let maxError = getErrorOnBoundaryValue(newDateString, max, format, false);
 
-            if (minError || maxError) {
+                if(minError || maxError) {
+                    this.invalidInput(true);
+                    this.setState({
+                        errorMessages: [minError || maxError]
+                    })
+                } else{
+                    this.invalidInput(false);
+                    this.setState({
+                        currentDate: newDateString,
+                        errorMessages: []
+                    });
+                    onValueSet({value: newDateString});
+                }
+            }
+        !manageValue && this.setState({stringValue: newDateString})
+        onValueChange({oldValue: stringValue, input: input, newValue: newDateString});
+       // } else
+        //    onValueChange({oldValue: stringValue, input: input});
+    }
+
+    dateSelected(date){
+        const {onValueChange, format, onValueSet, min, max} = this.props;
+        let dateInFormat =  moment(date).format(format);
+
+            let minError =  getErrorOnBoundaryValue(dateInFormat, min, format);
+            let maxError = getErrorOnBoundaryValue(dateInFormat, max, format,  false);
+
+            if(minError || maxError){
                 this.invalidInput(true);
                 this.setState({
                     errorMessages: [minError || maxError]
@@ -68,72 +95,39 @@ class DatePicker extends React.Component {
             } else {
                 this.invalidInput(false);
                 this.setState({
-                    currentDate: newDateString,
+                    currentDate: date,
+                    stringValue: dateInFormat,
+                    isOpened: false,
                     errorMessages: []
-                });
-                onValueSet({value: newDateString});
+                })
             }
-        }
-        !manageValue && this.setState({stringValue: newDateString})
-        onValueChange({oldValue: stringValue, input: input, newValue: newDateString});
-        // } else
-        //    onValueChange({oldValue: stringValue, input: input});
-    }
-
-    dateSelected(date) {
-        const {
-            manageValue, onValueChange, format,
-            manageInvalid, onValueSet, min, max
-        } = this.props;
-        let dateInFormat = moment(date).format(format);
-
-        // if(!manageValue)
-        //{
-        let minError = getErrorOnBoundaryValue(dateInFormat, min);
-        let maxError = getErrorOnBoundaryValue(dateInFormat, max, false);
-
-        if (minError || maxError) {
-            this.invalidInput(true);
-            this.setState({
-                errorMessages: [minError || maxError]
-            })
-        } else {
-            this.invalidInput(false);
-            this.setState({
-                currentDate: date,
-                stringValue: dateInFormat,
-                isOpened: false,
-                errorMessages: []
-            })
-        }
-        // }
 
         onValueChange({oldValue: this.state.stringValue, newValue: dateInFormat});
         onValueSet({value: dateInFormat});
     }
 
-    invalidInput(isInvalid) {
+    invalidInput(isInvalid){
         const {manageInvalid, onInvalid} = this.props;
 
-        if (!manageInvalid) {
+        if(!manageInvalid) {
             this.setState({isInvalid: isInvalid});
-            if (!isInvalid)
+            if(!isInvalid)
                 this.setState({errorMessages: []});
         }
         onInvalid(isInvalid);
     }
 
-    openCalendar(event) {
+    openCalendar(event){
         const {manageOpened, onOpen, format} = this.props;
         const {isOpened, stringValue} = this.state;
 
         let openState = isOpened;
         let isValidStringDate = moment(stringValue, format).isValid();
 
-        if (!manageOpened) {
+        if(!manageOpened) {
             openState = !openState;
 
-            if (isValidStringDate)
+            if(isValidStringDate)
                 this.setState({
                     currentDate: moment(stringValue, format).toDate()
                 })
@@ -150,7 +144,7 @@ class DatePicker extends React.Component {
         onOpen({openState, event})
     }
 
-    checkIsInvalid() {
+    checkIsInvalid(){
         const {format, manageInvalid, min, max} = this.props;
         const {stringValue} = this.state;
 
@@ -158,14 +152,14 @@ class DatePicker extends React.Component {
         let isValidValue = isEmptyStr || moment(stringValue, format, true).isValid();
 
         let errorMessages = [];
-        if (!manageInvalid && !isValidValue)
+        if(!manageInvalid && !isValidValue)
             errorMessages = [invalidFormatMess]
-        else if (isValidValue) {
-            let minError = getErrorOnBoundaryValue(stringValue, min);
-            let maxError = getErrorOnBoundaryValue(stringValue, max, false);
+        else if(isValidValue){
+            let minError =  getErrorOnBoundaryValue(stringValue, min, format);
+            let maxError = getErrorOnBoundaryValue(stringValue, max, format, false);
 
             let hasError = minError || maxError;
-            if (hasError) {
+            if(hasError){
                 isValidValue = false;
                 errorMessages = [hasError];
             }
@@ -175,10 +169,10 @@ class DatePicker extends React.Component {
         this.invalidInput(!isValidValue)
     }
 
-    onBlur(e) {
+    onBlur(e){
         let sameParent = e.target?.parentElement === e.relatedTarget?.parentElement?.parentElement;
 
-        if (!sameParent)
+        if(!sameParent)
             this.checkIsInvalid();
     }
 
@@ -186,17 +180,18 @@ class DatePicker extends React.Component {
         const {manageInvalid, manageOpened, manageValue, opened, invalid, value, format} = this.props
         const {isInvalid, isOpened, stringValue} = this.state;
 
-        if (manageInvalid && isInvalid !== invalid)
+        if(manageInvalid && isInvalid !== invalid)
             this.invalidInput(invalid)
 
-        if (manageOpened && opened !== isOpened)
+        if(manageOpened && opened!==isOpened)
             this.setState({isOpened: opened});
 
-        if (manageValue && (value !== prevProps.value)) {
+        if(manageValue && (value!==prevProps.value))
+        {
             let dateValue = value ? moment(value, format) : null;
             let newStr = dateValue && dateValue.format(format);
 
-            let invalidValue = invalid || (value && !manageInvalid && !dateValue.isValid());
+            let invalidValue = invalid || ( value && !manageInvalid && !dateValue.isValid());
 
             this.setState({
                 stringValue: newStr,
@@ -208,7 +203,7 @@ class DatePicker extends React.Component {
     }
 
     componentDidMount() {
-        if (this.inputRef && this.inputRef.current) {
+        if(this.inputRef && this.inputRef.current){
 
             let inputEl = this.inputRef.current.querySelector('input');
             inputEl.onclick = (e) =>
@@ -216,42 +211,38 @@ class DatePicker extends React.Component {
                     (this.state.stringValue === null) ? 0 : this.state.stringValue.length;
 
             inputEl.onkeydown = (e) =>
-                setTimeout(() => {
-                    inputEl.selectionStart = inputEl.selectionEnd =
-                        (this.state.stringValue === null) ? 0 : this.state.stringValue.length;
-                }, 0);
+                setTimeout(()=>{ inputEl.selectionStart = inputEl.selectionEnd =
+                    (this.state.stringValue === null) ? 0 : this.state.stringValue.length; }, 0);
         }
     }
 
-    renderInput() {
+    renderInput(){
         const {label, format, message = [], required, name, className, min, max} = this.props;
         const {stringValue, isInvalid, errorMessages} = this.state
 
         let allMessages = errorMessages.concat(message);
 
-        return <Input
-            label={label}
-            placeholder={(label) ? "" : format}
-            value={stringValue}
-            name={name}
-            manageInvalid={true}
-            invalid={isInvalid}
-            onInvalid={() => this.invalidInput(true)}
-            onChange={this.changeValue}
-            message={allMessages}
-            required={required}
-            className={className}
-            onBlur={this.onBlur}
-            min={min}
-            max={max}
-        >
-            <Input.End>
-                <Button
-                    icon={"calendar"}
-                    variant={"tertiary"}
-                    onClick={this.openCalendar}
-                />
-            </Input.End>
+        return  <Input
+                label={label}
+                placeholder={(label) ? "" : format}
+                value={stringValue}
+                name={name}
+                manageInvalid={true}
+                invalid = {isInvalid}
+                onInvalid={() => this.invalidInput(true)}
+                onChange={this.changeValue}
+                message = {allMessages}
+                required={required}
+                className={className}
+                onBlur={this.onBlur}
+            >
+                <Input.End>
+                    <Button
+                        icon={"calendar"}
+                        variant={"tertiary"}
+                        onClick={this.openCalendar}
+                    />
+                </Input.End>
         </Input>
     }
 
@@ -273,27 +264,27 @@ class DatePicker extends React.Component {
 
         return (
             visible ?
-                <div ref={el => this.inputRef.current = el}>
-                    {this.renderInput()}
-                    {refExist &&
-                    <Popover
-                        hideTail={true}
-                        manageOpened={true}
-                        opened={isOpened}
-                        positions={calendarPositions}
-                        positionTarget={this.inputRef}
-                        onOuterPopoverClicked={this.openCalendar}
-                    >
-                        <Popover.Content>
-                            <SmallCalendar
-                                onSelected={({date}) => this.dateSelected(date)}
-                                openedDate={currentDate}
-                            />
-                        </Popover.Content>
-                    </Popover>
+                <div ref = {el => this.inputRef.current =  el}>
+                    { this.renderInput() }
+                    { refExist &&
+                        <Popover
+                            hideTail={true}
+                            manageOpened={true}
+                            opened={isOpened}
+                            positions={calendarPositions}
+                            positionTarget={this.inputRef}
+                            onOuterPopoverClicked={this.openCalendar}
+                        >
+                            <Popover.Content>
+                                <SmallCalendar
+                                    onSelected={({date}) => this.dateSelected(date)}
+                                    openedDate={currentDate}
+                                />
+                            </Popover.Content>
+                        </Popover>
                     }
                 </div>
-                : null
+            : null
         )
     }
 }
@@ -313,8 +304,7 @@ DatePicker.defaultProps = {
     onInvalid: () => void 0,
     onValueSet: () => void 0,
     onValueChange: () => void 0,
-    visible: true,
-    className: {}
+    visible: true
 }
 
 DatePicker.propTypes = {
@@ -335,7 +325,7 @@ DatePicker.propTypes = {
     manageValueChange: propTypes.bool,
     manageValueSet: propTypes.bool,
     message: PropTypes.arrayOf(PropTypes.shape({
-        status: PropTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
+        status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
         content: PropTypes.string,
         icon: PropTypes.string,
         className: propTypes.object,
