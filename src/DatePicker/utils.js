@@ -87,13 +87,31 @@ export const getErrorOnBoundaryValue = (current, boundary, format, isMin = true)
 
         let invalidCheck = (isMin && (currentDate < boundaryDate)) || (!isMin && (currentDate > boundaryDate));
 
-        console.log(invalidCheck, isMin)
         if (invalidCheck)
             return {
                 content: `Date should be ${isMin ? "bigger" : "smaller"} than ${moment(boundaryDate).format(format)}`,
-                icon: "exclamation-circle",
-                delay: 5000
+                icon: "exclamation-circle"
             };
     }
     return undefined;
+}
+
+const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle"}
+
+export const getErrorMessages = (stringDate, format, min, max) => {
+    let isEmptyStr = !stringDate || stringDate.length < 1;
+    let isValidValue = isEmptyStr || moment(stringDate, format, true).isValid();
+
+    if(!isValidValue)
+        return [invalidFormatMess]
+    else{
+        let minError =  getErrorOnBoundaryValue(stringDate, min, format);
+        let maxError = getErrorOnBoundaryValue(stringDate, max, format, false);
+
+        let hasError = minError || maxError;
+        if(hasError)
+            return [hasError];
+    }
+
+    return [];
 }
