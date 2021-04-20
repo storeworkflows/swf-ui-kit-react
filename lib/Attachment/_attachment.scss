@@ -53,7 +53,7 @@
     box-shadow: none;
     transition: box-shadow 250ms cubic-bezier(0.27, 0.01, 0.38, 0.06), border 250ms cubic-bezier(0.27, 0.01, 0.38, 0.06);
     text-align: center;
-    cursor: default;
+    cursor: pointer;
 
     .--invalid {
       border-color: red;
