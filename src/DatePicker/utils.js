@@ -80,16 +80,17 @@ export const isPointInsideTheElement = (element, pointX, pointY) => {
 }
 
 
-export const getErrorOnBoundaryValue = (current, boundary, isMin = true) => {
+export const getErrorOnBoundaryValue = (current, boundary, format, isMin = true) => {
     if(current && boundary) {
         let currentDate = new Date(current);
         let boundaryDate = new Date(boundary);
 
-        let invalidCheck = (isMin && (currentDate < boundaryDate)) || currentDate > boundaryDate;
+        let invalidCheck = (isMin && (currentDate < boundaryDate)) || (!isMin && (currentDate > boundaryDate));
 
+        console.log(invalidCheck, isMin)
         if (invalidCheck)
             return {
-                content: `Date should be ${isMin ? "smaller" : "bigger"} than ${boundaryDate}`,
+                content: `Date should be ${isMin ? "bigger" : "smaller"} than ${moment(boundaryDate).format(format)}`,
                 icon: "exclamation-circle",
                 delay: 5000
             };
