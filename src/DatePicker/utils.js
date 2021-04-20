@@ -96,7 +96,7 @@ export const getErrorOnBoundaryValue = (current, boundary, format, isMin = true)
     return undefined;
 }
 
-const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle", delay: 5000}
+const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle"}
 
 export const getErrorMessages = (stringDate, format, min, max) => {
     let isEmptyStr = !stringDate || stringDate.length < 1;
