@@ -6,15 +6,14 @@
   cursor: pointer;
 
   .inp-label {
-    color: #5a6169;
+    color: rgb(90, 97, 105);
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
-    background: #fff;
-    padding: 4px;
-    transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-    transform: translate(14px, -14px);
+    background: rgb(255, 255, 255);
+    transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms, transform 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms;
+    transform: translate(19px, -8px);
 
     &.--focused {
       color: #007bff;
