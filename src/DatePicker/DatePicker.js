@@ -75,7 +75,8 @@ class DatePicker extends React.Component {
             if(!manageValue)
                 this.setState({currentDate: newDateString});
 
-            onValueSet({value: newDateString});
+            if(errors.length === 0)
+                onValueSet({value: newDateString});
         } else if (newDateString.length === 0) {
             onValueSet({value: ""});
             this.invalidInput([], "");
