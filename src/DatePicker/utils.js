@@ -90,8 +90,7 @@ export const getErrorOnBoundaryValue = (current, boundary, format, isMin = true)
         if (invalidCheck)
             return {
                 content: `Date should be ${isMin ? "bigger" : "smaller"} than ${moment(boundaryDate).format(format)}`,
-                icon: "exclamation-circle",
-                delay: 5000
+                icon: "exclamation-circle"
             };
     }
     return undefined;

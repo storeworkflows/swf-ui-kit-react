@@ -11,7 +11,7 @@ import SmallCalendar from "../SmallCalendar/SmallCalendar";
 import {addCharToDate, getErrorMessages, getErrorOnBoundaryValue} from "./utils";
 import PropTypes from "prop-types";
 
-const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle", delay: 5000}
+const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle"}
 
 class DatePicker extends React.Component {
 
