@@ -68,17 +68,9 @@
     padding-top: 5px;
   }
 
-  .checkbox-container {
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    //padding-left: 1rem;
-    height: calc(1rem + 6px);
-    width: 100%;
-  }
 
   .checkbox-information{
-    height: 100%;
+    height: calc(1rem + 6px);
   }
 }
 
