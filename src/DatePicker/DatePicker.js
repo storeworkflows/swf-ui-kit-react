@@ -57,8 +57,8 @@ class DatePicker extends React.Component {
             let newDateString = addCharToDate(format, stringValue, input);
 
             if(moment(newDateString, format, true).isValid()) {
-                let minError =  getErrorOnBoundaryValue(newDateString, min);
-                let maxError = getErrorOnBoundaryValue(newDateString, max, false);
+                let minError =  getErrorOnBoundaryValue(newDateString, min, format);
+                let maxError = getErrorOnBoundaryValue(newDateString, max, format, false);
 
                 if(minError || maxError) {
                     this.invalidInput(true);
@@ -81,14 +81,11 @@ class DatePicker extends React.Component {
     }
 
     dateSelected(date){
-        const {manageValue, onValueChange, format,
-            manageInvalid, onValueSet, min, max} = this.props;
+        const {onValueChange, format, onValueSet, min, max} = this.props;
         let dateInFormat =  moment(date).format(format);
 
-       // if(!manageValue)
-        //{
-            let minError =  getErrorOnBoundaryValue(dateInFormat, min);
-            let maxError = getErrorOnBoundaryValue(dateInFormat, max, false);
+            let minError =  getErrorOnBoundaryValue(dateInFormat, min, format);
+            let maxError = getErrorOnBoundaryValue(dateInFormat, max, format,  false);
 
             if(minError || maxError){
                 this.invalidInput(true);
@@ -104,7 +101,6 @@ class DatePicker extends React.Component {
                     errorMessages: []
                 })
             }
-       // }
 
         onValueChange({oldValue: this.state.stringValue, newValue: dateInFormat});
         onValueSet({value: dateInFormat});
@@ -159,8 +155,8 @@ class DatePicker extends React.Component {
         if(!manageInvalid && !isValidValue)
             errorMessages = [invalidFormatMess]
         else if(isValidValue){
-            let minError =  getErrorOnBoundaryValue(stringValue, min);
-            let maxError = getErrorOnBoundaryValue(stringValue, max, false);
+            let minError =  getErrorOnBoundaryValue(stringValue, min, format);
+            let maxError = getErrorOnBoundaryValue(stringValue, max, format, false);
 
             let hasError = minError || maxError;
             if(hasError){
@@ -239,8 +235,6 @@ class DatePicker extends React.Component {
                 required={required}
                 className={className}
                 onBlur={this.onBlur}
-                min={min}
-                max={max}
             >
                 <Input.End>
                     <Button
@@ -310,8 +304,7 @@ DatePicker.defaultProps = {
     onInvalid: () => void 0,
     onValueSet: () => void 0,
     onValueChange: () => void 0,
-    visible: true,
-    className: {}
+    visible: true
 }
 
 DatePicker.propTypes = {
