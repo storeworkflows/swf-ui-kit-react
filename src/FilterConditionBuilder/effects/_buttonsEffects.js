@@ -9,7 +9,8 @@ export const BUTTONS_EFFECTS = {
         return {
             conditionsArray: [{ id: GENERAL_UTILS.generateID(), condition: '', operator: '', relatedConditions: [{ id: GENERAL_UTILS.generateID() + 1, condition: '', operator: '', conditionOptions: { operator: { operator: '', editior: '' }, field: '', value: '', fieldsData: { [fieldsDataID]: tableFields.columns }, fieldsDropdownData: [{ items: fieldsDropdownData }] }, relatedConditions: [] }] }],
             isSave: false,
-            breadcrumbsItems: [{ label: 'All', conditionId: 'all' }]    
+            breadcrumbsItems: [{ label: 'All', conditionId: 'all' }],
+            query: ""
         };
     },
     deleteCondition: function({ payload }) {

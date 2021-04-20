@@ -167,7 +167,7 @@ export default class FilterCondition extends React.Component {
         }
         this.setState({
             tableFields: result,
-            conditionsArray
+            conditionsArray,
         })
     }
 
