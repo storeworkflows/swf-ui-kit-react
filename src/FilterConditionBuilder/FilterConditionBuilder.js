@@ -262,11 +262,6 @@ export default class FilterCondition extends React.Component {
             await REQUEST_UTILS.fetchTableData({table, queryParams}).then(result => {
                 this.fetchTableDataSuccessed({result, properties: this.props});
             });
-
-            this.setState({
-                active: true,
-                count: this.state.query?.split(/\^|\^OR/).length
-            })
         }
 
         if (prevState.advanced !== this.state.advanced) {
@@ -492,7 +487,11 @@ export default class FilterCondition extends React.Component {
     }
 
     setQuery = ({query}) => {
-        this.setState({query})
+        this.setState({
+            query,
+            active: true,
+            count: query?.split(/\^|\^OR/).length
+        })
     }
 
     setAdvanced = (value) => {
