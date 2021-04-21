@@ -537,7 +537,7 @@ export default class FilterCondition extends React.Component {
                         label="Apply"
                         variant="primary"
                         size="md"
-                        disabled={!active || !advanced}
+                        disabled={!advanced || !active}
                         onClick={() => this.clickBtn({action: "applyQuery", payload: {type: "run"}})}
                         customStyle={
                             {
