@@ -234,17 +234,23 @@ export const QUERY_UTILS = {
         let resultQuery = "";
         let error = false;
         let breadcrumbsItems = [{ label: "All", conditionId: "all"}];
+        let isNQ = false;
 
         conditionsArray.forEach(globalCond => {
-            resultQuery += globalCond.operator;
+
             globalCond.relatedConditions.forEach((parentCond, index) => {
-                resultQuery += parentCond.operator;
                 let breadcrumbItem = { label: `${globalCond.operator && index === 0 ? 'or' : ''}`, conditionId: parentCond.id, globalConditionId: globalCond.id };
                 let generatedCondition = QUERY_UTILS.generateCurrentConditionQuery({ payload: { conditionData: parentCond, operation, breadcrumbItem } })
+                isNQ = generatedCondition.conditionQuery;
+                if (isNQ && index < 1) {
+                    resultQuery += globalCond.operator;
+                    isNQ = false;
+                }
+
                 let curCondition = generatedCondition.conditionQuery;
-                breadcrumbItem = generatedCondition.breadcrumbItem;
                 if (curCondition) {
-                    resultQuery += curCondition;
+                    breadcrumbItem = generatedCondition.breadcrumbItem;
+                    resultQuery += `${parentCond.operator}${curCondition}`;
                 } else if (operation === 'run' && !curCondition && !parentCond.conditionOptions.field && conditionsArray.length === 1 && globalCond.relatedConditions.length === 1 && !parentCond.relatedConditions.length) {
                     resultQuery = '';
                 } else {
@@ -252,21 +258,24 @@ export const QUERY_UTILS = {
                 }
 
                 parentCond.relatedConditions.forEach(childCond => {
-                    resultQuery += childCond.operator;
                     let generatedCondition = QUERY_UTILS.generateCurrentConditionQuery({ payload: { conditionData:  childCond, operation, breadcrumbItem }});
+
                     let curCondition = generatedCondition.conditionQuery;
-                    breadcrumbItem = generatedCondition.breadcrumbItem;
                     if (curCondition) {
-                        resultQuery += curCondition;
+                        breadcrumbItem = generatedCondition.breadcrumbItem;
+                        resultQuery += `${childCond.operator}${curCondition}`;
                     } else {
                         error = true;
                     }
                 })
-                breadcrumbItem.label = breadcrumbItem.label.trim();
-                breadcrumbsItems.push(breadcrumbItem);
+                if (generatedCondition.conditionQuery) {
+                    breadcrumbItem.label = breadcrumbItem.label.trim();
+                    breadcrumbsItems.push(breadcrumbItem);
+                }
             })
 
-            if (error) return null;
+
+            // if (error) return null;
 
             onSendQuery(resultQuery);
 
@@ -282,7 +291,6 @@ export const QUERY_UTILS = {
                     break;
             }
         })
-        
         return valueToReturn;
     }
 };
