@@ -107,7 +107,7 @@ class DatePicker extends React.Component {
 
     invalidInput(errors = [], date){
         const {isInvalid, errorMessages} = this.state;
-        const {manageInvalid, onInvalid} = this.props;
+        const {manageInvalid, onInvalid, invalid} = this.props;
         let isInvalidCurrent = errors.length>0;
 
         if(!manageInvalid) {
@@ -117,7 +117,7 @@ class DatePicker extends React.Component {
             });
         }
 
-        if(!_.isEqual(errorMessages.sort(), errors.sort()) || manageInvalid)
+        if(!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== isInvalid))
             onInvalid({isInvalid: isInvalidCurrent, errors: errors, date: date});
     }
 
