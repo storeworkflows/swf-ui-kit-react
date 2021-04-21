@@ -487,10 +487,12 @@ export default class FilterCondition extends React.Component {
     }
 
     setQuery = ({query}) => {
+        const count = query ? query?.split(/\^|\^OR/).length : 0;
+
         this.setState({
             query,
             active: true,
-            count: query?.split(/\^|\^OR/).length
+            count
         })
     }
 
