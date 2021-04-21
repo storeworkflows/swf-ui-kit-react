@@ -29,7 +29,9 @@ export default class FilterTemplates extends React.Component {
     }
 
     handleSelectItem = ({clickedItem}) => {
-        console.log(clickedItem);
+        this.setState({
+            selectedItem: clickedItem
+        })
     }
 
     render() {
@@ -40,18 +42,19 @@ export default class FilterTemplates extends React.Component {
         }
 
         const {setQuery, filterList} = this.props;
-        const {popoverToogle, filteredValues, searchValue} = this.state;
-        const valuesToShow = (!!filteredValues.length || !!searchValue) ? filteredValues : filterList;
+        const {selectedItem} = this.state;
 
         return (
             <div>
                 <Dropdown
-                    items={filterList.map(filter => ({
-                        id: filter.query,
-                        label: filter.title
+                    items={filterList.map(({title, filter}) => ({
+                        id: filter,
+                        label: title
                     }))}
                     manageSelectedItems={true}
                     onItemSelected={this.handleSelectItem}
+                    selectedItems={[selectedItem?.filter]}
+                    placeholder="-- Choose filter --"
                 />
                 {/*<div className="popoverTarget" ref={elm => this.popoverTarget.current = elm}>*/}
                 {/*    ​​​​​​​​*/}
