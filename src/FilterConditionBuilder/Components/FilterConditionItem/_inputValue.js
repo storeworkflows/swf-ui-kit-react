@@ -116,6 +116,7 @@ export const inputValue = ({ inputValuePayload }) => {
                         onKeyDown={(e) => {
                             textAreaValueSet({value: e.target.value})
                         }}
+                        className="limited-area"
                     />
                 </div>
             );
