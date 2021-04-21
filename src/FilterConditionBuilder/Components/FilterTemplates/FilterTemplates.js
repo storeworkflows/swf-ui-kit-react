@@ -17,9 +17,26 @@ export default class FilterTemplates extends React.Component {
             filteredValues: [],
             searchValue: "",
             selectedItem: {
-                id: "",
-                label: ""
+                [props.table]: {
+                    id: "",
+                    label: ""
+                }
             }
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.table !== this.props.table) {
+            if (this.props.table in this.state.selectedItem) return;
+            this.setState({
+                selectedItem: {
+                    ...this.state.selectedItem,
+                    [this.props.table]: {
+                        id: "",
+                        label: ""
+                    }
+                }
+            })
         }
     }
 
@@ -48,6 +65,7 @@ export default class FilterTemplates extends React.Component {
     }
 
     render() {
+        const {table} = this.props;
         const {selectedItem} = this.state;
 
         return (
@@ -56,7 +74,7 @@ export default class FilterTemplates extends React.Component {
                     items={this.filters()}
                     manageSelectedItems={true}
                     onItemSelected={this.handleSelectItem}
-                    selectedItems={[selectedItem?.id]}
+                    selectedItems={[selectedItem[table]?.id]}
                     select="single"
                     placeholder="-- Choose filter --"
                 />
