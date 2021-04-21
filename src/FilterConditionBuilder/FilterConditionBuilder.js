@@ -500,6 +500,8 @@ export default class FilterCondition extends React.Component {
 
         // console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
 
+        console.log({active})
+
         return (
             <>
                 <div className="collapsed-filter-header">
