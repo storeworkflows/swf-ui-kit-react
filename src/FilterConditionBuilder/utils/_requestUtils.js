@@ -43,10 +43,10 @@ export const REQUEST_UTILS = {
         }
         return await this.fetchRequest({url, params})
     },
-    fetchFilterTemplates: async function ({table, user}){
+    fetchFilterTemplates: async function ({table, user, filter}){
         const endpoint = `${window.location.origin}/api/now/table/sys_filter`;
         const queryParams = {
-            sysparm_query: `table=${table}^userISEMPTY^ORuser=${user}`,
+            sysparm_query: `table=${table}^${filter}`,
             sysparm_fields: "filter,sys_id,sys_name,table,title,user,group"
         };
         const query = this.prepareQueryParams(queryParams);

@@ -220,7 +220,7 @@ export default class FilterCondition extends React.Component {
     }
 
     async componentDidMount() {
-        const {table, user, onSendQuery} = this.props;
+        const {table, user, onSendQuery, filtersListQuery} = this.props;
         const {query, conditionsArray, isSave} = this.state;
         const queryParams = {
             sysparm_operators: true,
@@ -235,7 +235,7 @@ export default class FilterCondition extends React.Component {
         if (!!query)
             QUERY_UTILS.generateQuery({payload: {conditionsArray, onSendQuery, isSave, operation: "run"}});
 
-        REQUEST_UTILS.fetchFilterTemplates({table, user})
+        REQUEST_UTILS.fetchFilterTemplates({table, user, filter: filtersListQuery})
             .then(res => this.setState({filterList: res}));
     }
 
@@ -249,6 +249,9 @@ export default class FilterCondition extends React.Component {
 
             this.setState({query: "", breadcrumbsItems: [{label: 'All', conditionId: 'all'}]});
             onSendQuery("");
+
+            REQUEST_UTILS.fetchFilterTemplates({table, user, filter: filtersListQuery})
+                .then(res => this.setState({filterList: res}));
         }
 
         if (prevState.query !== this.state.query || prevProps.table !== this.props.table) {
@@ -667,7 +670,8 @@ FilterCondition.defaultProps = {
     blockFields: [],
     user: "",
     opened: false,
-    onSendQuery: noop
+    onSendQuery: noop,
+    filtersListQuery: ""
 }
 
 FilterCondition.propTypes = {
@@ -677,5 +681,6 @@ FilterCondition.propTypes = {
     blockFields: propTypes.array,
     allowFields: propTypes.array,
     opened: propTypes.bool,
-    onSendQuery: propTypes.func
+    onSendQuery: propTypes.func,
+    filtersListQuery: propTypes.string
 }
