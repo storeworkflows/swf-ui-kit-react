@@ -6,11 +6,7 @@ import {Button, Popover, Dropdown} from "../../../index";
 export default class FilterTemplates extends React.Component {
     constructor(props) {
         super(props);
-        this.allFilter = [{
-          id: "all",
-          label: "All"
-        }];
-        this.customFilter = [{
+        this.advancedMode = [{
             id: "advanced",
             label: "Advanced"
         }];
@@ -29,14 +25,14 @@ export default class FilterTemplates extends React.Component {
 
     handleSelectItem = ({clickedItem}) => {
         const {setQuery, setAdvanced} = this.props;
-        const emptyFiltersID = ["all", "advanced"];
+        const isAdvanced = ["advanced"].includes(clickedItem?.id);
 
         this.setState({
             selectedItem: clickedItem
         });
 
-        const query = emptyFiltersID.includes(clickedItem?.id) ? "" : clickedItem?.id ?? "";
-        const advanced = clickedItem?.id === "advanced";
+        const query = isAdvanced ? "" : clickedItem?.id ?? "";
+        const advanced = isAdvanced;
 
         setQuery({query});
         setAdvanced(advanced);
@@ -45,10 +41,10 @@ export default class FilterTemplates extends React.Component {
     filters = () => {
         const {filterList} = this.props;
 
-        return [...this.allFilter, ...filterList.map(({title, filter}) => ({
+        return [...filterList.map(({title, filter}) => ({
             id: filter,
             label: title
-        })), ...this.customFilter]
+        })), ...this.advancedMode]
     }
 
     render() {
