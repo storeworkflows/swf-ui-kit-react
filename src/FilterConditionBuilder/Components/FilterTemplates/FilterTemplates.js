@@ -45,7 +45,10 @@ export default class FilterTemplates extends React.Component {
         const isAdvanced = ["advanced"].includes(clickedItem?.id);
 
         this.setState({
-            selectedItem: clickedItem
+            selectedItem: {
+                ...this.state.selectedItem,
+                [this.props.table]: clickedItem
+            }
         });
 
         const query = isAdvanced ? "" : clickedItem?.id ?? "";
