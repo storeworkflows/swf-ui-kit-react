@@ -500,7 +500,7 @@ export default class FilterCondition extends React.Component {
 
         this.setState({
             query,
-            active: Boolean(query) || this.state.advanced,
+            active: Boolean(query),
             count
         })
     }
@@ -514,6 +514,7 @@ export default class FilterCondition extends React.Component {
     render() {
         const {
             active,
+            advanced,
             count,
             isFilterOpened,
             conditionsArray,
@@ -536,7 +537,7 @@ export default class FilterCondition extends React.Component {
                         label="Apply"
                         variant="primary"
                         size="md"
-                        disabled={!active}
+                        disabled={!active || !advanced}
                         onClick={() => this.clickBtn({action: "applyQuery", payload: {type: "run"}})}
                         customStyle={
                             {
