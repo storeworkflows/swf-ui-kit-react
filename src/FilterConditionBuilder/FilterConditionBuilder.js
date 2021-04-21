@@ -527,6 +527,8 @@ export default class FilterCondition extends React.Component {
 
         // console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
 
+        const isActive = [advanced, active].some(Boolean);
+
         return (
             <>
                 <div className="collapsed-filter-header">
@@ -537,7 +539,7 @@ export default class FilterCondition extends React.Component {
                         label="Apply"
                         variant="primary"
                         size="md"
-                        disabled={!advanced || !active}
+                        disabled={!isActive}
                         onClick={() => this.clickBtn({action: "applyQuery", payload: {type: "run"}})}
                         customStyle={
                             {
@@ -546,7 +548,7 @@ export default class FilterCondition extends React.Component {
                                 "active-border-color": "none"
                             }
                         }/>
-                    {active && <Badge count={count}>
+                    {isActive && <Badge count={count}>
                         <Button
                             icon={isFilterOpened ? "funnel-fill" : "funnel"}
                             size="md"
