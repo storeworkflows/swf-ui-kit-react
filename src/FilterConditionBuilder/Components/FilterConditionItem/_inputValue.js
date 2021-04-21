@@ -3,7 +3,8 @@ import TextArea from "../../../TextArea/TextArea";
 import Dropdown from "../../../Dropdown/Dropdown";
 import Input from "../../../Input/Input";
 
-export const inputValue = (state, conditionOptions, itemClicked, onDatePickerChange, inputValueSet, textAreaValueSet) => {
+export const inputValue = ({ inputValuePayload }) => {
+    const { state, conditionOptions, itemClicked, onDatePickerChange, inputValueSet, textAreaValueSet } = inputValuePayload;
     const { dropdownsIsActive } = state;
     const {  operator: { editor } } = conditionOptions;
 

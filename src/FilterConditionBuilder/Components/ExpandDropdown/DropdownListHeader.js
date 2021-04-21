@@ -18,7 +18,7 @@ class DropdownListHeader extends React.Component {
 
     render() {
         const { searchValue, onSearch, selectedItem, itemSelected, searchBarWidth } = this.props;
-
+        
         return(
             <div className="dropdown-list__header">
                 <div className="swf-form-group" style={{maxWidth: searchBarWidth}}>

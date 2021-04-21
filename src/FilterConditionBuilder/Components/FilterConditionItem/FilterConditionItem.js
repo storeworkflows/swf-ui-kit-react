@@ -204,17 +204,23 @@ export default class FilterConditionItem extends React.Component {
 
     updateSelectedItem = ({item, command, listIndex}) => {
         const { selectedItem: { items } } = this.state;
+        let newState;
 
-        if (command === "push") {
-            items.push(item);
-            this.setState({ selectedItem: { items } });
-        } else if (command === "rewrite") {
-            this.setState({ selectedItem: { items: [item] } });
-        } else if (command === "same_list_index") {
-            items.splice(listIndex, items.length)
-            items.push(item);
-            this.setState({ selectedItem: { items } });
+        switch (command) {
+            case "push":
+                items.push(item);
+                newState = { selectedItem: { items } };
+                break;
+            case "rewrite":
+                newState = { selectedItem: { items: [item] } };
+                break;
+            case "same_list_index":
+                items.splice(listIndex, items.length)
+                items.push(item);
+                newState = { selectedItem: { items } };
+                break;
         }
+        this.setState(newState);
     }
 
     inputValueSet = ({value, type, index}) => {
@@ -267,6 +273,15 @@ export default class FilterConditionItem extends React.Component {
             conditionsArray,
         } = this.props;
 
+        const inputValuePayload = {
+            state: this.state,
+            conditionOptions: conditionObj.conditionOptions,
+            itemClicked: this.itemClicked,
+            onDatePickerChange: this.onDatePickerChange,
+            inputValueSet: this.inputValueSet,
+            textAreaValueSet: this.textAreaValueSet
+        }
+
         const { dropdownsIsActive } = this.state; 
         const isBtnsRender = (!!conditionObj.conditionOptions.value || conditionObj.conditionOptions.operator.editor === "none");
         return (
@@ -300,7 +315,7 @@ export default class FilterConditionItem extends React.Component {
                     />
                 </div>
                 {
-                    dropdownsIsActive.value && inputValue(this.state, conditionObj.conditionOptions, this.itemClicked, this.onDatePickerChange, this.inputValueSet, this.textAreaValueSet)
+                    dropdownsIsActive.value && inputValue({ inputValuePayload })
                 }
                 {(operatorType !== "^OR" && isBtnsRender) && <>
                     <div className="btn-container">
