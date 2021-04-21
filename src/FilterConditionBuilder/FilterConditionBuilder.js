@@ -264,7 +264,7 @@ export default class FilterCondition extends React.Component {
             });
 
             this.setState({
-                active: Boolean(this.state.query),
+                active: true,
                 count: this.state.query?.split(/\^|\^OR/).length
             })
         }
