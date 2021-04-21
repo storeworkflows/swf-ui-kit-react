@@ -46,6 +46,7 @@ export default class FilterCondition extends React.Component {
             operatorArr: [],
             clickedListIndex: null,
             filterList: [],
+            active: false
         }
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
         this.parseConditionValue = parseConditionValue.bind(this);
@@ -257,6 +258,10 @@ export default class FilterCondition extends React.Component {
             await REQUEST_UTILS.fetchTableData({table, queryParams}).then(result => {
                 this.fetchTableDataSuccessed({result, properties: this.props});
             });
+
+            this.setState({
+                active: Boolean(this.state.query)
+            })
         }
 
         if (this.state.isFilterSaved) {
@@ -412,7 +417,6 @@ export default class FilterCondition extends React.Component {
         this.setState({conditionsArray: copyConditionsArray})
     }
 
-
     setConditionOptionsFieldData = ({conditionOptions, value}) => {
         const fieldsDataID = GENERAL_UTILS.generateID();
         let copyConditionOptions;
@@ -438,7 +442,6 @@ export default class FilterCondition extends React.Component {
 
         return copyConditionOptions;
     }
-
 
     getConditionsIDs = ({currentConditionID, globalConditionID}) => {
         this.setState({currentConditionID, globalConditionID})
@@ -485,6 +488,7 @@ export default class FilterCondition extends React.Component {
 
     render() {
         const {
+            active,
             isFilterOpened,
             conditionsArray,
             breadcrumbsItems,
@@ -506,6 +510,7 @@ export default class FilterCondition extends React.Component {
                         label="Apply"
                         variant="primary"
                         size="md"
+                        disabled={!active}
                         onClick={() => this.clickBtn({action: "applyQuery", payload: {type: "run"}})}
                         customStyle={
                             {
@@ -514,14 +519,13 @@ export default class FilterCondition extends React.Component {
                                 "active-border-color": "none"
                             }
                         }/>
-                    <Button
+                    {active && <Button
                         icon={isFilterOpened ? "funnel-fill" : "funnel"}
                         size="md"
                         tooltipContent="Filter"
                         variant="tertiary"
                         onClick={() => this.clickBtn({action: "filterToogle"})}
-                    />
-
+                    />}
                 </div>
                 <div className={
                     classnames({
@@ -535,20 +539,6 @@ export default class FilterCondition extends React.Component {
                     <div className="filter-header">
                         <div className="actions">
                             <div className="buttons">
-                                <div className="btn">
-                                    <Button
-                                        label="Apply"
-                                        variant="primary"
-                                        size="md"
-                                        onClick={() => this.clickBtn({action: "applyQuery", payload: {type: "run"}})}
-                                        customStyle={
-                                            {
-                                                "border-color": "rgb(15,67,55)",
-                                                "hover-border-color": "rgb(15,67,55)",
-                                                "active-border-color": "none"
-                                            }
-                                        }/>
-                                </div>
                                 <div className="btn">
                                     <Button label="Save" variant="secondary" size="md" customStyle={{
                                         "border-color": "rgb(172,180,181)",
@@ -571,9 +561,6 @@ export default class FilterCondition extends React.Component {
                                         onClick={() => this.clickBtn({action: "clearAll"})}
                                     />
                                 </div>
-                            </div>
-                            <div className="templates">
-                                <FilterTemplates setQuery={this.setQuery} filterList={filterList} table={table}/>
                             </div>
                         </div>
                         {

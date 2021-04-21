@@ -33,7 +33,7 @@ export default class FilterTemplates extends React.Component {
         const {selectedItem} = this.state;
 
         return (
-            <div>
+            <div style={{marginRight: "1rem"}}>
                 <Dropdown
                     items={filterList.map(({title, filter}) => ({
                         id: filter,
