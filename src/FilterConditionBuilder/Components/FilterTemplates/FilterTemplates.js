@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import PopoverContent from './PopoverContent/PopoverContent';
-import { Button, Popover } from "../../../index";
+import { Button, Popover, Dropdown } from "../../../index";
 
 export default class FilterTemplates extends React.Component {
     constructor(props) {
@@ -41,25 +41,28 @@ export default class FilterTemplates extends React.Component {
 
         return(
             <div>
-                <div className="popoverTarget" ref={elm => this.popoverTarget.current = elm}>
-                    ​​​​​​​​
-                    <Button label="Filters" onClick={this.managePopover} ref={e => this.btnRef = e} customStyle={btnStyles} variant="tertiary" />
-                </div>
-                {(popoverToogle && this.popoverTarget.current) &&
-                
-                    (<Popover
-                        manageOpened={true}
-                        opened={popoverToogle}
-                        positionTarget={this.popoverTarget}
-                        onOuterPopoverClicked={() => this.setState({popoverToogle: false})}
-                        hideTail={false}
-                        positions={[{"target":"bottom-end","content":"top-end"}]}
-                    >
-                        <Popover.Content>
-                            <PopoverContent filterList={valuesToShow} setQuery={setQuery} onSearch={this.filterForFilterList} managePopover={this.managePopover} inputValue={searchValue} />
-                        </Popover.Content>
-                    </Popover>)
-                }
+                <Dropdown items={filterList.map(filter => ({
+                    id: filter.query,
+                    label: filter.title
+                }))} />
+                {/*<div className="popoverTarget" ref={elm => this.popoverTarget.current = elm}>*/}
+                {/*    ​​​​​​​​*/}
+                {/*    <Button label="Filters" onClick={this.managePopover} ref={e => this.btnRef = e} customStyle={btnStyles} variant="tertiary" />*/}
+                {/*</div>*/}
+                {/*{(popoverToogle && this.popoverTarget.current) &&*/}
+                {/*    (<Popover*/}
+                {/*        manageOpened={true}*/}
+                {/*        opened={popoverToogle}*/}
+                {/*        positionTarget={this.popoverTarget}*/}
+                {/*        onOuterPopoverClicked={() => this.setState({popoverToogle: false})}*/}
+                {/*        hideTail={false}*/}
+                {/*        positions={[{"target":"bottom-end","content":"top-end"}]}*/}
+                {/*    >*/}
+                {/*        <Popover.Content>*/}
+                {/*            <PopoverContent filterList={valuesToShow} setQuery={setQuery} onSearch={this.filterForFilterList} managePopover={this.managePopover} inputValue={searchValue} />*/}
+                {/*        </Popover.Content>*/}
+                {/*    </Popover>)*/}
+                {/*}*/}
             </div>
         ) 
     }

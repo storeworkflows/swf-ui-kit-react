@@ -657,7 +657,7 @@ FilterCondition.defaultProps = {
     allowFields: [],
     blockFields: [],
     user: "",
-    opened: true,
+    opened: false,
     onSendQuery: noop
 }
 
