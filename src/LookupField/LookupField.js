@@ -181,6 +181,9 @@ class LookupField extends React.Component {
     onPaste = (event) => {
         event.preventDefault();
         event.stopPropagation();
+        this.setState({focused: false});
+
+        console.log({value: event.target.value});
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -272,6 +275,7 @@ class LookupField extends React.Component {
                         onInput={this.onChange}
                         readonly={readonly}
                         onInvalid={onInvalid}
+                        onPaste={this.onPaste}
                         invalid={invalid}
                         required={required}
                         message={message}
