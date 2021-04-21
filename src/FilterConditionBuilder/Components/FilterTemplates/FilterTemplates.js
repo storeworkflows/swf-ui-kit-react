@@ -45,11 +45,21 @@ export default class FilterTemplates extends React.Component {
                     ​​​​​​​​
                     <Button label="Filters" onClick={this.managePopover} ref={e => this.btnRef = e} customStyle={btnStyles} variant="tertiary" />
                 </div>
-                {popoverToogle && this.popoverTarget.current && <Popover manageOpened={true} opened={popoverToogle} positionTarget={this.popoverTarget} hideTail={false} positions={[{"target":"bottom-end","content":"top-end"}]}>
-                    <Popover.Content>
-                        <PopoverContent filterList={valuesToShow} setQuery={setQuery} onSearch={this.filterForFilterList} managePopover={this.managePopover} inputValue={searchValue} />
-                    </Popover.Content>
-                </Popover>}
+                {(popoverToogle && this.popoverTarget.current) &&
+                
+                    (<Popover
+                        manageOpened={true}
+                        opened={popoverToogle}
+                        positionTarget={this.popoverTarget}
+                        onOuterPopoverClicked={() => this.setState({popoverToogle: false})}
+                        hideTail={false}
+                        positions={[{"target":"bottom-end","content":"top-end"}]}
+                    >
+                        <Popover.Content>
+                            <PopoverContent filterList={valuesToShow} setQuery={setQuery} onSearch={this.filterForFilterList} managePopover={this.managePopover} inputValue={searchValue} />
+                        </Popover.Content>
+                    </Popover>)
+                }
             </div>
         ) 
     }

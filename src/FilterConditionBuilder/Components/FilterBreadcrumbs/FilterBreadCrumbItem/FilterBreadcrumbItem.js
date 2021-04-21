@@ -1,15 +1,13 @@
 import * as React from "react";
 
-import Tooltip from "../../../../Tooltip/Tooltip";
-
 export default class FilterBreadcrumbItem extends React.Component {
     constructor(props) {
         super(props);
     }
     
     breadcrumbItemClicked = (data, operation) => {
-        const { onBreadcrumbItemClicked } = this.props;
-        onBreadcrumbItemClicked({data, operation});
+        const { clickBtn } = this.props;
+        clickBtn({action: "breadcrumbs", payload: { data, operation }});
     }
 
     render() {

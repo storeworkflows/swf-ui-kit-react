@@ -8,31 +8,22 @@ import Button from "../Button/Button";
 import Popover from "../Popover/Popover";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 
-import {addCharToDate, getErrorOnBoundaryValue} from "./utils";
+import {addCharToDate, getErrorMessages, getErrorOnBoundaryValue} from "./utils";
 import PropTypes from "prop-types";
 
-const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle", delay: 5000}
+const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle"}
 
 class DatePicker extends React.Component {
 
     constructor(props) {
         super(props);
-        const {value, format, opened, invalid, manageInvalid, onInvalid} = this.props;
-
-
-        let dateValue = value ? moment(value, format) : null;
-        let isInvalidValue = (value) ? !dateValue.isValid() : false;
-        let invalidValue = manageInvalid ? invalid : isInvalidValue;
-
-        if(isInvalidValue)
-            onInvalid(true)
 
         this.state = {
-            stringValue: dateValue && dateValue.format(format),
-            currentDate: value && !isInvalidValue ? dateValue.toDate() : null,
-            isOpened: opened,
-            isInvalid: invalidValue,
-            errorMessages: invalidValue ? [invalidFormatMess] : []
+            stringValue: "",
+            currentDate: null,
+            isOpened: this.props.opened,
+            isInvalid: false,
+            errorMessages: []
         }
 
         this.inputRef = React.createRef();
@@ -43,166 +34,156 @@ class DatePicker extends React.Component {
         this.openCalendar = this.openCalendar.bind(this);
         this.dateSelected = this.dateSelected.bind(this);
         this.invalidInput = this.invalidInput.bind(this);
-        this.checkIsInvalid = this.checkIsInvalid.bind(this);
+        this.setDateFromProps = this.setDateFromProps.bind(this);
+    }
+
+    setDateFromProps() {
+        const {value, format, min, max} = this.props;
+
+        if (moment(value, format, true).isValid()) {
+            let errors = getErrorMessages(value, format, min, max);
+            this.invalidInput(errors, value);
+
+            this.setState({
+                stringValue: moment(value).format(format),
+                currentDate: value
+            })
+        }
+        else {
+            this.setState({
+                stringValue: value,
+                currentDate: null
+            });
+        }
     }
 
     changeValue(e){
         e.preventDefault();
         let input = e.nativeEvent.data;
-        const {format, manageValue, onValueChange, manageInvalid, onValueSet, min, max} = this.props;
+
+        const {format, onValueChange, onValueSet, min, max, manageValue} = this.props;
         const {stringValue} = this.state;
+        let newDateString = addCharToDate(format, stringValue, input);
+
+        if(!manageValue)
+            this.setState({stringValue: newDateString})
+
+        if (moment(newDateString, format, true).isValid()) {
+            let errors = getErrorMessages(newDateString, format, min, max);
+            this.invalidInput(errors, newDateString);
+
+            if(!manageValue)
+                this.setState({currentDate: newDateString});
+
+            if(errors.length === 0)
+                onValueSet({value: newDateString});
+        } else if (newDateString.length === 0) {
+            onValueSet({value: ""});
+            this.invalidInput([], "");
+        }
 
 
-      //  if(!manageValue) {
-            let newDateString = addCharToDate(format, stringValue, input);
-
-            if(moment(newDateString, format, true).isValid()) {
-                let minError =  getErrorOnBoundaryValue(newDateString, min, format);
-                let maxError = getErrorOnBoundaryValue(newDateString, max, format, false);
-
-                if(minError || maxError) {
-                    this.invalidInput(true);
-                    this.setState({
-                        errorMessages: [minError || maxError]
-                    })
-                } else{
-                    this.invalidInput(false);
-                    this.setState({
-                        currentDate: newDateString,
-                        errorMessages: []
-                    });
-                    onValueSet({value: newDateString});
-                }
-            }
-        !manageValue && this.setState({stringValue: newDateString})
         onValueChange({oldValue: stringValue, input: input, newValue: newDateString});
-       // } else
-        //    onValueChange({oldValue: stringValue, input: input});
     }
 
     dateSelected(date){
-        const {onValueChange, format, onValueSet, min, max} = this.props;
+        const {onValueChange, format, onValueSet, min, max, manageValue} = this.props;
         let dateInFormat =  moment(date).format(format);
 
-            let minError =  getErrorOnBoundaryValue(dateInFormat, min, format);
-            let maxError = getErrorOnBoundaryValue(dateInFormat, max, format,  false);
+        let errors = getErrorMessages(dateInFormat, format, min, max);
+        this.invalidInput(errors, dateInFormat);
 
-            if(minError || maxError){
-                this.invalidInput(true);
-                this.setState({
-                    errorMessages: [minError || maxError]
-                })
-            } else {
-                this.invalidInput(false);
-                this.setState({
-                    currentDate: date,
-                    stringValue: dateInFormat,
-                    isOpened: false,
-                    errorMessages: []
-                })
-            }
 
+        if (errors.length === 0 && !manageValue)
+            this.setState({
+                currentDate: date,
+                stringValue: dateInFormat,
+                isOpened: false
+            })
+
+        if(errors.length === 0)
+            onValueSet({value: dateInFormat});
         onValueChange({oldValue: this.state.stringValue, newValue: dateInFormat});
-        onValueSet({value: dateInFormat});
     }
 
-    invalidInput(isInvalid){
+    invalidInput(errors = [], date){
+        const {isInvalid, errorMessages} = this.state;
         const {manageInvalid, onInvalid} = this.props;
+        let isInvalidCurrent = errors.length>0;
 
         if(!manageInvalid) {
-            this.setState({isInvalid: isInvalid});
-            if(!isInvalid)
-                this.setState({errorMessages: []});
+            this.setState({
+                isInvalid: isInvalidCurrent,
+                errorMessages: errors
+            });
         }
-        onInvalid(isInvalid);
+
+        if(!_.isEqual(errorMessages.sort(), errors.sort()))
+            onInvalid({isInvalid: isInvalidCurrent, errors: errors, date: date});
     }
 
-    openCalendar(event){
-        const {manageOpened, onOpen, format} = this.props;
+    openCalendar(e, onFocusClose ){
+        const {manageOpened, onOpen, format, min, max} = this.props;
         const {isOpened, stringValue} = this.state;
-
         let openState = isOpened;
-        let isValidStringDate = moment(stringValue, format).isValid();
 
-        if(!manageOpened) {
-            openState = !openState;
+        if(!onFocusClose || isOpened) {
 
-            if(isValidStringDate)
-                this.setState({
-                    currentDate: moment(stringValue, format).toDate()
-                })
-            else
-                this.setState({
-                    stringValue: '',
-                    currentDate: null
-                });
+            let isValidStringDate = moment(stringValue, format).isValid();
 
-            this.checkIsInvalid()
-            this.setState({isOpened: openState});
-        }
+            if (!manageOpened) {
+                openState = !openState;
 
-        onOpen({openState, event})
-    }
+                if (isValidStringDate)
+                    this.setState({currentDate: moment(stringValue, format).toDate()})
+                else
+                    this.setState({
+                        stringValue: '',
+                        currentDate: null
+                    });
 
-    checkIsInvalid(){
-        const {format, manageInvalid, min, max} = this.props;
-        const {stringValue} = this.state;
+                this.setState({isOpened: openState});
+            }
 
-        let isEmptyStr = !stringValue || stringValue.length < 1;
-        let isValidValue = isEmptyStr || moment(stringValue, format, true).isValid();
-
-        let errorMessages = [];
-        if(!manageInvalid && !isValidValue)
-            errorMessages = [invalidFormatMess]
-        else if(isValidValue){
-            let minError =  getErrorOnBoundaryValue(stringValue, min, format);
-            let maxError = getErrorOnBoundaryValue(stringValue, max, format, false);
-
-            let hasError = minError || maxError;
-            if(hasError){
-                isValidValue = false;
-                errorMessages = [hasError];
+            onOpen({openState})
+            if(!onFocusClose && !openState){
+                let errors = getErrorMessages(stringValue, format, min, max);
+                this.invalidInput(errors, stringValue);
             }
         }
 
-        this.setState({errorMessages: errorMessages})
-        this.invalidInput(!isValidValue)
+
     }
 
+
     onBlur(e){
+        const {stringValue} = this.state;
+        const {format, min, max} = this.props;
         let sameParent = e.target?.parentElement === e.relatedTarget?.parentElement?.parentElement;
 
-        if(!sameParent)
-            this.checkIsInvalid();
+        if(!sameParent){
+            let errors = getErrorMessages(stringValue, format, min, max);
+            this.invalidInput(errors, stringValue);
+        }
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {manageInvalid, manageOpened, manageValue, opened, invalid, value, format} = this.props
-        const {isInvalid, isOpened, stringValue} = this.state;
+        const {manageInvalid, manageOpened, manageValue, opened, invalid, value} = this.props
+        const {isInvalid, isOpened} = this.state;
 
         if(manageInvalid && isInvalid !== invalid)
-            this.invalidInput(invalid)
+            this.setState({invalid: invalid})
 
         if(manageOpened && opened!==isOpened)
             this.setState({isOpened: opened});
 
         if(manageValue && (value!==prevProps.value))
-        {
-            let dateValue = value ? moment(value, format) : null;
-            let newStr = dateValue && dateValue.format(format);
-
-            let invalidValue = invalid || ( value && !manageInvalid && !dateValue.isValid());
-
-            this.setState({
-                stringValue: newStr,
-                currentDate: dateValue?.isValid() ? dateValue.toDate() : null,
-                invalid: invalidValue
-            })
-        }
-
+            this.setDateFromProps();
     }
 
     componentDidMount() {
+        this.setDateFromProps();
+
         if(this.inputRef && this.inputRef.current){
 
             let inputEl = this.inputRef.current.querySelector('input');
@@ -217,7 +198,7 @@ class DatePicker extends React.Component {
     }
 
     renderInput(){
-        const {label, format, message = [], required, name, className, min, max} = this.props;
+        const {label, format, message = [], required, name, className} = this.props;
         const {stringValue, isInvalid, errorMessages} = this.state
 
         let allMessages = errorMessages.concat(message);
@@ -229,8 +210,9 @@ class DatePicker extends React.Component {
                 name={name}
                 manageInvalid={true}
                 invalid = {isInvalid}
-                onInvalid={() => this.invalidInput(true)}
+                onInvalid={(e) => this.invalidInput([e], stringValue)}
                 onChange={this.changeValue}
+                onFocus={(e) => this.openCalendar(e, true)}
                 message = {allMessages}
                 required={required}
                 className={className}
@@ -238,6 +220,7 @@ class DatePicker extends React.Component {
             >
                 <Input.End>
                     <Button
+                        className={"datepicker-button"}
                         icon={"calendar"}
                         variant={"tertiary"}
                         onClick={this.openCalendar}
@@ -260,19 +243,18 @@ class DatePicker extends React.Component {
             {target: "center-start", content: "center-end"},
         ]
 
-        let refExist = this.inputRef && this.inputRef.current;
-
+        let popoverTarget = this.inputRef?.current?.getElementsByClassName("input-group")[0]
         return (
             visible ?
                 <div ref = {el => this.inputRef.current =  el}>
                     { this.renderInput() }
-                    { refExist &&
+                    { popoverTarget &&
                         <Popover
                             hideTail={true}
                             manageOpened={true}
                             opened={isOpened}
                             positions={calendarPositions}
-                            positionTarget={this.inputRef}
+                            positionTarget={{current: popoverTarget}}
                             onOuterPopoverClicked={this.openCalendar}
                         >
                             <Popover.Content>
@@ -298,8 +280,7 @@ DatePicker.defaultProps = {
     opened: false,
     manageOpened: false,
     manageInvalid: false,
-    manageValueChange: false,
-    manageValueSet: false,
+    manageValue: false,
     onOpen: () => void 0,
     onInvalid: () => void 0,
     onValueSet: () => void 0,
@@ -322,8 +303,7 @@ DatePicker.propTypes = {
     opened: propTypes.bool,
     manageOpened: propTypes.bool,
     manageInvalid: propTypes.bool,
-    manageValueChange: propTypes.bool,
-    manageValueSet: propTypes.bool,
+    manageValue: propTypes.bool,
     message: PropTypes.arrayOf(PropTypes.shape({
         status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
         content: PropTypes.string,
