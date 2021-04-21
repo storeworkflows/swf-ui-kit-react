@@ -37,6 +37,7 @@ export default class FilterTemplates extends React.Component {
                     }
                 }
             })
+            this.handleSelectItem({clickedItem: this.state.selectedItem[this.props.table]})
         }
     }
 
