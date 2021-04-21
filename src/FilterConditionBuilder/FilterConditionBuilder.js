@@ -13,6 +13,8 @@ import {
     parseConditionValue,
 } from "./utils/utils"
 
+import Badge from "../Badge/Badge";
+
 import {REQUEST_UTILS, CONDITION_OPTIONS_UTILS, GENERAL_UTILS, DATA_UTILS, QUERY_UTILS} from "./utils";
 import {BUTTONS_EFFECTS} from "./effects";
 
@@ -46,7 +48,8 @@ export default class FilterCondition extends React.Component {
             operatorArr: [],
             clickedListIndex: null,
             filterList: [],
-            active: false
+            active: false,
+            count: 0
         }
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
         this.parseConditionValue = parseConditionValue.bind(this);
@@ -260,7 +263,8 @@ export default class FilterCondition extends React.Component {
             });
 
             this.setState({
-                active: Boolean(this.state.query)
+                active: Boolean(this.state.query),
+                count: this.state.query?.split(/\^|\^OR/).length
             })
         }
 
@@ -489,6 +493,7 @@ export default class FilterCondition extends React.Component {
     render() {
         const {
             active,
+            count,
             isFilterOpened,
             conditionsArray,
             breadcrumbsItems,
@@ -521,13 +526,15 @@ export default class FilterCondition extends React.Component {
                                 "active-border-color": "none"
                             }
                         }/>
-                    {active && <Button
-                        icon={isFilterOpened ? "funnel-fill" : "funnel"}
-                        size="md"
-                        tooltipContent="Filter"
-                        variant="tertiary"
-                        onClick={() => this.clickBtn({action: "filterToogle"})}
-                    />}
+                    {active && <Badge count={count}>
+                        <Button
+                            icon={isFilterOpened ? "funnel-fill" : "funnel"}
+                            size="md"
+                            tooltipContent="Filter"
+                            variant="tertiary"
+                            onClick={() => this.clickBtn({action: "filterToogle"})}
+                        />
+                    </Badge>}
                 </div>
                 <div className={
                     classnames({
@@ -638,6 +645,7 @@ export default class FilterCondition extends React.Component {
             </>
         )
     }
+
 }
 
 FilterCondition.defaultProps = {
