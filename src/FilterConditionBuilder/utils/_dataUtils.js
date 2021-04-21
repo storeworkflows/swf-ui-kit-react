@@ -63,7 +63,7 @@ export const DATA_UTILS = {
                 }
                 REQUEST_UTILS.fetchReferenceData({table: tableFields[field].reference, queryParams})
                     .then(res => {
-                        this.fetchReferenceDataSuccessed({result, field, currentID, globalID})
+                        this.fetchReferenceDataSuccessed({result: res, field, currentID, globalID})
                     })
                 this.setState({referenceFieldData: {
                     field: tableFields[field],
