@@ -159,11 +159,6 @@ class LookupField extends React.Component {
         this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
     }
 
-    // componentDidUpdate(prevProps, prevState, snapshot) {
-    //     const {loading, loaded, records} = this.state;
-    //     console.log(records, loading, loaded);
-    // }
-
     onClick(record) {
         const isReference = this.props?.type === "reference"
         return isReference ? this.referenceHandleClick(record) : this.listHandleClick(record)
@@ -181,6 +176,11 @@ class LookupField extends React.Component {
 
     onBlur(event) {
         this.setState({focused: false});
+    }
+
+    onPaste = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
     }
 
     componentWillReceiveProps(nextProps, nextContext) {

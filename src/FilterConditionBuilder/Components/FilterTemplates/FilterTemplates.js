@@ -1,7 +1,5 @@
 import * as React from "react";
-
-import PopoverContent from './PopoverContent/PopoverContent';
-import {Button, Popover, Dropdown} from "../../../index";
+import {Dropdown} from "../../../index";
 
 export default class FilterTemplates extends React.Component {
     constructor(props) {
