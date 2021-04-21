@@ -101,7 +101,8 @@ class DatePicker extends React.Component {
                 isOpened: false
             })
 
-        onValueSet({value: dateInFormat});
+        if(errors.length === 0)
+            onValueSet({value: dateInFormat});
         onValueChange({oldValue: this.state.stringValue, newValue: dateInFormat});
     }
 
@@ -121,28 +122,37 @@ class DatePicker extends React.Component {
             onInvalid({isInvalid: isInvalidCurrent, errors: errors, date: date});
     }
 
-    openCalendar(event){
-        const {manageOpened, onOpen, format} = this.props;
+    openCalendar(e, onFocusClose ){
+        const {manageOpened, onOpen, format, min, max} = this.props;
         const {isOpened, stringValue} = this.state;
-
         let openState = isOpened;
-        let isValidStringDate = moment(stringValue, format).isValid();
 
-        if(!manageOpened) {
-            openState = !openState;
+        if(!onFocusClose || isOpened) {
 
-            if(isValidStringDate)
-                this.setState({ currentDate: moment(stringValue, format).toDate()  })
-            else
-                this.setState({
-                    stringValue: '',
-                    currentDate: null
-                });
+            let isValidStringDate = moment(stringValue, format).isValid();
 
-            this.setState({ isOpened: openState });
+            if (!manageOpened) {
+                openState = !openState;
+
+                if (isValidStringDate)
+                    this.setState({currentDate: moment(stringValue, format).toDate()})
+                else
+                    this.setState({
+                        stringValue: '',
+                        currentDate: null
+                    });
+
+                this.setState({isOpened: openState});
+            }
+
+            onOpen({openState})
+            if(!onFocusClose && !openState){
+                let errors = getErrorMessages(stringValue, format, min, max);
+                this.invalidInput(errors, stringValue);
+            }
         }
 
-        onOpen({openState, event})
+
     }
 
 
@@ -202,6 +212,7 @@ class DatePicker extends React.Component {
                 invalid = {isInvalid}
                 onInvalid={(e) => this.invalidInput([e], stringValue)}
                 onChange={this.changeValue}
+                onFocus={(e) => this.openCalendar(e, true)}
                 message = {allMessages}
                 required={required}
                 className={className}
