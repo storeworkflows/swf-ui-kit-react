@@ -500,7 +500,7 @@ export default class FilterCondition extends React.Component {
 
         this.setState({
             query,
-            active: true,
+            active: Boolean(query),
             count
         })
     }
