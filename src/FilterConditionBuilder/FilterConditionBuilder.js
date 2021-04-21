@@ -49,7 +49,8 @@ export default class FilterCondition extends React.Component {
             clickedListIndex: null,
             filterList: [],
             active: false,
-            count: 0
+            count: 0,
+            advanced: false
         }
         this.getValueAdditionalData = getValueAdditionalData.bind(this);
         this.parseConditionValue = parseConditionValue.bind(this);
@@ -266,6 +267,10 @@ export default class FilterCondition extends React.Component {
                 active: Boolean(this.state.query),
                 count: this.state.query?.split(/\^|\^OR/).length
             })
+        }
+
+        if (prevState.advanced !== this.state.advanced) {
+            this.clickBtn({action: "filterToogle"});
         }
 
         if (this.state.isFilterSaved) {
@@ -490,6 +495,12 @@ export default class FilterCondition extends React.Component {
         this.setState({query})
     }
 
+    setAdvanced = (value) => {
+        this.setState({
+            advanced: value
+        })
+    }
+
     render() {
         const {
             active,
@@ -505,13 +516,11 @@ export default class FilterCondition extends React.Component {
 
         // console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
 
-        console.log({active})
-
         return (
             <>
                 <div className="collapsed-filter-header">
                     <div className="templates">
-                        <FilterTemplates setQuery={this.setQuery} filterList={filterList} table={table}/>
+                        <FilterTemplates setQuery={this.setQuery} setAdvanced={this.setAdvanced} filterList={filterList} table={table}/>
                     </div>
                     <Button
                         label="Apply"

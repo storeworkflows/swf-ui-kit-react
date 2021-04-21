@@ -6,6 +6,14 @@ import {Button, Popover, Dropdown} from "../../../index";
 export default class FilterTemplates extends React.Component {
     constructor(props) {
         super(props);
+        this.allFilter = [{
+          id: "all",
+          label: "All"
+        }];
+        this.customFilter = [{
+            id: "advanced",
+            label: "Advanced"
+        }];
         this.state = {
             popoverToogle: false,
             popoverTarget: null,
@@ -20,25 +28,36 @@ export default class FilterTemplates extends React.Component {
     }
 
     handleSelectItem = ({clickedItem}) => {
-        const {setQuery} = this.props;
+        const {setQuery, setAdvanced} = this.props;
+        const emptyFiltersID = ["all", "advanced"];
+
         this.setState({
             selectedItem: clickedItem
         });
 
-        setQuery({query: clickedItem?.id});
+        const query = emptyFiltersID.includes(clickedItem?.id) ? "" : clickedItem?.id ?? "";
+        const advanced = clickedItem?.id === "advanced";
+
+        setQuery({query});
+        setAdvanced(advanced);
+    }
+
+    filters = () => {
+        const {filterList} = this.props;
+
+        return [...this.allFilter, ...filterList.map(({title, filter}) => ({
+            id: filter,
+            label: title
+        })), ...this.customFilter]
     }
 
     render() {
-        const {filterList} = this.props;
         const {selectedItem} = this.state;
 
         return (
             <div style={{marginRight: "1rem"}}>
                 <Dropdown
-                    items={filterList.map(({title, filter}) => ({
-                        id: filter,
-                        label: title
-                    }))}
+                    items={this.filters()}
                     manageSelectedItems={true}
                     onItemSelected={this.handleSelectItem}
                     selectedItems={[selectedItem?.id]}
