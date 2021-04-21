@@ -43,7 +43,7 @@ export default class FilterTemplates extends React.Component {
 
         const {setQuery, filterList} = this.props;
         const {selectedItem} = this.state;
-
+        console.log({selectedItem})
         return (
             <div>
                 <Dropdown
