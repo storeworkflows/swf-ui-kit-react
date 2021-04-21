@@ -54,6 +54,7 @@ export default class FilterTemplates extends React.Component {
                     manageSelectedItems={true}
                     onItemSelected={this.handleSelectItem}
                     selectedItems={[selectedItem?.filter]}
+                    select="single"
                     placeholder="-- Choose filter --"
                 />
                 {/*<div className="popoverTarget" ref={elm => this.popoverTarget.current = elm}>*/}
