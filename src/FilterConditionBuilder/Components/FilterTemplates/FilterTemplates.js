@@ -54,8 +54,8 @@ export default class FilterTemplates extends React.Component {
         const query = isAdvanced ? "" : clickedItem?.id ?? "";
         const advanced = isAdvanced;
 
-        setQuery({query});
         setAdvanced(advanced);
+        setQuery({query});
     }
 
     filters = () => {

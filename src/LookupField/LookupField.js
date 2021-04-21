@@ -182,8 +182,8 @@ class LookupField extends React.Component {
         event.preventDefault();
         event.stopPropagation();
         this.setState({focused: false});
-
-        console.log({value: event.target.value});
+        console.log({event})
+        console.log({value: event.clipboardData});
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
