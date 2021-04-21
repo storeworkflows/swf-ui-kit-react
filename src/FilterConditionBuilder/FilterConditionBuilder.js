@@ -247,9 +247,10 @@ export default class FilterCondition extends React.Component {
         if (prevProps.table !== this.props.table) {
             const {onSendQuery, query, table, filtersListQuery} = this.props;
 
-            this.setQuery({query: ""});
-            this.setState({breadcrumbsItems: [{label: 'All', conditionId: 'all'}]});
+            this.setQuery({query: query});
+            this.setState({active: Boolean(query), breadcrumbsItems: [{label: 'All', conditionId: 'all'}]});
             onSendQuery(query);
+            this.setAdvanced(false);
 
             REQUEST_UTILS.fetchFilterTemplates({table, filter: filtersListQuery})
                 .then(res => this.setState({filterList: res}));
