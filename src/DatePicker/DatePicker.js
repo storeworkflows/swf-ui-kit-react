@@ -93,12 +93,11 @@ class DatePicker extends React.Component {
         let errors = getErrorMessages(dateInFormat, format, min, max);
         this.invalidInput(errors, dateInFormat);
 
-
+        this.setState({isOpened: false});
         if (errors.length === 0 && !manageValue)
             this.setState({
                 currentDate: date,
-                stringValue: dateInFormat,
-                isOpened: false
+                stringValue: dateInFormat
             })
 
         if(errors.length === 0)
@@ -108,7 +107,7 @@ class DatePicker extends React.Component {
 
     invalidInput(errors = [], date){
         const {isInvalid, errorMessages} = this.state;
-        const {manageInvalid, onInvalid} = this.props;
+        const {manageInvalid, onInvalid, invalid} = this.props;
         let isInvalidCurrent = errors.length>0;
 
         if(!manageInvalid) {
@@ -118,7 +117,7 @@ class DatePicker extends React.Component {
             });
         }
 
-        if(!_.isEqual(errorMessages.sort(), errors.sort()))
+        if(!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== isInvalid))
             onInvalid({isInvalid: isInvalidCurrent, errors: errors, date: date});
     }
 
@@ -172,7 +171,7 @@ class DatePicker extends React.Component {
         const {isInvalid, isOpened} = this.state;
 
         if(manageInvalid && isInvalid !== invalid)
-            this.setState({invalid: invalid})
+            this.setState({isInvalid: invalid})
 
         if(manageOpened && opened!==isOpened)
             this.setState({isOpened: opened});
