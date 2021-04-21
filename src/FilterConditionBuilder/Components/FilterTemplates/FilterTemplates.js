@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import PopoverContent from './PopoverContent/PopoverContent';
-import { Button, Popover, Dropdown } from "../../../index";
+import {Button, Popover, Dropdown} from "../../../index";
 
 export default class FilterTemplates extends React.Component {
     constructor(props) {
@@ -12,6 +12,7 @@ export default class FilterTemplates extends React.Component {
             btnRef: null,
             filteredValues: [],
             searchValue: "",
+            selectedItem: {}
         }
         this.popoverTarget = React.createRef();
     }
@@ -20,12 +21,15 @@ export default class FilterTemplates extends React.Component {
         this.setState({popoverToogle: !this.state.popoverToogle});
     }
 
-
     filterForFilterList = ({value}) => {
-        const { filterList } = this.props;
+        const {filterList} = this.props;
         const searchValue = value.trim();
         const filteredValues = filterList.filter(item => !!item.title.toLowerCase().match(searchValue.toLowerCase()));
         this.setState({filteredValues, searchValue});
+    }
+
+    handleSelectItem = ({clickedItem}) => {
+        console.log(clickedItem);
     }
 
     render() {
@@ -35,16 +39,20 @@ export default class FilterTemplates extends React.Component {
             "active-text-color": "rgb(1,60,71)"
         }
 
-        const { setQuery, filterList } = this.props;
-        const { popoverToogle, filteredValues, searchValue } = this.state;
+        const {setQuery, filterList} = this.props;
+        const {popoverToogle, filteredValues, searchValue} = this.state;
         const valuesToShow = (!!filteredValues.length || !!searchValue) ? filteredValues : filterList;
 
-        return(
+        return (
             <div>
-                <Dropdown items={filterList.map(filter => ({
-                    id: filter.query,
-                    label: filter.title
-                }))} />
+                <Dropdown
+                    items={filterList.map(filter => ({
+                        id: filter.query,
+                        label: filter.title
+                    }))}
+                    manageSelectedItems={true}
+                    onItemSelected={this.handleSelectItem}
+                />
                 {/*<div className="popoverTarget" ref={elm => this.popoverTarget.current = elm}>*/}
                 {/*    ​​​​​​​​*/}
                 {/*    <Button label="Filters" onClick={this.managePopover} ref={e => this.btnRef = e} customStyle={btnStyles} variant="tertiary" />*/}
@@ -64,6 +72,6 @@ export default class FilterTemplates extends React.Component {
                 {/*    </Popover>)*/}
                 {/*}*/}
             </div>
-        ) 
+        )
     }
 }
