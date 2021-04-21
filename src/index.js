@@ -29,3 +29,5 @@ export {default as Modal} from "./Modal/Modal";
 export {default as HtmlEditor} from "./HtmlEditor/HtmlEditor";
 export {default as Preloader} from "./Preloader/Preloader";
 export {default as FilterCondition} from "./FilterConditionBuilder/FilterConditionBuilder"
+
+export {default as Badge} from "./Badge/Badge";
