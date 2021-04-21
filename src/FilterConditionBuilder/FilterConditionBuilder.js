@@ -265,7 +265,9 @@ export default class FilterCondition extends React.Component {
         }
 
         if (prevState.advanced !== this.state.advanced) {
-            this.clickBtn({action: "filterToogle"});
+            this.setState({
+                isFilterOpened: this.state.advanced
+            })
         }
 
         if (this.state.isFilterSaved) {
