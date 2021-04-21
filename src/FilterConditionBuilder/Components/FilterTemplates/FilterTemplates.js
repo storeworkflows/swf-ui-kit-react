@@ -12,7 +12,10 @@ export default class FilterTemplates extends React.Component {
             btnRef: null,
             filteredValues: [],
             searchValue: "",
-            selectedItem: {}
+            selectedItem: {
+                id: "",
+                label: ""
+            }
         }
         this.popoverTarget = React.createRef();
     }
@@ -53,7 +56,7 @@ export default class FilterTemplates extends React.Component {
                     }))}
                     manageSelectedItems={true}
                     onItemSelected={this.handleSelectItem}
-                    selectedItems={[selectedItem?.filter]}
+                    selectedItems={[selectedItem?.id]}
                     select="single"
                     placeholder="-- Choose filter --"
                 />
