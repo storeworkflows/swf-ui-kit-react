@@ -172,7 +172,7 @@ class LookupField extends React.Component {
 
     showPreloader(repeat = 4) {
         return <Input.Start><Preloader count={repeat}
-                                       flexDirectionGeneral="column"
+                                       flexDirectionGeneral="row"
                                        mainStyles={{backgroundColor: "transparent"}}
                                        items={[
                                            {
