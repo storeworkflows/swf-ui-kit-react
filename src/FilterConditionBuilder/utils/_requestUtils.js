@@ -56,5 +56,18 @@ export const REQUEST_UTILS = {
         };
 
         return await this.fetchRequest({url, params});
+    },
+    fetchGroup: async function ({sys_id}) {
+        const endpoint = `${window.location.origin}/api/now/table/sys_user_group`;
+        const queryParams = {
+            sysparm_query: `sys_id=${sys_id}`
+        }
+        const query = this.prepareQueryParams(queryParams);
+        const url = `${endpoint}?${query}`;
+        const params = {
+            method: "GET"
+        };
+
+        return await this.fetchRequest({url, params});
     }
 };

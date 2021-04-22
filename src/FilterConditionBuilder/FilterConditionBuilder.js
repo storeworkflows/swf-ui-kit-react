@@ -44,6 +44,10 @@ export default class FilterCondition extends React.Component {
             tableFields: {
                 columns: {}
             },
+            defaultGroup: {
+                displayValue: "",
+                sys_id: ""
+            },
             query: this.props.query,
             operatorArr: [],
             clickedListIndex: null,
@@ -227,6 +231,11 @@ export default class FilterCondition extends React.Component {
             sysparm_get_extended_tables: true,
             sysparm_keywords: true
         };
+        const groupId = filtersListQuery.replace(/.*=/, "");
+
+        await REQUEST_UTILS.fetchGroup({sys_id: groupId}).then(res => {
+            this.setState({defaultGroup: {displayValue: res[0].name, sys_id: groupId}})
+        })
 
         await REQUEST_UTILS.fetchTableData({table, queryParams}).then(async result => {
             await this.fetchTableDataSuccessed({result, properties: this.props});
@@ -246,12 +255,18 @@ export default class FilterCondition extends React.Component {
     async componentDidUpdate(prevProps, prevState) {
         if (prevProps.table !== this.props.table) {
             const {query, table, filtersListQuery} = this.props;
+            const groupId = filtersListQuery.replace(/.*=/, "");
 
             this.setQuery({query: query});
             this.setState({active: Boolean(query), breadcrumbsItems: [{label: 'All', conditionId: 'all'}]});
 
             REQUEST_UTILS.fetchFilterTemplates({table, filter: filtersListQuery})
-                .then(res => this.setState({filterList: res}));
+            .then(res => this.setState({filterList: res}));
+            
+
+            await REQUEST_UTILS.fetchGroup({sys_id: groupId}).then(res => {
+                this.setState({defaultGroup: {displayValue: res[0].name, sys_id: groupId}})
+            })
         }
 
         if (this.props.query !== prevProps.query) {
@@ -522,6 +537,7 @@ export default class FilterCondition extends React.Component {
             isSave,
             queryToSave,
             filterList,
+            defaultGroup
         } = this.state;
         const {table, user} = this.props;
 
@@ -596,7 +612,7 @@ export default class FilterCondition extends React.Component {
                         </div>
                         {
                             isSave && <FilterSaver isFilterSaved={this.isFilterSaved} table={table} query={queryToSave}
-                                                   user={user}/>
+                                                   user={user} defaultGroup={defaultGroup}/>
                         }
                     </div>
                     <div className="filter-body">

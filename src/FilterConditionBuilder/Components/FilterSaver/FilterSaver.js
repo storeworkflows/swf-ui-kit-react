@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Input, RadioButtons, Button, Dropdown } from '../../../index';
+import { Input, RadioButtons, Button, Dropdown, LookupField } from '../../../index';
 import { fetchGroupList, postFilter } from './Requests';
 
 class FilterSaver extends React.Component {
@@ -9,15 +9,18 @@ class FilterSaver extends React.Component {
 
         this.state = {
             filterTitle: '',
-            radioValue: 'Me',
-            groupDropdownItems: [],
-            groupValue: '',
-            isAdmin: false
+            radioValue: 'Group',
+            groupValue: this.props.defaultGroup ? this.props.defaultGroup.sys_id : "",
+            isAdmin: false,
+            lookupFieldVal: {
+                name: "group",
+                sys_id: this.props.defaultGroup ? this.props.defaultGroup.sys_id : null,
+                dispVal: this.props.defaultGroup ? this.props.defaultGroup.displayValue : null,
+            }
         }
 
         this.handleInputTitle = this.handleInputTitle.bind(this);
         this.handleRadioChanged = this.handleRadioChanged.bind(this);
-        this.handleDropdownItemSelected = this.handleDropdownItemSelected.bind(this);
         this.handleSaveClicked = this.handleSaveClicked.bind(this);
 
         this.radioOptions = ['Me', 'Everyone', 'Group'];
@@ -27,30 +30,16 @@ class FilterSaver extends React.Component {
         // this.setState({ isAdmin: window.swfPortalUser.isTeamworkAdmin });
     }
 
-    async componentDidUpdate(prevProps, prevState) {
-        if (prevState.radioValue !== this.state.radioValue && this.state.radioValue === 'Group') {
-            const groups = await fetchGroupList();
-
-            const groupDropdownItems = groups.map(group => ({
-                id: group.sys_id,
-                label: group.name
-            }))
-
-            this.setState({ groupDropdownItems });
-        }
-    }
-
     handleInputTitle(e) {
         this.setState({ filterTitle: e.target.value })
     }
 
     handleRadioChanged(e) {
-        this.setState({ radioValue: e.id, groupValue: '' })
+        this.setState({ radioValue: e.id, groupValue: !(e.id === "Group") ? '' : this.props.defaultGroup.sys_id })
     }
 
-    handleDropdownItemSelected(e) {
-        const { clickedItem: { id } } = e;
-        this.setState({ groupValue: id })
+    handleLookupFieldValue = (name, sys_id, dispVal) => {
+        this.setState({lookupFieldVal: {name, sys_id, dispVal}, groupValue: sys_id})
     }
 
     async handleSaveClicked() {
@@ -85,13 +74,14 @@ class FilterSaver extends React.Component {
             }))
     }
 
+
     render() {
         const {
             filterTitle,
             radioValue,
             groupValue,
-            groupDropdownItems,
-            isAdmin
+            isAdmin,
+            lookupFieldVal
         } = this.state;
 
         const { query } = this.props;
@@ -125,12 +115,18 @@ class FilterSaver extends React.Component {
                 {
                     radioValue === "Group" ?
                         <div className="group-dropdown__container input-container">
-                            <Dropdown
-                                manageSelectedItems={true}
-                                items={groupDropdownItems}
-                                selectedItems={[groupValue]}
-                                onItemSelected={this.handleDropdownItemSelected}
-                                placeholder="Group list"
+                            <LookupField
+                                type="reference"
+                                table="sys_filter"
+                                required={true}
+                                visible={true}
+                                name="group"
+                                label="Group"
+                                onValueChange={this.handleLookupFieldValue}
+                                value={lookupFieldVal.sys_id}
+                                content={lookupFieldVal.sys_id}
+                                manageInvalid={false}
+                                displayValue={lookupFieldVal.dispVal}
                             />
                         </div>
                         : null
