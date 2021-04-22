@@ -207,9 +207,14 @@ class LookupField extends React.Component {
 
             const records = [...referenceDataList, ...referenceRecentDataList];
 
-            const searchValue = records.find(({value}) => value === chars);
-
-            results.push(searchValue);
+            for (let record of records) {
+                const data = record.referenceData;
+                const searchValue = data.find(({value}) => value === chars);
+                if (searchValue) {
+                    results.push(searchValue);
+                    break;
+                }
+            }
         }
 
         console.log({results})
