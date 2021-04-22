@@ -277,9 +277,13 @@ class LookupField extends React.Component {
 
     renderListPills() {
         return (
-            <Input.Start>{this.state.listRecords.displayValue.map((label) => <Pill label={label}
-                                                                                   canDismiss={true}
-                                                                                   onDelete={this.deleteValue}/>)}</Input.Start>
+            <Input.Start>{this.state.listRecords.displayValue.map((label) => {
+                if (!label) return null;
+                return <Pill label={label}
+                             canDismiss={true}
+                             onDelete={this.deleteValue}/>
+            })
+            }</Input.Start>
         )
     }
 
@@ -294,7 +298,17 @@ class LookupField extends React.Component {
     }
 
     render() {
-        const {matchesCount, records, loading, loaded, preloader, repeat, focused, referenceRecord, listRecords} = this.state;
+        const {
+            matchesCount,
+            records,
+            loading,
+            loaded,
+            preloader,
+            repeat,
+            focused,
+            referenceRecord,
+            listRecords
+        } = this.state;
 
         const {
             label, declarativeUiActions, type, name, readonly,
