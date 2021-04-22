@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Input, RadioButtons, Button, Dropdown } from '../../../index';
+import { Input, RadioButtons, Button, Dropdown, LookupField } from '../../../index';
 import { fetchGroupList, postFilter } from './Requests';
 
 class FilterSaver extends React.Component {
@@ -12,7 +12,8 @@ class FilterSaver extends React.Component {
             radioValue: 'Me',
             groupDropdownItems: [],
             groupValue: '',
-            isAdmin: false
+            isAdmin: false,
+            lookupFieldVal: ""
         }
 
         this.handleInputTitle = this.handleInputTitle.bind(this);
@@ -53,6 +54,11 @@ class FilterSaver extends React.Component {
         this.setState({ groupValue: id })
     }
 
+    handleLookupFieldValue = (name, sys_id, dispVal) => {
+        console.log("VALUE", {name, sys_id, dispVal})
+        this.setState({lookupFieldVal: {name, sys_id, dispVal}}, () => console.log("STATE", this.state.lookupFieldVal))
+    }
+
     async handleSaveClicked() {
         const { user, table, query, isFilterSaved } = this.props;
         const { filterTitle, radioValue, groupValue } = this.state;
@@ -85,13 +91,15 @@ class FilterSaver extends React.Component {
             }))
     }
 
+
     render() {
         const {
             filterTitle,
             radioValue,
             groupValue,
             groupDropdownItems,
-            isAdmin
+            isAdmin,
+            lookupFieldVal
         } = this.state;
 
         const { query } = this.props;
@@ -125,12 +133,24 @@ class FilterSaver extends React.Component {
                 {
                     radioValue === "Group" ?
                         <div className="group-dropdown__container input-container">
-                            <Dropdown
+                            {/* <Dropdown
                                 manageSelectedItems={true}
                                 items={groupDropdownItems}
                                 selectedItems={[groupValue]}
                                 onItemSelected={this.handleDropdownItemSelected}
                                 placeholder="Group list"
+                            /> */}
+                            <LookupField
+                                type="reference"
+                                table="sys_filter"
+                                required={true}
+                                visible={true}
+                                name="group"
+                                label="Group list"
+                                onValueChange={() => undefined}
+                                // value={lookupFieldVal}
+                                // content={lookupFieldVal.sys_id}
+                                // displayValue={lookupFieldVal.dispVal}
                             />
                         </div>
                         : null

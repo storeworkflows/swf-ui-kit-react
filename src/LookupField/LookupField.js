@@ -96,6 +96,7 @@ class LookupField extends React.Component {
 
     onChange(event) {
         const {target: {value}} = event;
+        console.log(value)
         if (this.controllerRef.current) {
             this.controllerRef.current.abort();
         }
@@ -113,6 +114,8 @@ class LookupField extends React.Component {
 
     referenceHandleClick(record) {
         const {sysId, referenceData} = record;
+
+        console.log({sysId, referenceData})
 
         this.setState({
             referenceRecord: {
@@ -166,6 +169,7 @@ class LookupField extends React.Component {
 
     onClick(record) {
         const isReference = this.props?.type === "reference"
+        console.log(record, isReference)
         return isReference ? this.referenceHandleClick(record) : this.listHandleClick(record)
     }
 
