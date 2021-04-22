@@ -45,6 +45,7 @@ class LookupField extends React.Component {
             loaded: false,
             focused: false,
             preloader: false,
+            repeat: 0
         }
     }
 
@@ -169,16 +170,16 @@ class LookupField extends React.Component {
         return isReference ? this.referenceHandleClick(record) : this.listHandleClick(record)
     }
 
-    showPreloader() {
+    showPreloader(repeat = 4) {
         return <Input.Start><Preloader count={1}
                                        flexDirectionGeneral="column"
                                        mainStyles={{backgroundColor: "transparent"}}
                                        items={[
                                            {
-                                               repeat: 4,
-                                               width: "4rem",
-                                               height: "1.5rem",
-                                               itemStyles: {justifyContent: "space-between", padding: "0 3rem"},
+                                               repeat,
+                                               width: "6rem",
+                                               height: "2rem",
+                                               itemStyles: {justifyContent: "space-between"},
                                                round: false
                                            },
                                        ]}/></Input.Start>
@@ -211,6 +212,8 @@ class LookupField extends React.Component {
         this.setState({focused: false, preloader: true});
 
         const charsArray = value.split(/,|\\n/);
+
+        this.setState({focused: false, preloader: true, repeat: charsArray.length});
 
         const results = [];
 
@@ -297,7 +300,7 @@ class LookupField extends React.Component {
     }
 
     render() {
-        const {matchesCount, records, loading, loaded, preloader, focused, referenceRecord, listRecords} = this.state;
+        const {matchesCount, records, loading, loaded, preloader, repeat, focused, referenceRecord, listRecords} = this.state;
 
         const {
             label, declarativeUiActions, type, name, readonly,
@@ -335,7 +338,7 @@ class LookupField extends React.Component {
                             required={required}
                             message={message}
                         >
-                            {preloader && this.showPreloader()}
+                            {preloader && this.showPreloader(repeat)}
                             {isList && this.renderListPills()}
                             {!readonly && <Input.End>{showDeleteButton &&
                             <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
