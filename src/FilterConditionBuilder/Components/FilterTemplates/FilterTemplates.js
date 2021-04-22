@@ -1,7 +1,5 @@
 import * as React from "react";
-
-import PopoverContent from './PopoverContent/PopoverContent';
-import {Button, Popover, Dropdown} from "../../../index";
+import {Dropdown} from "../../../index";
 
 export default class FilterTemplates extends React.Component {
     constructor(props) {
@@ -27,16 +25,18 @@ export default class FilterTemplates extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.table !== this.props.table) {
-            if (this.props.table in this.state.selectedItem) return;
-            this.setState({
-                selectedItem: {
-                    ...this.state.selectedItem,
-                    [this.props.table]: {
-                        id: "",
-                        label: ""
+            if (!(this.props.table in this.state.selectedItem)) {
+                this.setState({
+                    selectedItem: {
+                        ...this.state.selectedItem,
+                        [this.props.table]: {
+                            id: "",
+                            label: ""
+                        }
                     }
-                }
-            })
+                })
+            }
+            this.handleSelectItem({clickedItem: this.state.selectedItem[this.props.table]})
         }
     }
 
@@ -52,10 +52,9 @@ export default class FilterTemplates extends React.Component {
         });
 
         const query = isAdvanced ? "" : clickedItem?.id ?? "";
-        const advanced = isAdvanced;
 
+        setAdvanced(isAdvanced);
         setQuery({query});
-        setAdvanced(advanced);
     }
 
     filters = () => {

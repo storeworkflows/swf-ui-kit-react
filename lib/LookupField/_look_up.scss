@@ -44,6 +44,7 @@
 
   .additional {
     font-size: .8rem;
+    margin-left: .2rem;
   }
 
   .action {
@@ -82,6 +83,11 @@
 
     .form-control--start > * {
       margin: 3px;
+    }
+
+    .swf-preloader .mock-container {
+      padding: 0;
+      margin: 0;
     }
   }
 }

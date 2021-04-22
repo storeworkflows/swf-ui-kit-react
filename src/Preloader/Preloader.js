@@ -11,7 +11,7 @@ class Preloader extends Component {
         const { count, items, width, height, flexDirectionGeneral, background, mainStyles, blur } = this.props;
 
         return (
-            <div className="swf-preloader" style={{ flexDirection: flexDirectionGeneral }}>
+            <div className="swf-preloader" style={{ flexDirection: flexDirectionGeneral, flexWrap: 'wrap' }}>
                 {new Array(count).fill(null).map((el, i) => (
                     <div
                         className={classNames({ "mock-container": true, "gray": background })}

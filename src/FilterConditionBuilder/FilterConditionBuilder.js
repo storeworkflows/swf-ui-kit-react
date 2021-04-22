@@ -254,13 +254,11 @@ export default class FilterCondition extends React.Component {
 
     async componentDidUpdate(prevProps, prevState) {
         if (prevProps.table !== this.props.table) {
-            const {onSendQuery, query, table, filtersListQuery} = this.props;
+            const {query, table, filtersListQuery} = this.props;
             const groupId = filtersListQuery.replace(/.*=/, "");
 
             this.setQuery({query: query});
             this.setState({active: Boolean(query), breadcrumbsItems: [{label: 'All', conditionId: 'all'}]});
-            onSendQuery(query);
-            this.setAdvanced(false);
 
             REQUEST_UTILS.fetchFilterTemplates({table, filter: filtersListQuery})
             .then(res => this.setState({filterList: res}));
@@ -269,6 +267,10 @@ export default class FilterCondition extends React.Component {
             await REQUEST_UTILS.fetchGroup({sys_id: groupId}).then(res => {
                 this.setState({defaultGroup: {displayValue: res[0].name, sys_id: groupId}})
             })
+        }
+
+        if (this.props.query !== prevProps.query) {
+            this.setQuery({query: this.props.query});
         }
 
         if (prevState.query !== this.state.query || prevProps.table !== this.props.table) {
@@ -513,7 +515,7 @@ export default class FilterCondition extends React.Component {
 
         this.setState({
             query,
-            active: true,
+            active: Boolean(query),
             count
         })
     }
@@ -527,6 +529,7 @@ export default class FilterCondition extends React.Component {
     render() {
         const {
             active,
+            advanced,
             count,
             isFilterOpened,
             conditionsArray,
@@ -540,6 +543,8 @@ export default class FilterCondition extends React.Component {
 
         // console.log("%c%s", "color: green", "REACT Filter Conditions Array", this.state.conditionsArray)
 
+        const isActive = [advanced, active].some(Boolean);
+
         return (
             <>
                 <div className="collapsed-filter-header">
@@ -550,7 +555,7 @@ export default class FilterCondition extends React.Component {
                         label="Apply"
                         variant="primary"
                         size="md"
-                        disabled={!active}
+                        disabled={!isActive}
                         onClick={() => this.clickBtn({action: "applyQuery", payload: {type: "run"}})}
                         customStyle={
                             {
@@ -559,7 +564,7 @@ export default class FilterCondition extends React.Component {
                                 "active-border-color": "none"
                             }
                         }/>
-                    {active && <Badge count={count}>
+                    {isActive && <Badge count={count}>
                         <Button
                             icon={isFilterOpened ? "funnel-fill" : "funnel"}
                             size="md"

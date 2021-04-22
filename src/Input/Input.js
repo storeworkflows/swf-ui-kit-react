@@ -184,6 +184,7 @@ class Input extends React.Component {
                             multiple={multiple}
                             onInput={this.onInput}
                             onChange={this.props.onChange}
+                            onPaste={this.props.onPaste}
                             onKeyDown={this.props.onKeyDown}
                             onFocus={(event) => {
                                    this.onFocus(event)
@@ -233,6 +234,7 @@ Input.defaultProps = {
     onFocus: noop,
     onInvalid: noop,
     onKeyDown: noop,
+    onPaste: noop,
     className: {}
 }
 
@@ -275,6 +277,7 @@ Input.propTypes = {
     onKeyDown: PropTypes.func,
     onBlur: PropTypes.func,
     onInvalid: PropTypes.func,
+    onPaste: PropTypes.func,
     internalRef: PropTypes.oneOfType([
         propTypes.func,
         propTypes.shape({ current: propTypes.any })
