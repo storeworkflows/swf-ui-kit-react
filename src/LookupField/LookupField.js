@@ -195,17 +195,24 @@ class LookupField extends React.Component {
 
         const charsArray = value.split(/,|\\n/);
 
+        const results = [];
+
         for (let chars of charsArray) {
             const result = await this.makeRequest(chars);
 
             const {
                 referenceDataList,
-                referenceRecentDataList,
-                totalCount
+                referenceRecentDataList
             } = _.get(result, "[0].data.GlideLayout_Query.referenceDataRetriever");
 
-            console.log({referenceRecentDataList, referenceDataList, totalCount});
+            const records = [...referenceDataList, ...referenceRecentDataList];
+
+            const searchValue = records.find(({value}) => value === chars);
+
+            results.push(searchValue);
         }
+
+        console.log({results})
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
