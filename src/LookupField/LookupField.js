@@ -333,7 +333,7 @@ class LookupField extends React.Component {
                             message={message}
                         >
                             {preloader && this.showPreloader(repeat)}
-                            {isList && this.renderListPills()}
+                            {isList && !preloader && this.renderListPills()}
                             {!readonly && <Input.End>{showDeleteButton &&
                             <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
                                     onClick={this.clearValue}/>}</Input.End>}
