@@ -141,6 +141,10 @@ class LookupField extends React.Component {
 
         this.setState({
             listRecords,
+            referenceRecord: {
+                sysId: null,
+                displayValue: ""
+            },
             loaded: false
         })
 
@@ -325,7 +329,7 @@ class LookupField extends React.Component {
 
         const showDeleteButton = !isList && hasValue && !readonly;
 
-        const count = listRecords.displayValue.length;
+        const count = listRecords.displayValue.filter(Boolean).length;
 
         return (
             visible ?
