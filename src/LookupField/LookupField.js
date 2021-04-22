@@ -49,6 +49,29 @@ class LookupField extends React.Component {
         }
     }
 
+    makeRequest = async (chars) => {
+        const response = await graphqlRequest({
+            operationName: "reference",
+            query,
+            variables: {
+                chars,
+                encodedRecord: "",
+                field: this.props.name,
+                ignoreRefQual: false,
+                paginationLimit: 25,
+                serializedChanges: "{}",
+                sortBy: "",
+                sys_id: this.props.tableRecordSysId,
+                table: this.props.table
+            },
+            params: {
+                signal: this.controllerRef.current.signal
+            }
+        });
+
+        return await response.json();
+    }
+
     async getReferenceList(value) {
         try {
             this.setState({
@@ -57,30 +80,13 @@ class LookupField extends React.Component {
                 loaded: false
             });
 
-            const response = await graphqlRequest({
-                operationName: "reference",
-                query,
-                variables: {
-                    chars: value,
-                    encodedRecord: "",
-                    field: this.props.name,
-                    ignoreRefQual: false,
-                    paginationLimit: 25,
-                    serializedChanges: "{}",
-                    sortBy: "",
-                    sys_id: this.props.tableRecordSysId,
-                    table: this.props.table
-                },
-                params: {
-                    signal: this.controllerRef.current.signal
-                }
-            });
-            const json = await response.json();
+            const data = await this.makeRequest(value);
+
             const {
                 referenceDataList,
                 referenceRecentDataList,
                 totalCount
-            } = _.get(json, "[0].data.GlideLayout_Query.referenceDataRetriever");
+            } = _.get(data, "[0].data.GlideLayout_Query.referenceDataRetriever");
 
             this.setState({
                 loading: false,
@@ -108,7 +114,7 @@ class LookupField extends React.Component {
 
         this.controllerRef.current = new AbortController();
 
-        this.getReferenceList(value);
+        this.getReferenceList(value).then();
     }
 
     referenceHandleClick(record) {
@@ -141,9 +147,9 @@ class LookupField extends React.Component {
         this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
     }
 
-    deleteValue ({label}) {
+    deleteValue({label}) {
         const value = new Map(this.state.listRecords.value.map((v, i) => [i, v]));
-        const displayValue = new Map(this.state.listRecords.displayValue.map((v ,i) => [v, i]));
+        const displayValue = new Map(this.state.listRecords.displayValue.map((v, i) => [v, i]));
 
         const id = displayValue.get(label);
         value["delete"](id);
@@ -178,12 +184,28 @@ class LookupField extends React.Component {
         this.setState({focused: false});
     }
 
-    onPaste = (event) => {
+    onPaste = async (event) => {
         event.preventDefault();
         event.stopPropagation();
+        const value = event.clipboardData.getData("Text");
+
+        if (!value) return;
+
         this.setState({focused: false});
-        console.log({event})
-        console.log({value: event.clipboardData});
+
+        const charsArray = value.split(/,|\\n/);
+
+        for (let chars of charsArray) {
+            const result = await this.makeRequest(chars);
+
+            const {
+                referenceDataList,
+                referenceRecentDataList,
+                totalCount
+            } = _.get(result, "[0].data.GlideLayout_Query.referenceDataRetriever");
+
+            console.log({referenceRecentDataList, referenceDataList, totalCount});
+        }
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -229,7 +251,8 @@ class LookupField extends React.Component {
     renderListPills() {
         return (
             <Input.Start>{this.state.listRecords.displayValue.map((label) => <Pill label={label}
-                                                                                   canDismiss={true} onDelete={this.deleteValue}/>)}</Input.Start>
+                                                                                   canDismiss={true}
+                                                                                   onDelete={this.deleteValue}/>)}</Input.Start>
         )
     }
 
@@ -246,8 +269,10 @@ class LookupField extends React.Component {
     render() {
         const {matchesCount, records, loading, loaded, focused, referenceRecord, listRecords} = this.state;
 
-        const {label, declarativeUiActions, type, name, readonly,
-            invalid, required, onInvalid, message, visible} = this.props;
+        const {
+            label, declarativeUiActions, type, name, readonly,
+            invalid, required, onInvalid, message, visible
+        } = this.props;
 
         const hasMatches = matchesCount > 0;
 
@@ -263,27 +288,29 @@ class LookupField extends React.Component {
 
         return (
             visible ?
-            <>
-                <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}>
-                    <Input
-                        internalRef={this.inputRef}
-                        className="swf-reference--input"
-                        value={referenceRecord.displayValue}
-                        containerClass={isList ? "list-field-group" : ""}
-                        label={`${label} ${isList ? count + " selected" : ""}`}
-                        name={name}
-                        onInput={this.onChange}
-                        readonly={readonly}
-                        onInvalid={onInvalid}
-                        onPaste={this.onPaste}
-                        invalid={invalid}
-                        required={required}
-                        message={message}
-                    >
-                        {isList && this.renderListPills()}
-                        {!readonly && <Input.End>{showDeleteButton && <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear" onClick={this.clearValue}/>}</Input.End> }
-                    </Input>
-                    {this.inputRef && this.inputRef.current &&
+                <>
+                    <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}>
+                        <Input
+                            internalRef={this.inputRef}
+                            className="swf-reference--input"
+                            value={referenceRecord.displayValue}
+                            containerClass={isList ? "list-field-group" : ""}
+                            label={`${label} ${isList ? count + " selected" : ""}`}
+                            name={name}
+                            onInput={this.onChange}
+                            readonly={readonly}
+                            onInvalid={onInvalid}
+                            onPaste={this.onPaste}
+                            invalid={invalid}
+                            required={required}
+                            message={message}
+                        >
+                            {isList && this.renderListPills()}
+                            {!readonly && <Input.End>{showDeleteButton &&
+                            <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
+                                    onClick={this.clearValue}/>}</Input.End>}
+                        </Input>
+                        {this.inputRef && this.inputRef.current &&
                         <Popover
                             hideTail={true}
                             hideTail={true}
@@ -293,7 +320,7 @@ class LookupField extends React.Component {
                             positions={[
                                 {target: "bottom-center", content: "top-center"},
                                 {target: "top-center", content: "bottom-center"}
-                                ]}
+                            ]}
 
                         >
                             {/*style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}*/}
@@ -305,9 +332,9 @@ class LookupField extends React.Component {
                                 </ul>
                             </Popover.Content>
                         </Popover>
-                    }
-                </div>
-            </>
+                        }
+                    </div>
+                </>
                 : null
         )
     }
