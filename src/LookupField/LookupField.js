@@ -3,12 +3,10 @@ import propTypes from "prop-types";
 import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
 import {query} from "./datasource";
 import _ from "lodash";
-import {Button, Input} from "../index";
-import DeclarativeUIActions from "./DeclarativeUIActions";
+import {Button, Input, Preloader} from "../index";
 import Result from "./Result";
 import Pill from "../Pill/Pill";
 import Popover from "../Popover/Popover";
-import {noop} from "../utils";
 import PropTypes from "prop-types";
 
 class LookupField extends React.Component {
@@ -45,7 +43,8 @@ class LookupField extends React.Component {
             matchesCount: 0,
             loading: false,
             loaded: false,
-            focused: true
+            focused: false,
+            preloader: false,
         }
     }
 
@@ -156,18 +155,33 @@ class LookupField extends React.Component {
         displayValue["delete"](label);
 
         const listRecords = {
-            value: Array.from(value.values()),
-            displayValue: Array.from(displayValue.keys())
+            value: Array.from(value.values()).filter(Boolean),
+            displayValue: Array.from(displayValue.keys()).filter(Boolean)
         }
 
         this.setState({listRecords});
 
-        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
+        this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString());
     }
 
     onClick(record) {
         const isReference = this.props?.type === "reference"
         return isReference ? this.referenceHandleClick(record) : this.listHandleClick(record)
+    }
+
+    showPreloader() {
+        return <Input.Start><Preloader count={1}
+                                       flexDirectionGeneral="column"
+                                       mainStyles={{backgroundColor: "transparent"}}
+                                       items={[
+                                           {
+                                               repeat: 4,
+                                               width: "4rem",
+                                               height: "1.5rem",
+                                               itemStyles: {justifyContent: "space-between", padding: "0 3rem"},
+                                               round: false
+                                           },
+                                       ]}/></Input.Start>
     }
 
     onFocus(event) {
@@ -194,7 +208,7 @@ class LookupField extends React.Component {
 
         if (!value) return;
 
-        this.setState({focused: false});
+        this.setState({focused: false, preloader: true});
 
         const charsArray = value.split(/,|\\n/);
 
@@ -215,6 +229,8 @@ class LookupField extends React.Component {
             if (searchValue) results.push(searchValue);
         }
 
+        this.setState({focused: false, preloader: false});
+
         results.forEach((record) => this.listHandleClick(record));
     }
 
@@ -225,15 +241,19 @@ class LookupField extends React.Component {
             return this.setState({
                 listRecords: {
                     value: nextProps.value?.split(",") ?? [],
-                    displayValue: nextProps.displayValue?.split(",") ?? []
-                },
+                    displayValue: nextProps.displayValue?.split(",") ?? [],
+                    loading: false,
+                    focused: false
+                }
             })
         }
 
         return this.setState({
             referenceRecord: {
                 sysId: nextProps.value || null,
-                displayValue: nextProps.displayValue || ""
+                displayValue: nextProps.displayValue || "",
+                loading: false,
+                focused: false
             }
         })
     }
@@ -246,7 +266,7 @@ class LookupField extends React.Component {
                 listRecords: {
                     value: nextProps.value?.split(",") ?? [],
                     displayValue: nextProps.displayValue?.split(",") ?? []
-                },
+                }
             }
         }
 
@@ -277,7 +297,7 @@ class LookupField extends React.Component {
     }
 
     render() {
-        const {matchesCount, records, loading, loaded, focused, referenceRecord, listRecords} = this.state;
+        const {matchesCount, records, loading, loaded, preloader, focused, referenceRecord, listRecords} = this.state;
 
         const {
             label, declarativeUiActions, type, name, readonly,
@@ -315,6 +335,7 @@ class LookupField extends React.Component {
                             required={required}
                             message={message}
                         >
+                            {preloader && this.showPreloader()}
                             {isList && this.renderListPills()}
                             {!readonly && <Input.End>{showDeleteButton &&
                             <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
