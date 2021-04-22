@@ -185,8 +185,11 @@ class LookupField extends React.Component {
     }
 
     onPaste = async (event) => {
+        if (!this.isList) return
+
         event.preventDefault();
         event.stopPropagation();
+
         const value = event.clipboardData.getData("Text");
 
         if (!value) return;
@@ -212,7 +215,7 @@ class LookupField extends React.Component {
             if (searchValue) results.push(searchValue);
         }
 
-        console.log({results})
+        results.forEach((record) => this.listHandleClick(record));
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
