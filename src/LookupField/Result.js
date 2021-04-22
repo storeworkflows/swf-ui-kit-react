@@ -13,13 +13,13 @@ class Result extends React.Component {
        return (
         <>
             { records.map(record => {
-                const hasAdditionalInfo = record.referenceData.length > 1;
-
                 return (
                     <li className="result--item" key={record.sysId}
                         onMouseDown={() => onClick(record)}>
-                        <h3 className="main">{record.referenceData[0].value}</h3>
-                        {hasAdditionalInfo && <span className="additional">{record.referenceData[1].value}</span> }
+                        {record.referenceData.map((data, index) => {
+                            if (index === 0) return <h3 className="main">{data.value}</h3>
+                            return <span className="additional">{data.value}</span>
+                        })}
                     </li>
                 )
             })}
