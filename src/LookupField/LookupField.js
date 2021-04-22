@@ -211,30 +211,24 @@ class LookupField extends React.Component {
 
         this.setState({focused: false, preloader: true});
 
-        const charsArray = value.split(/,|\\n/);
+        const charsArray = value.split(/,|\\n/).map(chars => chars.trim());
 
         this.setState({focused: false, preloader: true, repeat: charsArray.length});
 
-        const results = [];
+        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list?table=${this.props.reference}&search_string=${charsArray}`, {
+            credentials: 'same-origin',
+            headers: {
+                'content-type': "application/json",
+                'X-Transaction-Source': window.transaction_source,
+                'X-UserToken': window.g_ck
+            }
+        });
 
-        for (let chars of charsArray) {
-            const result = await this.makeRequest(chars);
-
-            const {
-                referenceDataList,
-                referenceRecentDataList
-            } = _.get(result, "[0].data.GlideLayout_Query.referenceDataRetriever");
-
-            const records = [...referenceDataList, ...referenceRecentDataList];
-
-            const searchValue = records.find(({referenceData}) => referenceData.some(({value}) => value === chars));
-
-            if (searchValue) results.push(searchValue);
-        }
+        const data = await result.json();
 
         this.setState({focused: false, preloader: false});
 
-        results.forEach((record) => this.listHandleClick(record));
+        data.forEach((record) => this.listHandleClick(record));
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
