@@ -24,7 +24,15 @@ export default class FilterConditionItem extends React.Component {
             },
             dropdownFields: [],
             operators: [],
-            textAreaValue: ""
+            textAreaValue: "",
+            generalTable: this.props.generalTable,
+            refFieldValue: {
+                name: null,
+                sys_id: null,
+                displayVal: null
+            },
+            conditionsArray: this.props.conditionsArray,
+            conditionObj:this.props.conditionsArray
         }
     }
 
@@ -62,6 +70,13 @@ export default class FilterConditionItem extends React.Component {
     
     textAreaValueSet = ({value}) => {
         this.setState({ textAreaValue: value }, () => this.prepareTextAreaValue({ value: this.state.textAreaValue }));
+    }
+
+    lookupFieldValueSet = ({name, sys_id, displayVal}) => {
+        const { setConditionOptions } = this.props;
+
+        this.setState({refFieldValue: {name, sys_id, displayVal}})
+        setConditionOptions({value: sys_id, conditionOption: "value"});
     }
 
     itemClicked = (item) => {
@@ -279,9 +294,9 @@ export default class FilterConditionItem extends React.Component {
             itemClicked: this.itemClicked,
             onDatePickerChange: this.onDatePickerChange,
             inputValueSet: this.inputValueSet,
-            textAreaValueSet: this.textAreaValueSet
+            textAreaValueSet: this.textAreaValueSet,
+            lookupFieldValueSet: this.lookupFieldValueSet
         }
-
         const { dropdownsIsActive } = this.state; 
         const isBtnsRender = (!!conditionObj.conditionOptions.value || conditionObj.conditionOptions.operator.editor === "none");
         return (
