@@ -24,7 +24,34 @@ export default class FilterConditionItem extends React.Component {
             },
             dropdownFields: [],
             operators: [],
-            textAreaValue: ""
+            textAreaValue: "",
+            generalTable: this.props.generalTable,
+            refFieldValue: {
+                name: this.props.conditionObj.conditionOptions.operator.editor === "reference" ? this.props.conditionObj.conditionOptions.activeField : null,
+                sys_id: this.props.conditionObj.conditionOptions.operator.editor === "reference" ? this.props.conditionObj.conditionOptions.value : null,
+                displayVal: null,
+                table: this.props.conditionObj.conditionOptions.operator.editor === "reference" ? this.props.conditionObj.conditionOptions.fieldItems.items[this.props.conditionObj.conditionOptions.fieldItems.items.length - 1].table : null
+            },
+            conditionsArray: this.props.conditionsArray,
+            conditionObj:this.props.conditionsArray
+        }
+    }
+
+    componentDidMount() {
+        this.fetchTableData()
+
+        const { refFieldValue } = this.state;
+
+        const queryParams = {
+            sysparm_query: `sys_id=${refFieldValue.sys_id}`
+        }
+
+        if (!!refFieldValue.name && !!refFieldValue.sys_id)
+        {
+            REQUEST_UTILS.fetchReferenceData({table: refFieldValue.table, queryParams})
+                .then((res) => {
+                    this.setState({refFieldValue: {...refFieldValue, displayVal: res[0].name}})
+                })
         }
     }
 
@@ -34,7 +61,7 @@ export default class FilterConditionItem extends React.Component {
     }
 
     operatorsActivation = () => {
-        const { conditionObj: { conditionOptions } } = this.props;
+        const { conditionObj: { conditionOptions }, conditionsArray } = this.props;
         const { activeField: { column_type } } = this.state;
 
         if (column_type === "tag") return;
@@ -62,6 +89,13 @@ export default class FilterConditionItem extends React.Component {
     
     textAreaValueSet = ({value}) => {
         this.setState({ textAreaValue: value }, () => this.prepareTextAreaValue({ value: this.state.textAreaValue }));
+    }
+
+    lookupFieldValueSet = ({name, sys_id, displayVal}) => {
+        const { setConditionOptions } = this.props;
+
+        this.setState({refFieldValue: {name, sys_id, displayVal}})
+        setConditionOptions({value: sys_id, conditionOption: "value"});
     }
 
     itemClicked = (item) => {
@@ -156,10 +190,6 @@ export default class FilterConditionItem extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.fetchTableData()
-    }
-
     resetSelectedItem = () => {
         this.setState({selectedItem: {
             items: this.props.conditionObj.selectedItem.items
@@ -179,7 +209,7 @@ export default class FilterConditionItem extends React.Component {
     onItemClicked = (item) => {
         const { clickedItem } = item;
         const { setConditionOptions, conditionID, globalConditionID } = this.props
-        const { selectedItem } = this.state;
+        const { selectedItem, refFieldValue } = this.state;
         const queryParams = {
             sysparm_operators: true,
             sysparm_get_extended_tables: true,
@@ -200,6 +230,10 @@ export default class FilterConditionItem extends React.Component {
             this.operatorsActivation();
             setConditionOptions({value: items.selectedItems, globalConditionID, currentConditionID: conditionID, conditionOption: "field"})
         }
+        this.setState({refFieldValue: {
+            ...refFieldValue,
+            displayVal: null,
+        }})
     }
 
     updateSelectedItem = ({item, command, listIndex}) => {
@@ -279,9 +313,9 @@ export default class FilterConditionItem extends React.Component {
             itemClicked: this.itemClicked,
             onDatePickerChange: this.onDatePickerChange,
             inputValueSet: this.inputValueSet,
-            textAreaValueSet: this.textAreaValueSet
+            textAreaValueSet: this.textAreaValueSet,
+            lookupFieldValueSet: this.lookupFieldValueSet
         }
-
         const { dropdownsIsActive } = this.state; 
         const isBtnsRender = (!!conditionObj.conditionOptions.value || conditionObj.conditionOptions.operator.editor === "none");
         return (
