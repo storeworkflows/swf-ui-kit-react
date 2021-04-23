@@ -35,11 +35,10 @@ export const inputValue = ({ inputValuePayload }) => {
         case "choice":
         case "choice_dynamic":
         case "reference":
-            const table = conditionOptions.fieldItems.items.length < 2 ? generalTable : conditionOptions.fieldItems.items[conditionOptions.fieldItems.items.length - 2].table;
-
-            // const table = selectedItem.items.length < 2 ? generalTable : selectedItem.items[selectedItem.items.length - 2].table;
-            const name = conditionOptions.fieldItems.items[conditionOptions.fieldItems.items.length - 1].id;
-            const label = conditionOptions.fieldItems.items[conditionOptions.fieldItems.items.length - 1].label;
+            const { fieldItems: { items } } = conditionOptions
+            const table = items.length < 2 ? generalTable : items[items.length - 2].table;
+            const name = items[items.length - 1].id;
+            const label = items[items.length - 1].label;
             return (
                 <div className="dropdown-container choice-dropdown">
                     <LookupField

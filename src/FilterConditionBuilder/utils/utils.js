@@ -31,10 +31,10 @@ export const getValueAdditionalData = function({ tableFields, editor, field, glo
                 sysparm_fields: `${tableFields[field].reference_display_field},sys_id`,
                 sysparm_query: `nameISNOTEMPTY`
             }
-            REQUEST_UTILS.fetchReferenceData({table: tableFields[field].reference, queryParams})
-                .then(res => {
-                    this.fetchReferenceDataSuccessed(res)
-                })
+            // REQUEST_UTILS.fetchReferenceData({table: tableFields[field].reference, queryParams})
+            //     .then(res => {
+            //         this.fetchReferenceDataSuccessed(res)
+            //     })
             this.setState({referenceFieldData: {
                 field: tableFields[field],
                 currentConditionID: currentID,
