@@ -650,6 +650,8 @@ export default class FilterCondition extends React.Component {
                                                                 getConditionsIDs={this.getConditionsIDs}
                                                                 setConditionOptions={this.setConditionOptions}
                                                                 selectedItem={condition.conditionOptions.fieldItems}
+                                                                generalTable={table}
+                                                                conditionsArray={conditionsArray}
                                                             />
                                                         </div>
                                                     )

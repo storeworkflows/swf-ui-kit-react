@@ -2,10 +2,11 @@ import DatePicker from "../../../DatePicker/DatePicker";
 import TextArea from "../../../TextArea/TextArea";
 import Dropdown from "../../../Dropdown/Dropdown";
 import Input from "../../../Input/Input";
+import { LookupField } from "../../..";
 
 export const inputValue = ({ inputValuePayload }) => {
-    const { state, conditionOptions, itemClicked, onDatePickerChange, inputValueSet, textAreaValueSet } = inputValuePayload;
-    const { dropdownsIsActive } = state;
+    const { state, conditionOptions, itemClicked, onDatePickerChange, inputValueSet, textAreaValueSet, lookupFieldValueSet } = inputValuePayload;
+    const { dropdownsIsActive, selectedItem, generalTable, refFieldValue } = state;
     const {  operator: { editor } } = conditionOptions;
 
     const dropdownValueHandle = ({item, index}) => {
@@ -34,9 +35,22 @@ export const inputValue = ({ inputValuePayload }) => {
         case "choice":
         case "choice_dynamic":
         case "reference":
+            const table = conditionOptions.fieldItems.items.length < 2 ? generalTable : conditionOptions.fieldItems.items[conditionOptions.fieldItems.items.length - 2].table;
+
+            // const table = selectedItem.items.length < 2 ? generalTable : selectedItem.items[selectedItem.items.length - 2].table;
+            const name = conditionOptions.fieldItems.items[conditionOptions.fieldItems.items.length - 1].id;
+            const label = conditionOptions.fieldItems.items[conditionOptions.fieldItems.items.length - 1].label;
             return (
                 <div className="dropdown-container choice-dropdown">
-                    <Dropdown
+                    <LookupField
+                        table={table}
+                        name={name}
+                        label={label}
+                        onValueChange={(name, sys_id, displayVal) => lookupFieldValueSet({name, sys_id, displayVal})}
+                        displayValue={refFieldValue.displayVal}
+                        value={conditionOptions.value}
+                    />
+                    {/* <Dropdown
                         items={conditionOptions.valueAdditionalData}
                         selectedItems={[conditionOptions.value]}
                         select="single"
@@ -45,7 +59,7 @@ export const inputValue = ({ inputValuePayload }) => {
                         variant="tertiary"
                         size="md"
                         onItemSelected={(item) => dropdownValueHandle({item: item.clickedItem})}
-                    />
+                    /> */}
                 </div>
             );
         case "choice_multiple":
