@@ -1,3 +1,5 @@
+import { DATA_UTILS, GENERAL_UTILS, REQUEST_UTILS } from "./index";
+
 export const QUERY_UTILS = {
     parseConditionValue: ({ condition, operators, tableFields, globalID, currentID }) => {
         let operator = GENERAL_UTILS.findOperator(condition, operators);
@@ -10,7 +12,7 @@ export const QUERY_UTILS = {
             field = condition.slice(0, condition.indexOf(operator));
             value = condition.slice(field.length + operator.length);
             editor = tableFields[field].operators.find(op => op.operator === operator).advancedEditor;
-            valueAdditionalData = this.getValueAdditionalData({ tableFields, editor, field, globalID, currentID });
+            valueAdditionalData = DATA_UTILS.getValueAdditionalData({ tableFields, editor, field, globalID, currentID });
             value = DATA_UTILS.getValue({value, editor});
         }
         let fields = field.split('.');
@@ -93,7 +95,7 @@ export const QUERY_UTILS = {
                 value: fieldItems.map(field => field.id).join("."),
                 items: fieldItems
             }
-            valueAdditionalData = editor === "trend_field" ? DATA_UTILS.getTrendData(value['1']) : this.getValueAdditionalData({ tableFields: lastTableFields, editor, field: lastField, globalID, currentID });
+            valueAdditionalData = editor === "trend_field" ? DATA_UTILS.getTrendData(value['1']) : DATA_UTILS.getValueAdditionalData({ tableFields: lastTableFields, editor, field: lastField, globalID, currentID });
 
             return {
                 field,

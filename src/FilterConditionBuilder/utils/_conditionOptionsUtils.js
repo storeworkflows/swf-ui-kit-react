@@ -2,7 +2,9 @@ import { GENERAL_UTILS, DATA_UTILS } from "./index";
 
 export const CONDITION_OPTIONS_UTILS = {
 
-    setConditionOptions: function({value, conditionOption, currentConditionID, globalConditionID, conditionsArray}) {
+    setConditionOptions: function({value, conditionOption, currentConditionID, globalConditionID}) {
+        const {conditionsArray} = this.state;
+
         const properCurrentConditionID = currentConditionID ? currentConditionID : this.state.currentConditionID;
         const properGlobalConditionID = globalConditionID ? globalConditionID : this.state.globalConditionID;
         let copyConditionArray = GENERAL_UTILS.clone(conditionsArray);
@@ -10,61 +12,93 @@ export const CONDITION_OPTIONS_UTILS = {
         let currentConditionInArrInd = copyConditionArray[globalConditionInArrInd].relatedConditions.findIndex(cond => cond.id === properCurrentConditionID);
         let currentConditionInArr;
         let copyConditionOptions;
-
         if (currentConditionInArrInd > -1) {
             currentConditionInArr = copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd];
-            copyConditionOptions = { ...copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd].conditionOptions };
-        }
-        else {
+            copyConditionOptions = {...copyConditionArray[globalConditionInArrInd].relatedConditions[currentConditionInArrInd].conditionOptions};
+        } else {
             copyConditionArray[globalConditionInArrInd].relatedConditions.forEach((cond, parentInd) => {
                 cond.relatedConditions.forEach((cond, childInd) => {
                     if (cond.id === properCurrentConditionID) {
                         currentConditionInArr = copyConditionArray[globalConditionInArrInd].relatedConditions[parentInd].relatedConditions[childInd];
-                        copyConditionOptions = { ...cond.conditionOptions }
+                        copyConditionOptions = {...cond.conditionOptions}
                     }
                 })
             })
         }
         switch (conditionOption) {
             case "field":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsField({conditionOptions: copyConditionOptions, value});
+                currentConditionInArr.conditionOptions = CONDITION_OPTIONS_UTILS.setConditionOptionsField({
+                    conditionOptions: copyConditionOptions,
+                    value,
+                    properCurrentConditionID,
+                    properGlobalConditionID
+                });
                 break;
             case "fieldsData":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsFieldData({conditionOptions: copyConditionOptions, value});
+                currentConditionInArr.conditionOptions = CONDITION_OPTIONS_UTILS.setConditionOptionsFieldData({
+                    conditionOptions: copyConditionOptions,
+                    value
+                });
                 break;
             case "operator":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsOperator({value, conditionOptions: copyConditionOptions, properCurrentConditionID, properGlobalConditionID})
+                currentConditionInArr.conditionOptions = CONDITION_OPTIONS_UTILS.setConditionOptionsOperator({
+                    value,
+                    conditionOptions: copyConditionOptions,
+                    properCurrentConditionID,
+                    properGlobalConditionID
+                })
                 break;
             case "value":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsValue({value, conditionOptions: copyConditionOptions, conditionOption});
+                currentConditionInArr.conditionOptions = CONDITION_OPTIONS_UTILS.setConditionOptionsValue({
+                    value,
+                    conditionOptions: copyConditionOptions,
+                    conditionOption
+                });
                 break;
             case "valueAditionalData":
-                currentConditionInArr.conditionOptions = this.setConditionOptionsValueAdditional({value, conditionOptions: copyConditionOptions})
+                currentConditionInArr.conditionOptions = CONDITION_OPTIONS_UTILS.setConditionOptionsValueAdditional({
+                    value,
+                    conditionOptions: copyConditionOptions
+                })
                 break;
         }
-        return copyConditionArray;
+
+        this.setState({conditionsArray: copyConditionArray})
     },
 
     setConditionOptionsField: function({conditionOptions, value}) {
-        const { fieldsData } = conditionOptions;
+        const {fieldsData} = conditionOptions;
         let currentFieldsData = fieldsData[value.items[value.items.length - 1].index];
         let currentValue = value.items[value.items.length - 1].id;
         let currentValueIndex = conditionOptions.fieldsDropdownData.findIndex(data => data.items[0].index === value.items[value.items.length - 1].index);
         let deletedFieldsData = conditionOptions.fieldsDropdownData.splice(currentValueIndex + 1);
-        deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
-        deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
-        let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({ id: operation.operator, label: operation.label, dropdown: 'operation', editor: operation.advancedEditor }));
-
-        return conditionOptions = {
+        let operatorsArray = currentFieldsData[currentValue].operators.map(operation => ({
+            id: operation.operator,
+            label: operation.label,
+            dropdown: 'operation',
+            editor: operation.advancedEditor
+        }));
+        let copyConditionOptions = {
             ...conditionOptions,
             field: value.value,
             fieldItems: value,
-            operator: { operator: operatorsArray[0].id, editor: operatorsArray[0].editor },
+            operator: {operator: operatorsArray[0].id, editor: operatorsArray[0].editor},
             value: '',
             operatorsArray,
-            activeFieldsData: { ...currentFieldsData },
+            activeFieldsData: {...currentFieldsData},
             activeField: currentValue
-        }
+        };
+
+        deletedFieldsData = deletedFieldsData.map(data => data.items[0].index);
+        deletedFieldsData.forEach(key => delete conditionOptions.fieldsData[key]);
+        copyConditionOptions = CONDITION_OPTIONS_UTILS.setConditionOptionsOperator({
+            value: {
+                operator: operatorsArray[0].id,
+                editor: operatorsArray[0].editor
+            }, conditionOptions: copyConditionOptions
+        });
+
+        return copyConditionOptions;
     },
 
     setConditionOptionsFieldData: function({conditionOptions, value}) {
@@ -85,7 +119,7 @@ export const CONDITION_OPTIONS_UTILS = {
     setConditionOptionsOperator: function({value, conditionOptions, currentConditionID, globalConditionID}) {
         const { activeField, activeFieldsData } = conditionOptions;
         let valueAdditionalData = [];
-        valueAdditionalData = this.getValueAdditionalData({ state: this.state, tableFields: activeFieldsData, editor: value.editor, field: activeField, currentID: currentConditionID, globalID: globalConditionID});
+        valueAdditionalData = DATA_UTILS.getValueAdditionalData({ state: this.state, tableFields: activeFieldsData, editor: value.editor, field: activeField, currentID: currentConditionID, globalID: globalConditionID});
         conditionOptions = {
             ...conditionOptions,
             operator: value,

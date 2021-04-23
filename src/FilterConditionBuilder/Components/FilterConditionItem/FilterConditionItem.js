@@ -61,8 +61,8 @@ export default class FilterConditionItem extends React.Component {
     }
 
     operatorsActivation = () => {
-        const { conditionObj: { conditionOptions } } = this.props;
-        const { activeField: { column_type }, refFieldValue } = this.state;
+        const { conditionObj: { conditionOptions }, conditionsArray } = this.props;
+        const { activeField: { column_type } } = this.state;
 
         if (column_type === "tag") return;
 

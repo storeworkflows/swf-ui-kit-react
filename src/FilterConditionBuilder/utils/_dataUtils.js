@@ -1,5 +1,3 @@
-import { REQUEST_UTILS } from "./_requestUtils";
-
 export const DATA_UTILS = {
     getDropdownFieldsItems: ({ tableFields, index, blockFields, allowFileds, listIndex }) => {
         let dropdownFields = [];
@@ -30,7 +28,7 @@ export const DATA_UTILS = {
         });
         return dropdownFields;
     },
-    getValueAdditionalData: ({ tableFields, editor, field, globalID, currentID }) => {
+    getValueAdditionalData: ({ tableFields, editor, field }) => {
         let valueAdditionalData = [];
         switch (editor) {
             case 'choice_field_names':
@@ -48,28 +46,12 @@ export const DATA_UTILS = {
                     }
                 }
                 break;
-
             case 'choice':
             case 'choice_multiple':
-                valueAdditionalData = tableFields[field].choices.map(choice => ({ id: choice.value, label: choice.label, dropdown: 'value' }));
+                valueAdditionalData =  tableFields[field].choices ? tableFields[field].choices.map(choice => ({ id: choice.value, label: choice.label, dropdown: 'value' })) : [];
                 break;
             case 'choice_dynamic':
                 valueAdditionalData = tableFields[field].dynamic_choices.map(choice => ({ id: choice.value, label: choice.label, dropdown: 'value' }));
-                break;
-            case 'reference':
-                const queryParams = {
-                    sysparm_fields: `${tableFields[field].reference_display_field},sys_id`,
-                    sysparm_query: `nameISNOTEMPTY`
-                }
-                REQUEST_UTILS.fetchReferenceData({table: tableFields[field].reference, queryParams})
-                    .then(res => {
-                        this.fetchReferenceDataSuccessed({result: res, field, currentID, globalID})
-                    })
-                this.setState({referenceFieldData: {
-                    field: tableFields[field],
-                    currentConditionID: currentID,
-                    globalConditionID: globalID
-                }})
                 break;
         }
 
