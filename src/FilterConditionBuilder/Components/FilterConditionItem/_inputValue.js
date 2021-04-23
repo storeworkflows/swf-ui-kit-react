@@ -34,6 +34,18 @@ export const inputValue = ({ inputValuePayload }) => {
         case "choice_field_names":
         case "choice":
         case "choice_dynamic":
+            return (
+                <Dropdown
+                    items={conditionOptions.valueAdditionalData}
+                    selectedItems={[conditionOptions.value]}
+                    select="single"
+                    disabled={!dropdownsIsActive.value}
+                    placeholder="--choose value--"
+                    variant="tertiary"
+                    size="md"
+                    onItemSelected={(item) => dropdownValueHandle({item: item.clickedItem})}
+                />
+            );
         case "reference":
             const { fieldItems: { items } } = conditionOptions
             const table = items.length < 2 ? generalTable : items[items.length - 2].table;
@@ -49,16 +61,6 @@ export const inputValue = ({ inputValuePayload }) => {
                         displayValue={refFieldValue.displayVal}
                         value={conditionOptions.value}
                     />
-                    {/* <Dropdown
-                        items={conditionOptions.valueAdditionalData}
-                        selectedItems={[conditionOptions.value]}
-                        select="single"
-                        disabled={!dropdownsIsActive.value}
-                        placeholder="--choose value--"
-                        variant="tertiary"
-                        size="md"
-                        onItemSelected={(item) => dropdownValueHandle({item: item.clickedItem})}
-                    /> */}
                 </div>
             );
         case "choice_multiple":
