@@ -261,7 +261,7 @@
     }
 
     &.--active {
-      bottom: calc(-100% + (var(--swf-modal-footer-height) + 1rem));
+      bottom: calc(-100% + (var(--swf-modal-footer-height) + 2rem));
     }
   }
 
