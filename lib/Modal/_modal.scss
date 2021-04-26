@@ -140,7 +140,7 @@
     &.--mobile > .main-buttons {
       -ms-grid-row: 1;
       -ms-grid-column: 1;
-      justify-self: start;
+      justify-self: end;
     }
 
     .additional-buttons {
@@ -152,6 +152,7 @@
     &.--mobile > .additional-buttons {
       -ms-grid-row: 1;
       -ms-grid-column: 2;
+      justify-self: start;
     }
 
     .header-content {
