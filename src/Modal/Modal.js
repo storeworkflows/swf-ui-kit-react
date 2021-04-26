@@ -122,6 +122,13 @@ class Modal extends React.Component {
         })
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.mobileFooterOpened) {
+            const footerContentHeight = this.modalRef.current.querySelector(".footer-content");
+            this.modalRef.current.style.setProperty("--swf-modal-footer-height", footerContentHeight);
+        }
+    }
+
     render() {
         const {display, openModal, headerElements, manageOpened} = this.props;
         const {mobileFooterOpened, openModal: open, currentStatus} = this.state;
