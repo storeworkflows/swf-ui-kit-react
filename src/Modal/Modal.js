@@ -92,15 +92,15 @@ class Modal extends React.Component {
     mobileButtons() {
         return (
             <>
-                <Button
-                    icon="arrow-left"
-                    variant="tertiary"
-                    bare={true}
-                    size="md"
-                    configAria={{"button": {"aria-label": "Back"}}}
-                    tooltipContent="Back"
-                    onClick={() => this.setState({modalOpened: false})}
-                />
+                {/*<Button*/}
+                {/*    icon="arrow-left"*/}
+                {/*    variant="tertiary"*/}
+                {/*    bare={true}*/}
+                {/*    size="md"*/}
+                {/*    configAria={{"button": {"aria-label": "Back"}}}*/}
+                {/*    tooltipContent="Back"*/}
+                {/*    onClick={() => this.setState({modalOpened: false})}*/}
+                {/*/>*/}
                 <Button
                     icon="three-dots"
                     variant="tertiary"

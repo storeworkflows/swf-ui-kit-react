@@ -1,0 +1,51 @@
+version: 2
+jobs:
+  lint:
+    docker:
+      - image: circleci/node:12.14.1-buster
+    steps:
+      - checkout
+      - run:
+          name: Lint
+          command:
+  test:
+    docker:
+      - image: circleci/node:12.14.1-buster
+    steps:
+      - checkout
+      - run:
+          name: Test
+          command:
+  build:
+    docker:
+      - image: circleci/node:12.14.1-buster
+    steps:
+      - checkout
+      - run:
+          name: Install local packages
+          command: npm i
+      - run:
+          name: Clean lib directory
+          command: npm run clean
+      - run:
+          name: Build App
+          command: npm run build
+      - run:
+          name: Delete src and babelrc folder
+          command: rm -rf /src .babelrc .gitignore package-lock.json
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./
+  deploy:
+    docker:
+      - image: circleci/node:12.14.1-buster
+        auth:
+          username: $DOCKER_USER
+          password: $DOCKER_PASS
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Add github.com to known_hosts
+          command: mkdir ~/.ssh && echo $GITHUB_PUBLIC_KEY >> ~/.ssh/known_hosts

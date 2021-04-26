@@ -125,7 +125,7 @@
 
     &.--mobile {
       grid-template-areas:
-            "main-buttons additional-buttons"
+            "additional-buttons main-buttons"
             "header-content header-content";
     }
 
