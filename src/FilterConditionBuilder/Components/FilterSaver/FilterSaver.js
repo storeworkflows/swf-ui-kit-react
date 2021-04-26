@@ -100,6 +100,7 @@ class FilterSaver extends React.Component {
                         value={filterTitle}
                         onInput={this.handleInputTitle}
                         autofocus={true}
+                        required={true}
                     />
                 </div>
 
