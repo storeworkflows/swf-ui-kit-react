@@ -31,7 +31,7 @@ class AvatarGroup extends React.Component {
         return this.props.onClick({index, avatar});
     }
 
-    addNewMember(event) {
+    addNewMember() {
         if (this.props.clickable) {
             this.props.onAdd();
         }
