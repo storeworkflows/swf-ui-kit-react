@@ -22,11 +22,13 @@ class AvatarGroup extends React.Component {
         this.setState({openedAvatar: isSameClicked ? -1 : index})
     }
 
-    handleClick = (index) => {
-        if (this.props.onClick === noop) {
+    handleClick = ({index, avatar}) => {
+        const {manageOpened} = this.props;
+
+        if (!manageOpened || this.props.onClick === noop) {
            return this.openAvatar(index)
         }
-        return this.props.onClick();
+        return this.props.onClick({index, avatar});
     }
 
     addNewMember(event) {
@@ -36,7 +38,7 @@ class AvatarGroup extends React.Component {
     }
 
     render() {
-        const {size, max, canAdd, clickable, manageOpened, members, canRemove, onRemove, customIcon} = this.props;
+        const {size, max, canAdd, members, canRemove, onRemove, customIcon} = this.props;
         const hasAdditionalMembers = members.length > max + 1;
         const maxViewers = hasAdditionalMembers ? max : members.length;
         const additionalMembers = members.length - max;
@@ -81,7 +83,7 @@ class AvatarGroup extends React.Component {
                                 onRemove={onRemove}
                                 member={viewer}
                                 manageOpened={true}
-                                onClick={() => this.handleClick(index)}
+                                onClick={() => this.handleClick({index, avatar: viewer})}
                                 open={this.state?.openedAvatar === index}
                             />
                         </div>
