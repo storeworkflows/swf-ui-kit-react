@@ -334,7 +334,7 @@ class LookupField extends React.Component {
         return (
             visible ?
                 <>
-                    <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}>
+                    <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur} ref={elm => this.props.internalRef.current = elm}>
                         <Input
                             internalRef={this.inputRef}
                             className="swf-reference--input"
@@ -358,9 +358,8 @@ class LookupField extends React.Component {
                         </Input>
                         {this.inputRef && this.inputRef.current &&
                         <Popover
-                            hideTail={true}
-                            hideTail={true}
-                            manageOpened={true}
+                            hideTail
+                            manageOpened
                             opened={showResults}
                             positionTarget={this.inputRef}
                             positions={[
@@ -397,7 +396,8 @@ LookupField.defaultProps = {
     invalid: false,
     onInvalid: () => void 0,
     message: [],
-    visible: true
+    visible: true,
+    internalRef: React.createRef()
 }
 
 LookupField.propTypes = {
@@ -421,7 +421,11 @@ LookupField.propTypes = {
         className: propTypes.object,
         iconSize: PropTypes.number
     })),
-    visible: propTypes.bool
+    visible: propTypes.bool,
+    internalRef: PropTypes.oneOfType([
+        propTypes.func,
+        propTypes.shape({ current: propTypes.any })
+    ])
 }
 
 
