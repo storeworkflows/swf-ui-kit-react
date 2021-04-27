@@ -142,7 +142,7 @@ class Modal extends React.Component {
             <div className="swf-modal-overlay"
                  ref={elm => this.modalRef.current = elm}
             >
-                <div className="modal">
+                <div className={classnames({modal: true, "--opened": showModal})}>
                     <div className={classnames({
                         "modal-dialog": true,
                         [`--${display}`]: true,
