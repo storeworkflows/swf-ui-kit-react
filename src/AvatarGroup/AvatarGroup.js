@@ -19,6 +19,13 @@ class AvatarGroup extends React.Component {
         this.setState({openedAvatar: index})
     }
 
+    handleClick = (index) => {
+        if (this.props.onClick === noop) {
+           return this.openAvatar(index)
+        }
+        return this.props.onClick();
+    }
+
     addNewMember(event) {
         if (this.props.clickable) {
             this.props.onAdd();
@@ -63,7 +70,7 @@ class AvatarGroup extends React.Component {
                     </div>}
 
                     {viewers.map((viewer, index) => (
-                        <div key={index + viewer.name.replace("", "_")} onClick={this.openAvatar.bind(this, index)}>
+                        <div key={index + viewer.name.replace("", "_")}>
                             <Avatar
                                 id={viewer.id || index}
                                 size={size}
@@ -71,6 +78,7 @@ class AvatarGroup extends React.Component {
                                 onRemove={onRemove}
                                 member={viewer}
                                 manageOpened={true}
+                                onClick={() => this.handleClick(index)}
                                 open={this.state?.openedAvatar === index}
                             />
                         </div>
