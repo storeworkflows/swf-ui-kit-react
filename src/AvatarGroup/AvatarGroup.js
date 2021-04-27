@@ -16,7 +16,10 @@ class AvatarGroup extends React.Component {
     }
 
     openAvatar(index) {
-        this.setState({openedAvatar: index})
+        const {openedAvatar} = this.state;
+        const isSameClicked = openedAvatar === index;
+
+        this.setState({openedAvatar: isSameClicked ? -1 : index})
     }
 
     handleClick = (index) => {
