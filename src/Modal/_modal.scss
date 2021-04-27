@@ -25,6 +25,12 @@
     visibility: visible;
     width: 100%;
     height: 100%;
+    transform: scale(0);
+    transition: transform .3s ease;
+
+    &.--opened {
+      transform: scale(1);
+    }
   }
 
   .modal-dialog {
