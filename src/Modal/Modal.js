@@ -127,12 +127,12 @@ class Modal extends React.Component {
             const footerContentHeight = this.modalRef.current.querySelector(".footer-content").offsetHeight;
             this.modalRef.current.style.setProperty("--swf-modal-footer-height", footerContentHeight + "px");
         }
+    }
 
-        if (this.props.openModal !== prevProps.openModal){
-            setTimeout(() => {
-                this.modalRef.current.querySelector(".modal").classList[this.props.openModal ? "add" : "remove"]("--opened");
-            }, 100);
-        }
+    setClass = () => {
+        setTimeout(() => {
+            this.modalRef?.current.querySelector(".modal").classList[this.props.openModal ? "add" : "remove"]("--opened");
+        }, 100);
     }
 
     render() {
@@ -143,6 +143,8 @@ class Modal extends React.Component {
         const showModal = manageOpened ? openModal : open;
 
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
+
+        this.setClass();
 
         return showModal && <>
             <div className="swf-modal-overlay"
