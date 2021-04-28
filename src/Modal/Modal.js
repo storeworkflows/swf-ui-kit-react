@@ -127,6 +127,12 @@ class Modal extends React.Component {
             const footerContentHeight = this.modalRef.current.querySelector(".footer-content").offsetHeight;
             this.modalRef.current.style.setProperty("--swf-modal-footer-height", footerContentHeight + "px");
         }
+
+        if (this.props.openModal !== prevProps.openModal){
+            setTimeout(() => {
+                this.modalRef.current.querySelector(".modal").classList[this.props.openModal ? "add" : "remove"]("--opened");
+            }, 100);
+        }
     }
 
     render() {
@@ -142,7 +148,7 @@ class Modal extends React.Component {
             <div className="swf-modal-overlay"
                  ref={elm => this.modalRef.current = elm}
             >
-                <div className={classnames({modal: true, "--opened": showModal})}>
+                <div className={classnames({modal: true})}>
                     <div className={classnames({
                         "modal-dialog": true,
                         [`--${display}`]: true,
