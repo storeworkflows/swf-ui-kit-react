@@ -130,7 +130,7 @@ class Modal extends React.Component {
     }
 
     render() {
-        const {display, openModal, headerElements, manageOpened, withAnimation} = this.props;
+        const {display, openModal, headerElements, manageOpened, animation} = this.props;
         const {mobileFooterOpened, openModal: open, currentStatus} = this.state;
         const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
 
@@ -142,7 +142,7 @@ class Modal extends React.Component {
             <div className="swf-modal-overlay"
                  ref={elm => this.modalRef.current = elm}
             >
-                <div className={classnames({"modal": true, "--opened": withAnimation})}>
+                <div className={classnames({"modal": true, "--opened": animation})}>
                     <div className={classnames({
                         "modal-dialog": true,
                         [`--${display}`]: true,
@@ -228,7 +228,7 @@ Modal.propTypes = {
         content: PropTypes.object,
         actions: PropTypes.object
     }),
-    withAnimation: PropTypes.bool,
+    animation: PropTypes.bool,
     display: PropTypes.oneOf([
         'block',
         'inline',
