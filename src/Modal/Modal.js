@@ -129,12 +129,6 @@ class Modal extends React.Component {
         }
     }
 
-    setClass = () => {
-        setTimeout(() => {
-            this.modalRef?.current.querySelector(".modal").classList[this.props.openModal ? "add" : "remove"]("--opened");
-        }, 100);
-    }
-
     render() {
         const {display, openModal, headerElements, manageOpened} = this.props;
         const {mobileFooterOpened, openModal: open, currentStatus} = this.state;
@@ -144,13 +138,11 @@ class Modal extends React.Component {
 
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
-        this.setClass();
-
         return showModal && <>
             <div className="swf-modal-overlay"
                  ref={elm => this.modalRef.current = elm}
             >
-                <div className={classnames({modal: true})}>
+                <div className={classnames({modal: true, "--opened": showModal})}>
                     <div className={classnames({
                         "modal-dialog": true,
                         [`--${display}`]: true,
