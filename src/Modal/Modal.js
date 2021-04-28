@@ -139,10 +139,10 @@ class Modal extends React.Component {
         const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
         return showModal && <>
-            <div className="swf-modal-overlay"
+            <div className={classnames({"swf-modal-overlay": true, "--mobile": isMobile})}
                  ref={elm => this.modalRef.current = elm}
             >
-                <div className={classnames({"modal": true, "--opened": animation})}>
+                <div className={classnames({"modal": true, "--animated": animation, "--mobile": isMobile, "--desktop": !isMobile})}>
                     <div className={classnames({
                         "modal-dialog": true,
                         [`--${display}`]: true,
