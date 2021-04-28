@@ -39,10 +39,10 @@
       }
 
       &.--mobile {
-        -webkit-animation: .2s linear 0s 1 alternate slide;
-        -moz-animation: .2s linear 0s 1 alternate slide;
-        -o-animation: .2s linear 0s 1 alternate slide;
-        animation: .2s linear 0s 1 alternate slide;
+        -webkit-animation: .2s linear 0s 1 slide;
+        -moz-animation: .2s linear 0s 1 slide;
+        -o-animation: .2s linear 0s 1 slide;
+        animation: .2s linear 0s 1 slide;
       }
 
     }
