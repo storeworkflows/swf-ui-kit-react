@@ -52,10 +52,10 @@
     @-o-keyframes scale { from { transform:scale(0); } to { transform: scale(1); }  }
     @keyframes scale { from { transform:scale(0); } to { transform: scale(1); }  }
 
-    @-webkit-keyframes slide { from { transform:translateX(-100vw); } to { transform: translateX(0); }  }
-    @-moz-keyframes slide { from { transform:translateX(-100vw); } to { transform: translateX(0); }  }
-    @-o-keyframes slide { from { transform:translateX(-100vw); } to { transform: translateX(0); }  }
-    @keyframes slide { from { transform:translateX(-100vw); } to { transform: translateX(0); }  }
+    @-webkit-keyframes slide { from { transform:translateX(100vw); } to { transform: translateX(0); }  }
+    @-moz-keyframes slide { from { transform:translateX(100vw); } to { transform: translateX(0); }  }
+    @-o-keyframes slide { from { transform:translateX(100vw); } to { transform: translateX(0); }  }
+    @keyframes slide { from { transform:translateX(100vw); } to { transform: translateX(0); }  }
   }
 
   .modal-dialog {
