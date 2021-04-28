@@ -29,8 +29,16 @@
     transition: transform .3s ease;
 
     &.--opened {
-      transform: scale(1);
+      -webkit-animation: .3s linear 0s 1 alternate scale;
+      -moz-animation: .3s linear 0s 1 alternate scale;
+      -o-animation: .3s linear 0s 1 alternate scale;
+      animation: .3s linear 0s 1 alternate scale;
     }
+
+    @-webkit-keyframes scale { from { transform:scale(0); } to { transform: scale(1); }  }
+    @-moz-keyframes scale { from { transform:scale(0); } to { transform: scale(1); }  }
+    @-o-keyframes scale { from { transform:scale(0); } to { transform: scale(1); }  }
+    @keyframes scale { from { transform:scale(0); } to { transform: scale(1); }  }
   }
 
   .modal-dialog {
