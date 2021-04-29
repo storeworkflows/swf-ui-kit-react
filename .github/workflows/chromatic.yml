@@ -1,0 +1,16 @@
+# Workflow name
+name: 'Chromatic Deployment'
+
+# Event for the workflow
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - run: npm install
+      - uses: chromaui/action@v1
+        with:
+          projectToken: ${{ secrets.adc3700c1f52 }}
+          token: ${{ secrets.GITHUB_TOKEN }}

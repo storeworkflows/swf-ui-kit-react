@@ -49,3 +49,20 @@ jobs:
       - run:
           name: Add github.com to known_hosts
           command: mkdir ~/.ssh && echo $GITHUB_PUBLIC_KEY >> ~/.ssh/known_hosts
+  chromatic-deployment:
+    docker:
+      - image: circleci/node:12
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run: npm install
+      - run: npm run chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}
+
+workflows:
+  chromatic-deploy:
+    jobs:
+      - chromatic-deployment
