@@ -78,7 +78,7 @@ jobs:
             git config --global user.email "accounting@storeworkflows.com"
             git clone git@github.com:storeworkflows/ui-kit.git
             rsync --checksum --recursive --links --exclude=.git --exclude=ui-kit --delete ./ ui-kit
-            cd ui-kit && git add --all && git commit --message="Deploy $CIRCLE_BUILD_NUM" && git push --set-upstream origin $CIRCLE_BRANCH
+            cd ui-kit && git add --all && git commit --message="Deploy $CIRCLE_BUILD_NUM" && git branch -M main && git push -u origin main
   chromatic-deployment:
       docker:
         - image: circleci/node:12.14.1-buster
