@@ -1,3 +1,4 @@
+
 version: 2
 jobs:
   lint:
@@ -6,40 +7,61 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Lint
-          command:
+          name: Remove node_modules
+          command: rm -rf node_modules/
+      - run:
+          name: Install local dependencies
+          command: |
+            npm install
+      - run:
+          name: Check code quality
+          command: npm run lint
   test:
     docker:
       - image: circleci/node:12.14.1-buster
+    environment:
+      NODE_ENV: test
     steps:
       - checkout
       - run:
-          name: Test
-          command:
+          name: Remove node_modules
+          command: rm -rf node_modules/
+      - run:
+          name: Install local dependencies
+          command: |
+            npm install
+            npm run test
+      - run:
+          name: Run tests
+          command: npm run test
   build:
     docker:
       - image: circleci/node:12.14.1-buster
     steps:
       - checkout
       - run:
-          name: Install local packages
-          command: npm i
+          name: Remove node_modules
+          command: rm -rf node_modules/
       - run:
-          name: Clean lib directory
-          command: npm run clean
+          name: Install local dependencies
+          command: |
+            npm install
       - run:
-          name: Build App
+          name: Build app
           command: npm run build
       - run:
-          name: Delete src and babelrc folder
-          command: rm -rf /src .babelrc .gitignore package-lock.json
+          name: Change package name to @storeworkflows/ui-kit
+          command: npm run rename
+      - run:
+          name: Delete unnecessary informations
+          command: rm -rf .storybook/ node_modules/ src/ .circleci/ .idea/ .gitignore package-lock.json build-storybook.log .babelrc
       - persist_to_workspace:
           root: .
           paths:
             - ./
   deploy:
     docker:
-      - image: circleci/node:12.14.1-buster
+      - image: storeworkflows/node:12.14.1-buster-rsync
         auth:
           username: $DOCKER_USER
           password: $DOCKER_PASS
@@ -49,20 +71,36 @@ jobs:
       - run:
           name: Add github.com to known_hosts
           command: mkdir ~/.ssh && echo $GITHUB_PUBLIC_KEY >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy to @storeworkflows/ui-kit
+          command: |
+            git config --global user.name "StoreWorkflow"
+            git config --global user.email "accounting@storeworkflows.com"
+            git clone https://github.com/storeworkflows/ui-kit.git
+            rsync --checksum --recursive --links --exclude=.git --exclude=ui-kit --delete ./ ui-kit
+            cd ui-kit && git add --all && git diff-index --quiet HEAD || git commit --message="Deploy $CIRCLE_BUILD_NUM" && git push --set-upstream origin $CIRCLE_BRANCH
   chromatic-deployment:
-    docker:
-      - image: circleci/node:12
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - run: npm run chromatic --project-token=${process.env.CHROMATIC_PROJECT_TOKEN}
-
+      docker:
+        - image: circleci/node:12.14.1-buster
+      working_directory: ~/repo
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-dependencies-{{ checksum "package.json" }}
+              - v1-dependencies-
+        - run: npm install
+        - run: npm chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}
 workflows:
-  chromatic-deploy:
+  version: 2
+  build-test-deploy:
     jobs:
-      - chromatic-deployment
+      - lint
+      - test
+      - build
+      - deploy:
+          context: storeworkflows
+          requires:
+            - lint
+            - test
+            - build
