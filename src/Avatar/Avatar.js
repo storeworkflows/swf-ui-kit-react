@@ -103,7 +103,7 @@ class Avatar extends React.Component {
         return (
             <>
                 <div
-                    ref={elm => this.props.innerRef.current = elm}
+                   // ref={elm => this.props.innerRef.current = elm}
                     className={classnames({
                         "swf-avatar": true,
                         [`--${size}`]: true,
@@ -173,6 +173,12 @@ Avatar.defaultProps = {
     className: ""
 }
 
+export const AvatarMember = {
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    avatar: PropTypes.string,
+}
+
 Avatar.propTypes = {
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     avatarVisible: PropTypes.bool,
@@ -181,11 +187,7 @@ Avatar.propTypes = {
     manageOpened: PropTypes.bool,
     open: PropTypes.bool,
     size: PropTypes.oneOf(["xs", "md", "lg"]),
-    member: PropTypes.shape({
-        name: PropTypes.string.required,
-        title: PropTypes.string,
-        avatar: PropTypes.string,
-    }),
+    member: PropTypes.shape(AvatarMember),
     onRemove: PropTypes.func,
     color: PropTypes.oneOf(["default", "primary", "negative"]),
     onClick: PropTypes.func,

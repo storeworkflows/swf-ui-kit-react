@@ -222,6 +222,9 @@ Alert.propTypes = {
         label: propTypes.string
     }),
     content: propTypes.oneOfType([propTypes.string, propTypes.object]),
+    /**
+     * Can control only if manageExpanded = true
+     */
     expanded: propTypes.bool,
     header: propTypes.string,
     icon: propTypes.string,
@@ -236,8 +239,14 @@ Alert.propTypes = {
     onExpandAction: propTypes.func,
     onTextLinkClicked: propTypes.func,
     onButtonClick: propTypes.func,
+    /**
+     *  Can control only if manageVisibility = true
+     */
     visible: propTypes.bool,
     manageVisibility: propTypes.bool,
+    /**
+     * Time before remove (in milliseconds)
+     */
     delay: propTypes.number,
     onCloseAction: propTypes.func,
     manageButtonClick: propTypes.bool

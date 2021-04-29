@@ -1,0 +1,17 @@
+import React from 'react';
+
+import { default as Checkbox } from './Checkbox';
+
+export default {
+    title: 'swf-ui-kit/Input/Checkbox',
+    component: Checkbox,
+};
+
+
+const Template = (args) => <Checkbox {...args}/>;
+
+export const Standard = Template.bind({});
+Standard.args = {
+    label: "Label",
+    value: "value"
+}

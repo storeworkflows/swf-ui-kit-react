@@ -44,13 +44,14 @@
 
 
   .value-content{
+   // margin: auto 0;
     display: block;
 
     &.--inline{
       display: inline-flex;
     }
 
-    &.text-value {
+    &.--text-value {
       margin: auto 0;
       font-size: var(--label-value-text-size);
       text-overflow: ellipsis;

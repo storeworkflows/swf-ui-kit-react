@@ -106,7 +106,7 @@ class Dropdown extends React.Component {
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': '100%',
+            'width': 'calc( 100% - 2px)',
             'maxHeight': '15rem'
         }
 
@@ -126,13 +126,11 @@ class Dropdown extends React.Component {
                             ref = {el => this.itemsContainerRef.current = el}
                         >
                             {   items.map((item) => {
-                                    const {id, label, disabled} = item;
+                                    const {id, disabled} = item;
 
                                     return <DropdownItem
-                                        key={id}
+                                        {...item}
                                         onSelectAction={this.itemSelected}
-                                        id={id}
-                                        label={label}
                                         disabled={this.props.disabled || disabled}
                                         isSelected={selectedItems.includes(id)}
                                         showOnMount = {scrollToSelected && id === selectedItems[0]}

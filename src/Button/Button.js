@@ -6,6 +6,9 @@ import Icon from "../Icon/Icon";
 import {addStyles, getIconSize} from "./utils";
 
 class Button extends React.Component {
+	constructor(props) {
+		super(props);
+	}
 
 	render() {
 
@@ -50,7 +53,7 @@ class Button extends React.Component {
 		return (
 			<>
 				<button
-					ref={elm => this.props.innerRef.current = elm}
+					//ref={elm => this.props.innerRef.current = elm}
 					className={buttonClasses}
 					onClick={onClick}
 					disabled = {disabled}
@@ -103,4 +106,5 @@ Button.propTypes = {
 	innerRef: propTypes.object
 }
 
-export default Button
+export default Button;
+

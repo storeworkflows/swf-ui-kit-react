@@ -6,6 +6,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@storybook/addon-info": "^5.3.21",
     "@tinymce/tinymce-react": "^2.6.1",
     "autosize": "^4.0.2",
     "classnames": "^2.2.6",
@@ -14,31 +15,53 @@
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "moments": "0.0.2",
+    "patch-package": "^6.4.7",
     "resize-observer": "^1.0.0",
+    "styled-components": "^5.2.3",
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "@storybook/addons": "^6.1.14"
   },
   "scripts": {
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",
-    "build": "babel src --out-dir lib --source-maps false --copy-files"
+    "build": "babel src --out-dir lib --source-maps false --copy-files",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-decorators": "^7.12.13",
     "@babel/plugin-proposal-optional-chaining": "^7.13.0",
     "@babel/plugin-syntax-jsx": "^7.12.13",
     "@babel/plugin-transform-react-jsx": "^7.12.16",
     "@babel/preset-env": "^7.12.16",
     "@babel/preset-react": "^7.12.13",
+    "@storybook/addon-actions": "^6.2.8",
+    "@storybook/addon-controls": "^6.2.8",
+    "@storybook/addon-docs": "^6.2.8",
+    "@storybook/addon-essentials": "^6.2.8",
+    "@storybook/addon-links": "^6.2.8",
+    "@storybook/addons": "^6.2.8",
+    "@storybook/preset-scss": "^1.0.3",
+    "@storybook/react": "^6.2.8",
+    "babel-loader": "^8.2.2",
     "babel-plugin-styled-components": "^1.12.0",
+    "chromatic": "^5.6.2",
+    "css-loader": "^5.2.3",
     "cssnano": "^4.1.10",
+    "mini-css-extract-plugin": "^1.5.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
-  }
+    "react-docgen": "^5.3.1",
+    "react-dom": "^17.0.1",
+    "sass": "^1.32.10",
+    "sass-loader": "^10.1.1",
+    "style-loader": "^2.0.0"
+  },
+  "postinstall": "patch-package"
 }

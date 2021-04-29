@@ -1,9 +1,11 @@
 import * as React from "react";
-import PropTypes from "prop-types";
+import propTypes from "prop-types";
 import classnames from "classnames";
 import {Avatar} from "../index";
 import {noop} from "../utils";
 import Icon from "../Icon/Icon";
+import {AvatarMember} from "../Avatar/Avatar";
+import PropTypes from "prop-types";
 
 class AvatarGroup extends React.Component {
     constructor(props) {
@@ -48,7 +50,7 @@ class AvatarGroup extends React.Component {
         return (
             <>
                 <div
-                    ref={elm => this.props.innerRef.current = elm}
+                    //ref={elm => this.props.innerRef.current = elm}
                     className={
                         classnames({
                             "swf-avatar-container": true,
@@ -111,18 +113,22 @@ AvatarGroup.defaultProps = {
 }
 
 AvatarGroup.propTypes = {
-    clickable: PropTypes.bool,
-    max: PropTypes.number,
-    size: PropTypes.oneOf(["xs", "md", "lg"]),
-    manageOpened: PropTypes.bool,
-    members: PropTypes.array,
-    canRemove: PropTypes.bool,
-    onClick: PropTypes.func,
-    canAdd: PropTypes.bool,
-    customIcon: PropTypes.string,
-    onAdd: PropTypes.func,
-    onRemove: PropTypes.func,
-    innerRef: PropTypes.object
+    clickable: propTypes.bool,
+    max: propTypes.number,
+    size: propTypes.oneOf(["xs", "md", "lg"]),
+    manageOpened: propTypes.bool,
+    members: propTypes.arrayOf(propTypes.shape({
+        name: PropTypes.string.isRequired,
+        title: PropTypes.string,
+        avatar: PropTypes.string,
+    })),
+    canRemove: propTypes.bool,
+    onClick: propTypes.func,
+    canAdd: propTypes.bool,
+    customIcon: propTypes.string,
+    onAdd: propTypes.func,
+    onRemove: propTypes.func,
+    innerRef: propTypes.object
 }
 
 export default AvatarGroup

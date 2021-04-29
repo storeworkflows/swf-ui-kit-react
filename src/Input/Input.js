@@ -152,7 +152,9 @@ class Input extends React.Component {
 
         return (
             <>
-                <div className={containerClasses} ref={elm => this.props.internalRef.current = elm}>
+                <div className={containerClasses}
+                    // ref={elm => this.props.internalRef.current = elm}
+                >
 
                     {_hasLabel &&
                         <span className={labelClasses}>

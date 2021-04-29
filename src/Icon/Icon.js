@@ -64,7 +64,7 @@ class Icon extends React.Component {
 
     return (
         <svg
-            ref={elm => this.props.innerRef.current = elm}
+           // ref={elm => this.props.innerRef.current = elm}
             {...this.getAttrs(node.attributes)}
             style={this.getStyles()}
             className={this.props.className}
