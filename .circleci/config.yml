@@ -99,22 +99,22 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
       - test:
           filters:
             branches:
               only:
-                - master
+                - main
       - build:
           filters:
             branches:
               only:
-                - master
+                - main
       - deploy:
           filters:
             branches:
               only:
-                - master
+                - main
           context: storeworkflows
           requires:
             - lint
