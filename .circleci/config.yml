@@ -78,11 +78,10 @@ jobs:
             git config --global user.email "accounting@storeworkflows.com"
             git clone git@github.com:storeworkflows/ui-kit.git
             rsync --checksum --recursive --links --exclude=.git --exclude=ui-kit --delete ./ ui-kit
-            cd ui-kit && git add --all && git commit --message="Deploy $CIRCLE_BUILD_NUM" && git push --set-upstream origin $CIRCLE_BRANCH
+            cd ui-kit && git add --all && git commit --message="Deploy $CIRCLE_BUILD_NUM" && git branch -M main && git push -u origin main
   chromatic-deployment:
       docker:
         - image: circleci/node:12.14.1-buster
-      working_directory: ~/repo
       steps:
         - checkout
         - restore_cache:
@@ -90,7 +89,7 @@ jobs:
               - v1-dependencies-{{ checksum "package.json" }}
               - v1-dependencies-
         - run: npm install
-        - run: npm chromatic --project-token=${process.env.CHROMATIC_PROJECT_TOKEN}
+        - run: npm run chromatic -- --project-token=${CHROMATIC_PROJECT_TOKEN} --exit-zero-on-changes
 workflows:
   version: 2
   build-test-deploy:
@@ -120,3 +119,11 @@ workflows:
             - lint
             - test
             - build
+  chromatic-deploy:
+    jobs:
+      - chromatic-deployment:
+          context: storeworkflows
+          filters:
+            branches:
+              only:
+                - main
