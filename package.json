@@ -26,8 +26,9 @@
     "@storybook/addons": "^6.1.14"
   },
   "scripts": {
+    "clean": "rimraf lib/*",
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",
-    "build": "babel src --out-dir lib --source-maps false --copy-files",
+    "build": "npm run clean && babel src --out-dir lib --source-maps false --copy-files",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "test": "echo \"Error: no test specified\" && exit 0",
@@ -63,7 +64,8 @@
     "react-dom": "^17.0.1",
     "sass": "^1.32.10",
     "sass-loader": "^10.1.1",
-    "style-loader": "^2.0.0"
+    "style-loader": "^2.0.0",
+    "rimraf": "^3.0.2"
   },
   "postinstall": "patch-package"
 }

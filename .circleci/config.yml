@@ -48,9 +48,6 @@ jobs:
             npm install
             npm install json
       - run:
-          name: Clean dist directory
-          command: npm run clean
-      - run:
           name: Build app
           command: npm run build
       - run:
