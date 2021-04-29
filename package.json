@@ -30,7 +30,8 @@
     "build": "babel src --out-dir lib --source-maps false --copy-files",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "echo \"Error: no lint specified\" && exit 1"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
