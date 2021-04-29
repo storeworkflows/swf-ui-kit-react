@@ -60,7 +60,6 @@ class Popover extends React.Component {
                         this.setStylesToContent()
                 }
             }
-
             this.targetRef.onclick = (e) => this.targetClicked(e)
             return null;
         }
@@ -197,7 +196,7 @@ class Popover extends React.Component {
         document.addEventListener("click", e => this.documentClicked(e));
         this.updateOpenedState(this.props.opened);
 
-        addResizeObserver(this.targetRef,this.contentResized);
+        addResizeObserver(this.targetRef, this.contentResized);
         addResizeObserver(this.contentRef.children[0].children[0], this.contentResized);
     }
 

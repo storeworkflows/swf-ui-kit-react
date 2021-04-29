@@ -331,7 +331,6 @@ export const addResizeObserver = (el, onResizeAction) => {
     const resizeObserver = new ResizeObserver(entries => {
         onResizeAction(entries)
     });
-
     resizeObserver.observe(el);
 }
 
