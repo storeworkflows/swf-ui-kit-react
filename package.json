@@ -34,7 +34,7 @@
     "build-storybook": "build-storybook",
     "test": "echo \"Error: no test specified\" && exit 0",
     "lint": "echo \"Error: no lint specified\" && exit 0",
-    "chromatic": "chromatic --project-token CHROMATIC_PROJECT_TOKEN --exit-zero-on-changes"
+    "chromatic": "chromatic"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
