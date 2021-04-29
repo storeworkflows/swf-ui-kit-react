@@ -46,13 +46,12 @@ jobs:
           name: Install local dependencies
           command: |
             npm install
-            npm install json
       - run:
           name: Build app
           command: npm run build
       - run:
           name: Change package name to @storeworkflows/ui-kit
-          command: json -I -f package.json -e "this.name=\"@storeworkflows/ui-kit\""
+          command: npm run rename
       - run:
           name: Delete unnecessary informations
           command: rm -rf .storybook/ node_modules/ src/ .circleci/ .idea/ .gitignore package-lock.json build-storybook.log .babelrc
@@ -80,6 +79,18 @@ jobs:
             git clone git@github.com:storeworkflows/ui-kit.git
             rsync --checksum --recursive --links --exclude=.git --exclude=ui-kit --delete ./ ui-kit
             cd ui-kit && git add --all && git diff-index --quiet HEAD || git commit --message="Deploy $CIRCLE_BUILD_NUM" && git push --set-upstream origin $CIRCLE_BRANCH
+  chromatic-deployment:
+      docker:
+        - image: circleci/node:12.14.1-buster
+      working_directory: ~/repo
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - v1-dependencies-{{ checksum "package.json" }}
+              - v1-dependencies-
+        - run: npm install
+        - run: npm chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}
 workflows:
   version: 2
   build-test-deploy:

@@ -26,6 +26,7 @@
     "@storybook/addons": "^6.1.14"
   },
   "scripts": {
+    "rename": "json -I -f package.json -e \"this.name=\\\"@storeworkflows/ui-kit\\\"\"",
     "clean": "rimraf lib/*",
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",
     "build": "npm run clean && babel src --out-dir lib --source-maps false --copy-files",
@@ -65,7 +66,8 @@
     "sass": "^1.32.10",
     "sass-loader": "^10.1.1",
     "style-loader": "^2.0.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "json": "^11.0.0"
   },
   "postinstall": "patch-package"
 }
