@@ -103,7 +103,7 @@ class Avatar extends React.Component {
         return (
             <>
                 <div
-                   // ref={elm => this.props.innerRef.current = elm}
+                    ref={elm => this.props.innerRef.current = elm}
                     className={classnames({
                         "swf-avatar": true,
                         [`--${size}`]: true,

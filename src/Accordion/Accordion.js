@@ -71,7 +71,7 @@ Accordion.Header = createSubComponent("Header");
 
 Accordion.defaultProps = {
     selectMany: true,
-    hideDividers: false,
+  //  hideDividers: false,
     onItemClicked: () => void 0,
     className: {}
 }
@@ -79,7 +79,7 @@ Accordion.defaultProps = {
 Accordion.propTypes = {
     selectMany: propTypes.bool,
     onItemClicked: propTypes.func,
-    hideDividers: propTypes.bool,
+  //  hideDividers: propTypes.bool,
     className: propTypes.object,
 }
 

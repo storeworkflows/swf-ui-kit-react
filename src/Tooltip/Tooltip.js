@@ -91,10 +91,6 @@ Tooltip.defaultProps = {
     delay: 700,
     manageOpened: false,
     opened: false,
-    targetRef: propTypes.oneOfType([
-        propTypes.func,
-        propTypes.shape({ current: propTypes.any })
-    ]),
     position:
         [{ target:"top-center", content: "bottom-center"},
             { target: "bottom-center", content: "top-center"},
@@ -105,7 +101,7 @@ Tooltip.defaultProps = {
             { target: "top-start", content: "top-end"},
             { target: "bottom-start", content: "bottom-end"}],
     roundBorder: true,
-    content: '',
+    content: ''
 }
 
 Tooltip.propTypes = {

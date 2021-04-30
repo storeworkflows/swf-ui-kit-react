@@ -130,6 +130,7 @@ class Dropdown extends React.Component {
 
                                     return <DropdownItem
                                         {...item}
+                                        key = {id}
                                         onSelectAction={this.itemSelected}
                                         disabled={this.props.disabled || disabled}
                                         isSelected={selectedItems.includes(id)}
@@ -243,7 +244,7 @@ Dropdown.defaultProps = {
     hideCaret: false
 }
 
-const dropdownItem = propTypes.shape({
+const dropdownItem = {
             id: propTypes.oneOfType([
                 propTypes.string,
                 propTypes.number
@@ -253,42 +254,42 @@ const dropdownItem = propTypes.shape({
             sublabel: propTypes.string,
             number: propTypes.number,
             icon: propTypes.string
-        });
+        };
 
-const dropdownSection = propTypes.shape({
+const dropdownSection = {
     id: propTypes.oneOfType([
         propTypes.string,
         propTypes.number
     ]),
     label: propTypes.string,
-    children: propTypes.arrayOf(dropdownItem)
-});
+    children: propTypes.arrayOf(propTypes.shape(dropdownItem))
+};
 
-const messageItem = propTypes.shape({
+const messageItem = {
     status: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
     content: propTypes.string,
     icon: propTypes.string,
     className: propTypes.object,
     iconSize: propTypes.number,
     delay: propTypes.number
-})
-
-
+}
 Dropdown.propTypes = {
     //basic props
     name: propTypes.string,
     label: propTypes.string,
     placeholder: propTypes.string,
-    items: propTypes.oneOfType([
-        propTypes.arrayOf(dropdownItem),
-        propTypes.arrayOf(dropdownSection)
-    ]),
+    items: propTypes.arrayOf(
+        propTypes.oneOfType([
+            propTypes.shape(dropdownItem),
+            propTypes.shape(dropdownSection)
+        ])
+    ),
     selectedItems: propTypes.arrayOf(
         propTypes.oneOfType([
             propTypes.string,
             propTypes.number]
         )),
-    message: propTypes.arrayOf(messageItem),
+    message: propTypes.arrayOf(propTypes.shape(messageItem)),
 
     //display characteristic
     select: propTypes.oneOf([DROPDOWN.SELECT.NONE, DROPDOWN.SELECT.SINGLE, DROPDOWN.SELECT.MULTI]),

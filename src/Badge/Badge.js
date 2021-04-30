@@ -21,5 +21,6 @@ export default class Badge extends Component {
             <span className={classNames({
                 "swf-badge": true
             })}>{this.props?.count}</span>
-        </div>}
+        </div>
+    }
 }

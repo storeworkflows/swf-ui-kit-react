@@ -53,7 +53,7 @@ class Button extends React.Component {
 		return (
 			<>
 				<button
-					//ref={elm => this.props.innerRef.current = elm}
+					ref={elm => this.props.innerRef.current = elm}
 					className={buttonClasses}
 					onClick={onClick}
 					disabled = {disabled}

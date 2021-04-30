@@ -94,7 +94,6 @@ export const getErrorOnBoundaryValue = (current, boundary, format, isMin = true)
             };
     }
     return undefined;
-    return undefined;
 }
 
 const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle"}
