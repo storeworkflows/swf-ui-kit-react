@@ -4,6 +4,7 @@ import React from 'react';
 import classnames from "classnames";
 import { createCssVariables, getCircleSize } from "./utils";
 import Icon from "../Icon/Icon";
+import propTypes from "prop-types";
 
 class Stepper extends React.Component {
     constructor(props) {
@@ -201,9 +202,26 @@ class Stepper extends React.Component {
 }
 
 Stepper.propTypes = {
-    steps: PropTypes.arrayOf(PropTypes.object),
-    palette: PropTypes.object,
-    iconSize: PropTypes.string,
+    steps: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.oneOfType([
+                PropTypes.string, PropTypes.number
+            ]) ,
+            icon: PropTypes.string,
+            label:  PropTypes.string
+        })
+    ),
+    palette: PropTypes.shape({
+        icon: PropTypes.shape({
+            finished: PropTypes.string,
+            unfinished: PropTypes.string
+        }),
+        circle: PropTypes.string,
+        link: PropTypes.string,
+        label: PropTypes.string,
+        arrows: PropTypes.string
+    }),
+    iconSize: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
     hideLabels: PropTypes.bool,
     vertical: PropTypes.bool,
     completedCounter: PropTypes.bool,
