@@ -78,7 +78,7 @@ class Tab extends React.Component {
 
 
 Tab.defaultProps = {
-    items: ITEMS,
+    items: [],
     fixedWidth: false,
     hideLabel: false,
     manageSelectedItem: false,
@@ -103,7 +103,7 @@ Tab.propTypes = {
     manageSelectedItem: propTypes.bool,
     maxWidth: propTypes.number,
     selectedItem: propTypes.string,
-    tabsAlignment: propTypes.oneOf(Object.values(ALIGNMENT)),
+    tabsAlignment: propTypes.oneOf([ 'left', 'right', 'center', 'stretch']),
     onClick: propTypes.func
 }
 
