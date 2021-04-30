@@ -130,6 +130,7 @@ class Dropdown extends React.Component {
 
                                     return <DropdownItem
                                         {...item}
+                                        key = {id}
                                         onSelectAction={this.itemSelected}
                                         disabled={this.props.disabled || disabled}
                                         isSelected={selectedItems.includes(id)}
