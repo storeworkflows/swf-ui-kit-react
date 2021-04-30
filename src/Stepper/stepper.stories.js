@@ -30,17 +30,25 @@ Default.args = {
         {
             id: "1",
             icon: "alarm",
-            label: "Label 1"
+            label: "Label 1",
+            sublabel: "sublabel"
         },
         {
             id: "2",
             icon: "bell",
-            label: "Label 2"
+            label: "Label 2",
+            progress: "partial"
         },
         {
             id: "3",
             icon: "bicycle",
             label: "Label 3"
+        },
+        {
+            id: "4",
+            icon: "book",
+            label: "Label 4",
+            disabled: true
         }
     ]
 }

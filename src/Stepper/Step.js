@@ -58,7 +58,10 @@ Step.propTypes = {
             PropTypes.string, PropTypes.number
         ]) ,
         icon: PropTypes.string,
-        label:  PropTypes.string
+        label:  PropTypes.string,
+        sublabel: PropTypes.string,
+        progress: PropTypes.oneOf(["none", "partial", "done"]),
+        disabled: PropTypes.bool
     }),
     iconColor: PropTypes.string,
     iconSize: PropTypes.string,

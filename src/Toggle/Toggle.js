@@ -76,10 +76,19 @@ Toggle.defaultProps = {
 }
 
 Toggle.propTypes = {
+	/**
+	 * Available to change only when manageChecked=true
+	 */
 	checked: propTypes.bool,
 	disabled: propTypes.bool,
 	manageChecked: propTypes.bool,
 	size: propTypes.oneOf(["sm", "md"]),
+	/**
+	 * Available custom styles: "width",   "height",   "circle-border-size", "border-size", "circle-gap",
+	 "active-border-color", "active-background-color",
+	 "border-color", "background-color",
+	 "circle-border-color", "circle-background", "hover-circle-background"
+	 */
 	customStyle: propTypes.object,
 	onClick: propTypes.func
 }
