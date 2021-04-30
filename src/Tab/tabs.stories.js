@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { default as Tab} from './Tab';
 import {ITEMS} from "./mock";
-import propTypes from "prop-types";
+import { default as Tab} from './Tab';
 import {TABLE_CATEGORIES} from "../../.storybook/tableCategories";
 
 export default {

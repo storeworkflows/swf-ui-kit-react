@@ -1,8 +1,8 @@
-import { Component } from "react";
+import * as React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 
-class Preloader extends Component {
+class Preloader extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -58,10 +58,18 @@ Preloader.defaultProps = {
 
 Preloader.propTypes = {
     count: PropTypes.number,
-    items: PropTypes.array,
+    items: PropTypes.arrayOf(PropTypes.shape({
+        repeat: PropTypes.number,
+        width: PropTypes.string,
+        height: PropTypes.string,
+        styles: PropTypes.arrayOf(PropTypes.object),
+        itemStyles: PropTypes.object
+    })),
     width: PropTypes.string,
     height: PropTypes.string,
-    flexDirectionGeneral: PropTypes.string,
+    flexDirectionGeneral: PropTypes.oneOf([
+        "row", "row-reverse", "column", "column-reverse"
+    ]),
     background: PropTypes.bool,
     mainStyles: PropTypes.object,
     blur: PropTypes.string

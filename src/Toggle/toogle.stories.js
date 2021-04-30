@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { default as Toggle} from './Toggle';
-import propTypes from "prop-types";
 import {TABLE_CATEGORIES} from "../../.storybook/tableCategories";
 
 export default {
