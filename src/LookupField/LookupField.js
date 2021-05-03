@@ -68,8 +68,11 @@ class LookupField extends React.Component {
                 signal: this.controllerRef.current.signal
             }
         });
-
+//
+        let res = await response;
+        console.log("resp", res);
         return await response.json();
+      //  return await response.json();
     }
 
     async getReferenceList(value) {
@@ -80,8 +83,9 @@ class LookupField extends React.Component {
                 loaded: false
             });
 
+            console.log("ok");
             const data = await this.makeRequest(value);
-
+            console.log(data, "Hello")
             const {
                 referenceDataList,
                 referenceRecentDataList,
@@ -228,7 +232,9 @@ class LookupField extends React.Component {
             }
         });
 
+        console.log(result);
         const data = await result.json();
+        console.log(data);
 
         this.setState({focused: false, preloader: false});
 

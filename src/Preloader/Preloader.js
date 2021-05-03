@@ -58,13 +58,15 @@ Preloader.defaultProps = {
 
 Preloader.propTypes = {
     count: PropTypes.number,
-    items: PropTypes.arrayOf(PropTypes.shape({
-        repeat: PropTypes.number,
-        width: PropTypes.string,
-        height: PropTypes.string,
-        styles: PropTypes.arrayOf(PropTypes.object),
-        itemStyles: PropTypes.object
-    })),
+    items: PropTypes.arrayOf(
+        PropTypes.shape({
+            repeat: PropTypes.number,
+            width: PropTypes.string,
+            height: PropTypes.string,
+            styles: PropTypes.arrayOf(PropTypes.object),
+            itemStyles: PropTypes.object
+        })
+    ),
     width: PropTypes.string,
     height: PropTypes.string,
     flexDirectionGeneral: PropTypes.oneOf([

@@ -73,14 +73,14 @@ Accordion.defaultProps = {
     selectMany: true,
   //  hideDividers: false,
     onItemClicked: () => void 0,
-    className: {}
+    className: ""
 }
 
 Accordion.propTypes = {
     selectMany: propTypes.bool,
     onItemClicked: propTypes.func,
   //  hideDividers: propTypes.bool,
-    className: propTypes.object,
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
 }
 
 export default Accordion
