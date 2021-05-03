@@ -47,7 +47,9 @@ class SmallCalendar extends React.Component {
             onSelected({date: newSelected});
     }
 
-    changeMonth(isNext) {
+    changeMonth(e, isNext) {
+        e?.stopPropagation();
+
         let additionValue = isNext ? 1 : -1;
         let changedTo = moment(this.state.openedDate).add(additionValue, "month");
 
@@ -102,8 +104,8 @@ class SmallCalendar extends React.Component {
     componentDidMount() {
        if(this.calendarElem){
             let mc = new Hammer(this.calendarElem);
-            mc.on("swipeleft", () => this.changeMonth(true))
-            mc.on("swiperight", () => this.changeMonth(false))
+            mc.on("swipeleft", (e) => this.changeMonth(e,true))
+            mc.on("swiperight", (e) => this.changeMonth(e,false));
         }
     }
 
@@ -158,7 +160,7 @@ class SmallCalendar extends React.Component {
         return (
             <div
                 className={classes}
-                onClick = {() => this.changeMonth(isNext)}>
+                onClick = {(e) => this.changeMonth(e, isNext)}>
 
                 <Icon
                     icon={isNext ? "chevron-right" : "chevron-left"}

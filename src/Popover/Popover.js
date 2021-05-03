@@ -39,6 +39,7 @@ class Popover extends React.Component {
                     })}
                  ref={el => this.contentRef = el}
                  style={contentStyles}
+                 onClick={e => e?.stopPropagation()}
             >
                 <div className={"popover-content-keeper"}>
                     {content}</div>

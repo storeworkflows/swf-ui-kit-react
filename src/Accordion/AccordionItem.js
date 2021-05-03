@@ -125,12 +125,12 @@ AccordionItem.defaultProps = {
     manageOpened: false,
     triggerIcon: "chevron-down",
     iconToStart: false,
-    className: {},
+    className: "",
     onClick: () => void 0,
     onSelected: () => void 0,
     isLastItem: false,
     isFirstItem: false,
-    headerClassName: {}
+    headerClassName: ""
 }
 
 AccordionItem.propTypes = {
@@ -143,8 +143,8 @@ AccordionItem.propTypes = {
     iconToStart: propTypes.bool,
     isLastItem: propTypes.bool,
     isFirstItem: propTypes.bool,
-    className: propTypes.object,
-    headerClassName: propTypes.object
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    headerClassName:propTypes.oneOfType([propTypes.object, propTypes.string])
 }
 
 export default AccordionItem

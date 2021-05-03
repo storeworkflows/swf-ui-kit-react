@@ -34,6 +34,16 @@ $primary: RGB( 30, 133, 109);
   gap: 0.5rem;
   border-bottom: 2px solid transparent;
   cursor: pointer;
+
+  .info-icon-container{
+    display: flex;
+    margin: auto 0;
+  }
+
+  .info-icon{
+    color: #2196F3;
+  }
+
   &:hover{
     border-bottom-color: #a5a5a5;
   }
@@ -49,10 +59,17 @@ $primary: RGB( 30, 133, 109);
   }
   &.invalid{
     color: red;
+    .info-icon{
+      color: red;
+    }
   }
   &.disabled{
     pointer-events: none;
     opacity: 0.5;
   }
 
+}
+
+.info-content{
+  color: black;
 }

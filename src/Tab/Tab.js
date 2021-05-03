@@ -4,7 +4,6 @@ import propTypes from "prop-types";
 import classNames from 'classnames';
 
 import TabItem from "./TabItem";
-import {ITEMS} from "./mock";
 import {ALIGNMENT} from './constants'
 
 
@@ -27,7 +26,7 @@ class Tab extends React.Component {
 
     tabSelected(id, disabled){
         const {manageSelectedItem, onClick} = this.props;
-
+        console.log("tab selected");
         if (!disabled) {
             if(onClick)
                 onClick({id: id});
@@ -78,7 +77,7 @@ class Tab extends React.Component {
 
 
 Tab.defaultProps = {
-    items: ITEMS,
+    items: [],
     fixedWidth: false,
     hideLabel: false,
     manageSelectedItem: false,
@@ -96,15 +95,16 @@ Tab.propTypes = {
         presence: propTypes.string,
         disabled: propTypes.bool,
         required: propTypes.bool,
-        invalid: propTypes.bool
+        invalid: propTypes.bool,
+        infoMessage: propTypes.string
     })),
     fixedWidth: propTypes.bool,
     hideLabel: propTypes.bool,
     manageSelectedItem: propTypes.bool,
     maxWidth: propTypes.number,
     selectedItem: propTypes.string,
-    tabsAlignment: propTypes.oneOf(Object.values(ALIGNMENT)),
-    onClick: propTypes.func
+    tabsAlignment: propTypes.oneOf([ 'left', 'right', 'center', 'stretch']),
+    onClick: propTypes.func,
 }
 
 export default Tab;

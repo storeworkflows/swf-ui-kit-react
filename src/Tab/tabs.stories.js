@@ -1,10 +1,25 @@
 import React from 'react';
 
+import {ITEMS} from "./mock";
 import { default as Tab} from './Tab';
+import {TABLE_CATEGORIES} from "../../.storybook/tableCategories";
 
 export default {
     title: 'swf-ui-kit/Controls/Tab',
     component: Tab,
+    argTypes: {
+        items: TABLE_CATEGORIES.VALUE,
+        fixedWidth: TABLE_CATEGORIES.STYLE,
+        hideLabel: TABLE_CATEGORIES.STYLE,
+        manageSelectedItem: TABLE_CATEGORIES.MANAGING,
+        maxWidth: TABLE_CATEGORIES.STYLE,
+        selectedItem: TABLE_CATEGORIES.VALUE,
+        tabsAlignment:TABLE_CATEGORIES.STYLE,
+        onClick: TABLE_CATEGORIES.ACTION
+    },
+    args: {
+        items: ITEMS
+    }
 };
 
 

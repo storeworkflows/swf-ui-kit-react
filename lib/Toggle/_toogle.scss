@@ -29,10 +29,10 @@
 }
 
 .switch{
-  --circle-size: calc(var(--height) - 2*( var(--border-size) + var(--circle-gap)));
+  --circle-size: calc(var(--height) - 2*( var(--border-size) + var(--circle-gap) + var(--circle-border-size)));
   --real-width: calc(var(--width) - 2*var(--border-size));
 
-  --circle-transform: calc( var(--real-width) - var(--circle-size) - 2 * var(--circle-gap));
+  --circle-transform: calc( var(--real-width) - var(--circle-size) - 2 *( var(--circle-gap) + var(--circle-border-size)));
 }
 
 /* The switch - the box around the slider */

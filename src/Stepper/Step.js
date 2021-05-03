@@ -53,7 +53,16 @@ class Step extends React.Component {
 }
 
 Step.propTypes = {
-    step: PropTypes.object,
+    step: PropTypes.shape({
+        id: PropTypes.oneOfType([
+            PropTypes.string, PropTypes.number
+        ]) ,
+        icon: PropTypes.string,
+        label:  PropTypes.string,
+        sublabel: PropTypes.string,
+        progress: PropTypes.oneOf(["none", "partial", "done"]),
+        disabled: PropTypes.bool
+    }),
     iconColor: PropTypes.string,
     iconSize: PropTypes.string,
     hideLabel: PropTypes.bool
