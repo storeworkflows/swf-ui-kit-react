@@ -23,7 +23,7 @@ class Checkbox extends React.Component {
 
     onChangeAction(e){
         e?.preventDefault();
-       // e?.stopPropagation();
+        //e?.stopPropagation();
         const {manageChecked, onChange, readonly, disabled, label, name, value} = this.props;
         const currentValue = this.state.checkedValue;
 
@@ -88,7 +88,7 @@ class Checkbox extends React.Component {
             visible,
             className,
             value,
-             invalid,
+            invalid,
             labelClassName,
             inlineRequired
         } = this.props;
@@ -105,45 +105,45 @@ class Checkbox extends React.Component {
 
         return (
             visible ?
-            <>
-                <div className={className}>
-                    {(label || required) &&
+                <>
+                    <div className={className}>
+                        {(label || required) &&
                         <RequiredLabel className={labelClassName}
                                        invalid={invalid}
                                        required={required}
                                        label={label}
                         />
-                    }
+                        }
 
-                    <div className={checkBoxClasses}
-                         ref = { el => this.checkboxRef.current = el}
-                         onClick={this.onChangeAction}
-                    >
-                        <input
-                            className={"checkbox-input"}
-                            type="checkbox"
-                            disabled={disabled}
-                            required={required}
-                            name={name}
-                            value={this.state.checkedValue}
-                            checked={checkedValue}
-                            onInvalid={this.onInvalidAction}
-                            onChange={ (e) => {e.preventDefault(); e.stopPropagation();}}
-                            onClick={ (e) => {e.preventDefault(); e.stopPropagation();}}
-                        />
-                        <div className={"checkbox-information"} >
-                            {value &&
+                        <div className={checkBoxClasses}
+                             ref = { el => this.checkboxRef.current = el}
+                             onClick={this.onChangeAction}
+                        >
+                            <input
+                                className={"checkbox-input"}
+                                type="checkbox"
+                                disabled={disabled}
+                                required={required}
+                                name={name}
+                                value={this.state.checkedValue}
+                                checked={checkedValue}
+                                onInvalid={this.onInvalidAction}
+                                onChange={ (e) => {e.preventDefault(); e.stopPropagation();}}
+                                onClick={ (e) => {e.preventDefault(); e.stopPropagation();}}
+                            />
+                            <div className={"checkbox-information"} >
+                                {value &&
                                 <RequiredLabel
                                     htmlFor={name}
                                     className={"checkbox-label"}
                                     required={inlineRequired}
                                     label={value}
                                 />
-                            }
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-            </>
+                </>
                 : null
         );
     }
@@ -160,7 +160,9 @@ Checkbox.defaultProps = {
     visible: true,
     onInvalid: () => void 0,
     onChange: () => void 0,
-    inlineRequired: false
+    inlineRequired: false,
+    className: "",
+    labelClassName: "",
 };
 
 Checkbox.propTypes = {
@@ -179,9 +181,9 @@ Checkbox.propTypes = {
     onInvalid: propTypes.func,
     onChange: propTypes.func,
     visible: propTypes.bool,
-    className: propTypes.object,
+    className: propTypes.oneOfType([propTypes.string, propTypes.object]),
     value: propTypes.string,
-    labelClassName: propTypes.object,
+    labelClassName: propTypes.oneOfType([propTypes.string, propTypes.object]),
     inlineRequired: propTypes.bool
 }
 
