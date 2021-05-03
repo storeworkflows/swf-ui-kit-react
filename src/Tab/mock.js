@@ -6,6 +6,7 @@ export const ITEMS = [
     count: 3,
     presence: '',
     disabled: false,
+    infoMessage: "information"
   },
   {
     id: '2',
@@ -19,11 +20,12 @@ export const ITEMS = [
   {
     id: '3',
     label: 'Year',
-    icon: 'binoculars-fill',
+   // icon: 'binoculars-fill',
     count: 1,
     presence: '',
     disabled: false,
     invalid: true,
-    required: true
+    required: true,
+    infoMessage: "Hello"
   }
 ]
