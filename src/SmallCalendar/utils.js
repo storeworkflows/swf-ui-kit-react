@@ -1,4 +1,3 @@
-import moment from "moment";
 
 export const isSelected = (openedDate, selectedDate, dayNumber, isActive) => {
     if(selectedDate) {
@@ -16,8 +15,7 @@ export const isSelected = (openedDate, selectedDate, dayNumber, isActive) => {
         let isSelectedDateInNextMonth = !isActive && selectedMonth === nextMonth && selectedYear === nextYear;
         let isSelectedDateInPrevMonth = !isActive && selectedMonth === prevMonth && selectedYear === prevYear;
 
-
-        return selectedDate.getDate() === dayNumber &&
+       return selectedDate.getDate() === dayNumber &&
             (isSelectedDateInOpenedMonth
                 || isSelectedDateInNextMonth
                 || isSelectedDateInPrevMonth);
@@ -26,7 +24,7 @@ export const isSelected = (openedDate, selectedDate, dayNumber, isActive) => {
     return false;
 }
 
-export const isNowDate = (openedDate, isActive) => {
-    let selectedDate = moment();
-    return isSelected(openedDate, selectedDate, selectedDate.getDate(), isActive)
+export const isNowDate = (openedDate, isActive, dayNumber) => {
+    let selectedDate = new Date();
+    return isSelected(openedDate, selectedDate, dayNumber, isActive)
 }
