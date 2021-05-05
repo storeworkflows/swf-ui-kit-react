@@ -197,12 +197,13 @@ class DatePicker extends React.Component {
     }
 
     renderInput(){
-        const {label, format, message = [], required, name, className} = this.props;
+        const {label, format, message = [], required, name, className, readonly} = this.props;
         const {stringValue, isInvalid, errorMessages} = this.state
 
         let allMessages = errorMessages.concat(message);
 
         return  <Input
+                readonly={readonly}
                 label={label}
                 placeholder={(label) ? "" : format}
                 value={stringValue}
@@ -221,7 +222,8 @@ class DatePicker extends React.Component {
                     <Button
                         className={"datepicker-button"}
                         icon={"calendar"}
-                        variant={"tertiary"}
+                        variant={readonly ? "inherit" : "tertiary"}
+                        disabled={readonly}
                         onClick={this.openCalendar}
                     />
                 </Input.End>
@@ -284,7 +286,7 @@ DatePicker.defaultProps = {
     onInvalid: () => void 0,
     onValueSet: () => void 0,
     onValueChange: () => void 0,
-    visible: true
+    visible: true,
 }
 
 DatePicker.propTypes = {
