@@ -3,16 +3,17 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 import Icon from "../Icon/Icon";
 
-class HighlightedValue extends React.Component {
+//class HighlightedValue extends React.Component {
+const HighlightedValue = React.forwardRef((props, ref) => {
 
-    getIconSize(size, icon){
+    const getIconSize = (size, icon) => {
         switch (size){
             case "sm": return icon? 11: 7;
             case "lg": return icon? 18: 10;
             default: return icon ? 14: 8;
         }
     }
-    render() {
+   // render() {
         const {
             roundBorder,
             className,
@@ -23,7 +24,7 @@ class HighlightedValue extends React.Component {
             label,
             icon,
             size
-        } = this.props;
+        } = props;
 
         const classes = classnames(
             "highlighted-value-container",
@@ -34,11 +35,11 @@ class HighlightedValue extends React.Component {
             }
         )
 
-        let iconSize = this.getIconSize(size, icon);
+        let iconSize = getIconSize(size, icon);
 
         return (
             <>
-                <div className={classes}>
+                <div className={classes}  ref={ref}>
                     <div
                         className={classnames(
                             "highlighted-color-container",
@@ -58,8 +59,8 @@ class HighlightedValue extends React.Component {
                 </div>
             </>
         )
-    }
-}
+    //}
+});
 
 HighlightedValue.defaultProps = {
     className: {},
@@ -68,7 +69,7 @@ HighlightedValue.defaultProps = {
     size: "md",
     variant: "primary",
     color: "red",
-    roundBorder: true
+    roundBorder: false
 }
 
 HighlightedValue.propTypes = {

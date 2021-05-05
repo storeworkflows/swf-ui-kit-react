@@ -83,4 +83,10 @@
         }
     }
 
+    .form-control.readonly {
+        background: #ebebeb;
+        cursor: default;
+       // opacity: 0.5;
+    }
+
 }

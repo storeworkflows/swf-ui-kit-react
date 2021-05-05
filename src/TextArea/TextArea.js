@@ -106,9 +106,9 @@ TextArea.defaultProps = {
     value: "",
     resize: true,
     label: "",
-    placeholder: "",
+    placeholder: "Placeholder",
     innerRef: React.createRef(),
-    readonly: false
+    readonly: true
 }
 
 TextArea.propTypes = {
