@@ -56,11 +56,12 @@ class TextArea extends React.Component {
 
     render() {
         const _hasLabel = Boolean(this.props.label);
+        const {readonly} = this.props;
 
         return (
             <>
                 <div
-                    ref={elm => this.props.innerRef.current = elm }
+                    //ref={elm => this.props.innerRef.current = elm }
                     className="form-group"
                     style={{
                         minHeight: this.state.parentHeight
@@ -74,15 +75,18 @@ class TextArea extends React.Component {
                         className={classnames({
                             "form-control": true,
                             [this.props.className]: true,
-                            "resize": this.props.resize
+                            "resize": this.props.resize,
+                            "readonly": readonly,
+                            "active": !readonly
                         })}
                         ref={(elm) => this.textAreaRef.current = elm}
                         name={this.props.name}
+                        readOnly={this.props.readonly}
                         value={this.state.value}
-                        onChange={this.onChange}
-                        onKeyDown={this.onChange}
-                        onFocus={this.onFocus}
-                        onBlur={this.onBlur}
+                        onChange={e => !readonly && this.onChange(e)}
+                        onKeyDown={e => !readonly && this.onChange(e)}
+                        onFocus={e => !readonly && this.onFocus(e)}
+                        onBlur={e => !readonly && this.onBlur(e)}
                         placeholder={!_hasLabel ? this.props.placeholder : ""}
                     />
                 </div>
@@ -103,7 +107,8 @@ TextArea.defaultProps = {
     resize: true,
     label: "",
     placeholder: "",
-    innerRef: React.createRef()
+    innerRef: React.createRef(),
+    readonly: true
 }
 
 TextArea.propTypes = {
@@ -118,7 +123,8 @@ TextArea.propTypes = {
     resize: propTypes.bool,
     placeholder: propTypes.string,
     innerRef: propTypes.object,
-    onBlur: propTypes.func
+    onBlur: propTypes.func,
+    readonly: propTypes.bool
 }
 
 export default TextArea

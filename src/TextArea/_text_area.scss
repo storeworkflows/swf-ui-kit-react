@@ -65,14 +65,22 @@
     }
 
     .form-control:focus {
-        color: #495057;
-        background-color: #fff;
-        border-color: #007bff;
-        box-shadow: 0 0.313rem 0.719rem rgba(0, 123, 255, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
+        .active {
+            color: #495057;
+            background-color: #fff;
+            border-color: #007bff;
+            box-shadow: 0 0.313rem 0.719rem rgba(0, 123, 255, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
+        }
     }
 
-    .form-control:hover {
+    .form-control.active:hover {
         border-color: #8fa4b8;
+    }
+
+    .form-control:focus{
+        &.readonly{
+            outline: none;
+        }
     }
 
 }

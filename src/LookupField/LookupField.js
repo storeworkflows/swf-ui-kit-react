@@ -83,7 +83,6 @@ class LookupField extends React.Component {
                 loaded: false
             });
 
-            console.log("ok");
             const data = await this.makeRequest(value);
             console.log(data, "Hello")
             const {

@@ -1,9 +1,11 @@
 import React from 'react';
 import '!style-loader!css-loader!sass-loader!../src/styles.scss';
 
-import { decorator } from '../__mocks__/isomorphic-fetch';
+import { addDecorator } from '@storybook/react';
+//import { initializeWorker, mswDecorator } from 'msw-storybook-addon';
 
-export const decorators = [decorator];
+// initializeWorker();
+// addDecorator(mswDecorator);
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
