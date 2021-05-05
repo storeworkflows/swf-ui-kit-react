@@ -149,9 +149,10 @@
     }
 
     &.--readonly {
-      border-color: #a5a5a5;
+      border-color: transparent;
       color: #a5a5a5;
       cursor: default;
+      background: rgb(228, 230, 231);
     }
   }
 
