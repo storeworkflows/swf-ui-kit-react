@@ -86,15 +86,20 @@
 
     &.notActive{
       color: #a5a5a5;
-      &.selected{
-        font-weight: bold;
-      }
+      //&.selected{
+      //  font-weight: bold;
+      //}
     }
 
     &.week-day{
       color: #888888;
       cursor: default;
     }
+
+    &.now-date{
+      font-weight: bold;
+    }
+
 
   }
 

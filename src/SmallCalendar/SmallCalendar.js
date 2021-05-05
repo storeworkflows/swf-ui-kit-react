@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import hammer from "hammerjs";
 
 import Icon from "../Icon/Icon"
+import {isNowDate, isSelected} from "./utils";
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
@@ -58,31 +59,7 @@ class SmallCalendar extends React.Component {
 
     renderCalendarElement(day, isActive, key){
         const {openedDate, selectedDate} = this.state;
-
         let dayNumber = parseInt(day)
-
-        let isSelected = false;
-        if(selectedDate) {
-            let selectedMonth = selectedDate.getMonth();
-            let selectedYear = selectedDate.getFullYear();
-            let openedMonth = openedDate.getMonth();
-            let openedYear = openedDate.getFullYear();
-
-            let nextMonth = (openedMonth + 1) % 12;
-            let prevMonth = (openedMonth - 1) % 12;
-            let nextYear = (nextMonth === 0) ? (openedYear + 1) : openedYear;
-            let prevYear = (prevMonth === 11) ? (openedYear - 1) : openedYear;
-
-            let isSelectedDateInOpenedMonth = isActive && selectedMonth === openedMonth && selectedYear === openedYear;
-            let isSelectedDateInNextMonth = !isActive && selectedMonth === nextMonth && selectedYear === nextYear;
-            let isSelectedDateInPrevMonth = !isActive && selectedMonth === prevMonth && selectedYear === prevYear;
-
-
-            isSelected = selectedDate.getDate() === dayNumber &&
-                (isSelectedDateInOpenedMonth
-                    || isSelectedDateInNextMonth
-                    || isSelectedDateInPrevMonth);
-        }
 
         return (
             <div className={
@@ -91,7 +68,8 @@ class SmallCalendar extends React.Component {
                     "day-element": true,
                     "notActive": !isActive,
                     "active": isActive,
-                    "selected": isSelected
+                    "selected": isSelected(openedDate, selectedDate, dayNumber, isActive),
+                    "now-date": isNowDate(openedDate, isActive, dayNumber)
                 })}
                  onClick={(e) =>  this.setDate(dayNumber, isActive, e)}
                  key={key}
