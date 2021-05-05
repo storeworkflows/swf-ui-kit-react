@@ -154,7 +154,6 @@ class DatePicker extends React.Component {
 
     }
 
-
     onBlur(e){
         const {stringValue} = this.state;
         const {format, min, max} = this.props;
@@ -197,13 +196,12 @@ class DatePicker extends React.Component {
     }
 
     renderInput(){
-        const {label, format, message = [], required, name, className, readonly} = this.props;
+        const {label, format, message = [], required, readonly, name, className} = this.props;
         const {stringValue, isInvalid, errorMessages} = this.state
 
         let allMessages = errorMessages.concat(message);
 
         return  <Input
-                readonly={readonly}
                 label={label}
                 placeholder={(label) ? "" : format}
                 value={stringValue}
@@ -217,19 +215,18 @@ class DatePicker extends React.Component {
                 required={required}
                 className={className}
                 onBlur={this.onBlur}
+                readonly={readonly}
             >
                 <Input.End>
-                    <Button
+                    {readonly ? <span/> : <Button
                         className={"datepicker-button"}
                         icon={"calendar"}
-                        variant={readonly ? "inherit" : "tertiary"}
-                        disabled={readonly}
+                        variant={"tertiary"}
                         onClick={this.openCalendar}
-                    />
+                    /> }
                 </Input.End>
         </Input>
     }
-
 
     render() {
         const {visible} = this.props;
@@ -286,7 +283,7 @@ DatePicker.defaultProps = {
     onInvalid: () => void 0,
     onValueSet: () => void 0,
     onValueChange: () => void 0,
-    visible: true,
+    visible: true
 }
 
 DatePicker.propTypes = {

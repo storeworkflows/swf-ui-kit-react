@@ -346,6 +346,7 @@ class LookupField extends React.Component {
                             value={referenceRecord.displayValue}
                             containerClass={isList ? "list-field-group" : ""}
                             label={`${label} ${isList ? count + " selected" : ""}`}
+                            manageValue={true}
                             name={name}
                             onInput={this.onChange}
                             readonly={readonly}

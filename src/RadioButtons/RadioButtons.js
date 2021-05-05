@@ -20,10 +20,10 @@ class RadioButtons extends React.Component {
     }
 
     optionClicked(option){
-        const {manageValue, onChange} = this.props;
+        const {manageValue, onChange, readonly} = this.props;
         if(!manageValue)
-            this.setState({selectedValue: option.id});
-        onChange(option)
+            !readonly && this.setState({selectedValue: option.id});
+        !readonly && onChange(option)
     }
 
     optionInvalid(e){

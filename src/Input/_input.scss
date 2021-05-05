@@ -149,9 +149,10 @@
     }
 
     &.--readonly {
-      border-color: rgb(190, 202, 214);
-      color: #BDBDBD;
+      border-color: transparent;
+      color: #a5a5a5;
       cursor: default;
+      background: rgb(228, 230, 231);
     }
   }
 
@@ -174,6 +175,7 @@
       box-shadow: none;
       cursor: default;
       border-color: rgb(190, 202, 214);
+      box-shadow: none;
       color: #BDBDBD;
       outline: none;
 
@@ -190,8 +192,8 @@
     }
 
     &.--readonly {
-      border-color: rgb(190, 202, 214);
-      color: #BDBDBD;
+      border-color: #a5a5a5;
+      color: #a5a5a5;
       cursor: default;
     }
   }
