@@ -253,15 +253,6 @@ class LookupField extends React.Component {
                 }
             })
         }
-
-        return this.setState({
-            referenceRecord: {
-                sysId: nextProps.value || null,
-                displayValue: nextProps.displayValue || "",
-                loading: false,
-                focused: false
-            }
-        })
     }
 
     static getDerivedStateFromProps(nextProps) {
@@ -273,13 +264,6 @@ class LookupField extends React.Component {
                     value: nextProps.value?.split(",") ?? [],
                     displayValue: nextProps.displayValue?.split(",") ?? []
                 }
-            }
-        }
-
-        return {
-            referenceRecord: {
-                sysId: nextProps.value || null,
-                displayValue: nextProps.displayValue || ""
             }
         }
     }
