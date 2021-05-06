@@ -193,9 +193,9 @@ class Attachment extends React.Component {
     }
 
     renderLabel() {
-        const {required, label, labelClassName} = this.props;
+        const {required, label, labelClassName, name, readonly} = this.props;
         const {invalid} = this.state;
-        let labelClasses = classnames(labelClassName, "inp-label");
+        let labelClasses = classnames(labelClassName, "inp-label" , {"--readonly": readonly});
 
         return (label ?
             <RequiredLabel

@@ -30,9 +30,9 @@ class Checkbox extends React.Component {
         let newValue = (currentValue==="indeterminate") || !currentValue;
         let canChange = !readonly && !disabled;
 
-        if(!manageChecked){
-            canChange && this.setState({ checkedValue: newValue });
-            canChange && onChange({value: newValue, valueName: value, label: label, name: name});
+        if(!manageChecked && canChange){
+            this.setState({ checkedValue: newValue });
+            onChange({value: newValue, valueName: value, label: label, name: name});
         } else
             canChange && onChange({value: currentValue, valueName: value, label: label, name: name});
     }

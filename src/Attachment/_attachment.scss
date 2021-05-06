@@ -5,15 +5,22 @@
   position: relative;
   cursor: pointer;
 
+
+
   .inp-label {
     color: rgb(90, 97, 105);
     position: absolute;
     top: 0;
     left: 0;
     z-index: 1;
-    background: rgb(255, 255, 255);
+    background: linear-gradient(transparent, #fff);
     transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms, transform 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms;
     transform: translate(19px, -8px);
+
+
+    &.--readonly{
+      background: linear-gradient(transparent, rgb(228, 230, 231));
+    }
 
     &.--focused {
       color: #007bff;
@@ -59,8 +66,7 @@
     }
 
     &.--readonly{
-      border-color: #a5a5a5;
-      color: #a5a5a5;
+      background: rgb(228, 230, 231);
       cursor: default;
     }
 
@@ -83,12 +89,12 @@
       box-shadow: 0 0.313rem 0.719rem rgba(255, 123, 0, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
     }
 
-    &.--readonly{
-      border-color: #a5a5a5;
-      color: #a5a5a5;
-      box-shadow: none;
-      cursor: default;
-    }
+    //&.--readonly{
+    //  border-color: #a5a5a5;
+    //  color: #a5a5a5;
+    //  box-shadow: none;
+    //  cursor: default;
+    //}
 
     &.--disabled{
       border-color: #a5a5a5;
@@ -105,11 +111,11 @@
       border-color: red;
       box-shadow: 0 0.313rem 0.719rem rgba(255, 123, 0, 0.1), 0 0.156rem 0.125rem rgba(0, 0, 0, 0.06);
     }
-    &.--readonly{
-      border-color: #a5a5a5;
-      color: #a5a5a5;
-      cursor: default;
-    }
+    //&.--readonly{
+    //  border-color: #a5a5a5;
+    //  color: #a5a5a5;
+    //  cursor: default;
+    //}
   }
 
   .attach-placeholder{
