@@ -31,11 +31,14 @@ class Input extends React.Component {
     };
 
     renderStart() {
-        const {children} = this.props;
+        const {children, readonly, disabled} = this.props;
         const start = findByType(children, "Start");
         const classes = classnames({
             "form-control--start": true,
-            "--invalid": this.state?.invalid
+            "--invalid": this.state?.invalid,
+            "--focused": this.state?.focused,
+            "--readonly": readonly,
+            "--disabled": disabled
         })
 
         if (!start || start.length < 1) return null;
@@ -46,11 +49,14 @@ class Input extends React.Component {
     }
 
     renderEnd() {
-        const {children} = this.props;
+        const {children, readonly, disabled} = this.props;
         const end = findByType(children, "End");
         const classes = classnames({
             "form-control--end": true,
-            "--invalid": this.state?.invalid
+            "--invalid": this.state?.invalid,
+            "--readonly": readonly,
+            "--disabled": disabled,
+            "--focused": this.state?.focused,
         })
 
         if (!end || end.length<1) return null;
@@ -61,18 +67,33 @@ class Input extends React.Component {
     }
 
     onBlur(event) {
-        this.setState({focused: false})
-        this.props.onBlur(event);
+        const {readonly, disabled} = this.props;
+        let canChange = !readonly && !disabled;
+
+        if(canChange) {
+            this.setState({focused: false})
+            this.props.onBlur(event);
+        }
     }
 
     onFocus(event) {
-        this.setState({focused: true})
-        this.props.onFocus(event);
+        const {readonly, disabled} = this.props;
+        let canChange = !readonly && !disabled;
+
+        if(canChange) {
+            this.setState({focused: true})
+            this.props.onFocus(event);
+        }
     }
 
     onInput(event) {
-        this.setState({value: event.target.value });
-        this.props.onInput(event)
+        const {readonly, disabled} = this.props;
+        let canChange = !readonly && !disabled;
+
+        if(canChange) {
+            this.setState({value: event.target.value});
+            this.props.onInput(event)
+        }
     }
 
     onInvalid(e){
@@ -124,6 +145,7 @@ class Input extends React.Component {
             "swf-form-group": true,
             "--invalid": this.state?.invalid,
             "--readonly": this.props.readonly,
+            "--focused": this.state?.focused,
             [this.props.containerClass]: true
         })
 
@@ -188,13 +210,9 @@ class Input extends React.Component {
                             onChange={this.props.onChange}
                             onPaste={this.props.onPaste}
                             onKeyDown={this.props.onKeyDown}
-                            onFocus={(event) => {
-                                   this.onFocus(event)
-                               }}
-                            onBlur={(event) => {
-                                   this.onBlur(event);
-                               }}
-                            onInvalid={(e) => this.onInvalid(e)}
+                            onFocus={this.onFocus}
+                            onBlur={this.onBlur}
+                            onInvalid={this.onInvalid}
                         />
                         {this.renderEnd()}
                     </div>
