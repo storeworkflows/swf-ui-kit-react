@@ -19,6 +19,7 @@
     "moments": "0.0.2",
     "patch-package": "^6.4.7",
     "resize-observer": "^1.0.0",
+    "storybook-addon-mock": "^0.1.0",
     "styled-components": "^5.2.3",
     "uuid": "^8.3.2"
   },
