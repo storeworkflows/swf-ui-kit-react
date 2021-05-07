@@ -6,6 +6,12 @@ import { addDecorator } from '@storybook/react';
 
 // initializeWorker();
 // addDecorator(mswDecorator);
+// .storybook/preview.js
+
+import { decorator } from '../__mocks__/isomorphic-fetch';
+
+// Add the decorator to all stories
+export const decorators = [decorator];
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

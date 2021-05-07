@@ -17,6 +17,7 @@ module.exports = {
           use: ['style-loader', 'css-loader', 'sass-loader'],
           include: path.resolve(__dirname, '../'),
     });
+    config.resolve.alias['isomorphic-fetch'] = require.resolve('../__mocks__/isomorphic-fetch.js');
     return config;
   },
 }
