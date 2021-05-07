@@ -49,7 +49,7 @@ export const downloadRequest = async (attachmentSysId, delay) => {
         try {
             const response = await fetch(url, requestOptions);
             const data = await response.json();
-
+            console.log(response)
             if (!response.ok) {
                 const error = (data && data.message) || response.statusText;
                 return errorMessage(error, delay)
@@ -80,10 +80,9 @@ export const uploadRequest = async (file, tableSysId, tableName, delay) => {
             },
             body: data
         };
-
         try {
-            const response = await fetch(url, requestOptions);
-            const data = await response.json();
+            const response = await fetch(url, requestOptions)
+            const data = await response?.json();
 
             if (!response.ok) {
                 const error = (data && data.message) || response.statusText;
@@ -112,7 +111,6 @@ export const deleteRequest = async (attachmentSysId, input, delay) => {
 
         try {
             const response = await fetch(url, requestOptions);
-
             if (!response.ok )
                 return errorMessage(response.statusText, delay);
 

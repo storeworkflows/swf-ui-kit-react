@@ -29,10 +29,13 @@
 }
 
 .switch{
-  --circle-size: calc(var(--height) - 2*( var(--border-size) + var(--circle-gap) + var(--circle-border-size)));
+ // --circle-size: calc(var(--height) - 2*( var(--border-size) + var(--circle-gap) + var(--circle-border-size)));
+  --circle-size: calc(var(--height) - 2*( var(--border-size) + var(--circle-gap)));
   --real-width: calc(var(--width) - 2*var(--border-size));
 
-  --circle-transform: calc( var(--real-width) - var(--circle-size) - 2 *( var(--circle-gap) + var(--circle-border-size)));
+//  --circle-transform: calc( var(--real-width) - var(--circle-size) - 2 *( var(--circle-gap) + var(--circle-border-size)));
+  --circle-transform: calc( var(--real-width) - var(--circle-size) - 2 *( var(--circle-gap)));
+
 }
 
 /* The switch - the box around the slider */
@@ -59,8 +62,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  -webkit-transition: .1s;
-  transition: .1s;
+  -webkit-transition: transform .1s;
+  transition: transform .1s;
   border: var(--border-size) solid var(--alert-border-color);
   border-radius: 34px;
 }
@@ -75,8 +78,8 @@
   left: var(--circle-gap, 1px);
   top: var(--circle-gap, 1px);
   background-color: var(--circle-background);
-  -webkit-transition: all 0.1s linear 0s;
-  transition: all 0.1s linear 0s;
+  -webkit-transition: transform 0.1s linear 0s;
+  transition: transform 0.1s linear 0s;
   border-radius: 34px;
 }
 

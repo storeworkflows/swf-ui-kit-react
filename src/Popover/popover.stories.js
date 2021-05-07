@@ -2,6 +2,7 @@
 import React, {createRef} from 'react';
 
 import { default as Popover} from './Popover';
+import Toggle from "../Toggle/Toggle";
 
 export default {
     title: 'swf-ui-kit/Containers/Popover',
@@ -60,6 +61,7 @@ export const TargetRef = (args) => {
                         <Popover.Content>
                             <div style={{width: "100px", height: "100px", padding: "10px"}}>
                                 Example Content
+                                <Toggle/>
                             </div>
                         </Popover.Content>
                     </Popover>

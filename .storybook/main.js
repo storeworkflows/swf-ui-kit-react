@@ -1,5 +1,6 @@
 const path = require('path');
 
+
 module.exports = {
   stories: [
     "../src/**/*.stories.mdx",
@@ -9,7 +10,9 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     '@storybook/preset-scss',
+    "storybook-addon-mock/register"
   ],
+  devServer: { contentBase: path.join(__dirname, 'public') },
   webpackFinal: async (config, { configType }) => {
     config.module.rules.push(
         {

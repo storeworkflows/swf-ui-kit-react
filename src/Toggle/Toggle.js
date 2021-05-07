@@ -27,24 +27,18 @@ class Toggle extends React.Component {
 	};
 
 	onClick(){
-		const {manageChecked, onClick} = this.props;
-		let checked = this.state.checked
+		const {manageChecked, onClick, checked} = this.props;
+
 		if(!manageChecked) {
-			checked = !this.state.checked
-			this.setState({checked: checked})
-		}
-		onClick({value: checked});
-	}
-
-	componentDidUpdate(prevProps, prevState, snapshot) {
-		const {manageChecked, checked} = this.props;
-
-		if(manageChecked && checked!==this.state.checked)
-			this.setState({checked: checked});
+			let newChecked = !this.state.checked
+			this.setState({checked: newChecked})
+			onClick({value: newChecked});
+		} else
+			onClick({value: checked});
 	}
 
 	render() {
-		const { disabled, size, customStyle, className } = this.props;
+		const { disabled, size, customStyle, className, manageChecked, checked, visible } = this.props;
 
 		const additionalStyle = _addStyles(customStyle);
 		let toggleClasses = classnames(
@@ -56,18 +50,20 @@ class Toggle extends React.Component {
 			})
 
 		return (
-			<>
-				<label className={toggleClasses}
-					   style={additionalStyle}
-				>
-					<input type="checkbox"
-						   checked  = {this.state.checked}
-						   disabled = {disabled}
-						   onChange = {this.onClick}
-					/>
-						<span className="slider"/>
-				</label>
-			</>
+			!visible ?
+				<>
+					<label className={toggleClasses}
+						   style={additionalStyle}
+					>
+						<input type="checkbox"
+							   checked  = {manageChecked ? checked : this.state.checked}
+							   disabled = {disabled}
+							   onChange = {this.onClick}
+						/>
+							<span className="slider"/>
+					</label>
+				</>
+			: null
 		)
 	}
 }
@@ -79,7 +75,8 @@ Toggle.defaultProps = {
 	size: "md",
 	customStyle: null,
 	onClick: () => void 0,
-	className: ""
+	className: "",
+	visible: false
 }
 
 Toggle.propTypes = {
@@ -98,7 +95,8 @@ Toggle.propTypes = {
 	 */
 	customStyle: propTypes.object,
 	onClick: propTypes.func,
-	className: propTypes.oneOfType([propTypes.string, propTypes.object])
+	className: propTypes.oneOfType([propTypes.string, propTypes.object]),
+	visible: propTypes.bool
 }
 
 export default Toggle;

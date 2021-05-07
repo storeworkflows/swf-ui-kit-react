@@ -70,7 +70,6 @@ class LookupField extends React.Component {
         });
 //
         let res = await response;
-        console.log("resp", res);
         return await response.json();
       //  return await response.json();
     }
@@ -84,7 +83,6 @@ class LookupField extends React.Component {
             });
 
             const data = await this.makeRequest(value);
-            console.log(data, "Hello")
             const {
                 referenceDataList,
                 referenceRecentDataList,

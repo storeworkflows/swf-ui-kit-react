@@ -18,7 +18,9 @@ export default async function fetch() {
 // the decorator to be used in ./storybook/preview to apply the mock to all stories
 
 export function decorator(story, { parameters }) {
+    console.log("decorator")
     if (parameters && parameters.fetch) {
+        console.log(parameters.fetch.json)
         nextJson = parameters.fetch.json;
     }
     return story();
