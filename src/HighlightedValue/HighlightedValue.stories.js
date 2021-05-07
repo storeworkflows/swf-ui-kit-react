@@ -28,4 +28,3 @@ Tertiary.args = {
     icon: "alarm",
     variant: "tertiary"
 };
-

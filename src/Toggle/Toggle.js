@@ -20,45 +20,50 @@ class Toggle extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.onClick = this.onClick.bind(this);
 		this.state = {
 			checked: this.props.checked
 		}
 	};
 
+	onClick(){
+		const {manageChecked, onClick} = this.props;
+		let checked = this.state.checked
+		if(!manageChecked) {
+			checked = !this.state.checked
+			this.setState({checked: checked})
+		}
+		onClick({value: checked});
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		const {manageChecked, checked} = this.props;
+
+		if(manageChecked && checked!==this.state.checked)
+			this.setState({checked: checked});
+	}
+
 	render() {
-		const {
-			disabled,
-			manageChecked,
-			size,
-			customStyle,
-			onClick
-		} = this.props;
+		const { disabled, size, customStyle, className } = this.props;
 
 		const additionalStyle = _addStyles(customStyle);
-
-		const toggleClick = () => {
-			let checked = this.state.checked
-			if(!manageChecked) {
-				checked = !this.state.checked
-				this.setState({checked: checked})
-			}
-			onClick({value: checked});
-		};
+		let toggleClasses = classnames(
+			className,
+			`toggle-${size}`,
+			{
+				"switch": true,
+				"disabled": disabled
+			})
 
 		return (
 			<>
-				<label className={ classnames(
-					`toggle-${size}`,
-					{
-						"switch": true,
-						"disabled": disabled
-					})}
+				<label className={toggleClasses}
 					   style={additionalStyle}
 				>
 					<input type="checkbox"
 						   checked  = {this.state.checked}
 						   disabled = {disabled}
-						   onChange = {toggleClick}
+						   onChange = {this.onClick}
 					/>
 						<span className="slider"/>
 				</label>
@@ -72,7 +77,9 @@ Toggle.defaultProps = {
 	disabled: false,
 	manageChecked: false,
 	size: "md",
-	customStyle: null
+	customStyle: null,
+	onClick: () => void 0,
+	className: ""
 }
 
 Toggle.propTypes = {
@@ -90,7 +97,8 @@ Toggle.propTypes = {
 	 "circle-border-color", "circle-background", "hover-circle-background"
 	 */
 	customStyle: propTypes.object,
-	onClick: propTypes.func
+	onClick: propTypes.func,
+	className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 export default Toggle;

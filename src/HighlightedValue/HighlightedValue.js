@@ -13,7 +13,7 @@ const HighlightedValue = React.forwardRef((props, ref) => {
             default: return icon ? 14: 8;
         }
     }
-   // render() {
+
         const {
             roundBorder,
             className,
@@ -59,7 +59,6 @@ const HighlightedValue = React.forwardRef((props, ref) => {
                 </div>
             </>
         )
-    //}
 });
 
 HighlightedValue.defaultProps = {
@@ -69,7 +68,7 @@ HighlightedValue.defaultProps = {
     size: "md",
     variant: "primary",
     color: "red",
-    roundBorder: false
+    roundBorder: true
 }
 
 HighlightedValue.propTypes = {

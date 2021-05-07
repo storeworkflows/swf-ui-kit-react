@@ -15,9 +15,9 @@ const End = () => null;
 class Input extends React.Component {
     constructor(props) {
         super(props);
-        this.onBlur = this.onBlur.bind(this)
-        this.onFocus = this.onFocus.bind(this)
-        this.onInput = this.onInput.bind(this)
+        this.onEvent = this.onEvent.bind(this)
+        // this.onFocus = this.onFocus.bind(this)
+        // this.onInput = this.onInput.bind(this)
         this.onInvalid = this.onInvalid.bind(this)
 
         this.state = {
@@ -66,35 +66,17 @@ class Input extends React.Component {
         return <div className={classes}>{end}</div>
     }
 
-    onBlur(event) {
+    //type is one of "onBlur", "onInput", "onFocus"
+    onEvent(event, type, value = this.state.value) {
         const {readonly, disabled} = this.props;
         let canChange = !readonly && !disabled;
 
-        if(canChange) {
-            this.setState({focused: false})
-            this.props.onBlur(event);
-        }
+        if(!canChange) return;
+
+        this.setState({ value, focused: type !== "onBlur" });
+        this.props[type](event);
     }
 
-    onFocus(event) {
-        const {readonly, disabled} = this.props;
-        let canChange = !readonly && !disabled;
-
-        if(canChange) {
-            this.setState({focused: true})
-            this.props.onFocus(event);
-        }
-    }
-
-    onInput(event) {
-        const {readonly, disabled} = this.props;
-        let canChange = !readonly && !disabled;
-
-        if(canChange) {
-            this.setState({value: event.target.value});
-            this.props.onInput(event)
-        }
-    }
 
     onInvalid(e){
         const {manageInvalid, onInvalid} = this.props;
@@ -206,12 +188,12 @@ class Input extends React.Component {
                             pattern={pattern}
                             disabled={disabled}
                             multiple={multiple}
-                            onInput={this.onInput}
                             onChange={this.props.onChange}
                             onPaste={this.props.onPaste}
                             onKeyDown={this.props.onKeyDown}
-                            onFocus={this.onFocus}
-                            onBlur={this.onBlur}
+                            onFocus={(e) => this.onEvent(e,"onFocus")}
+                            onBlur={(e) => this.onEvent(e,"onBlur")}
+                            onInput={(e) => this.onEvent(e,"onInput", e.target.value)}
                             onInvalid={this.onInvalid}
                         />
                         {this.renderEnd()}

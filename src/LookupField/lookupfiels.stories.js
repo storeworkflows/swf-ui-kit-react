@@ -7,16 +7,10 @@ export default {
     title: 'swf-ui-kit/Input/LookupField',
     component: LookupField,
     parameters: {
-        msw: [
-            rest.get('/api/now/graphql', (req, res, ctx) => {
-                return res(
-                    ctx.json({
-                        firstName: 'Neil',
-                        lastName: 'Maverick',
-                    }),
-                );
-            }),
-        ]
+        fetch: {
+            json: payload
+
+        }
     },
 };
 
