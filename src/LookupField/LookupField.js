@@ -68,10 +68,7 @@ class LookupField extends React.Component {
                 signal: this.controllerRef.current.signal
             }
         });
-//
-        let res = await response;
         return await response.json();
-      //  return await response.json();
     }
 
     async getReferenceList(value) {
@@ -83,6 +80,7 @@ class LookupField extends React.Component {
             });
 
             const data = await this.makeRequest(value);
+
             const {
                 referenceDataList,
                 referenceRecentDataList,
@@ -229,9 +227,7 @@ class LookupField extends React.Component {
             }
         });
 
-        console.log(result);
         const data = await result.json();
-        console.log(data);
 
         this.setState({focused: false, preloader: false});
 
@@ -321,7 +317,9 @@ class LookupField extends React.Component {
         return (
             visible ?
                 <>
-                    <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur} ref={elm => this.props.internalRef.current = elm}>
+                    <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}
+                         ref={elm => this.props.internalRef.current = elm}
+                    >
                         <Input
                             internalRef={this.inputRef}
                             className="swf-reference--input"
