@@ -2,6 +2,7 @@ import React from 'react';
 
 import { default as Pill} from './Pill';
 import {TABLE_CATEGORIES} from "../../.storybook/tableCategories";
+import {noop} from "../utils";
 
 export default {
     title: 'swf-ui-kit/DataVisualisation/Pill',
@@ -46,6 +47,7 @@ WithIcon.args = {
     icon: "alarm",
     canDismiss: true,
     color: "primary",
-    size: "sm"
+    size: "sm",
+    onDelete: noop
 }
 

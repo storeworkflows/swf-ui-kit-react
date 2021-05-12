@@ -6,95 +6,80 @@ import {noop} from "../utils";
 import Icon from "../Icon/Icon";
 import {AvatarMember} from "../Avatar/Avatar";
 import PropTypes from "prop-types";
+import {useState} from "react";
 
-class AvatarGroup extends React.Component {
-    constructor(props) {
-        super(props);
-        this.addNewMember = this.addNewMember.bind(this);
-        this.openAvatar = this.openAvatar.bind(this);
-        this.state = {
-            openedAvatar: -1
-        }
-    }
+const AvatarGroup = (props) => {
+    const {
+        size, max, canAdd, members, canRemove, onRemove, customIcon,
+        manageOpened, onClick, onAdd, clickable
+    } = props;
+    const [openedAvatar, setOpenedAvatar] = useState(-1)
 
-    openAvatar(index) {
-        const {openedAvatar} = this.state;
+    const openAvatar = (index) => {
         const isSameClicked = openedAvatar === index;
-
-        this.setState({openedAvatar: isSameClicked ? -1 : index})
+        setOpenedAvatar(isSameClicked ? -1 : index);
     }
 
-    handleClick = ({index, avatar}) => {
-        const {manageOpened} = this.props;
-
-        if (!manageOpened || this.props.onClick === noop) {
-           return this.openAvatar(index)
+    const handleClick = ({index, avatar}) => {
+        if (!manageOpened || onClick === noop) {
+            return openAvatar(index)
         }
-        return this.props.onClick({index, avatar});
+        return onClick({index, avatar});
     }
 
-    addNewMember() {
-        if (this.props.clickable) {
-            this.props.onAdd();
-        }
-    }
+    const hasAdditionalMembers = members.length > max + 1;
+    const maxViewers = hasAdditionalMembers ? max : members.length;
+    const additionalMembers = members.length - max;
 
-    render() {
-        const {size, max, canAdd, members, canRemove, onRemove, customIcon} = this.props;
-        const hasAdditionalMembers = members.length > max + 1;
-        const maxViewers = hasAdditionalMembers ? max : members.length;
-        const additionalMembers = members.length - max;
+    const viewers = members.slice(0, maxViewers).reverse().filter(viewer => viewer.name);
 
-        const viewers = members.slice(0, maxViewers).reverse().filter(viewer => viewer.name);
-
-        return (
-            <>
-                <div
-                    ref={elm => this.props.innerRef.current = elm}
-                    className={
-                        classnames({
-                            "swf-avatar-container": true,
-                            [`--${size}`]: true
-                        })
-                    }
-                >
-                    {canAdd && <div
-                        className={classnames({
-                            "avatar-multiple": true,
-                            "add-new-member": true,
-                            "additional-avatar": true
-                        })}
-                        onClick={this.addNewMember}
-                    >
-                        <Icon icon={customIcon || "person-plus"} size={size}/>
-                    </div>}
-
-                    {hasAdditionalMembers && <div className={classnames({
+    return (
+        <>
+            <div
+                ref={elm => props.innerRef.current = elm}
+                className={
+                    classnames({
+                        "swf-avatar-container": true,
+                        [`--${size}`]: true
+                    })
+                }
+            >
+                {canAdd && <div
+                    className={classnames({
                         "avatar-multiple": true,
-                        "additional-members": true
-                    })}>
-                        <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p>
-                    </div>}
+                        "add-new-member": true,
+                        "additional-avatar": true
+                    })}
+                    onClick={() => clickable && onAdd()}
+                >
+                    <Icon icon={customIcon || "person-plus"} size={size}/>
+                </div>}
 
-                    {viewers.map((viewer, index) => (
-                        <div key={index + viewer.name.replace("", "_")}>
-                            <Avatar
-                                id={viewer.id || index}
-                                size={size}
-                                canRemove={canRemove}
-                                onRemove={onRemove}
-                                member={viewer}
-                                manageOpened={true}
-                                onClick={() => this.handleClick({index, avatar: viewer})}
-                                open={this.state?.openedAvatar === index}
-                            />
-                        </div>
-                    ))
-                    }
-                </div>
-            </>
-        )
-    }
+                {hasAdditionalMembers && <div className={classnames({
+                    "avatar-multiple": true,
+                    "additional-members": true
+                })}>
+                    <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p>
+                </div>}
+
+                {viewers.map((viewer, index) => (
+                    <div key={index + viewer.name.replace("", "_")}>
+                        <Avatar
+                            id={viewer.id || index}
+                            size={size}
+                            canRemove={canRemove}
+                            onRemove={onRemove}
+                            member={viewer}
+                            manageOpened={true}
+                            onClick={() => handleClick({index, avatar: viewer})}
+                            open={openedAvatar === index}
+                        />
+                    </div>
+                ))
+                }
+            </div>
+        </>
+    )
 }
 
 AvatarGroup.defaultProps = {

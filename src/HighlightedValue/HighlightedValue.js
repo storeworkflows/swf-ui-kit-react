@@ -3,18 +3,18 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 import Icon from "../Icon/Icon";
 
-const HighlightedValue = React.forwardRef((props, ref) => {
-
-    const getIconSize = (size, icon) => {
-        switch (size) {
-            case "sm":
-                return icon ? 11 : 7;
-            case "lg":
-                return icon ? 18 : 10;
-            default:
-                return icon ? 14 : 8;
-        }
+const getIconSize = (size, icon) => {
+    switch (size) {
+        case "sm":
+            return icon ? 11 : 7;
+        case "lg":
+            return icon ? 18 : 10;
+        default:
+            return icon ? 14 : 8;
     }
+}
+
+const HighlightedValue = React.forwardRef((props, ref) => {
 
     const {
         roundBorder,
@@ -37,18 +37,20 @@ const HighlightedValue = React.forwardRef((props, ref) => {
         }
     )
 
+    const containerClasses = classnames(
+        "highlighted-color-container",
+        `--${variant}`, {
+            "--round": roundBorder
+        }
+    )
+
     let iconSize = getIconSize(size, icon);
 
     return (
         <>
             <div className={classes} ref={ref}>
                 <div
-                    className={classnames(
-                        "highlighted-color-container",
-                        `--${variant}`, {
-                            "--round": roundBorder
-                        }
-                    )}
+                    className={containerClasses}
                     onClick={onClick}
                 >
                     {showIcon && <Icon

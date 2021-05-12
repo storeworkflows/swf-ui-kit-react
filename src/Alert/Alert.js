@@ -11,8 +11,10 @@ import {openLink} from "./utils";
 const Alert = React.forwardRef((props, ref) => {
 
     const {
-        action, content, header, icon, color, visible, manageExpanded, manageVisibility,
-        textLinkProps, onTextLinkClicked, expanded
+        action, content, header, icon, color, visible, textLinkProps,
+        manageExpanded, manageVisibility, manageButtonClick,
+        onTextLinkClicked, onButtonClick, onExpandAction,
+        expanded, onCloseAction, delay
     } = props;
 
     const [isExpanded, setIsExpanded] = useState(expanded);
@@ -26,7 +28,6 @@ const Alert = React.forwardRef((props, ref) => {
 
 
     const setDelay = () => {
-        const {delay, onCloseAction, manageVisibility} = props;
         if (delay) {
             timer = setTimeout(() => {
                 if (!manageVisibility)
@@ -38,7 +39,6 @@ const Alert = React.forwardRef((props, ref) => {
 
     const buttonClicked = (e) => {
         e.preventDefault();
-        const {action, manageVisibility, onButtonClick, manageButtonClick} = props;
 
         if (!manageButtonClick) {
             if (!manageVisibility)
@@ -52,7 +52,6 @@ const Alert = React.forwardRef((props, ref) => {
 
     const expandAction = (e) => {
         e.preventDefault();
-        const {manageExpanded, onExpandAction} = props
 
         let curValue = isExpanded;
         if (!manageExpanded) {
