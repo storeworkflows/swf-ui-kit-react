@@ -5,8 +5,7 @@ import withMock from 'storybook-addon-mock';
 
 export default {
     title: 'swf-ui-kit/Input/Attachment',
-    component: Attachment,
-    decorators: [withMock]
+    component: Attachment
 };
 
 
@@ -14,6 +13,7 @@ const Template = (args) => <Attachment {...args} />
 
 
 export const MockUpload = Template.bind({});
+MockUpload.decorators = [withMock];
 MockUpload.args = {
     label: "Attachment",
     message: [{content: "example message", status: "green"}],
