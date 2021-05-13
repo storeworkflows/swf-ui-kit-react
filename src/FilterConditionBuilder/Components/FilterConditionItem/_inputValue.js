@@ -87,7 +87,6 @@ export const inputValue = ({ inputValuePayload }) => {
                         type="text"
                         value={conditionOptions.value}
                         onInput={(e) => inputValueSet({value: e.target.value, type: editor, index: 0})}
-                        autofocus={true}
                     />
                 </div>
             );
@@ -125,7 +124,6 @@ export const inputValue = ({ inputValuePayload }) => {
                 <div className="dropdown-container textarea-input">
                     <TextArea
                         autoresize={false}
-                        maxlength={5000}
                         value={state.textAreaValue}
                         resize="vertical"
                         onKeyDown={(e) => {
