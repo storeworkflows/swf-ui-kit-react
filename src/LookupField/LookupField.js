@@ -218,8 +218,13 @@ class LookupField extends React.Component {
 
         this.setState({focused: false, preloader: true, repeat: charsArray.length});
 
-        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list?table=${this.props.reference}&search_string=${charsArray}`, {
+        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list`, {
+            method: "post",
             credentials: 'same-origin',
+            body: JSON.stringify({
+                table: this.props.reference,
+                search_string: charsArray
+            }),
             headers: {
                 'content-type': "application/json",
                 'X-Transaction-Source': window.transaction_source,
@@ -231,23 +236,37 @@ class LookupField extends React.Component {
 
         this.setState({focused: false, preloader: false});
 
-        data.forEach((record) => this.listHandleClick(record));
-    }
-
-    componentWillReceiveProps(nextProps, nextContext) {
-        const isList = nextProps.type === "glide_list";
-
-        if (isList) {
-            return this.setState({
-                listRecords: {
-                    value: nextProps.value?.split(",") ?? [],
-                    displayValue: nextProps.displayValue?.split(",") ?? [],
-                    loading: false,
-                    focused: false
-                }
-            })
+        const listRecords = {
+            value: Array.from(new Set([...this.state.listRecords.value, ...data.map(({sysId}) => sysId)])),
+            displayValue: Array.from(new Set([...this.state.listRecords.displayValue, ... data.map(({referenceData}) => referenceData[0].value)]))
         }
+
+        this.setState({
+            listRecords,
+            referenceRecord: {
+                sysId: null,
+                displayValue: ""
+            },
+            loaded: false
+        })
+
+        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean));
     }
+
+    // UNSAFE_componentWillReceiveProps(nextProps, nextContext) {
+    //     const isList = nextProps.type === "glide_list";
+    //
+    //     if (isList) {
+    //         return this.setState({
+    //             listRecords: {
+    //                 value: nextProps.value?.split(",") ?? [],
+    //                 displayValue: nextProps.displayValue?.split(",") ?? [],
+    //                 loading: false,
+    //                 focused: false
+    //             }
+    //         })
+    //     }
+    // }
 
     static getDerivedStateFromProps(nextProps) {
         const isList = nextProps.type === "glide_list";
@@ -256,7 +275,9 @@ class LookupField extends React.Component {
             return {
                 listRecords: {
                     value: nextProps.value?.split(",") ?? [],
-                    displayValue: nextProps.displayValue?.split(",") ?? []
+                    displayValue: nextProps.displayValue?.split(",") ?? [],
+                    loading: false,
+                    focused: false
                 }
             }
         }
@@ -266,9 +287,11 @@ class LookupField extends React.Component {
         return (
             <Input.Start>{this.state.listRecords.displayValue.map((label) => {
                 if (!label) return null;
-                return <Pill label={label}
-                             canDismiss={true}
-                             onDelete={this.deleteValue}/>
+                return <Pill
+                    key={label}
+                    label={label}
+                    canDismiss={true}
+                    onDelete={this.deleteValue}/>
             })
             }</Input.Start>
         )
@@ -320,6 +343,7 @@ class LookupField extends React.Component {
                     <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}
                          ref={elm => this.props.internalRef.current = elm}
                     >
+
                         <Input
                             internalRef={this.inputRef}
                             className="swf-reference--input"
@@ -410,7 +434,7 @@ LookupField.propTypes = {
     visible: propTypes.bool,
     internalRef: PropTypes.oneOfType([
         propTypes.func,
-        propTypes.shape({ current: propTypes.any })
+        propTypes.shape({current: propTypes.any})
     ])
 }
 
