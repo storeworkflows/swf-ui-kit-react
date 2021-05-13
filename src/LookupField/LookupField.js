@@ -223,10 +223,10 @@ class LookupField extends React.Component {
         const result = await fetch(`api/x_aaro2_teamwork/swf_api/list`, {
             method: "post",
             credentials: 'same-origin',
-            body: {
+            body: JSON.stringify({
                 table: this.props.reference,
                 search_string: charsArray
-            },
+            }),
             headers: {
                 'content-type': "application/json",
                 'X-Transaction-Source': window.transaction_source,
