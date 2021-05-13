@@ -12,7 +12,6 @@ module.exports = {
     '@storybook/preset-scss',
     "storybook-addon-mock/register"
   ],
-  devServer: { contentBase: path.join(__dirname, 'public') },
   webpackFinal: async (config, { configType }) => {
     config.module.rules.push(
         {
@@ -20,7 +19,6 @@ module.exports = {
           use: ['style-loader', 'css-loader', 'sass-loader'],
           include: path.resolve(__dirname, '../'),
     });
-    config.resolve.alias['isomorphic-fetch'] = require.resolve('../__mocks__/isomorphic-fetch.js');
     return config;
   },
 }

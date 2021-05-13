@@ -5,12 +5,8 @@ import classnames from "classnames";
 import Icon from "../Icon/Icon";
 import {addStyles, getIconSize} from "./utils";
 
-class Button extends React.Component {
-	constructor(props) {
-		super(props);
-	}
+const Button = React.forwardRef((props, ref) => {
 
-	render() {
 
 		const {
 			disabled,
@@ -23,7 +19,7 @@ class Button extends React.Component {
 			children,
 			onClick,
 			className
-		} = this.props;
+		} = props;
 
 		const additionalStyle = addStyles(customStyle);
 
@@ -53,7 +49,7 @@ class Button extends React.Component {
 		return (
 			<>
 				<button
-					ref={elm => this.props.innerRef.current = elm}
+					ref={elm => props.innerRef.current = elm}
 					className={buttonClasses}
 					onClick={onClick}
 					disabled = {disabled}
@@ -77,8 +73,7 @@ class Button extends React.Component {
 				</button>
 			</>
 		)
-	}
-}
+})
 
 Button.defaultProps = {
 	disabled: false,

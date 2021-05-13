@@ -1,19 +1,14 @@
 import * as React from "react";
 import propTypes from "prop-types";
 
-import icons from "./icons";
 import {SIZE} from "./constants";
+import {generateSvg, getAttrs} from "./utils";
 
-class Icon extends React.Component {
+const Icon = (props) => {
+  const { icon, size, customSize, color, className,
+        innerRef, zeroSize, onClick} = props;
 
-  getStyles(){
-    const {
-      color,
-      size,
-      customSize,
-      zeroSize
-    } = this.props;
-
+  const getStyles = () => {
     let style = {}
 
     if (!zeroSize) {
@@ -23,79 +18,53 @@ class Icon extends React.Component {
       style.width = finalSize;
     }
 
-    if(color)
-      style.color = color;
+    if (color)
+      style.color = color
 
     return style;
   }
 
-  generateSvg(icon){
-    const wrapper = document.createElement("span");
-    wrapper.innerHTML = icons[icon];
-    return wrapper.children[0];
-  }
+  let node = generateSvg(icon);
 
-  getAttrs(attrs){
-    let props = {};
-    for(let i=0; i<attrs.length; i++){
-      let curProps = attrs.item(i);
-      let name = curProps.name;
-
-      if (curProps.name === "class")
-        name = "className";
-      if (curProps.name === "fill-rule")
-        name = "fillRule";
-      if (curProps.name === "fillrule")
-        name = "fillRule";
-
-      props[name] = curProps.value;
-    }
-    return props;
-  }
-
-
-  render () {
-    let node = this.generateSvg(this.props.icon);
-
-    if (!node) {
-      console.error(`Icon error: unregistered icon ${this.props.icon}`)
-      return null
-    }
-
+  if (!node) {
+    console.error(`Icon error: unregistered icon ${icon}`)
+    return null
+  } else {
     return (
         <svg
-           // ref={elm => this.props.innerRef.current = elm}
-            {...this.getAttrs(node.attributes)}
-            style={this.getStyles()}
-            className={this.props.className}
+            ref={elm => innerRef.current = elm}
+            {...getAttrs(node.attributes)}
+            style={getStyles()}
+            className={className}
+            onClick={onClick}
         >
-              {[ ...node.children ].map( (child, id) => {
-                const {tagName: Tag, attributes} = child
-                return  <Tag {...this.getAttrs(attributes)} key = {id} style={{fill: "currentColor"}}/>
-              })}
+          {[...node.children].map((child, id) => {
+            const {tagName: Tag, attributes} = child
+            return <Tag {...getAttrs(attributes)} key={id} style={{fill: "currentColor"}}/>
+          })}
         </svg>
     )
-
-    ;
   }
 }
 
 Icon.defaultProps = {
-  icon: "",
-  size: 'md',
-  color: "",
-  className: {},
-  innerRef: React.createRef()
+    icon: "",
+    size: 'md',
+    color: "",
+    className: {},
+    innerRef: React.createRef(),
+    onClick: () => void 0
 }
 
 Icon.propTypes = {
-  icon: propTypes.string.isRequired,
-  size: propTypes.oneOf(['xs','sm', 'md', 'lg', 'xl', 'xxl']),
-  customSize: propTypes.number,
-  color: propTypes.string,
-  className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-  innerRef: propTypes.object,
-  zeroSize: propTypes.bool
+    icon: propTypes.string.isRequired,
+    size: propTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', 'xxl']),
+    customSize: propTypes.number,
+    color: propTypes.string,
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    innerRef: propTypes.object,
+    zeroSize: propTypes.bool,
+    onClick: propTypes.func
 }
 
 export default Icon

@@ -2,38 +2,32 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 
-class TextLink extends React.Component {
+const TextLink = React.forwardRef((props, ref) => {
 
-    render() {
+    const {
+        download, href, label, openWindows,
+        underline, variant, onClick, className
+    } = props;
 
-        const {
-            download,
-            href,
-            label,
-            openWindows,
-            underline,
-            variant,
-            onClick,
-            className
-        } = this.props;
+    let linkClasses = classnames(
+        "swf-text-link",
+        variant,
+        className,
+        { "underline": underline }
+    )
 
-        let linkClasses = classnames(
-            "swf-text-link",
-            variant,
-            className,
-            { "underline": underline }
-        )
-
-        return (
-                <a href={href}
-                   download={download}
-                   onClick={onClick}
-                   className={linkClasses}
-                   target={openWindows ? "_blank" : "_self"}
-                >{label}</a>
-        )
-    }
-}
+    return (
+        <a href={href}
+           download={download}
+           onClick={onClick}
+           className={linkClasses}
+           target={openWindows ? "_blank" : "_self"}
+           ref={ref}
+        >
+            {label}
+        </a>
+    )
+});
 
 TextLink.defaultProps = {
     download: false,
@@ -54,7 +48,7 @@ TextLink.propTypes = {
     openWindows: propTypes.bool,
     underline: propTypes.bool,
     variant: propTypes.oneOf(["primary", "secondary"]),
-    onClick:propTypes.func,
+    onClick: propTypes.func,
     className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 

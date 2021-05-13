@@ -49,7 +49,7 @@ export const downloadRequest = async (attachmentSysId, delay) => {
         try {
             const response = await fetch(url, requestOptions);
             const data = await response.json();
-            console.log(response)
+
             if (!response.ok) {
                 const error = (data && data.message) || response.statusText;
                 return errorMessage(error, delay)

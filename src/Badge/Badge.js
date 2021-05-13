@@ -1,26 +1,27 @@
-import {Component} from "react";
-import classNames from "classnames";
 import propTypes from "prop-types";
+import * as React from "react";
 
-export default class Badge extends Component {
-    static propTypes = {
-        variant: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
-        count: propTypes.number,
-        children: propTypes.element
-    }
+const Badge = React.forwardRef((props, ref) => {
 
-    static defaultProps = {
-        variant: "green",
-        count: 0,
-        children: null
-    }
+    return <div className="swf-badge-root" ref={ref}>
+        {props.children}
+        <span className="swf-badge">
+            {props?.count}
+        </span>
+    </div>
 
-    render() {
-       return <div className="swf-badge-root">
-           {this.props.children}
-            <span className={classNames({
-                "swf-badge": true
-            })}>{this.props?.count}</span>
-        </div>
-    }
+});
+
+Badge.propTypes = {
+    variant: propTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
+    count: propTypes.number,
+    children: propTypes.element
 }
+
+Badge.defaultProps = {
+    variant: "green",
+    count: 0,
+    children: null
+}
+
+export default Badge

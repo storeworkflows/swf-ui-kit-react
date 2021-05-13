@@ -7,71 +7,96 @@ import hammer from "hammerjs";
 
 import Icon from "../Icon/Icon"
 import {isNowDate, isSelected} from "./utils";
+import {useEffect, useState} from "react";
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-class SmallCalendar extends React.Component {
-    constructor(props) {
-        super(props);
-        this.changeMonth = this.changeMonth.bind(this);
-        this.setDate = this.setDate.bind(this);
+const ArrowButton = (props) => {
+    const {isNext, onClick} = props;
 
-        const {openedDate} = this.props;
-        let date = (openedDate) ? new Date(openedDate) : null;
+    const classes = classnames({
+        "calendar-arrow": true,
+        "next": isNext
+    });
 
-        this.state = {
-            selectedDate: date,
-            openedDate: (date) ? date : new Date()
-        }
+    return (
+        <div
+            className={classes}
+            onClick={(e) => onClick(e, isNext)}>
+            <Icon
+                icon={isNext ? "chevron-right" : "chevron-left"}
+                size={"sm"}/>
+        </div>
+    )
+}
 
-    }
+const SmallCalendar = React.forwardRef((props, ref) => {
 
-    setDate(day, isActive, e){
+    const {openedDate, onSelected} = props;
+    let calendarElem = null;
+
+    const date = (openedDate) ? new Date(openedDate) : null;
+    const [selectedDate, setSelectedDate] = useState(date);
+    const [openedDateValue, setOpenedDateValue] = useState((date) ? date : new Date());
+
+    const setDate = (day, isActive, e) =>{
         e?.stopPropagation();
-
-        const {openedDate} = this.state;
-        const {onSelected} = this.props;
         let newSelected;
 
-        if(isActive)
-            newSelected = new Date(openedDate.getFullYear(), openedDate.getMonth(), day);
+        if (isActive)
+            newSelected = new Date(openedDateValue.getFullYear(), openedDateValue.getMonth(), day);
         else {
-            let isNext = day>15 ? -1 : 1;
-            let updatedMonth = moment(openedDate).add(isNext, "month").toDate();
+            let isNext = day > 15 ? -1 : 1;
+            let updatedMonth = moment(openedDateValue).add(isNext, "month").toDate();
 
             newSelected = new Date(updatedMonth.getFullYear(), updatedMonth.getMonth(), day);
-            this.setState({openedDate: updatedMonth});
+            setOpenedDateValue(updatedMonth);
         }
 
-        this.setState({selectedDate: newSelected});
-        if(onSelected)
+        setSelectedDate(newSelected)
+        if (onSelected)
             onSelected({date: newSelected});
     }
 
-    changeMonth(e, isNext) {
+    const changeMonth = (e, isNext) =>{
         e?.stopPropagation();
 
         let additionValue = isNext ? 1 : -1;
-        let changedTo = moment(this.state.openedDate).add(additionValue, "month");
+        let changedTo = moment(openedDateValue).add(additionValue, "month");
 
-        this.setState({openedDate: changedTo.toDate()})
+        setOpenedDateValue(changedTo.toDate())
     }
 
-    renderCalendarElement(day, isActive, key){
-        const {openedDate, selectedDate} = this.state;
-        let dayNumber = parseInt(day)
 
+    useEffect(() => {
+        if (calendarElem) {
+            let mc = new Hammer(calendarElem);
+            mc.on("swipeleft", (e) => changeMonth(e, true))
+            mc.on("swiperight", (e) => changeMonth(e, false));
+        }
+    }, [])
+
+    useEffect(() => {
+        let date = (openedDate) ? new Date(openedDate) : null;
+        setOpenedDateValue((date) ? date : new Date());
+        setSelectedDate(date);
+
+    }, [openedDate])
+
+
+    const renderCalendarElement = (day, isActive, key) => {
+        let dayNumber = parseInt(day)
+        const dayClasses = classnames({
+            "calendar-element": true,
+            "day-element": true,
+            "notActive": !isActive,
+            "active": isActive,
+            "selected": isSelected(openedDateValue, selectedDate, dayNumber, isActive),
+            "now-date": isNowDate(openedDateValue, isActive, dayNumber)
+        })
         return (
-            <div className={
-                classnames({
-                    "calendar-element": true,
-                    "day-element": true,
-                    "notActive": !isActive,
-                    "active": isActive,
-                    "selected": isSelected(openedDate, selectedDate, dayNumber, isActive),
-                    "now-date": isNowDate(openedDate, isActive, dayNumber)
-                })}
-                 onClick={(e) =>  this.setDate(dayNumber, isActive, e)}
+            <div className={dayClasses}
+                 onClick={(e) => setDate(dayNumber, isActive, e)}
                  key={key}
             >
                 {day}
@@ -79,108 +104,60 @@ class SmallCalendar extends React.Component {
         )
     }
 
-    componentDidMount() {
-       if(this.calendarElem){
-            let mc = new Hammer(this.calendarElem);
-            mc.on("swipeleft", (e) => this.changeMonth(e,true))
-            mc.on("swiperight", (e) => this.changeMonth(e,false));
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState, snapshot) {
-
-        const {openedDate} = this.props;
-        if(openedDate !== prevProps.openedDate) {
-            let date = (openedDate) ? new Date(openedDate) : null;
-
-            this.setState({
-                selectedDate: date,
-                openedDate: (date) ? date : new Date()
-            })
-        }
-    }
-
-
-    renderMonth(){
-        const {openedDate} = this.state;
+    const renderMonth = () =>{
         let result = [];
 
-        let openedMonth = openedDate.getMonth() + 1;
-        let currentWeek = moment(openedDate);
+        let openedMonth = openedDateValue.getMonth() + 1;
+        let currentWeek = moment(openedDateValue);
         currentWeek.startOf("month").startOf("week")
 
-        for(let w=0; w<6; w++)
-        {
-            if(w>0)
+        for (let w = 0; w < 6; w++) {
+            if (w > 0)
                 currentWeek.add(1, 'week');
             let currentDay = currentWeek.startOf("week");
 
-            for(let d=0; d<7; d++)
-            {
-                if(d>0)
+            for (let d = 0; d < 7; d++) {
+                if (d > 0)
                     currentDay.add(1, "day");
 
                 const isActive = currentDay.format('M') === `${openedMonth}`;
-                result.push(this.renderCalendarElement(currentDay.format('D'), isActive, currentDay));
+                result.push(renderCalendarElement(currentDay.format('D'), isActive, currentDay));
             }
         }
 
         return result;
     }
 
+    const currentDate = moment(openedDateValue)
+    let curMonthLabel = `${currentDate.format('MMMM')} ${currentDate.year()}`;
 
-    renderArrowButton(isNext){
-        let classes = classnames({
-            "calendar-arrow": true,
-            "next": isNext
-        });
-
-        return (
+    return (
+        <>
             <div
-                className={classes}
-                onClick = {(e) => this.changeMonth(e, isNext)}>
+                className={"ui-kit__calendar-container"}
+                ref={el => {calendarElem = el; ref=el}}
+            >
 
-                <Icon
-                    icon={isNext ? "chevron-right" : "chevron-left"}
-                    size={"sm"}/>
-            </div>
-        )
-    }
-
-
-    render() {
-
-        const {openedDate} = this.state;
-        const currentDate = moment(openedDate)
-        let curMonthLabel = `${currentDate.format('MMMM')} ${currentDate.year()}`;
-
-        return (
-            <>
-                <div
-                    className={"ui-kit__calendar-container"}
-                    ref = {el => this.calendarElem = el}
-                >
-
-                    <div className={"calendar-header"}>
-                        {this.renderArrowButton(false)}
-                        <span className={"calendar-header-label"} >
+                <div className={"calendar-header"}>
+                    <ArrowButton isNext = {false} onClick={changeMonth}/>
+                    <span className={"calendar-header-label"}>
                             {curMonthLabel}
-                        </span>
-                        {this.renderArrowButton(true)}
-                    </div>
-                    <div className={"week-days-container"}>
-                        {DAYS_OF_WEEK.map( (el, id) => {
-                            return <div className={"calendar-element week-day"} key={id}> {el} </div>
-                        })}
-                    </div>
-                    <div className={"calendar-view"} >
-                        {this.renderMonth().map(el => el)}
-                    </div>
+                    </span>
+                    <ArrowButton isNext = {true} onClick={changeMonth}/>
                 </div>
-            </>
-        )
-    }
-}
+                <div className={"week-days-container"}>
+                    {DAYS_OF_WEEK.map((el, id) => {
+                        return <div className={"calendar-element week-day"} key={id}> {el} </div>
+                    })}
+                </div>
+                <div className={"calendar-view"}>
+                    {renderMonth().map(el => el)}
+                </div>
+            </div>
+        </>
+    )
+
+});
 
 SmallCalendar.defaultProps = {
     openedDate: null
