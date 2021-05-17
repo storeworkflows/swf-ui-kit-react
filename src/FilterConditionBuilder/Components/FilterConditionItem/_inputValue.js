@@ -124,7 +124,7 @@ export const inputValue = ({ inputValuePayload }) => {
                 <div className="dropdown-container textarea-input">
                     <TextArea
                         autoresize={false}
-                        value={state.textAreaValue}
+                        value={state.textAreaValue || conditionOptions.value}
                         resize="vertical"
                         onKeyDown={(e) => {
                             textAreaValueSet({value: e.target.value})
