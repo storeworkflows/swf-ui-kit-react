@@ -2,7 +2,7 @@ import propTypes from "prop-types";
 import * as React from "react";
 
 import {Editor} from "@tinymce/tinymce-react";
-import {noop} from "../../lib/utils";
+import {noop} from "../utils";
 import {v4 as uuidv4} from "uuid";
 import fetch from "cross-fetch";
 import {Icon} from "../index";

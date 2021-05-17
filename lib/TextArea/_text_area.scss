@@ -83,4 +83,11 @@
         }
     }
 
+    .form-control.readonly {
+        cursor: default;
+        background: rgb(228, 230, 231);
+        border-color: transparent;
+       // opacity: 0.5;
+    }
+
 }

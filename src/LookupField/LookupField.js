@@ -205,8 +205,13 @@ const LookupField = React.forwardRef((props, ref) => {
         setPreloader(true);
         setRepeat(charsArray.length)
 
-        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list?table=${reference}&search_string=${charsArray}`, {
+        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list`, {
+            method: "post",
             credentials: 'same-origin',
+            body: JSON.stringify({
+                table: reference,
+                search_string: charsArray
+            }),
             headers: {
                 'content-type': "application/json",
                 'X-Transaction-Source': window.transaction_source,
@@ -219,7 +224,21 @@ const LookupField = React.forwardRef((props, ref) => {
         setFocused(false);
         setPreloader(false);
 
-        data.forEach((record) => listHandleClick(record));
+        const listRecords = {
+            value: Array.from(new Set([...this.state.listRecords.value, ...data.map(({sysId}) => sysId)])),
+            displayValue: Array.from(new Set([...this.state.listRecords.displayValue, ... data.map(({referenceData}) => referenceData[0].value)]))
+        }
+
+        this.setState({
+            listRecords,
+            referenceRecord: {
+                sysId: null,
+                displayValue: ""
+            },
+            loaded: false
+        })
+
+        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean));
     }
 
     useEffect(() => {
@@ -263,16 +282,18 @@ const LookupField = React.forwardRef((props, ref) => {
     //     }
     // }
 
-    const renderListPills = () => {
-        return <Input.Start>
-                {listRecords.displayValue.map((label) => {
-                    if (!label) return null;
-                    return <Pill label={label}
-                                 canDismiss={true}
-                                 onDelete={deleteValue}/>
-                    })
-                }
-        </Input.Start>
+    renderListPills() {
+        return (
+            <Input.Start>{listRecords.displayValue.map((label) => {
+                if (!label) return null;
+                return <Pill
+                    key={label}
+                    label={label}
+                    canDismiss={true}
+                    onDelete={deleteValue}/>
+            })
+            }</Input.Start>
+        )
     }
 
     const clearValue = () => {
