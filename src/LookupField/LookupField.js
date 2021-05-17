@@ -8,78 +8,68 @@ import Result from "./Result";
 import Pill from "../Pill/Pill";
 import Popover from "../Popover/Popover";
 import PropTypes from "prop-types";
+import {useEffect, useRef, useState} from "react";
 
-class LookupField extends React.Component {
-    constructor(props) {
-        super(props);
-        this.onChange = this.onChange.bind(this);
-        this.getReferenceList = this.getReferenceList.bind(this);
-        this.getReferenceList = _.debounce(this.getReferenceList, 500);
-        this.listHandleClick = this.listHandleClick.bind(this);
-        this.referenceHandleClick = this.referenceHandleClick.bind(this);
-        this.deleteValue = this.deleteValue.bind(this);
-        this.renderListPills = this.renderListPills.bind(this);
+const LookupField = React.forwardRef((props, ref) => {
+//class LookupField extends React.Component {
+    const {
+        type, value, displayValue, onValueChange, name, readonly, reference,
+        internalRef, visible, onInvalid, message, label, invalid, required,
+        tableRecordSysId, table
+    } = props;
 
-        this.onClick = this.onClick.bind(this);
-        this.onBlur = this.onBlur.bind(this);
-        this.onFocus = this.onFocus.bind(this);
+    const controllerRef = useRef(null);
+    const inputRef = useRef(null);
 
-        this.controllerRef = React.createRef();
-        this.inputRef = React.createRef();
+    const isList = type === "glide_list";
 
-        this.isList = this.props.type === "glide_list";
+    const [records, setRecords] = useState([]);
+    const [referenceRecord, setReferenceRecord] = useState({
+        sysId: isList ? "" : value || null,
+        displayValue: isList ? "" : displayValue || ""
+    });
+    const [listRecords, setListRecords] = useState({
+        value: value?.split(",").filter(Boolean) || [],
+        displayValue: displayValue?.split(",").filter(Boolean) || []
+    })
+    const [searchValue, setSearchValue] = useState("");
+    const [matchesCount, setMatchesCount] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [loaded, setLoaded] = useState(false);
+    const [focused, setFocused] = useState(false);
+    const [preloader, setPreloader] = useState(false);
+    const [repeat, setRepeat] = useState(0);
 
-        this.state = {
-            records: [],
-            referenceRecord: {
-                sysId: this.isList ? "" : this.props.value || null,
-                displayValue: this.isList ? "" : this.props.displayValue || ""
-            },
-            listRecords: {
-                value: this.props.value?.split(",").filter(Boolean) || [],
-                displayValue: this.props.displayValue?.split(",").filter(Boolean) || []
-            },
-            searchValue: "",
-            matchesCount: 0,
-            loading: false,
-            loaded: false,
-            focused: false,
-            preloader: false,
-            repeat: 0
-        }
-    }
 
-    makeRequest = async (chars) => {
+    const makeRequest = async (chars) => {
         const response = await graphqlRequest({
             operationName: "reference",
             query,
             variables: {
                 chars,
                 encodedRecord: "",
-                field: this.props.name,
+                field: name,
                 ignoreRefQual: false,
                 paginationLimit: 25,
                 serializedChanges: "{}",
                 sortBy: "",
-                sys_id: this.props.tableRecordSysId,
-                table: this.props.table
+                sys_id: tableRecordSysId,
+                table: table
             },
             params: {
-                signal: this.controllerRef.current.signal
+                signal: controllerRef.current.signal
             }
         });
         return await response.json();
     }
 
-    async getReferenceList(value) {
+    const getReferenceList = async (value) => {
         try {
-            this.setState({
-                loading: true,
-                records: [],
-                loaded: false
-            });
+            setLoading(true);
+            setRecords([]);
+            setLoaded(false);
 
-            const data = await this.makeRequest(value);
+            const data = await makeRequest(value);
 
             const {
                 referenceDataList,
@@ -87,72 +77,64 @@ class LookupField extends React.Component {
                 totalCount
             } = _.get(data, "[0].data.GlideLayout_Query.referenceDataRetriever");
 
-            this.setState({
-                loading: false,
-                loaded: true,
-                records: [...referenceDataList, ...referenceRecentDataList],
-                matchesCount: totalCount
-            });
+            setLoading(false);
+            setRecords([...referenceDataList, ...referenceRecentDataList]);
+            setLoaded(true);
+            setMatchesCount(totalCount)
 
         } catch (error) {
+            setLoading(false);
+            setRecords([]);
+            setLoaded(true);
             console.error(error);
         }
     }
 
-    onChange(event) {
+    const onChange = (event) => {
         const {target: {value}} = event;
-        if (this.controllerRef.current) {
-            this.controllerRef.current.abort();
+        if (controllerRef?.current) {
+            controllerRef.current.abort();
         }
-        this.setState({
-            referenceRecord: {
-                sysId: null,
-                displayValue: value
-            }
+        setReferenceRecord({
+            sysId: null,
+            displayValue: value
         })
 
-        this.controllerRef.current = new AbortController();
-
-        this.getReferenceList(value).then();
+        controllerRef.current = new AbortController();
+        getReferenceList(value).then();
     }
 
-    referenceHandleClick(record) {
+    const referenceHandleClick = (record) => {
         const {sysId, referenceData} = record;
 
-        this.setState({
-            referenceRecord: {
-                sysId,
-                displayValue: referenceData[0].value
-            },
-            loaded: false
-        })
-
-        this.props.onValueChange(this.props.name, sysId, referenceData[0].value);
+        setReferenceRecord({
+            sysId,
+            displayValue: referenceData[0].value
+        });
+        setLoaded(false)
+        onValueChange(name, sysId, referenceData[0].value);
     }
 
-    listHandleClick(record) {
+    const listHandleClick = (record) => {
         const {sysId, referenceData} = record;
 
         const listRecords = {
-            value: Array.from(new Set([...this.state.listRecords.value, sysId])),
-            displayValue: Array.from(new Set([...this.state.listRecords.displayValue, referenceData[0].value]))
+            value: Array.from(new Set([...listRecords.value, sysId])),
+            displayValue: Array.from(new Set([...listRecords.displayValue, referenceData[0].value]))
         }
+        setListRecords(listRecords);
+        setReferenceRecord({
+            sysId: null,
+            displayValue: ""
+        });
+        setLoaded(false)
 
-        this.setState({
-            listRecords,
-            referenceRecord: {
-                sysId: null,
-                displayValue: ""
-            },
-            loaded: false
-        })
-
-        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
+        onValueChange(name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
     }
 
-    deleteValue({label}) {
-        const value = new Map(this.state.listRecords.value.map((v, i) => [i, v]));
-        const displayValue = new Map(this.state.listRecords.displayValue.map((v, i) => [v, i]));
+    const deleteValue = ({label}) => {
+        const value = new Map(listRecords.value.map((v, i) => [i, v]));
+        const displayValue = new Map(listRecords.displayValue.map((v, i) => [v, i]));
 
         const id = displayValue.get(label);
         value["delete"](id);
@@ -163,47 +145,49 @@ class LookupField extends React.Component {
             displayValue: Array.from(displayValue.keys()).filter(Boolean)
         }
 
-        this.setState({listRecords});
+        setListRecords(listRecords)
 
-        this.props.onValueChange(this.props.name, listRecords.value.toString(), listRecords.displayValue.toString());
+        onValueChange(name, listRecords.value.toString(), listRecords.displayValue.toString());
     }
 
-    onClick(record) {
-        const isReference = this.props?.type === "reference"
-        return isReference ? this.referenceHandleClick(record) : this.listHandleClick(record)
+    const onClick = (record) => {
+        const isReference = type === "reference"
+        return isReference ? referenceHandleClick(record) : listHandleClick(record)
     }
 
-    showPreloader(repeat = 4) {
-        return <Input.Start><Preloader count={repeat}
-                                       flexDirectionGeneral="row"
-                                       mainStyles={{backgroundColor: "transparent"}}
-                                       items={[
-                                           {
-                                               repeat: 1,
-                                               width: "6rem",
-                                               height: "2rem",
-                                               itemStyles: {justifyContent: "space-between"},
-                                               round: false
-                                           },
-                                       ]}/></Input.Start>
+    const showPreloader = (repeat = 4) => {
+        return <Input.Start>
+            <Preloader count={repeat}
+                       flexDirectionGeneral="row"
+                       mainStyles={{backgroundColor: "transparent"}}
+                       items={[
+                           {
+                               repeat: 1,
+                               width: "6rem",
+                               height: "2rem",
+                               itemStyles: {justifyContent: "space-between"},
+                               round: false
+                           },
+                       ]}/>
+        </Input.Start>
     }
 
-    onFocus(event) {
-        this.setState({focused: true});
-        if (this.controllerRef.current) {
-            this.controllerRef.current.abort();
+    const onFocus = (event) => {
+        setFocused(true)
+        if (controllerRef?.current) {
+            controllerRef.current.abort();
         }
 
-        this.controllerRef.current = new AbortController();
-        !this.props.readonly && this.getReferenceList("**");
+        controllerRef.current = new AbortController();
+        !readonly && getReferenceList("**");
     }
 
-    onBlur(event) {
-        this.setState({focused: false});
+    const onBlur = (event) => {
+        setFocused(false)
     }
 
-    onPaste = async (event) => {
-        if (!this.isList) return
+    const onPaste = async (event) => {
+        if (!isList) return
 
         event.preventDefault();
         event.stopPropagation();
@@ -212,13 +196,16 @@ class LookupField extends React.Component {
 
         if (!value) return;
 
-        this.setState({focused: false, preloader: true});
+        setFocused(false);
+        setPreloader(true);
 
         const charsArray = value.split(/,|\\n/).map(chars => chars.trim());
 
-        this.setState({focused: false, preloader: true, repeat: charsArray.length});
+        setFocused(false);
+        setPreloader(true);
+        setRepeat(charsArray.length)
 
-        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list?table=${this.props.reference}&search_string=${charsArray}`, {
+        const result = await fetch(`api/x_aaro2_teamwork/swf_api/list?table=${reference}&search_string=${charsArray}`, {
             credentials: 'same-origin',
             headers: {
                 'content-type': "application/json",
@@ -229,147 +216,140 @@ class LookupField extends React.Component {
 
         const data = await result.json();
 
-        this.setState({focused: false, preloader: false});
+        setFocused(false);
+        setPreloader(false);
 
-        data.forEach((record) => this.listHandleClick(record));
+        data.forEach((record) => listHandleClick(record));
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        const isList = nextProps.type === "glide_list";
-
-        if (isList) {
-            return this.setState({
-                listRecords: {
-                    value: nextProps.value?.split(",") ?? [],
-                    displayValue: nextProps.displayValue?.split(",") ?? [],
-                    loading: false,
-                    focused: false
-                }
-            })
-        }
-    }
-
-    static getDerivedStateFromProps(nextProps) {
-        const isList = nextProps.type === "glide_list";
-
-        if (isList) {
-            return {
-                listRecords: {
-                    value: nextProps.value?.split(",") ?? [],
-                    displayValue: nextProps.displayValue?.split(",") ?? []
-                }
-            }
-        }
-    }
-
-    renderListPills() {
-        return (
-            <Input.Start>{this.state.listRecords.displayValue.map((label) => {
-                if (!label) return null;
-                return <Pill label={label}
-                             canDismiss={true}
-                             onDelete={this.deleteValue}/>
-            })
-            }</Input.Start>
-        )
-    }
-
-    clearValue = () => {
-        this.setState({
-            referenceList: {
-                value: "",
-                displayValue: ""
-            }
-        });
-        this.props.onValueChange(this.props.name, "", "");
-    }
-
-    render() {
-        const {
-            matchesCount,
-            records,
-            loading,
-            loaded,
-            preloader,
-            repeat,
-            focused,
-            referenceRecord,
-            listRecords
-        } = this.state;
-
-        const {
-            label, declarativeUiActions, type, name, readonly,
-            invalid, required, onInvalid, message, visible
-        } = this.props;
-
-        const hasMatches = matchesCount > 0;
-
-        const showResults = loading || (loaded && focused);
-
+    useEffect(() => {
         const isList = type === "glide_list";
 
-        const hasValue = Boolean(referenceRecord.sysId);
+        if (isList) {
+            setListRecords({
+                value: value?.split(",") ?? [],
+                displayValue: displayValue?.split(",") ?? [],
+                loading: false,
+                focused: false
+            })
+        }
+    })
 
-        const showDeleteButton = !isList && hasValue && !readonly;
+    // componentWillReceiveProps(nextProps, nextContext) {
+    //     const isList = nextProps.type === "glide_list";
+    //
+    //     if (isList) {
+    //         return this.setState({
+    //             listRecords: {
+    //                 value: nextProps.value?.split(",") ?? [],
+    //                 displayValue: nextProps.displayValue?.split(",") ?? [],
+    //                 loading: false,
+    //                 focused: false
+    //             }
+    //         })
+    //     }
+    // }
+    //
+    // static getDerivedStateFromProps(nextProps) {
+    //     const isList = nextProps.type === "glide_list";
+    //
+    //     if (isList) {
+    //         return {
+    //             listRecords: {
+    //                 value: nextProps.value?.split(",") ?? [],
+    //                 displayValue: nextProps.displayValue?.split(",") ?? []
+    //             }
+    //         }
+    //     }
+    // }
 
-        const count = listRecords.displayValue.filter(Boolean).length;
-
-        return (
-            visible ?
-                <>
-                    <div className="swf-reference" tabIndex="0" onFocus={this.onFocus} onBlur={this.onBlur}
-                         ref={elm => this.props.internalRef.current = elm}
-                    >
-                        <Input
-                            internalRef={this.inputRef}
-                            className="swf-reference--input"
-                            value={referenceRecord.displayValue}
-                            containerClass={isList ? "list-field-group" : ""}
-                            label={`${label} ${isList ? count + " selected" : ""}`}
-                            manageValue={true}
-                            name={name}
-                            onInput={this.onChange}
-                            readonly={readonly}
-                            onInvalid={onInvalid}
-                            onPaste={this.onPaste}
-                            invalid={invalid}
-                            required={required}
-                            message={message}
-                        >
-                            {preloader && this.showPreloader(repeat)}
-                            {isList && !preloader && this.renderListPills()}
-                            {!readonly && <Input.End>{showDeleteButton &&
-                            <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
-                                    onClick={this.clearValue}/>}</Input.End>}
-                        </Input>
-                        {this.inputRef && this.inputRef.current &&
-                        <Popover
-                            hideTail
-                            manageOpened
-                            opened={showResults}
-                            positionTarget={this.inputRef}
-                            positions={[
-                                {target: "bottom-center", content: "top-center"},
-                                {target: "top-center", content: "bottom-center"}
-                            ]}
-
-                        >
-                            {/*style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}*/}
-                            <Popover.Content>
-                                <ul className="result" style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}>
-                                    {loading ? <span className="message">Loading...</span> : null}
-                                    {loaded && !hasMatches ? <span className="message">No Results Found</span> : null}
-                                    {loaded && <Result records={records} onClick={this.onClick}/>}
-                                </ul>
-                            </Popover.Content>
-                        </Popover>
-                        }
-                    </div>
-                </>
-                : null
-        )
+    const renderListPills = () => {
+        return <Input.Start>
+                {listRecords.displayValue.map((label) => {
+                    if (!label) return null;
+                    return <Pill label={label}
+                                 canDismiss={true}
+                                 onDelete={deleteValue}/>
+                    })
+                }
+        </Input.Start>
     }
-}
+
+    const clearValue = () => {
+        setListRecords({
+            value: "",
+            displayValue: ""
+        })
+        onValueChange(name, "", "");
+    }
+
+
+    const hasMatches = matchesCount > 0;
+
+    const showResults = loading || (loaded && focused);
+
+    const hasValue = Boolean(referenceRecord.sysId);
+
+    const showDeleteButton = !isList && hasValue && !readonly;
+
+    const count = listRecords?.displayValue.filter(Boolean).length;
+
+    return (
+        visible ?
+            <>
+                <div className="swf-reference" tabIndex="0" onFocus={onFocus} onBlur={onBlur}
+                     ref={elm => internalRef.current = elm}
+                >
+                    <Input
+                        internalRef={inputRef}
+                        className="swf-reference--input"
+                        value={referenceRecord.displayValue}
+                        containerClass={isList ? "list-field-group" : ""}
+                        label={`${label} ${isList ? count + " selected" : ""}`}
+                        manageValue={true}
+                        name={name}
+                        onInput={onChange}
+                        readonly={readonly}
+                        onInvalid={onInvalid}
+                        onPaste={onPaste}
+                        invalid={invalid}
+                        required={required}
+                        message={message}
+                    >
+                        {preloader && showPreloader(repeat)}
+                        {isList && !preloader && renderListPills()}
+                        {!readonly && <Input.End>{showDeleteButton &&
+                        <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
+                                onClick={clearValue}/>}</Input.End>}
+                    </Input>
+                    {inputRef?.current &&
+                    <Popover
+                        hideTail
+                        manageOpened
+                        opened={showResults}
+                        positionTarget={inputRef}
+                        positions={[
+                            {target: "bottom-center", content: "top-center"},
+                            {target: "top-center", content: "bottom-center"}
+                        ]}
+
+                    >
+                        {/*style={{width: `${this.inputRef?.current?.offsetWidth - 16}px`}}*/}
+                        <Popover.Content>
+                            <ul className="result" style={{width: `${inputRef?.current?.offsetWidth - 16}px`}}>
+                                {loading ? <span className="message">Loading...</span> : null}
+                                {loaded && !hasMatches ? <span className="message">No Results Found</span> : null}
+                                {loaded && <Result records={records} onClick={onClick}/>}
+                            </ul>
+                        </Popover.Content>
+                    </Popover>
+                    }
+                </div>
+            </>
+            : null
+    )
+
+});
 
 LookupField.defaultProps = {
     label: "",
@@ -410,7 +390,7 @@ LookupField.propTypes = {
     visible: propTypes.bool,
     internalRef: PropTypes.oneOfType([
         propTypes.func,
-        propTypes.shape({ current: propTypes.any })
+        propTypes.shape({current: propTypes.any})
     ])
 }
 
