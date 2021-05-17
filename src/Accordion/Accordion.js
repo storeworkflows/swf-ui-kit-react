@@ -3,35 +3,24 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 import findByType, {createSubComponent} from "../utils/findByType";
 import AccordionItem from "./AccordionItem";
+import {useState} from "react";
 
-class Accordion extends React.Component {
+const Accordion = React.forwardRef((props, ref) => {
 
-    constructor(props) {
-        super(props);
-        this.itemSelected = this.itemSelected.bind(this);
+    const {children, selectMany, onItemClicked, className} = props;
+    const [selectedItemKey, setSelectedItemKey] = useState(null)
 
-        this.state = {
-            selectedItemKey: null
-        }
-
-    }
-
-    itemSelected({key}){
-        const {onItemClicked} = this.props;
-        const {selectedItemKey} = this.state;
-
+    const itemSelected = ({key}) => {
         let updatedKey = (key === selectedItemKey) ? null : key;
-        this.setState({selectedItemKey: updatedKey});
+        !selectMany && setSelectedItemKey(updatedKey)
 
-        onItemClicked({key: key});
+        onItemClicked({key});
     }
 
-    renderItems() {
-        const {children, selectMany} = this.props;
-        const {selectedItemKey} = this.state;
+    const renderItems = () => {
         const items = findByType(children, "Item");
 
-        if (!items || items.length<1)
+        if (!items || items.length < 1)
             return null;
 
         return items.map((el, i) => {
@@ -40,9 +29,9 @@ class Accordion extends React.Component {
                     key={el.key}
                     opened={el.key === selectedItemKey}
                     manageOpened={!selectMany}
-                    onSelected={() => !selectMany && this.itemSelected({key: el.key})}
-                    isLastItem = {i===(items.length-1)}
-                    isFirstItem = {i===0}
+                    onSelected={() =>  itemSelected({key: el.key})}
+                    isLastItem={i === (items.length - 1)}
+                    isFirstItem={i === 0}
                     {...el.props}
                 />
             )
@@ -50,28 +39,26 @@ class Accordion extends React.Component {
     }
 
 
-    render() {
-        const classes = classnames(
-            this.props.className,
-            "accordion-container"
-        )
+    const classes = classnames(
+        className,
+        "accordion-container"
+    )
 
-        return (
-            <>
-                <div className={classes}>
-                    {this.renderItems()}
-                </div>
-            </>
-        )
-    }
-}
+    return (
+        <>
+            <div className={classes} ref={ref}>
+                {renderItems()}
+            </div>
+        </>
+    )
+});
 
 Accordion.Item = createSubComponent("Item");
 Accordion.Header = createSubComponent("Header");
 
 Accordion.defaultProps = {
     selectMany: true,
-  //  hideDividers: false,
+    //  hideDividers: false,
     onItemClicked: () => void 0,
     className: ""
 }
@@ -79,7 +66,7 @@ Accordion.defaultProps = {
 Accordion.propTypes = {
     selectMany: propTypes.bool,
     onItemClicked: propTypes.func,
-  //  hideDividers: propTypes.bool,
+    //  hideDividers: propTypes.bool,
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
 }
 

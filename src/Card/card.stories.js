@@ -11,4 +11,5 @@ export default {
 const Template = (args) => <Card {...args}>
     <div>Content</div>
 </Card>;
+
 export const Standard = Template.bind({});

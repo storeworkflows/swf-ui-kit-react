@@ -5,14 +5,9 @@ import Icon from "../Icon/Icon";
 import Popover from "../Popover/Popover";
 import {useRef, useState} from "react";
 
-const TabItem = (props) => {
+const TabItem = React.forwardRef((props, ref) => {
     const infoRef = useRef(null);
     const [infoOpened, setInfoOpened] = useState(false)
-
-
-    // shouldComponentUpdate(nextProps, nextState, nextContext){
-    //     return this.state.infoOpened!==nextState.infoOpened|| this.props!==nextProps;
-    // }
 
     const {item, isSelected, hideLabel, tabSelected} = props;
     const {
@@ -20,7 +15,7 @@ const TabItem = (props) => {
         required = false, invalid = false, infoMessage
     } = item;
 
-    const hasIcon = icon !== undefined && icon.length > 0;
+    const hasIcon = !!icon;
     const hasRef = infoRef && infoRef.current;
 
     const tabClasses = classNames({
@@ -39,46 +34,45 @@ const TabItem = (props) => {
         {target: "bottom-end", content: "top-end"}
     ]
 
-    return (
-        <div
-            key={id}
-            className={tabClasses}
-            onClick={() => tabSelected(item.id, disabled)}
-            style={style || {}}
+    return <div
+        key={id}
+        className={tabClasses}
+        onClick={() => tabSelected(item.id, disabled)}
+        style={style || {}}
+        ref={ref}
+    >
+        {hasIcon && <Icon icon={icon} size="sm"/>}
+        {!hideLabel && <div className="label">{label}</div>}
+        {required && <Icon icon={'asterisk'} customSize={8}/>}
+        {infoMessage && <div
+            className={"info-icon-container"}
+            ref={el => infoRef.current = el}
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setInfoOpened(!infoOpened)
+            }}
         >
-            {hasIcon && <Icon icon={icon} size="sm"/>}
-            {!hideLabel && <div className="label">{label}</div>}
-            {required && <Icon icon={'asterisk'} customSize={8}/>}
-            {infoMessage && <div
-                className={"info-icon-container"}
-                ref={el => infoRef.current = el}
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setInfoOpened(!infoOpened)
-                }}
-            >
-                <Icon
-                    className={"info-icon"}
-                    icon={infoOpened ? 'info-circle-fill' : 'info-circle'}
-                    size={"sm"}
-                />
-            </div>
-            }
-            {hasRef && <Popover
-                hideTail={true}
-                manageOpened={true}
-                opened={infoOpened}
-                onOuterPopoverClicked={() => setInfoOpened(false)}
-                positionTarget={infoRef}
-                positions={popoverPositions}
-            >
-                <Popover.Content>
-                    <span className={"info-content"}>{infoMessage}</span>
-                </Popover.Content>
-            </Popover>}
+            <Icon
+                className={"info-icon"}
+                icon={infoOpened ? 'info-circle-fill' : 'info-circle'}
+                size={"sm"}
+            />
         </div>
-    )
-};
+        }
+        {hasRef && <Popover
+            hideTail={true}
+            manageOpened={true}
+            opened={infoOpened}
+            onOuterPopoverClicked={() => setInfoOpened(false)}
+            positionTarget={infoRef}
+            positions={popoverPositions}
+        >
+            <Popover.Content>
+                <span className={"info-content"}>{infoMessage}</span>
+            </Popover.Content>
+        </Popover>}
+    </div>
+});
 
 export default TabItem;

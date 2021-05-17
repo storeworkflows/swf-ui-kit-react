@@ -49,6 +49,28 @@ Standard.args = {
             id: 4,
             label: "fourth",
             subLabel: "sublabel"
+        },
+        {
+            id: 5,
+            label: "first",
+            disabled: true,
+            number: 7,
+            icon: "alarm"
+        },
+        {
+            id: 6,
+            label: "second",
+            number: 100,
+            icon: "alarm"
+        },
+        {
+            id: 7,
+            label: "third",
+        },
+        {
+            id: 8,
+            label: "fourth",
+            subLabel: "sublabel"
         }
     ]
 }

@@ -3,64 +3,62 @@ import propTypes from "prop-types";
 
 import classnames from "classnames";
 
-class RadioOption extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+const RadioOption = React.forwardRef((props, ref) => {
 
+    const {
+        id,
+        checked,
+        readonly,
+        disabled,
+        name,
+        value,
+        label,
+        onChangeAction,
+        onInvalidAction,
+        invalid,
+        isHorizontal,
+        required,
+        className
+    } = props;
 
-    render() {
-        const {
-            id,
-            checked,
-            readonly,
-            disabled,
-            name,
-            value,
-            label,
-            onChangeAction,
-            onInvalidAction,
-            invalid,
-            isHorizontal,
-            required,
-            className
-        } = this.props;
+    let optionClasses = classnames(
+        className,
+        "radio-option-container",
+        {
+            "disabled": disabled,
+            "readonly": readonly,
+            "invalid": invalid,
+            "horizontal": isHorizontal
+        })
 
-        let optionClasses= classnames(
-            className,
-            "radio-option-container",
-            {
-                "disabled": disabled,
-                "readonly": readonly,
-                "invalid": invalid,
-                "horizontal": isHorizontal
-            })
-
-        let canChangeValue = !readonly && !disabled;
-        return (
-            <>
-                <div className={optionClasses}
-                     onClick={()=> {canChangeValue && onChangeAction({id: id, name: name, value: value})}}
-                >
-                    <input
-                        className={classnames("radio-option", {"checked": checked})}
-                        type="radio"
-                        id={id}
-                        checked={checked}
-                        value={value ? value : label}
-                        disabled={disabled}
-                        readOnly={readonly}
-                        name={name}
-                        required={required}
-                        onChange={() => {}}
-                        onInvalid={(e) => onInvalidAction({e, id: id})}
-                    />
-                    <label className={"radio-option-label"}>{label}</label>
-                </div>
-            </>
-        );
-    }
-}
+    let canChangeValue = !readonly && !disabled;
+    return (
+        <>
+            <div className={optionClasses}
+                 onClick={() => {
+                     canChangeValue && onChangeAction({id: id, name: name, value: value})
+                 }}
+                 ref={ref}
+            >
+                <input
+                    className={classnames("radio-option", {"checked": checked})}
+                    type="radio"
+                    id={id}
+                    checked={checked}
+                    value={value ? value : label}
+                    disabled={disabled}
+                    readOnly={readonly}
+                    name={name}
+                    required={required}
+                    onChange={() => {
+                    }}
+                    onInvalid={(e) => onInvalidAction({e, id: id})}
+                />
+                <label className={"radio-option-label"}>{label}</label>
+            </div>
+        </>
+    );
+});
 
 RadioOption.defaultProps = {
     checked: false,

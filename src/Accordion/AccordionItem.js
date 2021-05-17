@@ -3,60 +3,41 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 import findByType from "../utils/findByType";
 import Button from "../Button/Button";
+import {useState} from "react";
 
 const Header = () => null;
 
-class AccordionItem extends React.Component {
+const AccordionItem = React.forwardRef((props, ref) => {
 
-    constructor(props) {
-        super(props);
-        this.itemClicked = this.itemClicked.bind(this);
+    const {
+        manageOpened, onClick, onSelected, opened, children, className, label,
+        triggerIcon, iconToStart, headerClassName, isLastItem, isFirstItem
+    } = props;
+    const [isOpened, setIsOpened] = useState(opened)
 
-        this.state={
-            opened: props.opened
-        }
-    }
-
-    itemClicked(){
-        const {opened} = this.state;
-        const {manageOpened, onClick, onSelected} = this.props;
-        let updateOpened = opened;
-
-        if(!manageOpened){
-            updateOpened = !opened;
-            this.setState({opened: updateOpened})
-        }
-
-        onClick({opened: updateOpened});
+    const itemClicked = () => {
+        onClick({opened: manageOpened ? opened : !isOpened});
+        !manageOpened && setIsOpened(!isOpened)
         onSelected();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {manageOpened, opened} = this.props
-
-        if(manageOpened && opened !== this.state.opened)
-            this.setState({opened: opened});
-    }
-
-    renderHeader() {
-        const {children, label} = this.props;
+    const renderHeader = () => {
         const header = findByType(children, "Header");
 
-        if (!header || header.length<1) return <label>{label}</label>;
+        if (!header || header.length < 1)
+            return <label>{label}</label>;
 
         return header
     }
 
-    renderContent() {
-        const {children} = this.props;
+    const renderContent = () => {
         const header = findByType(children, "Header");
 
-
         let contentElements = [].concat(children);
-        if(header && header.length> 0)
+        if (header && header.length > 0)
             contentElements = contentElements.filter(child => child.type !== header[0].type)
 
-        if(contentElements.length>0)
+        if (contentElements.length > 0)
             return <div className={"accordion-content"}>
                 {contentElements}
             </div>;
@@ -64,8 +45,7 @@ class AccordionItem extends React.Component {
         return null;
     }
 
-    renderIcon(){
-        const {triggerIcon, iconToStart} = this.props;
+    const renderIcon = () => {
         let classes = classnames({
             "trigger-icon": true,
             "left": iconToStart,
@@ -73,52 +53,49 @@ class AccordionItem extends React.Component {
         })
 
         return <Button
-            className = {classes}
+            className={classes}
             icon={triggerIcon}
             variant={"tertiary"}
         />
     }
 
+    const currentOpened = manageOpened ? opened : isOpened;
 
-    render() {
-        const { iconToStart, isLastItem, isFirstItem, className, headerClassName} = this.props;
-        const {opened} = this.state;
+    const itemStyles = classnames(
+        className,
+        {
+            "accordion-item": true,
+            "last": isLastItem,
+            "first": isFirstItem
+        })
 
-        const itemStyles =  classnames(
-            className,
-            {
-                "accordion-item": true,
-                "last": isLastItem,
-                "first": isFirstItem
-            })
+    const headerContentStyles = classnames(
+        {
+            "accordion-header-content": true,
+            "left": !iconToStart,
+            "right": iconToStart,
+            "opened": currentOpened
+        })
 
-        const headerContentStyles =  classnames(
-            {
-                "accordion-header-content": true,
-                "left": !iconToStart,
-                "right": iconToStart,
-                "opened": opened
-            })
-
-        return (
-            <>
-                <div className={itemStyles}>
-                    <div
-                        className= {classnames(headerClassName,"accordion-item-header")}
-                        onClick={this.itemClicked}
-                    >
-                        {iconToStart && this.renderIcon()}
-                        <div className={headerContentStyles}>
-                            {this.renderHeader()}
-                        </div>
-                        {!iconToStart && this.renderIcon()}
+    return (
+        <>
+            <div className={itemStyles} ref={ref}>
+                <div
+                    className={classnames(headerClassName, "accordion-item-header")}
+                    onClick={itemClicked}
+                >
+                    {iconToStart && renderIcon()}
+                    <div className={headerContentStyles}>
+                        {renderHeader()}
                     </div>
-                    { opened && this.renderContent()}
+                    {!iconToStart && renderIcon()}
                 </div>
-            </>
-        )
-    }
-}
+                {currentOpened && renderContent()}
+            </div>
+        </>
+    )
+
+});
 
 AccordionItem.defaultProps = {
     opened: false,
@@ -144,7 +121,7 @@ AccordionItem.propTypes = {
     isLastItem: propTypes.bool,
     isFirstItem: propTypes.bool,
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-    headerClassName:propTypes.oneOfType([propTypes.object, propTypes.string])
+    headerClassName: propTypes.oneOfType([propTypes.object, propTypes.string])
 }
 
 export default AccordionItem

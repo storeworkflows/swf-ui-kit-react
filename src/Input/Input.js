@@ -7,209 +7,185 @@ import {noop} from "../utils";
 import propTypes from "prop-types";
 import Icon from "../Icon/Icon";
 import InfoMessage from "../InfoMessage/InfoMessage";
-import _ from "lodash"
+import {useEffect, useState} from "react";
 
 const Start = () => null;
 const End = () => null;
 
-class Input extends React.Component {
-    constructor(props) {
-        super(props);
-        this.onEvent = this.onEvent.bind(this)
-        // this.onFocus = this.onFocus.bind(this)
-        // this.onInput = this.onInput.bind(this)
-        this.onInvalid = this.onInvalid.bind(this)
+const Input = (props) => {
+    const {children, readonly, disabled, manageInvalid, onInvalid} = props;
 
-        this.state = {
-            checked: this.props.checked,
-            invalid: this.props.invalid,
-            hasStart: false,
-            hasEnd: false,
-            focused: false,
-            value: this.props.value
-        }
-    };
+    const [invalid, setInvalid] = useState(props.invalid);
+    const [hasStart, setHasStart] = useState(false);
+    const [hasEnd, setHasEnd] = useState(false);
+    const [focused, setFocused] = useState(false);
+    const [value, setValue] = useState(props.value);
 
-    renderStart() {
-        const {children, readonly, disabled} = this.props;
+    const renderStart = () => {
         const start = findByType(children, "Start");
         const classes = classnames({
             "form-control--start": true,
-            "--invalid": this.state?.invalid,
-            "--focused": this.state?.focused,
+            "--invalid": invalid,
+            "--focused": focused,
             "--readonly": readonly,
             "--disabled": disabled
         })
 
         if (!start || start.length < 1) return null;
 
-        !this.state.hasStart && this.setState({hasStart: true})
+        !hasStart && setHasStart(true)
 
         return <div className={classes}>{start}</div>
     }
 
-    renderEnd() {
-        const {children, readonly, disabled} = this.props;
+    const renderEnd = () => {
         const end = findByType(children, "End");
         const classes = classnames({
             "form-control--end": true,
-            "--invalid": this.state?.invalid,
+            "--invalid": invalid,
             "--readonly": readonly,
             "--disabled": disabled,
-            "--focused": this.state?.focused,
+            "--focused": focused,
         })
 
-        if (!end || end.length<1) return null;
+        if (!end || end.length < 1) return null;
 
-        !this.state.hasEnd && this.setState({hasEnd: true})
+        !hasEnd && setHasEnd(true)
 
         return <div className={classes}>{end}</div>
     }
 
     //type is one of "onBlur", "onInput", "onFocus"
-    onEvent(event, type, value = this.state.value) {
-        const {readonly, disabled} = this.props;
+    const onEvent = (event, type, eventValue = value) => {
         let canChange = !readonly && !disabled;
 
-        if(!canChange) return;
+        if (!canChange) return;
 
-        this.setState({ value, focused: type !== "onBlur" });
-        this.props[type](event);
+        setValue(eventValue);
+        setFocused(type !== "onBlur");
+        props[type](event);
     }
 
 
-    onInvalid(e){
-        const {manageInvalid, onInvalid} = this.props;
-
-        if(!manageInvalid)
-            this.setState({invalid: true});
+    const onInvalidAction = (e) => {
+        !manageInvalid && setInvalid(true)
         onInvalid(e);
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {invalid, manageInvalid, value} = this.props;
+    useEffect(() => { manageInvalid && setInvalid(props.invalid)}, [props.invalid])
+    useEffect(() =>  setValue(props.value), [props.value])
 
-        if(!_.isEqual(prevProps.value, value) || !_.isEqual(value, this.state.value))
-            this.setState({value: value})
+    const {
+        label,
+        name = "name",
+        placeholder,
+        required,
+        type,
+        step,
+        autofocus,
+        max,
+        min,
+        maxlength,
+        minlength,
+        pattern,
+        multiple,
+        message,
+        className,
+        containerClass,
+        inputClass,
+        onChange, onKeyDown, onPaste
+    } = props;
 
-        if(manageInvalid && this.state.invalid !== invalid)
-            this.setState({invalid: invalid});
-    }
+    const _hasLabel = label !== undefined;
+    const _hasMessages = message.length > 0;
+    const _moved = focused || value || hasStart;
 
-    render() {
-        const {
-            disabled,
-            label,
-            name = "name",
-            placeholder,
-            readonly,
-            required,
-            type,
-            value = this.state.value,
-            invalid,
-            step,
-            autofocus,
-            max,
-            min,
-            maxlength,
-            minlength,
-            pattern,
-            multiple,
-            message,
-            className
-        } = this.props;
+    const containerClasses = classnames(className, {
+        "swf-form-group": true,
+        "--invalid": invalid,
+        "--readonly": readonly,
+        "--focused": focused,
+        [containerClass]: true
+    })
 
-        const _hasLabel = label !== undefined;
-        const _hasMessages = message.length > 0;
-        const _moved = this.state.focused || value || this.state.hasStart;
+    const labelClasses = classnames({
+        "inp-label": true,
+        "--moved": _moved,
+        "--focused": focused,
+        "--invalid": invalid,
+        "--readonly": readonly
+    });
 
-        const containerClasses = classnames( className,{
-            "swf-form-group": true,
-            "--invalid": this.state?.invalid,
-            "--readonly": this.props.readonly,
-            "--focused": this.state?.focused,
-            [this.props.containerClass]: true
-        })
+    const requiredClasses = classnames({
+        "inp-required": true,
+        "--focused": focused,
+        "--invalid": invalid
+    });
 
-        const labelClasses = classnames({
-            "inp-label": true,
-            "--moved": _moved,
-            "--focused": this.state?.focused,
-            "--invalid": this.state?.invalid,
-            "--readonly": this.props.readonly
-        });
+    const inputClasses = classnames({
+        "form-control": true,
+        "no-start-border": hasStart,
+        "no-end-border": hasEnd,
+        "--invalid": invalid,
+        "--readonly": readonly,
+        [inputClass]: true
+    })
 
-        const requiredClasses = classnames({
-            "inp-required": true,
-            "--focused": this.state?.focused,
-            "--invalid": this.state?.invalid
-        });
+    return (
+        <>
+            <div className={containerClasses}
+                // ref={elm => props.internalRef.current = elm}
+            >
 
-        const inputClasses = classnames({
-            "form-control": true,
-            "no-start-border": this.state?.hasStart,
-            "no-end-border": this.state?.hasEnd,
-            "--invalid": this.state?.invalid,
-            "--readonly": this.props.readonly,
-            [this.props.inputClass]: true
-        })
-
-        return (
-            <>
-                <div className={containerClasses}
-                     ref={elm => this.props.internalRef.current = elm}
-                >
-
-                    {_hasLabel &&
-                        <span className={labelClasses}>
+                {_hasLabel &&
+                <span className={labelClasses}>
                             <label htmlFor="name">{label}</label>
-                            { required && <Icon icon={'asterisk'} className={requiredClasses} customSize={7}/>}
+                    {required && <Icon icon={'asterisk'} className={requiredClasses} customSize={7}/>}
                         </span>
-                    }
-                    <div className="input-group">
-                        {this.renderStart()}
-                        <input
-                            className={inputClasses}
-                            id="name"
-                            name={name}
-                            placeholder={placeholder}
-                            step={step}
-                            type={type}
-                            aria-required={required}
-                            aria-invalid={invalid}
-                            value={this.state.value}
-                            readOnly={readonly}
-                            required={required}
-                            autoFocus={autofocus}
-                            max={max}
-                            min={min}
-                            maxLength={maxlength}
-                            minLength={minlength}
-                            pattern={pattern}
-                            disabled={disabled}
-                            multiple={multiple}
-                            onChange={this.props.onChange}
-                            onPaste={this.props.onPaste}
-                            onKeyDown={this.props.onKeyDown}
-                            onFocus={(e) => this.onEvent(e,"onFocus")}
-                            onBlur={(e) => this.onEvent(e,"onBlur")}
-                            onInput={(e) => this.onEvent(e,"onInput", e.target.value)}
-                            onInvalid={this.onInvalid}
-                        />
-                        {this.renderEnd()}
-                    </div>
-                    {_hasMessages &&
-                        message.map((el, index) => {
-                            return (el && <InfoMessage
-                                {...el}
-                                key={index}
-                            />)
-                        })
-                    }
+                }
+                <div className="input-group">
+                    {renderStart()}
+                    <input
+                        className={inputClasses}
+                        id="name"
+                        name={name}
+                        placeholder={placeholder}
+                        step={step}
+                        type={type}
+                        aria-required={required}
+                        aria-invalid={invalid}
+                        value={value}
+                        readOnly={readonly}
+                        required={required}
+                        autoFocus={autofocus}
+                        max={max}
+                        min={min}
+                        maxLength={maxlength}
+                        minLength={minlength}
+                        pattern={pattern}
+                        disabled={disabled}
+                        multiple={multiple}
+                        onChange={onChange}
+                        onPaste={onPaste}
+                        onKeyDown={onKeyDown}
+                        onFocus={(e) => onEvent(e, "onFocus")}
+                        onBlur={(e) => onEvent(e, "onBlur")}
+                        onInput={(e) => onEvent(e, "onInput", e.target.value)}
+                        onInvalid={onInvalidAction}
+                    />
+                    {renderEnd()}
                 </div>
-            </>
-        )
-    }
+                {_hasMessages &&
+                message.map((el, index) => {
+                    return (el && <InfoMessage
+                        {...el}
+                        key={index}
+                    />)
+                })
+                }
+            </div>
+        </>
+    )
 };
 
 Input.Start = createSubComponent("Start");
@@ -220,7 +196,6 @@ Input.defaultProps = {
     disabled: false,
     invalid: false,
     manageInvalid: false,
-    manageValue: false,
     message: [],
     multiple: false,
     readonly: false,
@@ -229,6 +204,7 @@ Input.defaultProps = {
     containerClass: "",
     step: "any",
     type: "text",
+    value: "",
     internalRef: React.createRef(),
     onInput: noop,
     onChange: noop,
@@ -246,13 +222,12 @@ Input.propTypes = {
     invalid: PropTypes.bool,
     label: PropTypes.string,
     manageInvalid: PropTypes.bool,
-    manageValue: PropTypes.bool,
     max: PropTypes.number,
     min: PropTypes.number,
     maxlength: PropTypes.number,
     minlength: PropTypes.number,
     message: PropTypes.arrayOf(PropTypes.shape({
-        status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
+        status: PropTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
         content: PropTypes.string,
         icon: PropTypes.string,
         className: propTypes.object,
@@ -282,9 +257,9 @@ Input.propTypes = {
     onPaste: PropTypes.func,
     internalRef: PropTypes.oneOfType([
         propTypes.func,
-        propTypes.shape({ current: propTypes.any })
+        propTypes.shape({current: propTypes.any})
     ]),
-    className:propTypes.oneOfType([propTypes.string, propTypes.object])
+    className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 export default Input;

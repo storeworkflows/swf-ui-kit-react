@@ -4,117 +4,86 @@ import classnames from "classnames";
 
 import RadioOption from "./RadioOption.js"
 import {RADIO_BUTTONS_LAYOUT} from "./constants";
-import Icon from "../Icon/Icon";
 import RequiredLabel from "../RequiredLabel/RequiredLabel";
+import {useState} from "react";
 
-class RadioButtons extends React.Component {
-    constructor(props) {
-        super(props);
-        this.optionClicked = this.optionClicked.bind(this);
-        this.optionInvalid = this.optionInvalid.bind(this);
+const RadioButtons = React.forwardRef((props, ref) => {
+    const {value, invalid, manageValue, onChange, readonly, manageInvalid, onInvalid, layout, required} = props;
 
-        this.state = {
-            selectedValue: this.props.value,
-            isInvalid: this.props.invalid
+    const [selectedValue, setSelectedValue] = useState(value);
+    const [isInvalid, setIsInvalid] = useState(invalid)
+
+    const selectedFinal = manageValue ? value : selectedValue;
+    const invalidFinal = manageInvalid ? invalid : isInvalid
+
+    const optionClicked = (option) => {
+        if (!readonly) {
+            !manageValue && setSelectedValue(option.id);
+            onChange(option)
         }
     }
 
-    optionClicked(option){
-        const {manageValue, onChange, readonly} = this.props;
-        if(!manageValue)
-            !readonly && this.setState({selectedValue: option.id});
-        !readonly && onChange(option)
-    }
-
-    optionInvalid(e){
-        const {manageInvalid, onInvalid} = this.props;
-        if(!manageInvalid)
-            this.setState({isInvalid: true});
+    const optionInvalid = (e) => {
+        !manageInvalid && setIsInvalid(true);
         onInvalid(e)
     }
 
-    renderValue(option, name){
-        const {
-            id,
-            label,
-            value,
-            checked,
-            readonly,
-            disabled
-        } = option;
+    const renderValue = (option, name) => {
+        const { id, label, value, checked, readonly, disabled} = option;
 
-
-        let isChecked = this.state.selectedValue ? this.state.selectedValue === id : checked
-        let isHorizontal = this.props.layout === RADIO_BUTTONS_LAYOUT.horizontal;
+        let isChecked = selectedFinal ? selectedFinal === id : checked
+        let isHorizontal = layout === RADIO_BUTTONS_LAYOUT.horizontal;
 
         return (
             <RadioOption
                 key={id}
-                id = {id}
-                label = {label}
-                value = {value}
-                checked = {isChecked}
-                readonly = {readonly || this.props.readonly}
-                disabled = {disabled || this.props.disabled}
-                required = {this.props.required}
-                invalid = {this.state.isInvalid}
-                name = {name}
-                onChangeAction = {this.optionClicked}
-                onInvalidAction = {this.optionInvalid}
-                isHorizontal = {isHorizontal}
+                id={id}
+                label={label}
+                value={value}
+                checked={isChecked}
+                readonly={readonly || props.readonly}
+                disabled={disabled || props.disabled}
+                required={required}
+                invalid={invalidFinal}
+                name={name}
+                onChangeAction={optionClicked}
+                onInvalidAction={optionInvalid}
+                isHorizontal={isHorizontal}
             />
         )
     }
 
-    componentDidUpdate(){
-        let {value, invalid, manageValue, manageInvalid} = this.props;
+    const {
+        label, name, options, visible,
+        className, labelClassName,
+    } = props;
 
-        if(manageValue && value!== this.state.selectedValue)
-            this.setState({selectedValue: value});
-
-        if(manageInvalid && invalid!== this.state.isInvalid)
-            this.setState({isInvalid: invalid});
-    }
-
-    render() {
-
-        const {
-            label,
-            name,
-            options,
-            required,
-            visible,
-            className,
-            labelClassName,
-            invalid
-        } = this.props;
-
-        return (
-            visible ?
+    return (
+        visible ?
             <>
-                <div className={classnames(className, "radio-buttons-container")}>
+                <div className={classnames(className, "radio-buttons-container")} ref={ref}>
                     <div className={classnames({
-                                 "radio-buttons-header": true,
-                                 "invalid": this.state.isInvalid
-                             })}
+                        "radio-buttons-header": true,
+                        "invalid": invalidFinal
+                    })}
                     >
                         {(label || required) &&
-                            <RequiredLabel className={labelClassName}
-                                           invalid={invalid}
-                                           required={required}
-                                           label={label}
-                            />
+                        <RequiredLabel className={labelClassName}
+                                       invalid={invalidFinal}
+                                       required={required}
+                                       label={label}
+                        />
                         }
                     </div>
                     <div className={"group-of-radio-buttons"}>
-                        {options.map((option) => this.renderValue(option, name))}
+                        {options.map((option) => renderValue(option, name))}
                     </div>
                 </div>
             </>
-                : null
-        );
-    }
-};
+            : null
+    );
+
+});
 
 RadioButtons.defaultProps = {
     disabled: false,
@@ -149,7 +118,7 @@ RadioButtons.propTypes = {
             checked: propTypes.bool,
             readonly: propTypes.bool,
             disabled: propTypes.bool
-    })),
+        })),
     readonly: propTypes.bool,
     required: propTypes.bool,
     value: propTypes.string,

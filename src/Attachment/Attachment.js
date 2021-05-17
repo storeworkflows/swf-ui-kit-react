@@ -4,105 +4,85 @@ import classnames from "classnames";
 import RequiredLabel from "../RequiredLabel/RequiredLabel";
 import PropTypes from "prop-types";
 import InfoMessage from "../InfoMessage/InfoMessage";
-import {getFileExtensions} from "./utils";
+import {checkFileToUpload, getFileExtensions} from "./utils";
 import File from "./InnerComponents/File/File";
 import Button from "../Button/Button";
 import {downloadRequest, uploadRequest, deleteRequest} from "./_requests";
-import {GLOBAL_CONSTANTS} from "../Card/constants";
 import Preloader from "../Preloader/Preloader";
 import Loader from "./InnerComponents/Loader/Loader";
+import {useEffect, useRef, useState} from "react";
 
-class Attachment extends React.Component {
-    constructor(props) {
-        super(props);
+const Attachment = React.forwardRef((props, ref) => {
+    const {
+        invalid, tableName, tableSysId, attachmentSysId, value,
+        contentType, errorMessagesDelay, readonly, disabled,
+        onValueChange, name,
+        manageInvalid, onInvalid,
+        labelClassName, label, required,
+        visible, className, displayValue, message, placeholder
+    } = props;
 
-        const {invalid, tableName, tableSysId, attachmentSysId, value} = this.props;
-        this.state = {
-            invalid: invalid,
-            file: value,
-            focus: false,
-            systemMessages: [],
-            tableName: tableName,
-            tableSysId: tableSysId,
-            attachmentSysId: attachmentSysId,
-            activePreloader: true,
-            activeDeleting: false
-        }
+    const [isInvalid, setIsInvalid] = useState(invalid);
+    const [file, setFile] = useState(value);
+    const [focus, setFocusSate] = useState(false);
+    const [systemMessages, setSystemMessages] = useState([]);
+    const [tableNameState, setTableNameState] = useState(tableName);
+    const [tableSysIdSate, setTableSysIdSate] = useState(tableSysId);
+    const [attachmentSysIdSate, setAttachSysIdSate] = useState(attachmentSysId);
+    const [activePreloader, setActivePreloader] = useState(true);
+    const [activeDeleting, setActiveDeleting] = useState(false);
 
-        this.containerClickedEvent = this.containerClickedEvent.bind(this);
-        this.onInvalidEvent = this.onInvalidEvent.bind(this);
-        this.onChangeEvent = this.onChangeEvent.bind(this);
-        this.onDropEvent = this.onDropEvent.bind(this);
+    const input = useRef(null)
+    const invalidValue = manageInvalid ? input : isInvalid;
 
-        this.downloadFile = this.downloadFile.bind(this);
-        this.uploadFile = this.uploadFile.bind(this);
-        this.deleteFile = this.deleteFile.bind(this);
+    const uploadNewFile = (fileToUpload) => {
+        if (!file && !readonly && !disabled) {
+            setBlur();
+            let errorMessages = checkFileToUpload(fileToUpload, props);
 
-        this.setFocus = this.setFocus.bind(this);
-        this.setBlur = this.setBlur.bind(this);
-        this.setFile = this.setFile.bind(this);
+            if (errorMessages.length === 0)
+                uploadFile(fileToUpload)
 
-        this.input = null
-    }
-
-    setFile(file){
-        const {maxAttachmentSize, contentType, extensions, errorMessagesDelay, readonly, disabled} = this.props
-        if(!this.state.file && !this.state.readonly && !readonly && !disabled) {
-            this.setBlur();
-            const {tableSysId, tableName} = this.state;
-
-            let isFitSize = maxAttachmentSize ? file.size <= maxAttachmentSize : true;
-            let isFitType = contentType ? contentType.includes(file.type) : true;
-            let isFitExtensions = extensions ? extensions.includes(getFileExtensions(file.name)) : true;
-
-            let errorIcon = "exclamation-circle"
-            let errorMessages = []
-            let delay = errorMessagesDelay;
-
-            if (!isFitType)
-                errorMessages.push({content: `Available types: ${contentType.join(', ')}`, icon: errorIcon, delay: delay})
-            if (!isFitSize)
-                errorMessages.push({content: `Max file size = ${maxAttachmentSize / 1000} Kb`, icon: errorIcon, delay: delay})
-            if (!isFitExtensions)
-                errorMessages.push({content: `Available extensions: ${extensions.join(', ')}`, icon: errorIcon, delay: delay})
-            if(!tableSysId || !tableName)
-                errorMessages.push({content: `Can't get access to table`, icon: errorIcon, delay: delay})
-
-            if (errorMessages.length === 0){
-                this.uploadFile(file)
-            }
-            else if(this.input) {
-                this.input.value = "";
-                this.setState({
-                    systemMessages: errorMessages,
-                    activePreloader: false
-                })
+            else if (input?.current) {
+                input.current.value = "";
+                setSystemMessages(errorMessages);
+                setActivePreloader(false);
             }
         }
     }
 
-    async uploadFile(file) {
-        const {tableSysId, tableName} = this.state;
-        const {onValueChange} = this.props;
-        let updatedState = await uploadRequest(file, tableSysId, tableName, this.props.errorMessagesDelay);
+    const uploadFile = async (file) => {
+        let result = await uploadRequest(file, tableSysIdSate, tableNameState, errorMessagesDelay);
 
-        this.setState(updatedState);
-        this.setState({activePreloader: false});
-        onValueChange(this.props.name, updatedState?.attachmentSysId, updatedState?.displayValue)
+        if(result.systemMessages)
+            setSystemMessages(result.systemMessages)
+        else {
+            setSystemMessages([]);
+            setFile(file);
+            setAttachSysIdSate(result.sys_id);
+        }
+        setActivePreloader(false);
+        onValueChange(name, result.attachmentSysId, result.displayValue)
     }
 
-    async deleteFile(e) {
-        this.stopEvent(e);
-        this.setState({activeDeleting: true})
-        const {attachmentSysId} = this.state;
-        let stateToUpdate = await deleteRequest(attachmentSysId, this.input, this.props.errorMessagesDelay)
-        this.setState(stateToUpdate)
-        this.setState({activeDeleting: false})
+    const deleteFile = async (e) => {
+        stopEvent(e);
+        setActiveDeleting(true)
+        let result = await deleteRequest(attachmentSysIdSate, errorMessagesDelay)
+
+        if(result.systemMessages)
+            setSystemMessages(result.systemMessages)
+        else {
+            setSystemMessages([]);
+            setFile(undefined);
+            setAttachSysIdSate(undefined);
+            if(input?.current) input.current.value = "";
+        }
+        setActiveDeleting(false)
     }
 
-    downloadFile(e){
-        this.stopEvent(e)
-        let file = this.state.file;
+    const downloadFile = (e) => {
+        stopEvent(e)
         if (window.navigator.msSaveOrOpenBlob)
             window.navigator.msSaveOrOpenBlob(file, file.name);
         else {
@@ -112,123 +92,100 @@ class Attachment extends React.Component {
             a.download = file.name;
             document.body.appendChild(a);
             a.click();
-            setTimeout(function() {
+            setTimeout(function () {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
             }, 0);
         }
     }
 
-    stopEvent(e){
+    const stopEvent = (e) => {
         e?.preventDefault();
         e?.stopPropagation();
     }
 
-    setFocus(e){
-        this.stopEvent(e);
+    const setFocus = (e) => {
+        stopEvent(e);
 
-        const {activePreloader, activeDeleting} = this.state;
-        const {disabled, readonly} = this.props;
-
-        if(!activePreloader && !activeDeleting && !disabled && !readonly)
-            this.setState({focus: true});
+        if (!activePreloader && !activeDeleting && !disabled && !readonly)
+            setFocusSate(true)
     }
 
-    setBlur(e){
-        this.stopEvent(e);
-        this.setState({focus: false});
+    const setBlur = (e) => {
+        stopEvent(e);
+        setFocusSate(false)
     }
 
-    onInvalidEvent(e){
-        this.stopEvent(e);
-        const {manageInvalid, onInvalid} = this.props;
+    const onInvalidEvent = (event) => {
+        stopEvent(event);
 
-        if(!manageInvalid)
-            this.setState({invalid: true})
-
-        onInvalid({event: e});
+       !manageInvalid && setIsInvalid(true);
+       onInvalid({event});
     }
 
-    onChangeEvent(e){
-        this.stopEvent(e);
-        this.setState({activePreloader: true })
-        this.setFile(this.input?.files[0]);
+    const onChangeEvent = (e) => {
+        stopEvent(e);
+        setActivePreloader(true)
+        uploadNewFile(input?.current?.files[0])
     }
 
-    onDropEvent(e){
-        this.stopEvent(e);
-        const {activePreloader, activeDeleting} = this.state;
-        const {disabled, readonly} = this.props;
+    const onDropEvent = (e) => {
+        stopEvent(e);
 
-        if(!activePreloader && !activeDeleting && !disabled && !readonly)
-        {
-            this.setState({activePreloader: true})
-            this.setFile(e.dataTransfer.files[0]);
+        if (!activePreloader && !activeDeleting && !disabled && !readonly) {
+            setActivePreloader(true)
+            uploadNewFile(e.dataTransfer.files[0])
         }
     }
 
-    containerClickedEvent(e){
-        const {file, activePreloader, activeDeleting} = this.state;
-        const {disabled, readonly} = this.props;
+    const containerClickedEvent = (e) => {
+        if (!file && !activePreloader && !activeDeleting && !disabled && !readonly) {
+            setFocus(e);
+            if (input?.current)
+                input?.current?.click();
+        }
+    }
 
-        if(!file && !activePreloader && !activeDeleting && !disabled && !readonly) {
-            this.setFocus(e);
-            if(this.input) {
-                this.input.click();
+    useEffect(async () => {
+        if(attachmentSysIdSate) {
+            let result = await downloadRequest(attachmentSysIdSate, errorMessagesDelay);
+
+            if (result.systemMessages)
+                setSystemMessages(result.systemMessages)
+            else {
+                const {
+                    file_name, size_bytes, content_type, download_link,
+                    tableName, tableSysId, sys_id
+                } = result;
+
+                setFile({
+                    name: file_name,
+                    size: size_bytes,
+                    type: content_type,
+                    link: download_link
+                })
+                setTableNameState(tableName);
+                setTableSysIdSate(tableSysId);
+                setAttachSysIdSate(sys_id)
             }
         }
-    }
+        setActivePreloader(false)
+    }, [])
 
-    componentDidUpdate(){
-        const {manageInvalid, invalid} = this.props;
-
-        if(manageInvalid && invalid !== this.state.invalid)
-            this.setState({invalid: invalid})
-    }
-
-    async componentDidMount() {
-        let updatedState = await downloadRequest(this.state.attachmentSysId, this.props.errorMessagesDelay);
-        this.setState(updatedState);
-        this.setState({activePreloader: false});
-    }
-
-    renderLabel() {
-        const {required, label, labelClassName, name, readonly} = this.props;
-        const {invalid} = this.state;
-        let labelClasses = classnames(labelClassName, "inp-label" , {"--readonly": readonly});
+    const renderLabel = () => {
+        let labelClasses = classnames(labelClassName, "inp-label", {"--readonly": readonly});
 
         return (label ?
             <RequiredLabel
                 className={labelClasses}
                 required={required}
-                invalid={invalid}
+                invalid={invalidValue}
                 label={label}
                 htmlFor={name}
             /> : null)
     }
 
-    renderMessages() {
-        const {message} = this.props;
-        const {systemMessages} = this.state;
-        let allMessages = message.concat(systemMessages);
-
-         return (allMessages.length > 0 ?
-                 allMessages.map((el, id) => {
-                    return <InfoMessage
-                        key={id}
-                        iconSize={el.iconSize}
-                        className={el.className}
-                        content={el.content}
-                        icon={el.icon}
-                        status={el.status}
-                        delay={el.delay}
-                    />
-                })
-            : null
-        )
-    }
-
-    renderPreloader(){
+    const renderPreloader = () => {
         return (
             <Preloader
                 count={1}
@@ -251,100 +208,91 @@ class Attachment extends React.Component {
         )
     };
 
-    render() {
+    let attachClasses = classnames("attach-container", {
+        "--focus": focus,
+        "--invalid": invalidValue,
+        "--readonly": readonly,
+        "--disabled": disabled
+    });
 
-        const {
-            disabled,
-            name,
-            readonly,
-            required,
-            visible,
-            className,
-            contentType,
-            placeholder,
-            displayValue
-        } = this.props;
-
-        const {invalid, file, focus, activePreloader, activeDeleting} = this.state
-
-        let attachClasses =  classnames("attach-container", {
-            "--focus": focus,
-            "--invalid": invalid,
-            "--readonly": readonly,
-            "--disabled": disabled
-        });
-
-        let negativeButtonStyle = {
-            "font-size": '16px'
-        }
-
-        let _isFile = !activePreloader && file;
-        let _isPlaceholder = !activePreloader && !file && placeholder;
-
-        return (
-            visible ?
-                <>
-                    <input
-                        ref = {el => this.input = el}
-                        type="file"
-                        name={name}
-                        id={name}
-                        required={required}
-                        disabled={disabled}
-                        accept={contentType?.join(',')}
-                        hidden
-                        onInvalid={this.onInvalidEvent}
-                        onChange={this.onChangeEvent}
-                    />
-
-                        <div className={classnames("swf-attach-input", className)}>
-                            {this.renderLabel()}
-                                <div
-                                    className={attachClasses}
-                                    onDrop={this.onDropEvent}
-                                    onDragEnter={this.setFocus}
-                                    onDragOver={this.setFocus}
-                                    onDragExit={this.setBlur}
-                                    onDragLeave={this.setBlur}
-                                    onClick={this.containerClickedEvent}
-                                >
-                                    {activeDeleting && <Loader actionName={"Deleting"}/>}
-                                    {activePreloader && this.renderPreloader()}
-                                    {_isFile &&
-                                        <File displayValue={displayValue} file={file}>
-                                            {!readonly &&
-                                                <File.End>
-                                                    <div>
-                                                        <Button icon={"x"}
-                                                                variant={"inherit"}
-                                                                size={"sm"}
-                                                                className={"file-button negative"}
-                                                                customStyle={negativeButtonStyle}
-                                                                onClick={this.deleteFile}
-                                                                disabled={disabled}
-                                                        />
-                                                        <Button icon={"download"}
-                                                                variant={"inherit"}
-                                                                className={"file-button positive"}
-                                                                size={"sm"}
-                                                                onClick={this.downloadFile}
-                                                                disabled={disabled}
-                                                        />
-                                                    </div>
-                                                </File.End>
-                                            }
-                                        </File>
-                                    }
-                                    { _isPlaceholder && <span className={"attach-placeholder"}>{placeholder}</span> }
-                                </div>
-                            {this.renderMessages()}
-                        </div>
-
-                </>
-                : null
-        );
+    let negativeButtonStyle = {
+        "font-size": '16px'
     }
-}
+
+    let _isFile = !activePreloader && file;
+    let _isPlaceholder = !activePreloader && !file && placeholder;
+
+    const _allMessages = message.concat(systemMessages);
+    const _hasMassages = _allMessages.length > 0;
+
+    return (
+        visible ?
+            <>
+                <input
+                    ref={el => {
+                        input.current = el;
+                        ref = el;
+                    }}
+                    type="file"
+                    name={name}
+                    id={name}
+                    required={required}
+                    disabled={disabled}
+                    accept={contentType?.join(',')}
+                    hidden
+                    onInvalid={onInvalidEvent}
+                    onChange={onChangeEvent}
+                />
+
+                <div className={classnames("swf-attach-input", className)}>
+                    {renderLabel()}
+                    <div
+                        className={attachClasses}
+                        onDrop={onDropEvent}
+                        onDragEnter={setFocus}
+                        onDragOver={setFocus}
+                        onDragExit={setBlur}
+                        onDragLeave={setBlur}
+                        onClick={containerClickedEvent}
+                    >
+                        {activeDeleting && <Loader actionName={"Deleting"}/>}
+                        {activePreloader && renderPreloader()}
+                        {_isFile &&
+                        <File displayValue={displayValue} file={file}>
+                            {!readonly &&
+                            <File.End>
+                                <div>
+                                    <Button icon={"x"}
+                                            variant={"inherit"}
+                                            size={"sm"}
+                                            className={"file-button negative"}
+                                            customStyle={negativeButtonStyle}
+                                            onClick={deleteFile}
+                                            disabled={disabled}
+                                    />
+                                    <Button icon={"download"}
+                                            variant={"inherit"}
+                                            className={"file-button positive"}
+                                            size={"sm"}
+                                            onClick={downloadFile}
+                                            disabled={disabled}
+                                    />
+                                </div>
+                            </File.End>
+                            }
+                        </File>
+                        }
+                        {_isPlaceholder && <span className={"attach-placeholder"}>{placeholder}</span>}
+                    </div>
+                    {_hasMassages && _allMessages.map((el, id) => <InfoMessage key={id} {...el}/>)}
+                </div>
+
+            </>
+            : null
+    );
+
+});
+
 
 
 Attachment.defaultProps = {
@@ -404,7 +352,6 @@ Attachment.propTypes = {
     labelClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
 
 }
-
 
 
 export default Attachment

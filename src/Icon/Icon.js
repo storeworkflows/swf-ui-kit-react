@@ -29,8 +29,9 @@ const Icon = (props) => {
   if (!node) {
     console.error(`Icon error: unregistered icon ${icon}`)
     return null
-  } else {
-    return (
+  }
+
+  return (
         <svg
             ref={elm => innerRef.current = elm}
             {...getAttrs(node.attributes)}
@@ -44,7 +45,6 @@ const Icon = (props) => {
           })}
         </svg>
     )
-  }
 }
 
 Icon.defaultProps = {

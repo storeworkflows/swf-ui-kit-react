@@ -1,31 +1,5 @@
 import fetch from "cross-fetch";
 
-
-const downloadSuccess = async (data) => {
-    let receivedFile = data.result;
-    return{
-        file: {
-            name: receivedFile.file_name,
-            size: receivedFile.size_bytes,
-            type: receivedFile.content_type,
-            link: receivedFile.download_link
-        },
-        tableName: receivedFile.table_name,
-        tableSysId: receivedFile.table_sys_id,
-        attachmentSysId: receivedFile.sys_id
-    }
-}
-
-const uploadSuccess = (data, file) => {
-    let resultFile = data.result;
-    return{
-        systemMessages: [],
-        file: file,
-        attachmentSysId: resultFile.sys_id,
-        displayValue: resultFile.file_name
-    };
-}
-
 const errorMessage = (error, delay) => {
     let errorIcon = "exclamation-circle"
     return{
@@ -54,7 +28,7 @@ export const downloadRequest = async (attachmentSysId, delay) => {
                 const error = (data && data.message) || response.statusText;
                 return errorMessage(error, delay)
             }
-            return downloadSuccess(data);
+            return data.result;
         } catch (error) {
             console.log(error);
         }
@@ -88,14 +62,14 @@ export const uploadRequest = async (file, tableSysId, tableName, delay) => {
                 const error = (data && data.message) || response.statusText;
                 return errorMessage(error, delay)
             }
-            return uploadSuccess(data, file);
+            return data.result;
         } catch (error) {
             console.log(error);
         }
     }
 }
 
-export const deleteRequest = async (attachmentSysId, input, delay) => {
+export const deleteRequest = async (attachmentSysId, delay) => {
     if (attachmentSysId) {
         let url = `/api/now/attachment/${attachmentSysId}`;
 
@@ -114,14 +88,7 @@ export const deleteRequest = async (attachmentSysId, input, delay) => {
             if (!response.ok )
                 return errorMessage(response.statusText, delay);
 
-            if (input)
-                input.value = "";
-
-            return {
-                systemMessages: [],
-                file: undefined,
-                attachmentSysId: undefined
-            }
+            return {};
         } catch (error) {
             console.log(error);
         }
