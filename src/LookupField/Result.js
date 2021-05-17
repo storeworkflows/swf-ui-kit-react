@@ -9,7 +9,6 @@ class Result extends React.Component {
 
    render() {
        const {records, onClick} = this.props;
-
        return (
         <>
             { records.map(record => {

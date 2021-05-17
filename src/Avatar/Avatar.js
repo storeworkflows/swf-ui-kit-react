@@ -3,6 +3,7 @@ import classnames from "classnames";
 import PropTypes from "prop-types";
 import {noop, normalizeURL} from "../utils";
 import {Icon} from "../index";
+import {useState} from "react";
 
 console.shallowCloneLog = function () {
     var typeString = Function.prototype.call.bind(Object.prototype.toString)
@@ -14,7 +15,7 @@ console.shallowCloneLog = function () {
             case 'Null':
             case 'Boolean':
                 return x;
-            case 'Array':
+            case 'Array':s
                 return x.slice();
             default:
                 var out = Object.create(Object.getPrototypeOf(x));
@@ -29,35 +30,46 @@ console.shallowCloneLog = function () {
 }
 
 
-class Avatar extends React.Component {
-    constructor(props) {
-        super(props);
-        this.fixPhotoSize = this.fixPhotoSize.bind(this);
-        this.onClick = this.onClick.bind(this);
-        this.state = {
-            open: false
-        }
-    }
+const Avatar = (props) => {
 
-    onClick(event) {
+    const {
+        id,
+        avatarVisible,
+        open,
+        color,
+        manageOpened,
+        member: {
+            avatar,
+            name,
+            title
+        },
+        size,
+        canRemove,
+        clickable,
+        className,
+        onClick, onRemove
+    } = props;
+    const [isOpen, setIsOpen] = useState(false);
+
+    const onAvatarClick = (event) => {
         event.preventDefault();
         event.stopPropagation();
 
-        if (this.props.clickable) {
-            this.setState({open: !this.state?.open})
-            this.props.onClick();
+        if (clickable) {
+            setIsOpen(!isOpen)
+            onClick();
         }
     }
 
-    getInitials(name) {
+    const getInitials = (name) => {
         return name
             .split(" ")
-            .map((letter, index) => index < 2 ? letter[0]: '')
+            .map((letter, index) => index < 2 ? letter[0] : '')
             .join("")
             .toUpperCase();
     }
 
-    fixPhotoSize(event) {
+    const fixPhotoSize = (event) => {
         const {nativeEvent} = event;
         const {path = nativeEvent.composedPath()} = nativeEvent;
 
@@ -70,92 +82,72 @@ class Avatar extends React.Component {
             "lg": "2.5rem"
         }
 
-        const parameters = sizes[this.props.size]
+        const parameters = sizes[size]
 
         image.style.width = naturalWidth < naturalHeight ? parameters : "auto";
         image.style.height = naturalWidth < naturalHeight ? "auto" : parameters;
 
     }
 
-    render() {
-        const {
-            id,
-            avatarVisible,
-            open,
-            color,
-            manageOpened,
-            member: {
-                avatar,
-                name,
-                title
-            },
-            size,
-            canRemove,
-            clickable,
-            className
-        } = this.props;
+    const hasAvatar = Boolean(avatar);
+    const avatarIsVisible = !hasAvatar && avatarVisible;
 
-        const hasAvatar = Boolean(avatar);
-        const avatarIsVisible = !hasAvatar && avatarVisible;
+    const openState = manageOpened ? open : isOpen;
 
-        const openState = manageOpened ? open : this.state?.open;
+    return (
+        <>
+            <div
+                ref={elm => props.innerRef.current = elm}
+                className={classnames({
+                    "swf-avatar": true,
+                    [`--${size}`]: true,
+                    [`--${color}`]: true,
+                    "--clickable": clickable,
+                    "--selected": openState,
+                    [className]: true
+                })}
+                onClick={onAvatarClick}
+            >
+                {hasAvatar && <div className="photo-container">
+                    <img
+                        title={name}
+                        onLoad={fixPhotoSize}
+                        className="member-photo"
+                        src={avatar}
+                    />
+                </div>}
+                {avatarIsVisible && <div className={classnames({
+                    "member-container": true,
+                    "--selected": isOpen
+                })}>
+                    <p className="initials" title={name}>{getInitials(name)}</p>
+                </div>}
 
-        return (
-            <>
-                <div
-                    ref={elm => this.props.innerRef.current = elm}
-                    className={classnames({
-                        "swf-avatar": true,
-                        [`--${size}`]: true,
-                        [`--${color}`]: true,
-                        "--clickable": clickable,
-                        "--selected": openState,
-                        [className]: true
-                    })}
-                    onClick={this.onClick}
-                >
-                    {hasAvatar && <div className="photo-container">
-                        <img
-                            title={name}
-                            onLoad={this.fixPhotoSize}
-                            className="member-photo"
-                            src={avatar}
+                <div className={classnames({
+                        "member-info": true,
+                        "visible": openState
+                    })}>
+                    <p className="name">{name}</p>
+                    <p className="title">{title}</p>
+                </div>
+                <div onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    onRemove({id});
+                }}>
+                    {canRemove && openState && <div className={classnames({
+                        "remove": true
+                    })}>
+                        <Icon
+                            icon="x"
+                            size="md"
                         />
                     </div>}
-                    {avatarIsVisible && <div className={classnames({
-                        "member-container": true,
-                        "--selected": this.state?.open
-                    })}>
-                        <p className="initials" title={name}>{this.getInitials(name)}</p>
-                    </div>}
-
-                    <div className={classnames(
-                        {
-                            "member-info": true,
-                            "visible": openState
-                        })}>
-                        <p className="name">{name}</p>
-                        <p className="title">{title}</p>
-                    </div>
-                    <div onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-
-                        this.props.onRemove({id});
-                    }}>
-                        {canRemove && openState && <div className={classnames({
-                            "remove": true
-                        })}>
-                            <Icon
-                                icon="x"
-                                size="md"
-                            />
-                        </div> }
-                    </div>
                 </div>
-            </>
-        )
-    }
+            </div>
+        </>
+    )
 }
 
 Avatar.defaultProps = {

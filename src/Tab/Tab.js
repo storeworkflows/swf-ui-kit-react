@@ -5,85 +5,64 @@ import classNames from 'classnames';
 
 import TabItem from "./TabItem";
 import {ALIGNMENT} from './constants'
+import {useEffect, useState} from "react";
 
 
-class Tab extends React.Component {
+const Tab = React.forwardRef((props, ref) => {
+    const { hideLabel, items, tabsAlignment,
+        selectedItem, manageSelectedItem, onClick} = props
+    const [currentSelectedItem, setCurrentSelectedItem] = useState(selectedItem);
 
-    constructor(props) {
-        super(props);
-        this.tabSelected = this.tabSelected.bind(this);
-
-        this.state = {
-            currentSelectedItem: props.selectedItem
-        }
-    }
-
-    componentDidUpdate() {
-        const {manageSelectedItem, selectedItem} = this.props;
-        if(manageSelectedItem && selectedItem !== this.state.currentSelectedItem)
-            this.setState({currentSelectedItem : selectedItem});
-    }
-
-    tabSelected(id, disabled){
-        const {manageSelectedItem, onClick} = this.props;
-        console.log("tab selected");
+    const tabSelected = (id, disabled) => {
         if (!disabled) {
-            if(onClick)
-                onClick({id: id});
+            onClick({id: id});
 
-            if(!manageSelectedItem)
-                this.setState({ currentSelectedItem: id })
+            if (!manageSelectedItem)
+                setCurrentSelectedItem(id);
         }
-
     }
 
-    render() {
+    useEffect(() => {
+        if(manageSelectedItem)
+            setCurrentSelectedItem(selectedItem);
+    }, [selectedItem])
 
-        const {
-            hideLabel,
-            items,
-            fixedWidth,
-            maxWidth,
-            tabsAlignment
-        } = this.props
+    const tabsClasses = classNames({
+        "swf-tabs-container": true,
+        "flex-start": tabsAlignment === 'left',
+        "flex-end": tabsAlignment === 'right',
+        "center": tabsAlignment === 'center',
+        "stretch": tabsAlignment === 'stretch'
+    })
 
-        const {currentSelectedItem} = this.state;
+    return (
+        <>
+            <div className={tabsClasses} ref={ref}>
+                {
+                    _.orderBy(items, ['count'], ['asc']).map(item =>
+                        <TabItem
+                            key={item.id}
+                            item={item}
+                            isSelected={currentSelectedItem === item.id}
+                            hideLabel={hideLabel}
+                            tabSelected={tabSelected}
+                        />
+                    )
+                }
+            </div>
+        </>
+    );
 
-        return (
-            <>
-                <div className={classNames({
-                    "swf-tabs-container": true,
-                    "flex-start": tabsAlignment === 'left',
-                    "flex-end": tabsAlignment === 'right',
-                    "center": tabsAlignment === 'center',
-                    "stretch": tabsAlignment === 'stretch'
-                })}>
-                    {
-                        _.orderBy(items, ['count'], ['asc']).map(item =>
-                            <TabItem
-                                key = {item.id}
-                                item = {item}
-                                isSelected = {currentSelectedItem === item.id}
-                                hideLabel = {hideLabel}
-                                tabSelected = {this.tabSelected}
-                            />
-                        )
-                    }
-                </div>
-            </>
-        );
-    }
-}
+});
 
 
 Tab.defaultProps = {
     items: [],
-    fixedWidth: false,
     hideLabel: false,
     manageSelectedItem: false,
-    maxWidth: 240,
     selectedItem: '',
-    tabsAlignment: ALIGNMENT.STRETCH
+    tabsAlignment: ALIGNMENT.STRETCH,
+    onClick: () => void 0
 }
 
 Tab.propTypes = {
@@ -98,12 +77,10 @@ Tab.propTypes = {
         invalid: propTypes.bool,
         infoMessage: propTypes.string
     })),
-    fixedWidth: propTypes.bool,
     hideLabel: propTypes.bool,
     manageSelectedItem: propTypes.bool,
-    maxWidth: propTypes.number,
     selectedItem: propTypes.string,
-    tabsAlignment: propTypes.oneOf([ 'left', 'right', 'center', 'stretch']),
+    tabsAlignment: propTypes.oneOf(['left', 'right', 'center', 'stretch']),
     onClick: propTypes.func,
 }
 
