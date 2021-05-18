@@ -145,7 +145,7 @@ const getTopAndLeft = (targetPosition, targetDimensions, contentPosition, hasArr
     if(needMoveContentY && hasArrow)
         addPxY = -ARROW_SIZE - ARROW_SPACE;
 
-    let top = targetDimensions.y - contentDimensions.y  + calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
+    let top = targetDimensions.y - contentDimensions.y + calculatePosition(verticalAlign, verticalAlignment, targetHeight, addPx);
     let left = targetDimensions.x - contentDimensions.x + calculatePosition(horizontalAlign, horizontalAlignment, targetWidth, addPxY);
 
     return {top: top, left: left};
@@ -174,7 +174,7 @@ const getStyleByPosition = (position, targetDimensions, contentDimensions, windo
         left = positionByTarget.left;
     }
 
-     style.top = `${top}px`;
+    style.top = `${top}px`;
     style.left = `${left}px`;
 
     style.transform = getTransform(contentPosition, updatedContentSizes.width, updatedContentSizes.height).stringValue;
@@ -326,12 +326,5 @@ export const getAllPossibleVariants = () => {
     return  result;
 }
 
-
-export const addResizeObserver = (el, onResizeAction) => {
-    const resizeObserver = new ResizeObserver(entries => {
-        onResizeAction(entries)
-    });
-    resizeObserver.observe(el);
-}
 
 

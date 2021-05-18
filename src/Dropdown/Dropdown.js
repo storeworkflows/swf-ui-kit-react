@@ -1,6 +1,7 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
+import {useState, useRef, useEffect} from "react";
 
 import Icon from "../Icon/Icon"
 import Popover from "../Popover/Popover";
@@ -10,7 +11,6 @@ import RequiredLabel from "../RequiredLabel/RequiredLabel";
 
 import {getCorrectSelected, getDisplayValue, getItemById} from "./utils";
 import {DROPDOWN} from "./constants";
-import {useState, useRef, useEffect} from "react";
 
 const Dropdown = React.forwardRef((props, ref) => {
     const {
@@ -148,7 +148,8 @@ const Dropdown = React.forwardRef((props, ref) => {
 
         return (
             <>
-                <div className={classnames(className, "swf-dropdown-main-container")} ref={ref}>
+                <div className={classnames(className, "swf-dropdown-main-container")}
+                     ref={ref}>
                     <input
                         type="hidden"
                         name={name}

@@ -2,10 +2,11 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import findByType, {createSubComponent} from "../utils/findByType";
-import {addResizeObserver, getAllPossibleVariants, getPopoverStyle} from "./utils";
+import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 import {useEffect, useRef, useState} from "react";
+import {ResizeObserver} from "resize-observer";
 
 const Popover = React.forwardRef((props, ref) => {
 
@@ -17,7 +18,9 @@ const Popover = React.forwardRef((props, ref) => {
     const targetRef = useRef(null);
     const contentRef = useRef(null);
 
-    const openedFinal = manageOpened ? opened : isOpened;
+    let openedFinal = manageOpened ? opened : isOpened;
+
+    let resizeObserver = new ResizeObserver(() => contentResized);
 
     const renderContent = () => {
         const content = findByType(children, "Content");
@@ -148,26 +151,30 @@ const Popover = React.forwardRef((props, ref) => {
     }
 
     const updateOpenedState = (value) => {
-        if(value)
-            setStylesToContent();
-        else
-            resetStyles();
+        resetStyles();
+        value && setStylesToContent();
     }
 
     useEffect(() => {
-        const undatedValue = manageOpened ? opened : isOpened;
-        updateOpenedState(undatedValue);
+        const currentValue = manageOpened ? opened : isOpened;
+        updateOpenedState(currentValue);
     }, [opened, isOpened])
 
 
     useEffect(() => {
         document.addEventListener("click", e => documentClicked(e));
         updateOpenedState(opened);
-
-        addResizeObserver(targetRef?.current, contentResized);
-        addResizeObserver(contentRef?.current.children[0].children[0], contentResized);
+        return resizeObserver.disconnect();
     }, [])
 
+    useEffect(() => {
+        if(resizeObserver) {
+            resizeObserver.disconnect();
+
+            resizeObserver.observe(targetRef?.current);
+            resizeObserver.observe(contentRef?.current.children[0].children[0]);
+        }
+    })
 
     return <>
             {renderContent()}

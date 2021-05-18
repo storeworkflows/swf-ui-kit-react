@@ -11,8 +11,8 @@ const Result = (props) => {
                 <li className="result--item" key={record.sysId}
                     onMouseDown={() => onClick(record)}>
                     {record.referenceData.map((data, index) => {
-                        if (index === 0) return <h3 className="main">{data.value}</h3>
-                        return <span className="additional">{data.value}</span>
+                        if (index === 0) return <h3 className="main" key={index}>{data.value}</h3>
+                        return <span className="additional" key={index}>{data.value}</span>
                     })}
                 </li>
             )

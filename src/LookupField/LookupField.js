@@ -11,7 +11,6 @@ import PropTypes from "prop-types";
 import {useEffect, useRef, useState} from "react";
 
 const LookupField = React.forwardRef((props, ref) => {
-//class LookupField extends React.Component {
     const {
         type, value, displayValue, onValueChange, name, readonly, reference,
         internalRef, visible, onInvalid, message, label, invalid, required,
@@ -83,9 +82,6 @@ const LookupField = React.forwardRef((props, ref) => {
             setMatchesCount(totalCount)
 
         } catch (error) {
-            setLoading(false);
-            setRecords([]);
-            setLoaded(true);
             console.error(error);
         }
     }
@@ -146,8 +142,7 @@ const LookupField = React.forwardRef((props, ref) => {
         }
 
         setListRecords(listRecords)
-
-        onValueChange(name, listRecords.value.toString(), listRecords.displayValue.toString());
+        onValueChange(name, listRecords.value.toString(), listRecords.displayValue);
     }
 
     const onClick = (record) => {
@@ -225,20 +220,18 @@ const LookupField = React.forwardRef((props, ref) => {
         setPreloader(false);
 
         const listRecords = {
-            value: Array.from(new Set([...this.state.listRecords.value, ...data.map(({sysId}) => sysId)])),
-            displayValue: Array.from(new Set([...this.state.listRecords.displayValue, ... data.map(({referenceData}) => referenceData[0].value)]))
+            value: Array.from(new Set([...listRecords.value, ...data.map(({sysId}) => sysId)])),
+            displayValue: Array.from(new Set([...listRecords.displayValue, ... data.map(({referenceData}) => referenceData[0].value)]))
         }
 
-        this.setState({
-            listRecords,
-            referenceRecord: {
-                sysId: null,
-                displayValue: ""
-            },
-            loaded: false
-        })
+        setListRecords(listRecords);
+        setReferenceRecord({
+            sysId: null,
+            displayValue: ""
+        });
+        setLoaded(false)
 
-        this.props.onValueChange(this.props.name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean));
+        onValueChange(name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean));
     }
 
     useEffect(() => {
@@ -254,56 +247,28 @@ const LookupField = React.forwardRef((props, ref) => {
         }
     })
 
-    // componentWillReceiveProps(nextProps, nextContext) {
-    //     const isList = nextProps.type === "glide_list";
-    //
-    //     if (isList) {
-    //         return this.setState({
-    //             listRecords: {
-    //                 value: nextProps.value?.split(",") ?? [],
-    //                 displayValue: nextProps.displayValue?.split(",") ?? [],
-    //                 loading: false,
-    //                 focused: false
-    //             }
-    //         })
-    //     }
-    // }
-    //
-    // static getDerivedStateFromProps(nextProps) {
-    //     const isList = nextProps.type === "glide_list";
-    //
-    //     if (isList) {
-    //         return {
-    //             listRecords: {
-    //                 value: nextProps.value?.split(",") ?? [],
-    //                 displayValue: nextProps.displayValue?.split(",") ?? []
-    //             }
-    //         }
-    //     }
-    // }
+    const renderListPills = () =>{
+        return <Input.Start>
+            {listRecords.displayValue.map((label) => {
+                    if (!label) return null;
+                    return <Pill
+                        key={label}
+                        label={label}
+                        canDismiss={true}
+                        onDelete={deleteValue}/>
+                })
+            }
+        </Input.Start>
 
-    renderListPills() {
-        return (
-            <Input.Start>{listRecords.displayValue.map((label) => {
-                if (!label) return null;
-                return <Pill
-                    key={label}
-                    label={label}
-                    canDismiss={true}
-                    onDelete={deleteValue}/>
-            })
-            }</Input.Start>
-        )
     }
 
     const clearValue = () => {
         setListRecords({
             value: "",
-            displayValue: ""
+            displayValue: []
         })
-        onValueChange(name, "", "");
+        onValueChange(name, "", []);
     }
-
 
     const hasMatches = matchesCount > 0;
 

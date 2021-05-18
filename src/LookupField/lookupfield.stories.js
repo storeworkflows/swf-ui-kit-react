@@ -29,24 +29,24 @@ const Template = (args) => <LookupField {...args}/>;
 export const MockRequest = (args) => <LookupField {...args}/>;
  MockRequest.decorators = [withMock],
  MockRequest.parameters = {
-    // mockData: [{
-    //         url: '/api/now/graphql',
-    //         method: 'POST',
-    //         status: 200,
-    //         response: JSON.stringify([
-    //             {data: {
-    //                     'GlideLayout_Query': {
-    //                         referenceDataRetriever: {
-    //                             referenceDataList: mockData,
-    //                             referenceRecentDataList: [],
-    //                             totalCount: mockData.length
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         ]),
-    //     }
-    // ],
+    mockData: [{
+            url: '/api/now/graphql',
+            method: 'POST',
+            status: 200,
+            response: JSON.stringify([
+                {data: {
+                        'GlideLayout_Query': {
+                            referenceDataRetriever: {
+                                referenceDataList: mockData,
+                                referenceRecentDataList: [],
+                                totalCount: mockData.length
+                            }
+                        }
+                    }
+                }
+            ]),
+        }
+    ],
 }
 
 
