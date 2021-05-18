@@ -133,11 +133,12 @@ const DatePicker = React.forwardRef((props, ref) => {
     const renderInput = () => {
         const {label, message = [], required, readonly, name, className} = props;
         let allMessages = errorMessages.concat(message);
+        let dateStr = dateValue.toString();
 
         return <Input
             label={label}
-            placeholder={(label) ? "" : format}
-            value={dateValue.toString()}
+            placeholder={ label ? "" : format}
+            value={dateStr}
             name={name}
             manageInvalid={true}
             invalid={invalidValue}
@@ -149,6 +150,7 @@ const DatePicker = React.forwardRef((props, ref) => {
             className={className}
             onBlur={onBlur}
             readonly={readonly}
+            manageValue={true}
         >
             <Input.End>
                 {readonly ? <span/> : <Button

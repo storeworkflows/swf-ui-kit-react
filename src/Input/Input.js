@@ -7,25 +7,28 @@ import {noop} from "../utils";
 import propTypes from "prop-types";
 import Icon from "../Icon/Icon";
 import InfoMessage from "../InfoMessage/InfoMessage";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 
 const Start = () => null;
 const End = () => null;
 
 const Input = (props) => {
-    const {children, readonly, disabled, manageInvalid, onInvalid} = props;
+    const {children, readonly, disabled, manageInvalid, onInvalid, invalid, value, manageValue} = props;
 
-    const [invalid, setInvalid] = useState(props.invalid);
+    const [isInvalid, setIsInvalid] = useState(invalid);
     const [hasStart, setHasStart] = useState(false);
     const [hasEnd, setHasEnd] = useState(false);
     const [focused, setFocused] = useState(false);
-    const [value, setValue] = useState(props.value);
+    const [valueState, setValueState] = useState(value);
+
+    const valueFinal = manageValue ? value : valueState;
+    const invalidFinal = manageInvalid ? invalid : isInvalid;
 
     const renderStart = () => {
         const start = findByType(children, "Start");
         const classes = classnames({
             "form-control--start": true,
-            "--invalid": invalid,
+            "--invalid": invalidFinal,
             "--focused": focused,
             "--readonly": readonly,
             "--disabled": disabled
@@ -42,7 +45,7 @@ const Input = (props) => {
         const end = findByType(children, "End");
         const classes = classnames({
             "form-control--end": true,
-            "--invalid": invalid,
+            "--invalid": invalidFinal,
             "--readonly": readonly,
             "--disabled": disabled,
             "--focused": focused,
@@ -56,24 +59,20 @@ const Input = (props) => {
     }
 
     //type is one of "onBlur", "onInput", "onFocus"
-    const onEvent = (event, type, eventValue = value) => {
+    const onEvent = (event, type, eventValue = valueFinal) => {
         let canChange = !readonly && !disabled;
 
         if (!canChange) return;
 
-        setValue(eventValue);
+        !manageValue && setValueState(eventValue);
         setFocused(type !== "onBlur");
         props[type](event);
     }
 
-
     const onInvalidAction = (e) => {
-        !manageInvalid && setInvalid(true)
+        !manageInvalid && setIsInvalid(true)
         onInvalid(e);
     }
-
-    useEffect(() => { manageInvalid && setInvalid(props.invalid)}, [props.invalid])
-    useEffect(() =>  setValue(props.value), [props.value])
 
     const {
         label,
@@ -98,11 +97,11 @@ const Input = (props) => {
 
     const _hasLabel = label !== undefined;
     const _hasMessages = message.length > 0;
-    const _moved = focused || value || hasStart;
+    const _moved = focused || valueFinal || hasStart;
 
     const containerClasses = classnames(className, {
         "swf-form-group": true,
-        "--invalid": invalid,
+        "--invalid": invalidFinal,
         "--readonly": readonly,
         "--focused": focused,
         [containerClass]: true
@@ -112,21 +111,21 @@ const Input = (props) => {
         "inp-label": true,
         "--moved": _moved,
         "--focused": focused,
-        "--invalid": invalid,
+        "--invalid": invalidFinal,
         "--readonly": readonly
     });
 
     const requiredClasses = classnames({
         "inp-required": true,
         "--focused": focused,
-        "--invalid": invalid
+        "--invalid": invalidFinal
     });
 
     const inputClasses = classnames({
         "form-control": true,
         "no-start-border": hasStart,
         "no-end-border": hasEnd,
-        "--invalid": invalid,
+        "--invalid": invalidFinal,
         "--readonly": readonly,
         [inputClass]: true
     })
@@ -136,7 +135,6 @@ const Input = (props) => {
             <div className={containerClasses}
                  ref={elm => props.internalRef.current = elm}
             >
-
                 {_hasLabel &&
                 <span className={labelClasses}>
                             <label htmlFor="name">{label}</label>
@@ -153,8 +151,8 @@ const Input = (props) => {
                         step={step}
                         type={type}
                         aria-required={required}
-                        aria-invalid={invalid}
-                        value={value}
+                        aria-invalid={invalidFinal}
+                        value={valueFinal}
                         readOnly={readonly}
                         required={required}
                         autoFocus={autofocus}
@@ -222,6 +220,7 @@ Input.propTypes = {
     invalid: PropTypes.bool,
     label: PropTypes.string,
     manageInvalid: PropTypes.bool,
+    manageValue: PropTypes.bool,
     max: PropTypes.number,
     min: PropTypes.number,
     maxlength: PropTypes.number,
