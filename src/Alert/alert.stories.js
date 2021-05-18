@@ -46,7 +46,7 @@ Dismiss.args = {
 export const Acknowledge = Template.bind({});
 Acknowledge.args = {
     ...Dismiss.args,
-    action: {type: "acknowledge"},
+    action: { type: "acknowledge" },
     expanded: true,
     header: "Header",
     color: "red"

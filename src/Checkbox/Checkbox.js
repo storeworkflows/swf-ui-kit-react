@@ -84,7 +84,7 @@ const Checkbox = React.forwardRef((props, ref) => {
                     }
 
                     <div className={checkBoxClasses}
-                         ref={el => checkboxRef.current = el}
+                         ref={checkboxRef}
                          onClick={onChangeAction}
                     >
                         <input
