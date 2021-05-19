@@ -66,8 +66,7 @@ const Button = (props) => {
                     }
 
                     {_hasLabel && <label className={"button-label"}>{label}</label>}
-                    {children && children}
-
+                    { children }
                 </div>
             </button>
         </>

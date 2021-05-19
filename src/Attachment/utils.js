@@ -34,7 +34,7 @@ export const checkFileToUpload = (file, props) => {
         })
     if (!isFitSize)
         errorMessages.push({
-            content: `Max file size = ${maxAttachmentSize / 1000} Kb`,
+            content: `Max file size = ${maxAttachmentSize / 1024} Kb`,
             icon: errorIcon,
             delay: delay
         })

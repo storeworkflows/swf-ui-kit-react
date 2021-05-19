@@ -24,20 +24,24 @@ const AccordionItem = React.forwardRef((props, ref) => {
     const renderHeader = () => {
         const header = findByType(children, "Header");
 
-        if (!header || header.length < 1)
+        if (!header || !header.length)
             return <label>{label}</label>;
 
         return header
     }
 
     const renderContent = () => {
+        if(!children) return;
+
         const header = findByType(children, "Header");
+        let contentElements = React.Children.toArray(children).slice();
 
-        let contentElements = [].concat(children);
-        if (header && header.length > 0)
-            contentElements = contentElements.filter(child => child.type !== header[0].type)
+        if (header && header.length){
+            const headerType = header[0].type;
+            contentElements = contentElements.filter(child => child.type !== headerType)
+        }
 
-        if (contentElements.length > 0)
+        if (contentElements.length)
             return <div className={"accordion-content"}>
                 {contentElements}
             </div>;

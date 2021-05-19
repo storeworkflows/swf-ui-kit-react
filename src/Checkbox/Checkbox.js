@@ -57,9 +57,13 @@ const Checkbox = React.forwardRef((props, ref) => {
                 input.indeterminate = isIndeterminate;
         }
     }
+    const stopEvent = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 
-    useEffect(() => setIndeterminate(), [])
-    useEffect(() => setIndeterminate(), [checked, checkedSate])
+    useEffect( setIndeterminate, [])
+    useEffect( setIndeterminate, [checked, checkedSate])
 
     let isIndeterminate = checkedFinal === 'indeterminate'
     let checkedInputValue = isIndeterminate || checkedFinal;
@@ -96,14 +100,8 @@ const Checkbox = React.forwardRef((props, ref) => {
                             value={checkedFinal}
                             checked={checkedInputValue}
                             onInvalid={onInvalidAction}
-                            onChange={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                            }}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                            }}
+                            onChange={stopEvent}
+                            onClick={stopEvent}
                         />
                         <div className={"checkbox-information"}>
                             {value &&

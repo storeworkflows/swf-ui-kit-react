@@ -27,8 +27,8 @@ const Attachment = React.forwardRef((props, ref) => {
     const [focus, setFocusSate] = useState(false);
     const [systemMessages, setSystemMessages] = useState([]);
     const [tableNameState, setTableNameState] = useState(tableName);
-    const [tableSysIdSate, setTableSysIdSate] = useState(tableSysId);
-    const [attachmentSysIdSate, setAttachSysIdSate] = useState(attachmentSysId);
+    const [tableSysIdSate, setTableSysIdState] = useState(tableSysId);
+    const [attachmentSysIdSate, setAttachSysIdState] = useState(attachmentSysId);
     const [activePreloader, setActivePreloader] = useState(true);
     const [activeDeleting, setActiveDeleting] = useState(false);
 
@@ -59,7 +59,7 @@ const Attachment = React.forwardRef((props, ref) => {
         else {
             setSystemMessages([]);
             setFile(file);
-            setAttachSysIdSate(result.sys_id);
+            setAttachSysIdState(result.sys_id);
         }
         setActivePreloader(false);
         onValueChange(name, result.attachmentSysId, result.displayValue)
@@ -70,12 +70,12 @@ const Attachment = React.forwardRef((props, ref) => {
         setActiveDeleting(true)
         let result = await deleteRequest(attachmentSysIdSate, errorMessagesDelay)
 
-        if(result.systemMessages)
+        if(result?.systemMessages)
             setSystemMessages(result.systemMessages)
         else {
             setSystemMessages([]);
             setFile(undefined);
-            setAttachSysIdSate(undefined);
+            setAttachSysIdState(undefined);
             if(input?.current) input.current.value = "";
         }
         setActiveDeleting(false)
@@ -165,8 +165,8 @@ const Attachment = React.forwardRef((props, ref) => {
                     link: download_link
                 })
                 setTableNameState(tableName);
-                setTableSysIdSate(tableSysId);
-                setAttachSysIdSate(sys_id)
+                setTableSysIdState(tableSysId);
+                setAttachSysIdState(sys_id)
             }
         }
         setActivePreloader(false)

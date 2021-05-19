@@ -19,8 +19,8 @@ const Wrapper = React.forwardRef((props, ref) => {
     const arrowIcon = openFinal ? "caret-down-fill" : "caret-right-fill";
     const wrapperClasses = classNames(
         className,
+        "wrapper",
         {
-            "wrapper": true,
             "--open": openFinal,
             "--close": !openFinal
         }
@@ -40,8 +40,8 @@ const Wrapper = React.forwardRef((props, ref) => {
             }
         </div>
     </>;
-
 });
+
 Wrapper.Content = createSubComponent("Content");
 
 Wrapper.defaultProps = {

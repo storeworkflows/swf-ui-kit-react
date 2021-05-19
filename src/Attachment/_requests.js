@@ -88,7 +88,6 @@ export const deleteRequest = async (attachmentSysId, delay) => {
             if (!response.ok )
                 return errorMessage(response.statusText, delay);
 
-            return {};
         } catch (error) {
             console.log(error);
         }

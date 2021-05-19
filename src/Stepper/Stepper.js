@@ -1,6 +1,6 @@
 import Step from './Step';
 import PropTypes from 'prop-types';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import classnames from "classnames";
 import {createCssVariables, getCircleSize} from "./utils";
 import Icon from "../Icon/Icon";
@@ -13,19 +13,19 @@ const Stepper = React.forwardRef((props, ref) => {
     const [visibleStepsAmount, setVisibleStepsAmount] = useState(0);
     const [stepsCurrShiftedPos, setStepsCurrShiftedPos] = useState(0);
     const [isArrowsNeeded, setIsArrowsNeeded] = useState(false);
-    const [stepSize, setStepSize] = useState(vertical ? 120 : 140);
-    const [arrowsSize, setArrowsSize] = useState(parseInt(getCircleSize(iconSize)));
+    const stepSize = vertical ? 120 : 140;
+    const arrowsSize = parseInt(getCircleSize(iconSize));
 
     const stepperContainerRef = useRef(null);
 
-    const updateVisibleStepsAmount = () => {
+    const updateVisibleStepsAmount = useCallback(() => {
         const containerSize = stepperContainerRef?.current[vertical ? 'clientHeight' : 'clientWidth'];
         const isArrowsNeeded = steps.length * stepSize > containerSize;
         const currArrowsSize = isArrowsNeeded ? arrowsSize : 0;
 
         setIsArrowsNeeded(isArrowsNeeded);
         setVisibleStepsAmount(Math.floor((containerSize - (currArrowsSize * 2)) / stepSize) || 1);
-    }
+    }, [stepperContainerRef, vertical, stepSize, steps.length, arrowsSize])
 
     useEffect(() => {
         if(!disableScroll) {
