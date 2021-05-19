@@ -26,6 +26,10 @@
     background-color: var(--badge-background-color);
     color: var(--badge-color);
 
+    &.--with-padding{
+        padding: 0 0.5rem;
+    }
+
     &.yellow{
       --badge-background-color: #fcd200;
       --badge-color: #000;

@@ -101,6 +101,7 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         margin: auto 0;
+        cursor: pointer;
       }
 
       .item-element{
@@ -110,18 +111,25 @@
         white-space: nowrap;
       }
 
+      label {
+        cursor: pointer ;
+      }
 
       &.disabled {
-        cursor: default;
+        label {
+          cursor: default ;
+        }
+
         --current-color: var(--main-disabled-color);
         --current-details-color: var(--main-disabled-color);
       }
 
       &.selected{
-        cursor: pointer;
+        cursor: pointer !important;
         color: rgb(30, 133, 109);
         --current-color: var(--main-selected-color);
         --current-details-color: var(--main-selected-color);
+
       }
 
       color: var(--current-color);

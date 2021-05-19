@@ -5,53 +5,39 @@ import PropTypes from "prop-types";
 import Button from "../Button/Button";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {noop} from "../utils";
+import {useEffect, useRef, useState} from "react";
 
-class Modal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.modalRef = React.createRef();
-        this.expand = this.expand.bind(this);
-        this.desktopButtons = this.desktopButtons.bind(this);
-        this.mobileButtons = this.mobileButtons.bind(this);
+const Modal = (props) => {
 
-        this.state = {
-            currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT,
-            openModal: true,
-            mobileFooterOpened: false
-        }
-    }
+    const modalRef = useRef(null);
 
-    expand() {
-        const isFullSize = this.state.currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+    const [currentStatus, setCurrentStatus] = useState(SWF_MODAL.MODAL_SIZE.DEFAULT);
+    const [openModal, setOpenModal] = useState(true)
+    const [mobileFooterOpened, setMobileFooterOpened] = useState(true)
 
-        const modalNode = this.modalRef.current
-            .querySelector(".modal-dialog");
+    const {showPrint, closeRef, manageOpened, onClose, display,
+        headerElements, animation, children} = props;
+
+    const expand = () => {
+        const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+        const modalNode = modalRef?.current.querySelector(".modal-dialog");
 
         if (isFullSize) {
             modalNode.removeAttribute("style");
-            this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.DEFAULT});
+            setCurrentStatus(SWF_MODAL.MODAL_SIZE.DEFAULT)
             return;
         }
 
         modalNode.setAttribute("style", "width: 100%; height: 98%;");
-        this.setState({currentStatus: SWF_MODAL.MODAL_SIZE.FULL});
+        setCurrentStatus(SWF_MODAL.MODAL_SIZE.FULL)
     }
 
-    desktopButtons() {
-        const {showPrint} = this.props;
-        const isFullSize = this.state.currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+    const desktopButtons = () => {
+        const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
         const status = isFullSize ? SWF_MODAL.MODAL_SIZE.DEFAULT : SWF_MODAL.MODAL_SIZE.FULL;
 
         return (
             <>
-                {/*<Button icon="dash"*/}
-                {/*        variant="tertiary"*/}
-                {/*        bare={true}*/}
-                {/*        size="md"*/}
-                {/*        configAria={{"button": {"aria-label": "Collapse"}}}*/}
-                {/*        tooltipContent="Collapse"*/}
-                {/*        onClick={() => this.setState({modalOpened: true})}*/}
-                {/*/>*/}
                 {
                     showPrint && isFullSize && <Button icon="printer"
                                                        variant="tertiary"
@@ -68,10 +54,10 @@ class Modal extends React.Component {
                         size="md"
                         configAria={{"button": {"aria-label": "Expand"}}}
                         tooltipContent={isFullSize ? "Collapse" : "Expand"}
-                        onClick={() => this.setState({currentStatus: status})}
+                        onClick={() => setCurrentStatus(status)}
                 />
                 <Button icon="x"
-                        innerRef={this.props.closeRef}
+                        innerRef={closeRef}
                         variant="tertiary"
                         bare={true}
                         size="md"
@@ -79,28 +65,17 @@ class Modal extends React.Component {
                         configAria={{"button": {"aria-label": "Close"}}}
                         tooltipContent="Close"
                         onClick={() => {
-                            if (!this.props.manageOpened) {
-                                this.setState({openModal: false});
-                            }
-                            this.props.onClose();
+                            !manageOpened && setOpenModal(false);
+                            onClose()
                         }}
                 />
             </>
         )
     }
 
-    mobileButtons() {
+    const mobileButtons = () => {
         return (
             <>
-                {/*<Button*/}
-                {/*    icon="arrow-left"*/}
-                {/*    variant="tertiary"*/}
-                {/*    bare={true}*/}
-                {/*    size="md"*/}
-                {/*    configAria={{"button": {"aria-label": "Back"}}}*/}
-                {/*    tooltipContent="Back"*/}
-                {/*    onClick={() => this.setState({modalOpened: false})}*/}
-                {/*/>*/}
                 <Button
                     icon="three-dots"
                     variant="tertiary"
@@ -108,97 +83,96 @@ class Modal extends React.Component {
                     size="md"
                     configAria={{"button": {"aria-label": "Show Actions"}}}
                     tooltipContent="Show Actions"
-                    onClick={() => this.setState({mobileFooterOpened: true})}
+                    onClick={() => setMobileFooterOpened(true)}
                 />
             </>
         )
     }
 
-    componentDidMount() {
-        this.modalRef?.current?.addEventListener("click", (event) => {
-            if (this.state.mobileFooterOpened) {
-                this.setState({mobileFooterOpened: false})
-            }
+    useEffect(() => {
+        modalRef?.current?.addEventListener("click", (event) => {
+            mobileFooterOpened && setMobileFooterOpened(false);
         })
-    }
+    }, [])
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.state.mobileFooterOpened) {
-            const footerContentHeight = this.modalRef.current.querySelector(".footer-content").offsetHeight;
-            this.modalRef.current.style.setProperty("--swf-modal-footer-height", footerContentHeight + "px");
+    useEffect(() => {
+        if (mobileFooterOpened) {
+            const footerContentHeight = modalRef?.current?.querySelector(".footer-content")?.offsetHeight;
+            modalRef?.current?.style.setProperty("--swf-modal-footer-height", footerContentHeight + "px");
         }
-    }
+    })
 
-    render() {
-        const {display, openModal, headerElements, manageOpened, animation} = this.props;
-        const {mobileFooterOpened, openModal: open, currentStatus} = this.state;
-        const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
+    const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
 
-        const showModal = manageOpened ? openModal : open;
+    const showModal = manageOpened ? props.openModal : openModal;
 
-        const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
+    const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
-        return showModal && <>
-            <div className={classnames({"swf-modal-overlay": true, "--mobile": isMobile})}
-                 ref={elm => this.modalRef.current = elm}
-            >
-                <div className={classnames({"modal": true, "--animated": animation, "--mobile": isMobile, "--desktop": !isMobile})}>
+    return showModal ? <>
+        <div className={classnames({"swf-modal-overlay": true, "--mobile": isMobile})}
+             ref={elm => modalRef.current = elm}
+        >
+            <div className={classnames({
+                "modal": true,
+                "--animated": animation,
+                "--mobile": isMobile,
+                "--desktop": !isMobile
+            })}>
+                <div className={classnames({
+                    "modal-dialog": true,
+                    [`--${display}`]: true,
+                    [`--full-${isMobile ? "mobile" : "desktop"}`]: isMobile || isFullSize
+                })}>
                     <div className={classnames({
-                        "modal-dialog": true,
-                        [`--${display}`]: true,
-                        [`--full-${isMobile ? "mobile" : "desktop"}`]: isMobile || isFullSize
+                        "modal-header": true,
+                        "--mobile": isMobile,
+                        "--desktop-content": !isMobile && headerElements === 2,
+                        "--desktop": !isMobile && headerElements === 3
                     })}>
-                        <div className={classnames({
-                            "modal-header": true,
-                            "--mobile": isMobile,
-                            "--desktop-content": !isMobile && headerElements === 2,
-                            "--desktop": !isMobile && headerElements === 3
-                        })}>
-                            <div className="additional-buttons">
-                                {findByType(this.props.children, "Buttons")}
-                            </div>
-                            <div className="main-buttons">
-                                {isMobile ? this.mobileButtons() : this.desktopButtons()}
-                            </div>
-                            <div className="header-content">
-                                {findByType(this.props.children, "Header")}
-                            </div>
+                        <div className="additional-buttons">
+                            {findByType(children, "Buttons")}
                         </div>
+                        <div className="main-buttons">
+                            {isMobile ? mobileButtons() : desktopButtons()}
+                        </div>
+                        <div className="header-content">
+                            {findByType(children, "Header")}
+                        </div>
+                    </div>
+                    <div
+                        className="modal-body"
+                    >
+                        {findByType(children, "Body")}
+                    </div>
+                    {isMobile
+                        ?
                         <div
-                            className="modal-body"
-                        >
-                            {findByType(this.props.children, "Body")}
-                        </div>
-                        {isMobile
-                            ?
-                            <div
-                                className={classnames({
-                                    "menu-background": true,
-                                    "--active": mobileFooterOpened
-                                })}
-                            />
+                            className={classnames({
+                                "menu-background": true,
+                                "--active": mobileFooterOpened
+                            })}
+                        />
+                        :
+                        ""}
+                    <div className={classnames({
+                        "modal-footer": true,
+                        "--mobile": isMobile,
+                        "--active": mobileFooterOpened
+                    })}>
+                        {isMobile ?
+                            <div className="footer-content">
+                                {findByType(children, "Footer")}
+                                {findByType(children, "HeaderButtons")}
+                            </div>
                             :
-                            ""}
-                        <div className={classnames({
-                            "modal-footer": true,
-                            "--mobile": isMobile,
-                            "--active": mobileFooterOpened
-                        })}>
-                            {isMobile ?
-                                <div className="footer-content">
-                                    {findByType(this.props.children, "Footer")}
-                                    {findByType(this.props.children, "HeaderButtons")}
-                                </div>
-                                :
-                                findByType(this.props.children, "Footer")
-                            }
-                        </div>
+                            findByType(children, "Footer")
+                        }
                     </div>
                 </div>
             </div>
-        </>
-    }
-}
+        </div>
+    </> : null
+};
 
 Modal.Buttons = createSubComponent("Buttons");
 Modal.Header = createSubComponent("Header");

@@ -1,12 +1,24 @@
 import propTypes from "prop-types";
 import * as React from "react";
+import classnames from "classnames";
 
 const Badge = React.forwardRef((props, ref) => {
+    const {text, className, variant} = props;
 
-    return <div className="swf-badge-root" ref={ref}>
-        {props.children}
-        <span className="swf-badge">
-            {props?.count}
+    const isOneChar = text?.length === 1;
+
+    const containerClasses = classnames(
+        className,
+        "swf-badge-root");
+
+    const badgeClasses = classnames(
+        "swf-badge",
+            variant,
+            { "--with-padding": !isOneChar });
+
+    return <div className={containerClasses} ref={ref}>
+        <span className={badgeClasses}>
+            {text}
         </span>
     </div>
 
@@ -14,14 +26,14 @@ const Badge = React.forwardRef((props, ref) => {
 
 Badge.propTypes = {
     variant: propTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
-    count: propTypes.number,
-    children: propTypes.element
+    text: propTypes.string,
+    className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 Badge.defaultProps = {
     variant: "green",
-    count: 0,
-    children: null
+    className: "",
+    text: "0"
 }
 
 export default Badge

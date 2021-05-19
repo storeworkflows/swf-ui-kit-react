@@ -3,64 +3,46 @@ import * as React from "react";
 import Icon from "../Icon/Icon";
 import classnames from "classnames";
 import propTypes from "prop-types";
+import {useEffect, useState} from "react";
 
-class InfoMessage extends React.Component{
-    constructor(props) {
-        super(props);
+const InfoMessage = React.forwardRef((props, ref) => {
+    const {content, delay, status, icon, className, iconSize} = props;
+    const [contentValue, setContentValue] = useState(content);
+    let timer = null;
 
-        this.state = {
-            content: this.props.content
-        }
-
-        this.timer = null;
-        this.setDelay = this.setDelay.bind(this);
+    const setDelay = () => {
+        if (delay)
+            timer = setTimeout(() => setContentValue(undefined), delay);
     }
 
-    setDelay(){
-        const {delay} = this.props;
-        if(delay)
-            this.timer = setTimeout(() => this.setState({content: undefined}) , delay);
-    }
+    useEffect(()=>{
+        setContentValue(content);
+        setDelay();
+    }, [content])
+
+    useEffect(()=>{
+        setDelay();
+        return  clearTimeout(timer);
+    }, [])
 
 
-    componentDidMount() {
-        this.setDelay();
-    }
+    const messageClasses = classnames(
+        className,
+        status,
+        "info-message"
+    );
 
-    componentWillUnmount() {
-        clearTimeout(this.timer);
-    }
+    return (
+        contentValue
+            ?
+            <div className={messageClasses} ref={ref}>
+                {icon && <Icon className="input-message-icon" icon={icon} customSize={iconSize}/>}
+                <span className="input-message-content">{contentValue}</span>
+            </div>
+            : null
+    );
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        const {content} = this.props;
-
-        if(content !== prevProps.content){
-            this.setState({content: content});
-            this.setDelay();
-        }
-    }
-
-    render() {
-        const { status, icon, className, iconSize} = this.props;
-        const {content} = this.state;
-
-        const messageClasses = classnames(
-            className,
-            status,
-            "info-message"
-        );
-
-        return (
-            content
-                ?
-                    <div className={messageClasses}>
-                        {icon && <Icon className="input-message-icon" icon={icon} customSize={iconSize}/> }
-                        <span className="input-message-content">{content}</span>
-                    </div>
-                : null
-        );
-    }
-}
+});
 
 
 InfoMessage.defaultProps = {
@@ -70,7 +52,7 @@ InfoMessage.defaultProps = {
 }
 
 InfoMessage.propTypes = {
-    status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
+    status: PropTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
     content: PropTypes.string,
     icon: PropTypes.string,
     className: propTypes.object,

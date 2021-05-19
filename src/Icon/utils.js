@@ -8,7 +8,9 @@ export const generateSvg = (icon) => {
 
 export const getAttrs = (attrs) =>{
     let props = {};
-    for (let i = 0; i < attrs.length; i++) {
+    let length = attrs.length;
+
+    for (let i = 0; i < length; i++) {
         let curProps = attrs.item(i);
         let name = curProps.name;
 

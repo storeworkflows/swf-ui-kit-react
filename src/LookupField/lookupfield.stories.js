@@ -5,8 +5,7 @@ import withMock from "storybook-addon-mock";
 
 export default {
     title: 'swf-ui-kit/Input/LookupField',
-    component: LookupField,
-
+    component: LookupField
 };
 
 
@@ -27,7 +26,7 @@ const Template = (args) => <LookupField {...args}/>;
      }
  ]
 
-export const MockRequest = Template.bind({});
+export const MockRequest = (args) => <LookupField {...args}/>;
  MockRequest.decorators = [withMock],
  MockRequest.parameters = {
     mockData: [{
@@ -51,7 +50,7 @@ export const MockRequest = Template.bind({});
 }
 
 
- export const ExampleData = Template.bind({});
+ export const ExampleData = (args) => <LookupField {...args}/>;
  ExampleData.args = {
  //label: "LookupField",
   content: "d5640bdadbfb2300f0ee760a689619e6",

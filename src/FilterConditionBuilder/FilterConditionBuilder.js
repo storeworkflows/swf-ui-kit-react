@@ -352,7 +352,7 @@ export default class FilterCondition extends React.Component {
                                 "active-border-color": "none"
                             }
                         }/>
-                    {isActive && <Badge count={count}>
+                    {isActive && <Badge text={`${count}`}>
                         <Button
                             icon={isFilterOpened ? "funnel-fill" : "funnel"}
                             size="md"

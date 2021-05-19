@@ -2,88 +2,67 @@ import * as React from "react";
 import propTypes from "prop-types";
 import Popover from "../Popover/Popover";
 import findByType, {createSubComponent} from "../utils/findByType";
+import {useEffect, useState} from "react";
 
-class Tooltip extends React.Component {
-    constructor(props) {
-        super(props);
-        const {targetRef, opened} = this.props;
+const Tooltip = React.forwardRef((props, ref) => {
+    const {
+        targetRef, opened, manageOpened, content, children, delay,
+        onHover, onTimerStop, position, roundBorder
+    } = props;
 
-        this.state = {
-            opened: opened,
-            targetElement:  targetRef
-        }
+    const [isOpened, setIsOpened] = useState(opened);
+    const openedFinal = manageOpened ? opened : isOpened;
 
-        this.renderContent = this.renderContent.bind(this);
-        this.targetHovered = this.targetHovered.bind(this);
+    let timer = null;
 
-        this.timer = null;
-    }
-
-    renderContent = () => {
-        const {content, children} = this.props;
+    const renderContent = () => {
         const child = findByType(children, "Content");
 
-        if(!child && !content)
+        if (!child && !content)
             return null;
-        else if(!child)
+        else if (!child)
             return <span>{content}</span>
         else
             return child;
     }
 
-    targetHovered = () => {
-        if(!this.state.opened) {
-            this.timer = setTimeout(() =>
-                    this.setState({opened: false}) ,
-                    this.props.delay);
+    const targetHovered = (e) => {
+        if (!openedFinal) {
+            timer = setTimeout(() => {
+                !manageOpened && setIsOpened(false);
+                onTimerStop();
+            }, delay);
 
-            this.setState({
-                opened: true
-            })
-
+            !manageOpened && setIsOpened(true);
+            onHover(e);
         }
     }
 
+    useEffect(() => {
+        if(targetRef?.current)
+            targetRef.current.onmouseover = targetHovered;
+        return clearTimeout(timer);
+    }, [])
 
-    componentDidMount(){
-        if(!this.props.manageOpened)
-        {
-            let target = this.state.targetElement;
-            target.current.onmouseover = () => this.targetHovered();
-            this.setState({targetElement : target});
-        }
-    }
+    return (
+        <>
+            <Popover
+                manageOpened={true}
+                opened={openedFinal}
+                positions={position}
+                roundBorder={roundBorder}
+                positionTarget={targetRef}
+                hideTail={true}
+                ref={ref}
+            >
+                <Popover.Content>
+                    {renderContent()}
+                </Popover.Content>
+            </Popover>
+        </>
+    );
 
-    componentWillUnmount() {
-        clearTimeout(this.timer);
-    }
-
-
-    render() {
-        const {
-            position,
-            roundBorder,
-            targetRef
-        } = this.props;
-
-        return (
-            <>
-                <Popover
-                    manageOpened={true}
-                    opened={this.state.opened}
-                    positions={position}
-                    roundBorder={roundBorder}
-                    positionTarget={targetRef}
-                    hideTail={true}
-                >
-                    <Popover.Content>
-                        {this.renderContent()}
-                    </Popover.Content>
-                </Popover>
-            </>
-        );
-    }
-};
+});
 
 Tooltip.Content = createSubComponent("Content");
 
@@ -92,16 +71,18 @@ Tooltip.defaultProps = {
     manageOpened: false,
     opened: false,
     position:
-        [{ target:"top-center", content: "bottom-center"},
-            { target: "bottom-center", content: "top-center"},
-            { target: "center-end", content:"center-start"},
-            { target: "center-start", content: "center-end"},
-            { target: "top-end", content: "top-start"},
-            { target: "bottom-end", content:"bottom-start"},
-            { target: "top-start", content: "top-end"},
-            { target: "bottom-start", content: "bottom-end"}],
+        [{target: "top-center", content: "bottom-center"},
+            {target: "bottom-center", content: "top-center"},
+            {target: "center-end", content: "center-start"},
+            {target: "center-start", content: "center-end"},
+            {target: "top-end", content: "top-start"},
+            {target: "bottom-end", content: "bottom-start"},
+            {target: "top-start", content: "top-end"},
+            {target: "bottom-start", content: "bottom-end"}],
     roundBorder: true,
-    content: ''
+    content: '',
+    onHover: () => void 0,
+    onTimerStop: () => void 0
 }
 
 Tooltip.propTypes = {
@@ -110,14 +91,16 @@ Tooltip.propTypes = {
     opened: propTypes.bool,
     targetRef: propTypes.oneOfType([
         propTypes.func,
-        propTypes.shape({ current: propTypes.any })
+        propTypes.shape({current: propTypes.any})
     ]),
     position: propTypes.arrayOf(propTypes.shape({
         target: propTypes.string,
         content: propTypes.string,
     })),
     roundBorder: propTypes.bool,
-    content: propTypes.string
+    content: propTypes.string,
+    onHover: propTypes.func,
+    onTimerStop: propTypes.func
 }
 
 export default Tooltip

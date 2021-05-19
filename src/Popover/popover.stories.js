@@ -28,7 +28,7 @@ export const Default = (args) => <Popover {...args}>
         Target
     </Popover.Target>
     <Popover.Content>
-        <div style={{width: "100px", height: "100px", padding: "10px"}}>
+        <div style={{width: "800px", height: "100px", padding: "10px"}}>
             Example Content
         </div>
     </Popover.Content>

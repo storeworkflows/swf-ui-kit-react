@@ -4,7 +4,6 @@ import classnames from "classnames";
 import {Avatar} from "../index";
 import {noop} from "../utils";
 import Icon from "../Icon/Icon";
-import {AvatarMember} from "../Avatar/Avatar";
 import PropTypes from "prop-types";
 import {useState} from "react";
 
@@ -21,9 +20,7 @@ const AvatarGroup = (props) => {
     }
 
     const handleClick = ({index, avatar}) => {
-        if (!manageOpened || onClick === noop) {
-            return openAvatar(index)
-        }
+        !manageOpened && openAvatar(index)
         return onClick({index, avatar});
     }
 

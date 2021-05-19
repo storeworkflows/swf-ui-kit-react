@@ -1,6 +1,7 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
+import {useState, useRef, useEffect} from "react";
 
 import Icon from "../Icon/Icon"
 import Popover from "../Popover/Popover";
@@ -11,71 +12,60 @@ import RequiredLabel from "../RequiredLabel/RequiredLabel";
 import {getCorrectSelected, getDisplayValue, getItemById} from "./utils";
 import {DROPDOWN} from "./constants";
 
+const Dropdown = React.forwardRef((props, ref) => {
+    const {
+        opened, invalid, selectedItems, items, visible,
+        manageInvalid, onInvalid,
+        manageOpened, onOpened,
+        manageSelectedItems, onItemSelected, select
+    } = props;
 
-class Dropdown extends React.Component {
+    const [isOpened, setIsOpened] = useState(opened);
+    const [isInvalid, setIsInvalid] = useState(invalid);
+    const [selectedItemsState, setSelectedItemState] = useState(getCorrectSelected(items, selectedItems))
 
-    constructor(props) {
-        super(props);
+    const dropdownRef = useRef(null);
+    const itemsContainerRef = useRef(null);
+    const itemToScroll = useRef(null)
 
-        this.dropdownClicked = this.dropdownClicked.bind(this);
-        this.itemSelected = this.itemSelected.bind(this);
-        this.renderItems= this.renderItems.bind(this);
-        this.onInvalid = this.onInvalid.bind(this);
+    const invalidValue = manageInvalid ? invalid : isInvalid;
+    const openedValue = manageOpened ? opened : isOpened;
+    const selectsItemsValue = manageSelectedItems ? selectedItems : selectedItemsState;
 
-        const {opened, invalid, selectedItems, items} = this.props;
-
-        this.state = {
-            opened: opened,
-            invalid: invalid,
-            selectedItems: getCorrectSelected(items, selectedItems)
-        }
-
-        this.dropdownRef = React.createRef();
-        this.itemsContainerRef = React.createRef();
-    }
-
-    onInvalid(e){
-        const {manageInvalid, onInvalid} = this.props;
-        if(!manageInvalid)
-            this.setState({invalid: true});
+    const onInvalidAction = (e) => {
         onInvalid(e);
+        !manageInvalid && setIsInvalid(true)
     }
 
-    dropdownClicked(){
-        const {manageOpened, onOpened} = this.props;
-        const currentOpened = this.state.opened;
-
-        if(!manageOpened)
-            this.setState({opened: !currentOpened})
-
-        if(onOpened)
-            onOpened({ opened: currentOpened});
+    const dropdownClicked = () => {
+        onOpened({opened: manageOpened ? opened : !isOpened})
+        !manageOpened && setIsOpened(!isOpened);
     }
 
-    itemSelected({id}){
-        const {manageSelectedItems, onItemSelected, manageOpened, items, select} = this.props;
-        let currentSelectedIds = this.state.selectedItems;
+    const itemSelected = ({id}) => {
+        let currentSelectedIds = selectsItemsValue;
 
-        if(!manageSelectedItems) {
-            switch (select){
+        if (!manageSelectedItems) {
+            switch (select) {
                 case DROPDOWN.SELECT.SINGLE:
                     currentSelectedIds = (currentSelectedIds[0] === id) ? [] : [id];
                     break;
                 case DROPDOWN.SELECT.MULTI:
-                    if(currentSelectedIds.includes(id))
-                         currentSelectedIds = currentSelectedIds.filter(currentId => currentId !== id);
-                    else
-                        currentSelectedIds.push(id);
+                    currentSelectedIds = (selectsItemsValue.includes(id))
+                        ? selectsItemsValue.filter(currentId => currentId !== id)
+                        : selectsItemsValue.concat([id])
                     break;
                 default:
                     currentSelectedIds = [];
                     break;
             }
-            this.setState({ selectedItems: currentSelectedIds});
+            setSelectedItemState(currentSelectedIds);
         }
 
-        if(!manageOpened && select !==DROPDOWN.SELECT.MULTI)
-            this.setState({opened: false})
+        if (select !== DROPDOWN.SELECT.MULTI) {
+            !manageOpened && setIsOpened(false);
+            onOpened(manageOpened)
+        }
 
         onItemSelected({
             clickedItem: getItemById(id, items),
@@ -83,23 +73,13 @@ class Dropdown extends React.Component {
         });
     }
 
-    componentDidUpdate() {
-        const {opened, selectedItems, invalid,
-            manageOpened, manageSelectedItems, manageInvalid} = this.props;
+    useEffect(() => {
+        if(openedValue && itemToScroll?.current)
+            itemToScroll.current.scrollIntoView()
+    }, [isOpened, opened])
 
-        if(manageOpened && opened !== this.state.opened)
-            this.setState({opened: opened})
-
-        if(manageSelectedItems && selectedItems!== this.state.selectedItems)
-            this.setState({selectedItems: selectedItems});
-
-        if(manageInvalid && invalid!==this.state.invalid)
-            this.setState({invalid: invalid})
-    }
-
-    renderItems() {
-        const {items, scrollToSelected, itemClassName} = this.props;
-        const {opened, selectedItems} = this.state;
+    const renderItems = () => {
+        const {scrollToSelected, itemClassName} = props;
 
         let listStyles = {
             '--popover-border-radius': '0 0 0.5rem 0.5rem',
@@ -110,67 +90,54 @@ class Dropdown extends React.Component {
             'maxHeight': '15rem'
         }
 
-            return (
-                <Popover
-                    positionTarget={this.dropdownRef}
-                    manageOpened={true}
-                    opened={opened}
-                    hideTail={true}
-                    onOuterPopoverClicked={() => this.dropdownClicked()}
-                    positions={[{target: "bottom-start", content: "top-start"}]}
-                    contentStyles={listStyles}
-                >
-                    <Popover.Content>
-                        <div
-                            className={"dropdown-items-container"}
-                            ref = {el => this.itemsContainerRef.current = el}
-                        >
-                            {   items.map((item) => {
-                                    const {id, disabled} = item;
-
-                                    return <DropdownItem
-                                        {...item}
-                                        key = {id}
-                                        onSelectAction={this.itemSelected}
-                                        disabled={this.props.disabled || disabled}
-                                        isSelected={selectedItems.includes(id)}
-                                        showOnMount = {scrollToSelected && id === selectedItems[0]}
-                                        className={itemClassName}
-                                    />
-                                })
-                            }
-                        </div>
-                    </Popover.Content>
-                </Popover>
-            )
+        return (
+            <Popover
+                positionTarget={dropdownRef}
+                manageOpened={true}
+                opened={openedValue}
+                hideTail={true}
+                onOuterPopoverClicked={dropdownClicked}
+                positions={[{target: "bottom-start", content: "top-start"}]}
+                contentStyles={listStyles}
+            >
+                <Popover.Content>
+                    <div
+                        className={"dropdown-items-container"}
+                        ref={el => itemsContainerRef.current = el}
+                    >
+                        {items.map((item) => {
+                            const {id, disabled} = item;
+                            let isItemToScroll = scrollToSelected && id === selectsItemsValue[0];
+                            return <DropdownItem
+                                {...item}
+                                key={id}
+                                ref = {el => { if(isItemToScroll) itemToScroll.current = el }}
+                                onSelectAction={itemSelected}
+                                disabled={props.disabled || disabled}
+                                isSelected={selectsItemsValue.includes(id)}
+                                className={itemClassName}
+                            />
+                        })
+                        }
+                    </div>
+                </Popover.Content>
+            </Popover>
+        )
     }
 
-    render() {
-
+    const renderElement = () => {
         const {
-            disabled,
-            placeholder,
-            items,
-            name,
-            label,
-            required,
-            message,
-            className,
-            labelClassName,
-            visible,
-            hideCaret
-        } = this.props;
+            disabled, placeholder, name, label,
+            required, message, className, labelClassName, hideCaret
+        } = props;
 
-        const {selectedItems, opened, invalid} = this.state;
-
-        let hasSelected = selectedItems && (selectedItems.length > 0 );
-        //let hasLabel = hasSelected || placeholder;
+        let hasSelected = selectsItemsValue && selectsItemsValue.length;
 
         let buttonClasses = classnames({
-            "dropdown-button" : true,
-            "opened": opened,
+            "dropdown-button": true,
+            "opened": openedValue,
             "disabled": disabled,
-            "invalid": invalid,
+            "invalid": invalidValue,
             "hideCaret": hideCaret
         })
 
@@ -180,46 +147,47 @@ class Dropdown extends React.Component {
         })
 
         return (
-            visible ?
             <>
-                <div className={classnames(className, "swf-dropdown-main-container")}>
+                <div className={classnames(className, "swf-dropdown-main-container")}
+                     ref={ref}>
                     <input
                         type="hidden"
                         name={name}
                         required={required}
-                        onInvalid={this.onInvalid}
-                        value={selectedItems}
+                        onInvalid={onInvalidAction}
+                        value={selectsItemsValue}
                     />
-                    { label &&
-                        <RequiredLabel label={label}
-                               required={required}
-                               invalid={invalid}
-                               className={labelClassName}
-                        />
+                    {label &&
+                    <RequiredLabel label={label}
+                                   required={required}
+                                   invalid={invalidValue}
+                                   className={labelClassName}
+                    />
                     }
-                        <button
-                            onClick={this.dropdownClicked}
-                            disabled={disabled}
-                            className={buttonClasses}
-                            ref = {el => this.dropdownRef.current =  el}
-                        >
+                    <button
+                        onClick={dropdownClicked}
+                        disabled={disabled}
+                        className={buttonClasses}
+                        ref={el => dropdownRef.current = el}
+                    >
                             <span className={labelClasses}>
-                                {getDisplayValue(selectedItems, items, placeholder)}
+                                {getDisplayValue(selectsItemsValue, items, placeholder)}
                             </span>
-                            {!hideCaret &&
-                                <Icon className={"dropdown-caret"}
-                                      icon={"caret-down-fill"}
-                                      customSize={12}/>
-                            }
-                        </button>
-                    {this.dropdownRef?.current && this.renderItems()}
-                    {message.map(el => {return <InfoMessage {...el}/>}) }
+                        {!hideCaret &&
+                        <Icon className={"dropdown-caret"}
+                              icon={"caret-down-fill"}
+                              customSize={12}/>
+                        }
+                    </button>
+                    {dropdownRef?.current && renderItems()}
+                    {message.map(el => <InfoMessage {...el}/>)}
                 </div>
             </>
-            : null
         )
     }
-}
+
+    return  visible ? renderElement(): null
+});
 
 Dropdown.defaultProps = {
     disabled: false,
@@ -245,16 +213,16 @@ Dropdown.defaultProps = {
 }
 
 const dropdownItem = {
-            id: propTypes.oneOfType([
-                propTypes.string,
-                propTypes.number
-            ]),
-            label: propTypes.string,
-            disabled: propTypes.bool,
-            sublabel: propTypes.string,
-            number: propTypes.number,
-            icon: propTypes.string
-        };
+    id: propTypes.oneOfType([
+        propTypes.string,
+        propTypes.number
+    ]),
+    label: propTypes.string,
+    disabled: propTypes.bool,
+    sublabel: propTypes.string,
+    number: propTypes.number,
+    icon: propTypes.string
+};
 
 const dropdownSection = {
     id: propTypes.oneOfType([
@@ -266,7 +234,7 @@ const dropdownSection = {
 };
 
 const messageItem = {
-    status: propTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
+    status: propTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
     content: propTypes.string,
     icon: propTypes.string,
     className: propTypes.object,

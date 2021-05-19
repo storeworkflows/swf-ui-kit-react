@@ -55,7 +55,7 @@ const HighlightedValue = React.forwardRef((props, ref) => {
                 >
                     {showIcon && <Icon
                         className="highlighted-icon"
-                        icon={icon ? icon : "circle-fill"}
+                        icon={icon || "circle-fill"}
                         customSize={iconSize}
                     />}
                     {label && <span>{label}</span>}

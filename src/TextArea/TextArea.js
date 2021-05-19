@@ -2,98 +2,86 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 import autosize from "autosize/dist/autosize";
+import {useEffect, useRef, useState} from "react";
 
-class TextArea extends React.Component {
-    constructor(props) {
-        super(props);
-        this.textAreaRef = React.createRef();
-        this.onChange = this.onChange.bind(this);
-        this.onFocus = this.onFocus.bind(this);
-        this.onBlur = this.onBlur.bind(this);
-        this.state = {
-            value: this.props.value,
-            parentHeight: "auto",
-            textareaHeight: "auto",
-            focused: false
+const TextArea = (props) => {
+
+    const textAreaRef = useRef(null);
+
+    const [value, setValue] = useState(props.value);
+    const [parentHeight, setParentHeight] = useState("auto");
+    const [focused, setFocused] = useState(false);
+
+    const {
+        onKeyDown, autofocus, readonly, label, className, resize,
+        name, placeholder
+    } = props
+
+    const onChange = (event) => {
+        setValue(event.target.value);
+        onKeyDown(event)
+        if (textAreaRef.current) {
+            autosize(textAreaRef.current);
         }
     }
 
-    onChange (event) {
-        this.setState({value: event.target.value})
-        this.props.onKeyDown(event)
-        if (this.textAreaRef.current) {
-            autosize(this.textAreaRef.current);
+    const onFocus = (event) => {
+        setFocused(true);
+    }
+
+    const onBlur = (event) => {
+        setFocused(false);
+        props.onBlur(event);
+    }
+
+    useEffect(() => {
+        if (autofocus && textAreaRef.current) {
+            textAreaRef.current.focus()
+            autosize(textAreaRef.current);
         }
-    }
+    }, [])
 
-    onFocus(event) {
-        this.setState({focused: true})
-    }
+    useEffect(() => autofocus && textAreaRef.current && autosize(textAreaRef.current))
+    useEffect(() => setValue(props.value), [props.value])
 
-    onBlur (event) {
-        this.setState({focused: false})
-        this.props.onBlur(event);
-    }
+    const _hasLabel = Boolean(label);
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.autofocus && this.textAreaRef.current) {
-            autosize(this.textAreaRef.current);
-        }
-    }
+    return (
+        <>
+            <div
+                ref={elm => props.innerRef.current = elm}
+                className="form-group"
+                style={{
+                    minHeight: parentHeight
+                }}
+            >
+                {_hasLabel && <label htmlFor="name" className={classnames({
+                    "--moved": focused || (props.value || value),
+                    "--focused": focused
+                })}>{label}</label>}
+                <textarea
+                    className={classnames({
+                        "form-control": true,
+                        [className]: true,
+                        "resize": resize,
+                        "readonly": readonly,
+                        "active": !readonly
+                    })}
+                    ref={(elm) => textAreaRef.current = elm}
+                    name={name}
+                    readOnly={readonly}
+                    value={value}
+                    onChange={e => !readonly && onChange(e)}
+                    onKeyDown={e => !readonly && onChange(e)}
+                    onFocus={e => !readonly && onFocus(e)}
+                    onBlur={e => !readonly && onBlur(e)}
+                    placeholder={!_hasLabel ? placeholder : ""}
+                />
+            </div>
+        </>
+    )
 
-    componentDidMount() {
-        if (this.props.autofocus && this.textAreaRef.current) {
-            this.textAreaRef.current.focus()
-            autosize(this.textAreaRef.current);
-        }
-    }
-
-    static getDerivedStateFromProps (newProps) {
-        return {
-            value: newProps.value
-        }
-    }
-
-    render() {
-        const _hasLabel = Boolean(this.props.label);
-        const {readonly} = this.props;
-
-        return (
-            <>
-                <div
-                    ref={elm => this.props.innerRef.current = elm }
-                    className="form-group"
-                    style={{
-                        minHeight: this.state.parentHeight
-                    }}
-                >
-                    {_hasLabel && <label htmlFor="name" className={classnames({
-                        "--moved": this.state.focused || (this.props.value || this.state.value),
-                        "--focused": this.state.focused
-                    })}>{this.props.label}</label>}
-                    <textarea
-                        className={classnames({
-                            "form-control": true,
-                            [this.props.className]: true,
-                            "resize": this.props.resize,
-                            "readonly": readonly,
-                            "active": !readonly
-                        })}
-                        ref={(elm) => this.textAreaRef.current = elm}
-                        name={this.props.name}
-                        readOnly={this.props.readonly}
-                        value={this.state.value}
-                        onChange={e => !readonly && this.onChange(e)}
-                        onKeyDown={e => !readonly && this.onChange(e)}
-                        onFocus={e => !readonly && this.onFocus(e)}
-                        onBlur={e => !readonly && this.onBlur(e)}
-                        placeholder={!_hasLabel ? this.props.placeholder : ""}
-                    />
-                </div>
-            </>
-        )
-    }
-}
+};
 
 TextArea.defaultProps = {
     autoresize: false,

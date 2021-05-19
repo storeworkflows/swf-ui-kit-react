@@ -111,17 +111,17 @@ const SmallCalendar = React.forwardRef((props, ref) => {
         let currentWeek = moment(openedDateValue);
         currentWeek.startOf("month").startOf("week")
 
-        for (let w = 0; w < 6; w++) {
+        for (let w = 0, i =0; w < 6; w++) {
             if (w > 0)
                 currentWeek.add(1, 'week');
             let currentDay = currentWeek.startOf("week");
 
-            for (let d = 0; d < 7; d++) {
+            for (let d = 0; d < 7; d++, i++) {
                 if (d > 0)
                     currentDay.add(1, "day");
 
                 const isActive = currentDay.format('M') === `${openedMonth}`;
-                result.push(renderCalendarElement(currentDay.format('D'), isActive, currentDay));
+                result.push(renderCalendarElement(currentDay.format('D'), isActive, i));
             }
         }
 

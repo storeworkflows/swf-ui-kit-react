@@ -11,3 +11,4 @@ export default {
 const Template = (args) => <Badge {...args} />;
 
 export const Default = Template.bind({});
+
