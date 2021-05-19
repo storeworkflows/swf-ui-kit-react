@@ -3,7 +3,7 @@ import * as React from "react";
 import classnames from "classnames";
 
 const Badge = React.forwardRef((props, ref) => {
-    const {children, text, className, count} = props;
+    const {children, text, className, count, variant} = props;
 
     const isOneChar = text ? (text?.length === 1) : (count < 10 && count>-1);
 
@@ -13,6 +13,7 @@ const Badge = React.forwardRef((props, ref) => {
 
     const badgeClasses = classnames(
         "swf-badge",
+            variant,
             { "--with-padding": !isOneChar });
 
     return <div className={containerClasses} ref={ref}>

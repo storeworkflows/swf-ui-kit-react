@@ -5,7 +5,10 @@ import { default as Badge} from './Badge';
 
 export default {
     title: 'swf-ui-kit/DataVisualisation/Badge',
-    component: Badge
+    component: Badge,
+    args: {
+        text: ""
+    }
 };
 
 const Template = (args) => <Badge {...args} />;
