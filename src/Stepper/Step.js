@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Icon from '../Icon/Icon';
 
 const Step = React.forwardRef((props, ref) => {
-    const {step, iconColor, hideLabel} = props;
+    const {step: {progress, icon, label, sublabel}, iconColor, hideLabel} = props;
 
     return (
         <div className='step-container' ref={ref}>
@@ -14,21 +14,21 @@ const Step = React.forwardRef((props, ref) => {
                     viewBox="0 0 16 16"
                     className={classnames({
                         'step-circle': true,
-                        [`--${step.progress}`]: step.progress
+                        [`--${progress}`]: progress
                     })}
                 >
                     <circle
                         cx="50%" cy="50%" r="50%"
                         className={classnames({
-                            [`--${step.progress}`]: step.progress
+                            [`--${progress}`]: progress
                         })}
 
                     />
                     <foreignObject x="25.25%" y="0" height="100%" width="50%">
                         <div className="step-icon">
-                            {step.icon &&
+                            {icon &&
                             <Icon
-                                icon={step.icon}
+                                icon={icon}
                                 color={iconColor || 'white'}
                                 zeroSize
                             />
@@ -39,8 +39,8 @@ const Step = React.forwardRef((props, ref) => {
                 <div className="step-line --after"/>
             </div>
             <div className="step-label">
-                <span>{!hideLabel && step.label}</span>
-                <span className="step-sublabel">{!hideLabel && step.sublabel}</span>
+                <span>{!hideLabel && label}</span>
+                <span className="step-sublabel">{!hideLabel && sublabel}</span>
             </div>
         </div>
     )
@@ -73,4 +73,4 @@ Step.defaultProps = {
     hideLabel: false
 };
 
-export default Step;
+export default Step

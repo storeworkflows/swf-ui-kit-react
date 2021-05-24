@@ -5,27 +5,27 @@ import classNames from 'classnames';
 
 import TabItem from "./TabItem";
 import {ALIGNMENT} from './constants'
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 
 
 const Tab = React.forwardRef((props, ref) => {
     const { hideLabel, items, tabsAlignment,
-        selectedItem, manageSelectedItem, onClick} = props
+        selectedItem, manageSelectedItem, onClick, disabled} = props
     const [currentSelectedItem, setCurrentSelectedItem] = useState(selectedItem);
 
-    const tabSelected = (id, disabled) => {
+    const tabSelected = useCallback((item, id, disabled) => {
         if (!disabled) {
-            onClick({id: id});
+            onClick({id, item});
 
             if (!manageSelectedItem)
                 setCurrentSelectedItem(id);
         }
-    }
+    }, [disabled, items, manageSelectedItem, onClick])
 
     useEffect(() => {
         if(manageSelectedItem)
             setCurrentSelectedItem(selectedItem);
-    }, [selectedItem])
+    }, [selectedItem, manageSelectedItem])
 
     const tabsClasses = classNames({
         "swf-tabs-container": true,
@@ -46,6 +46,7 @@ const Tab = React.forwardRef((props, ref) => {
                             isSelected={currentSelectedItem === item.id}
                             hideLabel={hideLabel}
                             tabSelected={tabSelected}
+                            disabled = {disabled}
                         />
                     )
                 }
@@ -82,6 +83,7 @@ Tab.propTypes = {
     selectedItem: propTypes.string,
     tabsAlignment: propTypes.oneOf(['left', 'right', 'center', 'stretch']),
     onClick: propTypes.func,
+    disabled: propTypes.bool
 }
 
 export default Tab;

@@ -25,7 +25,6 @@ const Button = (props) => {
     const _hasIcon = icon.length > 0;
     const _hasLabel = label.length > 0;
     const _hasOnlyIcon = _hasIcon && !_hasLabel;
-    const _slotElement = !_hasLabel && !_hasIcon && children !== undefined;
     const _iconSize = getIconSize(customStyle, icon, size);
 
     const buttonClasses = classnames(

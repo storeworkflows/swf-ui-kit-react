@@ -145,12 +145,10 @@ const SmallCalendar = React.forwardRef((props, ref) => {
                     </span>
                     <ArrowButton isNext = {true} onClick={changeMonth}/>
                 </div>
-                <div className={"week-days-container"}>
+                <div className={"calendar-view"}>
                     {DAYS_OF_WEEK.map((el, id) => {
                         return <div className={"calendar-element week-day"} key={id}> {el} </div>
                     })}
-                </div>
-                <div className={"calendar-view"}>
                     {renderMonth().map(el => el)}
                 </div>
             </div>
@@ -160,12 +158,14 @@ const SmallCalendar = React.forwardRef((props, ref) => {
 });
 
 SmallCalendar.defaultProps = {
-    openedDate: null
+    openedDate: null,
+
 }
 
 SmallCalendar.propTypes = {
     openedDate: propTypes.any,
-    onSelected: propTypes.func
+    onSelected: propTypes.func,
+
 }
 
 export default SmallCalendar;

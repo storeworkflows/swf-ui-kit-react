@@ -4,9 +4,8 @@ import { default as InfoMessage } from './InfoMessage';
 
 export default {
     title: 'swf-ui-kit/Messages/InfoMessage',
-    component: InfoMessage,
+    component: InfoMessage
 };
-
 
 const Template = (args) => <InfoMessage {...args}/>;
 

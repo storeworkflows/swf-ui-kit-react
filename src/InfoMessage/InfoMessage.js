@@ -47,7 +47,7 @@ const InfoMessage = React.forwardRef((props, ref) => {
 
 InfoMessage.defaultProps = {
     status: "red",
-    className: {},
+    className: "",
     iconSize: 16
 }
 
@@ -60,4 +60,4 @@ InfoMessage.propTypes = {
     delay: propTypes.number
 }
 
-export default InfoMessage
+export default React.memo(InfoMessage)

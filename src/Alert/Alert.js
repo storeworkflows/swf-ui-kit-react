@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useCallback} from 'react';
 import propTypes from "prop-types";
 import classnames from "classnames";
 
@@ -17,21 +17,22 @@ const Alert = React.forwardRef((props, ref) => {
         expanded, onCloseAction, delay
     } = props;
 
-    const [isExpanded, setIsExpanded] = useState(expanded);
-    const [isOverflowed, setIsOverflowed] = useState(!expanded);
     const [oneLineText, setOneLineText] = useState(false);
+    const [isOverflowed, setIsOverflowed] = useState(!expanded);
+    const [isExpanded, setIsExpanded] = useState(expanded);
     const [isVisible, setIsVisible] =  useState(visible);
 
     const contentRef = useRef(null);
     const textRef = useRef(null);
     let timer = null;
 
+    const expandedFinal = manageExpanded ? expanded : isExpanded;
+    const visibleFinal = manageVisibility ? visible : isVisible;
 
     const setDelay = () => {
         if (delay) {
             timer = setTimeout(() => {
-                if (!manageVisibility)
-                    setIsVisible(false)
+                !manageVisibility && setIsVisible(false)
                 onCloseAction();
             }, delay);
         }
@@ -41,8 +42,7 @@ const Alert = React.forwardRef((props, ref) => {
         e.preventDefault();
 
         if (!manageButtonClick) {
-            if (!manageVisibility)
-                setIsVisible(false)
+            !manageVisibility && setIsVisible(false)
             if (action.href)
                 openLink(action.href);
         }
@@ -53,7 +53,7 @@ const Alert = React.forwardRef((props, ref) => {
     const expandAction = (e) => {
         e.preventDefault();
 
-        let curValue = isExpanded;
+        let curValue = expandedFinal;
         if (!manageExpanded) {
             curValue = !isExpanded;
             setIsOverflowed(!curValue);
@@ -63,8 +63,7 @@ const Alert = React.forwardRef((props, ref) => {
         onExpandAction({isExpanded: curValue})
     }
 
-    const defineSizes = () => {
-        const {header, content} = props;
+    const defineSizes = useCallback(() => {
         let contentEl = contentRef?.current;
         let text = textRef?.current;
 
@@ -75,25 +74,21 @@ const Alert = React.forwardRef((props, ref) => {
             setIsOverflowed(contentEl.scrollHeight < text.scrollHeight);
             setOneLineText(onlyHeader || oneLineText)
         }
-    }
+    }, [header, content, contentRef, textRef])
 
 
     useEffect( defineSizes, [content, header])
 
     useEffect(() => {
         if(manageVisibility){
-            setIsVisible(visible)
             setDelay();
             defineSizes();
         }
-    }, [visible])
+    }, [visible, manageVisibility])
 
     useEffect(() => {
-        if(manageExpanded){
-            setIsExpanded(expanded);
-            setIsOverflowed(!expanded)
-        }
-    }, [expanded])
+        manageExpanded && setIsOverflowed(!expanded)
+    }, [expanded, manageExpanded])
 
     useEffect(() => {
         defineSizes();
@@ -105,10 +100,10 @@ const Alert = React.forwardRef((props, ref) => {
 
     const mainContainerClasses = classnames(color, {
         "swf-alert-container": true,
-        "--alignCenter": !isOverflowed && !isExpanded,
+        "--alignCenter": !isOverflowed && !expandedFinal,
         "--overflowed": isOverflowed,
         "--oneLineContent": oneLineText,
-        "--expanded": isExpanded,
+        "--expanded": expandedFinal,
         "--no-icon": !icon
     })
 
@@ -116,14 +111,14 @@ const Alert = React.forwardRef((props, ref) => {
         "text-container": true,
         "--overflowed": isOverflowed,
         "--setToOneLine": header && isOverflowed,
-        "--expanded": isExpanded
+        "--expanded": expandedFinal
     })
 
-    let showLabel = isExpanded ? "less" : "more";
+    let showLabel = expandedFinal ? "less" : "more";
     let isButtonWithText = action.type === "acknowledge" || action.type === "open"
 
     return (
-        isVisible ?
+         visibleFinal &&
             <>
                 <div className={mainContainerClasses} ref={ref}>
                     {icon && <Icon className={"alert-icon"} icon={icon}/>}
@@ -147,7 +142,7 @@ const Alert = React.forwardRef((props, ref) => {
                             }</p>
                         </div>
                         }
-                        {(isOverflowed || isExpanded) &&
+                        {(isOverflowed || expandedFinal) &&
                         <Button
                             className={"show-more-button"}
                             variant={"tertiary"}
@@ -168,9 +163,7 @@ const Alert = React.forwardRef((props, ref) => {
                     />
                 </div>
             </>
-            : null
     );
-    //}
 });
 
 Alert.defaultProps = {
@@ -227,4 +220,4 @@ Alert.propTypes = {
     manageButtonClick: propTypes.bool
 }
 
-export default Alert
+export default React.memo(Alert)

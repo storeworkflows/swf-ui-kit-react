@@ -76,7 +76,7 @@ const Checkbox = React.forwardRef((props, ref) => {
     })
 
     return (
-        visible ?
+        visible &&
             <>
                 <div className={className} ref={ref}>
                     {(label || required) &&
@@ -116,7 +116,6 @@ const Checkbox = React.forwardRef((props, ref) => {
                     </div>
                 </div>
             </>
-            : null
     );
 
 });
@@ -159,4 +158,4 @@ Checkbox.propTypes = {
     inlineRequired: propTypes.bool
 }
 
-export default Checkbox
+export default React.memo(Checkbox)

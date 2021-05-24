@@ -18,6 +18,7 @@ export {default as Attachment} from "./Attachment/Attachment"
 export {default as TextLink} from "./TextLink/TextLink"
 export {default as HighlightedValue} from "./HighlightedValue/HighlightedValue"
 export {default as Wrapper} from "./Wrapper/Wrapper"
+export {default as RangePicker} from "./RangePicker/RangePicker"
 
 export {default as Stepper} from "./Stepper/Stepper";
 export {default as LookupField} from "./LookupField/LookupField";

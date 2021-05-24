@@ -1,7 +1,7 @@
 import moment from "moment";
 import * as React from "react";
 import propTypes from "prop-types";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import Input from "../Input/Input";
 import Button from "../Button/Button";
@@ -58,7 +58,7 @@ const DatePicker = React.forwardRef((props, ref) => {
         onValueChange({oldValue: dateValue, input, newValue});
     }
 
-    const dateSelected = (date) => {
+    const dateSelected = useCallback((date) => {
         let newValue = moment(date).format(format);
 
         let errors = getErrorMessages(newValue, format, min, max);
@@ -68,7 +68,7 @@ const DatePicker = React.forwardRef((props, ref) => {
 
         !errors.length && onValueSet({value: newValue});
         onValueChange({oldValue: dateValue, newValue});
-    }
+    }, [format, min, max, manageValue, onValueSet, onValueChange, dateValue])
 
     const invalidInput = (errors = [], date) => {
         let isInvalidCurrent = errors.length > 0;

@@ -1,50 +1,44 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
+import {useEffect, useRef} from "react";
 
-class Loader extends React.Component {
+const Loader = (props) => {
 
-    constructor(props) {
-        super(props);
-        this.loaderRef = null
-    }
-
-    componentDidMount() {
-        if(this.loaderRef){
-            let parentEl = this.loaderRef.parentElement.parentElement;
-            if(parentEl){
+    const loaderRef = useRef(null);
+    useEffect(() => {
+        if (loaderRef?.current) {
+            let parentEl = loaderRef.current.parentElement.parentElement;
+            if (parentEl) {
                 let styles = getComputedStyle(parentEl)
-                this.loaderRef.style.minHeight = `${parentEl.offsetHeight - styles.paddingTop.split('px')[0] - styles.paddingBottom.split('px')[0]}px`;
-
+                loaderRef.current.style.minHeight = `${parentEl.offsetHeight - styles.paddingTop.split('px')[0] - styles.paddingBottom.split('px')[0]}px`;
             }
-
         }
-    }
+    }, [])
 
-    render() {
-        const {actionName, className} = this.props;
-        const containerClasses = classnames(
-            className,
-            "swf-loader"
-        )
 
-        return  <>
-            <div className={"swf-loader-container"}>
-                <div className={containerClasses} ref = {el => this.loaderRef = el}>
-                    <div className={"loader-container"}>
-                        <span>{actionName}</span>
-                        <div className="loader"/>
-                    </div>
+    const {actionName, className} = props;
+    const containerClasses = classnames(
+        className,
+        "swf-loader"
+    )
+
+    return <>
+        <div className={"swf-loader-container"}>
+            <div className={containerClasses} ref={loaderRef}>
+                <div className={"loader-container"}>
+                    <span>{actionName}</span>
+                    <div className="loader"/>
                 </div>
             </div>
-        </>
-
-    }
+        </div>
+    </>
 };
 
 
 Loader.defaultProps = {
-    actionName: ""
+    actionName: "",
+    className: ""
 }
 
 Loader.propTypes = {
@@ -52,4 +46,4 @@ Loader.propTypes = {
     className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
-export default Loader
+export default React.memo(Loader)

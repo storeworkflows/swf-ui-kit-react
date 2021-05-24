@@ -36,4 +36,4 @@ Badge.defaultProps = {
     text: "0"
 }
 
-export default Badge
+export default React.memo(Badge)

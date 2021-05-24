@@ -9,9 +9,9 @@ const TabItem = React.forwardRef((props, ref) => {
     const infoRef = useRef(null);
     const [infoOpened, setInfoOpened] = useState(false)
 
-    const {item, isSelected, hideLabel, tabSelected} = props;
+    const {item, isSelected, hideLabel, tabSelected, disabled} = props;
     const {
-        label, icon, id, disabled, style,
+        label, icon, id, style,
         required = false, invalid = false, infoMessage
     } = item;
 
@@ -20,8 +20,8 @@ const TabItem = React.forwardRef((props, ref) => {
 
     const tabClasses = classNames({
         "swf-tab": true,
-        "active": isSelected && !disabled,
-        "disabled": disabled,
+        "active": isSelected && (!disabled && !item.disabled),
+        "disabled": disabled || item.disabled,
         "invalid": invalid
     })
 
@@ -37,7 +37,7 @@ const TabItem = React.forwardRef((props, ref) => {
     return <div
         key={id}
         className={tabClasses}
-        onClick={() => tabSelected(item.id, disabled)}
+        onClick={() => tabSelected(item, item.id, (disabled || item.disabled))}
         style={style || {}}
         ref={ref}
     >

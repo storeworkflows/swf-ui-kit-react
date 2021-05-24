@@ -63,4 +63,4 @@ DropdownItem.propTypes = {
     icon: propTypes.string,
 }
 
-export default DropdownItem
+export default React.memo(DropdownItem)
