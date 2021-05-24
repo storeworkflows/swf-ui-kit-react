@@ -5,7 +5,7 @@ import {Avatar} from "../index";
 import {noop} from "../utils";
 import Icon from "../Icon/Icon";
 import PropTypes from "prop-types";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
 const AvatarGroup = (props) => {
     const {
@@ -42,20 +42,20 @@ const AvatarGroup = (props) => {
                 }
             >
                 {canAdd && <div
-                    className={classnames({
-                        "avatar-multiple": true,
-                        "add-new-member": true,
-                        "additional-avatar": true
-                    })}
+                    className={classnames(
+                        "avatar-multiple",
+                        "add-new-member",
+                        "additional-avatar"
+                    )}
                     onClick={() => clickable && onAdd()}
                 >
                     <Icon icon={customIcon || "person-plus"} size={size}/>
                 </div>}
 
-                {hasAdditionalMembers && <div className={classnames({
-                    "avatar-multiple": true,
-                    "additional-members": true
-                })}>
+                {hasAdditionalMembers && <div className={classnames(
+                    "avatar-multiple",
+                    "additional-members"
+                )}>
                     <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p>
                 </div>}
 

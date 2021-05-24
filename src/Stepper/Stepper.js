@@ -7,6 +7,7 @@ import Icon from "../Icon/Icon";
 import propTypes from "prop-types";
 
 const Stepper = React.forwardRef((props, ref) => {
+    console.log("render stepper");
     const {palette, vertical, completedCounter, steps, iconSize,
         selectedItem, disableScroll, hideLabels, onStepClick} = props;
 
@@ -30,11 +31,11 @@ const Stepper = React.forwardRef((props, ref) => {
     useEffect(() => {
         if(!disableScroll) {
             updateVisibleStepsAmount();
-            window.addEventListener('resize', () => updateVisibleStepsAmount());
+            window.addEventListener('resize', updateVisibleStepsAmount);
 
             shiftStepsAccordinglyToSelectedItem();
         }
-        return window.removeEventListener('resize',  () => updateVisibleStepsAmount());
+        return window.removeEventListener('resize', updateVisibleStepsAmount);
     }, [])
 
     useEffect(() => {
@@ -50,15 +51,11 @@ const Stepper = React.forwardRef((props, ref) => {
         setStepsCurrShiftedPos(Math.min(Math.max(newStepsPosValue, 0), maxStepsPos))
     }
 
-    const onArrowClick = (direction) => () => {
+    const onArrowClick = (direction) => {
         const newStepsPosValue = stepsCurrShiftedPos + (stepSize * direction);
         const maxStepsPos = stepSize * (steps.length - visibleStepsAmount);
 
         setStepsCurrShiftedPos(Math.min(Math.max(newStepsPosValue, 0), maxStepsPos));
-    }
-
-    const selectStep = (index, id) => () => {
-        onStepClick({ index, id });
     }
 
     const renderSteps = () => {
@@ -82,7 +79,7 @@ const Stepper = React.forwardRef((props, ref) => {
                             '--disabled': step.disabled
                         })}
                         key={'step' + index}
-                        onClick={step.disabled ? undefined : selectStep(index, step.id)}
+                        onClick={() => !step.disabled && onStepClick({ index, id : step.id })}
                     >
                         <Step
                             iconColor={iconColor}
@@ -114,7 +111,7 @@ const Stepper = React.forwardRef((props, ref) => {
                 {isArrowsNeeded &&
                 <div
                     className="arrow arrow-left"
-                    onClick={onArrowClick(-1)}
+                    onClick={() => onArrowClick(-1)}
                 >
                     <div className="arrow-icon">
                         <Icon
@@ -150,7 +147,7 @@ const Stepper = React.forwardRef((props, ref) => {
                 {isArrowsNeeded &&
                 <div
                     className="arrow arrow-right"
-                    onClick={onArrowClick(1)}
+                    onClick={() => onArrowClick(1)}
                 >
                     <div className="arrow-icon">
                         <Icon

@@ -13,14 +13,13 @@ const Popover = React.forwardRef((props, ref) => {
     const {children, roundBorder, contentStyles, positionTarget, manageOpened,
         onTargetClick, onOuterPopoverClicked, positions, hideTail, opened} = props;
 
-    const [isOpened, setIsOpened] = useState(false);
+    const [isOpened, setIsOpened] = useState(opened);
 
     const targetRef = useRef(null);
     const contentRef = useRef(null);
 
     let openedFinal = manageOpened ? opened : isOpened;
-
-    let resizeObserver = new ResizeObserver(() => contentResized);
+    let resizeObserver;
 
     const renderContent = () => {
         const content = findByType(children, "Content");
@@ -42,7 +41,7 @@ const Popover = React.forwardRef((props, ref) => {
             </div>
         );
     }
-
+    console.log(targetRef)
     const renderTarget = () => {
         const target = findByType(children, "Target");
 
@@ -55,7 +54,8 @@ const Popover = React.forwardRef((props, ref) => {
                     openedFinal && setStylesToContent()
                 }
             }
-            targetRef.current.onclick = (e) => targetClicked(e)
+            if(targetRef?.current)
+                targetRef.current.onclick = (e) => targetClicked(e)
             return null;
         }
 
@@ -162,16 +162,18 @@ const Popover = React.forwardRef((props, ref) => {
 
 
     useEffect(() => {
-        document.addEventListener("click", e => documentClicked(e));
+        resizeObserver = new ResizeObserver(contentResized)
         updateOpenedState(opened);
         return resizeObserver.disconnect();
     }, [])
 
     useEffect(() => {
+        document.addEventListener("click", e => documentClicked(e));
         if(resizeObserver) {
             resizeObserver.disconnect();
 
-            resizeObserver.observe(targetRef?.current);
+            if(targetRef?.current)
+                resizeObserver.observe(targetRef.current);
             resizeObserver.observe(contentRef?.current.children[0].children[0]);
         }
     })

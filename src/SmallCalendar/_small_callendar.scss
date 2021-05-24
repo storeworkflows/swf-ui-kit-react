@@ -16,6 +16,17 @@
       font: 1rem Arial;
     }
 
+    .header-part{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0 0;
+
+      &.--end{
+        margin: 0 0 auto auto;
+      }
+    }
+
     .calendar-arrow{
       display: inline-flex;
       align-items: center;
@@ -40,67 +51,112 @@
 
   .week-days-container{
     display: grid;
+    width: 100%;
     grid-template-columns: repeat(7, max-content);
     grid-gap: 0.25rem;
-    margin: 0.25rem 0;
+    //margin: 0.25rem 0;
     justify-content: center;
   }
 
   .calendar-view{
     display: grid;
     grid-template-columns: repeat(7, max-content);
-    grid-template-rows: repeat(5, max-content);
-    grid-gap: 0.25rem;
+    grid-template-rows: repeat(6, max-content);
+    //grid-gap: 0.25rem;
     justify-content: center;
   }
 
-  .calendar-element {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 2rem;
-    width: 2rem;
+
+
+}
+
+.calendar-day-container{
+  padding: 0.125rem;
+
+  &.--first-in-period{
+    border-radius: 50% 0 0 50%;
+  }
+
+  &.--last-in-period{
+    border-radius: 0 50% 50% 0;
+  }
+
+  &.--one-in-period{
     border-radius: 50%;
-    font-family: Arial;
+  }
 
-    &.day-element{
-      cursor: pointer;
+  &.--in-selected-period{
+    background: #c1f5e9;
+  }
+
+  &.--hovered{
+    border: 1px dashed rgb(30, 133, 109);
+  }
+  //
+  //&.--selected-period{
+  //  background: #c1f5e9;
+  //}
+  //
+  //&.--hovered-period{
+  //  background: #ededed;
+  //}
+  //
+  //&.--hover-selected-period{
+  //    background: #44c2a4;
+  //}
+  //
+  //&.--disabled-period{
+  //    background: #d9d9d9;
+  //}
+
+}
+
+.calendar-element {
+  border: 1px solid transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  line-height: 1.5;
+
+  &.day-element{
+    cursor: pointer;
+  }
+
+  &.day-element:hover{
+    background: #ededed;
+    color:  rgb(30, 133, 109);
+
+    &.selected{
+      background: rgb(30, 133, 109);
+      color: white;
     }
+  }
 
-    &.day-element:hover{
-      background: #ededed;
-      color:  rgb(30, 133, 109);
-
-      &.selected{
-        background: rgb(30, 133, 109);
-        color: white;
-      }
+  &.active{
+    &.selected{
+      background: rgb(30, 133, 109);
+      color: white;
     }
+  }
 
-    &.active{
-      &.selected{
-        background: rgb(30, 133, 109);
-        color: white;
-      }
-    }
+  &.notActive{
+    color: #a5a5a5;
+    //&.selected{
+    //  font-weight: bold;
+    //}
+  }
 
-    &.notActive{
-      color: #a5a5a5;
-      //&.selected{
-      //  font-weight: bold;
-      //}
-    }
+  &.week-day{
+    color: #888888;
+    cursor: default;
+  }
 
-    &.week-day{
-      color: #888888;
-      cursor: default;
-    }
-
-    &.now-date{
-      font-weight: bold;
-    }
-
-
+  &.now-date{
+    font-weight: bold;
   }
 
 }

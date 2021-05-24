@@ -5,8 +5,6 @@ import findByType from "../utils/findByType";
 import Button from "../Button/Button";
 import {useState} from "react";
 
-const Header = () => null;
-
 const AccordionItem = React.forwardRef((props, ref) => {
 
     const {
@@ -50,7 +48,7 @@ const AccordionItem = React.forwardRef((props, ref) => {
     }
 
     const renderIcon = () => {
-        let classes = classnames({
+        const classes = classnames({
             "trigger-icon": true,
             "left": iconToStart,
             "right": !iconToStart

@@ -1,3 +1,5 @@
+import {DROPDOWN} from "./constants";
+
 export const  getItemById  = (id, items) => {
     return items.find(el => el.id ===id);
 }
@@ -19,4 +21,17 @@ export const getCorrectSelected = (items, selectedItems) => {
         return selectedItems.filter(el => getItemById(el, items))
 
     return [];
+}
+
+export const getUpdatedSelectedItems = (selectsItemsValue, select, id) => {
+    switch (select) {
+        case DROPDOWN.SELECT.SINGLE:
+             return (selectsItemsValue[0] === id) ? [] : [id];
+        case DROPDOWN.SELECT.MULTI:
+             return (selectsItemsValue.includes(id))
+                ? selectsItemsValue.filter(currentId => currentId !== id)
+                : selectsItemsValue.concat([id])
+        default:
+            return [];
+    }
 }

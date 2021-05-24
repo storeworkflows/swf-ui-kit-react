@@ -130,21 +130,17 @@ const Avatar = (props) => {
                     <p className="name">{name}</p>
                     <p className="title">{title}</p>
                 </div>
-                <div onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
+                {canRemove && openState && <Icon
+                    className="remove"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
 
-                    onRemove({id});
-                }}>
-                    {canRemove && openState && <div className={classnames({
-                        "remove": true
-                    })}>
-                        <Icon
-                            icon="x"
-                            size="md"
-                        />
-                    </div>}
-                </div>
+                        onRemove({id});
+                    }}
+                    icon="x" size="md"
+                />
+                }
             </div>
         </>
     )
@@ -187,4 +183,4 @@ Avatar.propTypes = {
     className: PropTypes.string
 }
 
-export default Avatar
+export default React.memo(Avatar)

@@ -3,19 +3,19 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 import findByType, {createSubComponent} from "../utils/findByType";
 import AccordionItem from "./AccordionItem";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
 const Accordion = React.forwardRef((props, ref) => {
 
     const {children, selectMany, onItemClicked, className} = props;
     const [selectedItemKey, setSelectedItemKey] = useState(-1)
 
-    const itemSelected = ({key}) => {
+    const itemSelected = useCallback(({key}) => {
         let updatedKey = (selectedItemKey === key) ? -1 : key;
         !selectMany && setSelectedItemKey(updatedKey)
 
         onItemClicked({key});
-    }
+    }, [selectedItemKey, selectMany, onItemClicked])
 
     const renderItems = () => {
         const items = findByType(children, "Item");
@@ -58,7 +58,6 @@ Accordion.Header = createSubComponent("Header");
 
 Accordion.defaultProps = {
     selectMany: true,
-    //  hideDividers: false,
     onItemClicked: () => void 0,
     className: ""
 }
@@ -66,7 +65,6 @@ Accordion.defaultProps = {
 Accordion.propTypes = {
     selectMany: propTypes.bool,
     onItemClicked: propTypes.func,
-    //  hideDividers: propTypes.bool,
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
 }
 

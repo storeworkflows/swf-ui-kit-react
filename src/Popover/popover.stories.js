@@ -3,6 +3,7 @@ import React, {createRef} from 'react';
 
 import { default as Popover} from './Popover';
 import Toggle from "../Toggle/Toggle";
+import InfoMessage from "../InfoMessage/InfoMessage";
 
 export default {
     title: 'swf-ui-kit/Containers/Popover',
@@ -38,38 +39,49 @@ export const TargetRef = (args) => {
     class PopoverWithRef extends React.Component{
         constructor(props) {
             super(props);
-            this.target = createRef();
+          //  this.
             this.state = {
-                hasTarget: false
+               // hasTarget: false,
+                styles: {width: "100px", height: "100px", padding: "10px"},
+                current: null
             }
         }
 
+        shouldComponentUpdate(nextProps, nextState, nextContext) {
+            return !_.isEqual(nextState, this.state)
+        }
+
         componentDidMount() {
-            if(this.target && this.target.current){
-                this.setState({hasTarget: true})
-            }
+            // if(this.target && this.target.current){
+            //     this.setState({hasTarget: true})
+            // }
         }
 
         render () {
             return (
                 <>
-                    <div ref={el => this.target.current = el}>Target by ref</div>
-                    {this.state.hasTarget &&
+                    <InfoMessage content={"Message content"}/>
+                    <div ref={el => this.setState({current: el})}>Target by ref</div>
+                    {/*{this.state.hasTarget &&*/}
                     <Popover {...this.props}
-                             positionTarget={{current: this.target.current}}
+                             positionTarget={{current: this.state.current}}
+                             opened={true}
                     >
                         <Popover.Content>
-                            <div style={{width: "100px", height: "100px", padding: "10px"}}>
+                            <div style={this.state.styles}
+                                 onClick={() => this.setState({
+                                     styles: {width: "100px", height: "200px", padding: "10px"}
+                                 })}>
                                 Example Content
                                 <Toggle/>
                             </div>
                         </Popover.Content>
                     </Popover>
-                    }
+                    {/*}*/}
                 </>
             );
         }
-    }
+    };
 
     return <PopoverWithRef {...args}/>
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, useCallback} from "react";
 
 import Icon from "../Icon/Icon"
 import Popover from "../Popover/Popover";
@@ -9,7 +9,7 @@ import DropdownItem from "./DropdownItem";
 import InfoMessage from "../InfoMessage/InfoMessage";
 import RequiredLabel from "../RequiredLabel/RequiredLabel";
 
-import {getCorrectSelected, getDisplayValue, getItemById} from "./utils";
+import {getCorrectSelected, getDisplayValue, getItemById, getUpdatedSelectedItems} from "./utils";
 import {DROPDOWN} from "./constants";
 
 const Dropdown = React.forwardRef((props, ref) => {
@@ -42,23 +42,11 @@ const Dropdown = React.forwardRef((props, ref) => {
         !manageOpened && setIsOpened(!isOpened);
     }
 
-    const itemSelected = ({id}) => {
+    const itemSelected = useCallback(({id}) => {
         let currentSelectedIds = selectsItemsValue;
 
         if (!manageSelectedItems) {
-            switch (select) {
-                case DROPDOWN.SELECT.SINGLE:
-                    currentSelectedIds = (currentSelectedIds[0] === id) ? [] : [id];
-                    break;
-                case DROPDOWN.SELECT.MULTI:
-                    currentSelectedIds = (selectsItemsValue.includes(id))
-                        ? selectsItemsValue.filter(currentId => currentId !== id)
-                        : selectsItemsValue.concat([id])
-                    break;
-                default:
-                    currentSelectedIds = [];
-                    break;
-            }
+            currentSelectedIds = getUpdatedSelectedItems(selectsItemsValue, select, id);
             setSelectedItemState(currentSelectedIds);
         }
 
@@ -71,7 +59,7 @@ const Dropdown = React.forwardRef((props, ref) => {
             clickedItem: getItemById(id, items),
             selectedItems: currentSelectedIds
         });
-    }
+    }, [onItemSelected, selectsItemsValue, manageSelectedItems, select, manageOpened, onOpened, items])
 
     useEffect(() => {
         if(openedValue && itemToScroll?.current)

@@ -35,13 +35,13 @@ const Attachment = React.forwardRef((props, ref) => {
     const input = useRef(null)
     const invalidValue = manageInvalid ? input : isInvalid;
 
-    const uploadNewFile = (fileToUpload) => {
+    const uploadNewFile = async (fileToUpload) => {
         if (!file && !readonly && !disabled) {
             setBlur();
             let errorMessages = checkFileToUpload(fileToUpload, props);
 
             if (errorMessages.length === 0)
-                uploadFile(fileToUpload)
+                await uploadFile(fileToUpload)
 
             else if (input?.current) {
                 input.current.value = "";
@@ -175,14 +175,14 @@ const Attachment = React.forwardRef((props, ref) => {
     const renderLabel = () => {
         let labelClasses = classnames(labelClassName, "inp-label", {"--readonly": readonly});
 
-        return (label ?
+        return label &&
             <RequiredLabel
                 className={labelClasses}
                 required={required}
                 invalid={invalidValue}
                 label={label}
                 htmlFor={name}
-            /> : null)
+            />
     }
 
     const renderPreloader = () => {
@@ -208,16 +208,23 @@ const Attachment = React.forwardRef((props, ref) => {
         )
     };
 
+    const renderFileButton = (icon, action, className="", style={}) => {
+        return <Button icon={icon}
+                variant={"inherit"}
+                size={"sm"}
+                className={classnames("file-button", className)}
+                customStyle={style}
+                onClick={action}
+                disabled={disabled}
+        />
+    }
+
     let attachClasses = classnames("attach-container", {
         "--focus": focus,
         "--invalid": invalidValue,
         "--readonly": readonly,
         "--disabled": disabled
     });
-
-    let negativeButtonStyle = {
-        "font-size": '16px'
-    }
 
     let _isFile = !activePreloader && file;
     let _isPlaceholder = !activePreloader && !file && placeholder;
@@ -226,7 +233,7 @@ const Attachment = React.forwardRef((props, ref) => {
     const _hasMassages = _allMessages.length > 0;
 
     return (
-        visible ?
+        visible &&
             <>
                 <input
                     ref={el => {
@@ -243,8 +250,7 @@ const Attachment = React.forwardRef((props, ref) => {
                     onInvalid={onInvalidEvent}
                     onChange={onChangeEvent}
                 />
-
-                <div className={classnames("swf-attach-input", className)}>
+                <div className={classnames("swf-attach-input", className)} ref={ref}>
                     {renderLabel()}
                     <div
                         className={attachClasses}
@@ -262,21 +268,8 @@ const Attachment = React.forwardRef((props, ref) => {
                             {!readonly &&
                             <File.End>
                                 <div>
-                                    <Button icon={"x"}
-                                            variant={"inherit"}
-                                            size={"sm"}
-                                            className={"file-button negative"}
-                                            customStyle={negativeButtonStyle}
-                                            onClick={deleteFile}
-                                            disabled={disabled}
-                                    />
-                                    <Button icon={"download"}
-                                            variant={"inherit"}
-                                            className={"file-button positive"}
-                                            size={"sm"}
-                                            onClick={downloadFile}
-                                            disabled={disabled}
-                                    />
+                                    {renderFileButton("x", deleteFile, "negative", {"font-size": '16px'})}
+                                    {renderFileButton("download", downloadFile, "positive")}
                                 </div>
                             </File.End>
                             }
@@ -286,9 +279,7 @@ const Attachment = React.forwardRef((props, ref) => {
                     </div>
                     {_hasMassages && _allMessages.map((el, id) => <InfoMessage key={id} {...el}/>)}
                 </div>
-
             </>
-            : null
     );
 
 });
