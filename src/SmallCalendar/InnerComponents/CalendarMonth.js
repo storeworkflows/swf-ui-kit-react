@@ -3,57 +3,70 @@ import * as React from 'react';
 import propTypes from "prop-types";
 import classnames from 'classnames';
 
-import hammer from "hammerjs";
-
-import Icon from "../Icon/Icon"
-import {defineIfHovered, defineProps} from "./utils";
-import {useCallback, useEffect, useState, useMemo} from "react";
-import findByType, {createSubComponent} from "../utils/findByType";
-import Input from "../Input/Input";
+import {defineProps} from "../utils";
+import {useCallback, useEffect, useState} from "react";
+import findByType, {createSubComponent} from "../../utils/findByType";
 import CalendarDay from "./CalendarDay";
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 const CalendarMonth = React.forwardRef((props, ref) => {
 
-    const {openedDate, onSelected, children, range, selectedDate, onMonthChange} = props;
+    const {openedDate, onSelected, children, range, selectedDate, onMonthChange, className} = props;
 
-    const [selectedDates, setSelectedDates] = useState(range ? [range.startDay, range.endDay] : [selectedDate])
+    const [selectedDates, setSelectedDates] = useState(range
+        ? [range.startDay?.setHours(0,0,0,0),
+            range.endDay?.setHours(0,0,0,0)]
+        : [selectedDate])
     const [hovered, setHovered] = useState(null)
 
-    const setDate = useCallback((date, isActive, e) =>{
+    let calendarElem = null;
+
+    useEffect(() => {
+        if (calendarElem) {
+            let mc = new Hammer(calendarElem);
+            mc.on("swipeleft", (e) => onMonthChange(null, true, e))
+            mc.on("swiperight", (e) => onMonthChange(null, false, e));
+        }
+    }, [])
+
+    // useEffect(() => {
+    //     setSelectedDates()
+    // }, [range])
+
+    const setDate = ({dateObj, isActive, e}) =>{
         e?.stopPropagation();
 
-        !isActive && onMonthChange({date, isNext: !(date.getDay() > 15)})
+        !isActive && onMonthChange(dateObj, !(new Date(dateObj).getDate() > 15))
 
         if(!range)
-            setSelectedDates([date])
+            setSelectedDates([dateObj])
         else
-            setSelectedDates(range.isFirstSelecting
-                ? [date, selectedDates[1]]
-                : [selectedDates[0], date]
-            )
+            setSelectedDates( range.isFirstSelecting
+                ? [dateObj, dateObj>selectedDates[1] ? null : selectedDates[1]]
+                : [dateObj<selectedDates[0] ? null : selectedDates[0] , dateObj]
+            );
 
-        onSelected({date});
-    }, [openedDate, onSelected, selectedDates]);
-
+        onSelected(new Date(dateObj));
+    };
 
     const renderHeaderElement = (name) => {
         const element = findByType(children, name);
+        // if(!element || element.length < 1)
+        //     return null;
+
         const classes = classnames({
             "header-part": true,
             "--end": name === "HeaderEnd"
         });
-
-        if (!classes || classes.length < 1) return null;
         return <div className={classes}>{element}</div>
     }
 
-    const renderCalendarElement = useCallback((date, isActive) => {
+    const renderCalendarElement = useCallback((date, isActive, dayInWeek) => {
         let dateObj = date.toDate().setHours(0,0,0,0);
         let day = date.format('D');
-        const {selected, inSelectedPeriod, isNowDate, isHovered, extreme}
-            = defineProps(selectedDates, range, dateObj, hovered);
+        const {selected, inSelectedPeriod, isNowDate, isHovered, extreme, borders,selectedBorders}
+            = defineProps(selectedDates, range, dateObj, hovered, dayInWeek);
 
         return <CalendarDay
             active={isActive}
@@ -64,10 +77,12 @@ const CalendarMonth = React.forwardRef((props, ref) => {
             inSelectedPeriod={inSelectedPeriod}
             hovered={isHovered}
             extreme={extreme}
+            borders={borders}
+            selectedBorders={selectedBorders}
 
             onMouseEnter={() => setHovered(dateObj)}
             onMouseLeave={() => setHovered(null)}
-            onClick={(e) => setDate(dateObj, isActive, e) }
+            onClick={(e) => setDate({dateObj, isActive, e}) }
         />
     }, [hovered, selectedDates, range, openedDate])
 
@@ -87,7 +102,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
                 (d > 0) && currentDay.add(1, "day");
 
                 const isActive = currentDay.format('M') === `${openedMonth}`;
-                result.push(renderCalendarElement(currentDay, isActive));
+                result.push(renderCalendarElement(currentDay, isActive, d));
             }
         }
 
@@ -100,7 +115,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     return (
         <>
             <div
-                className={"ui-kit__calendar-container"}
+                className={classnames(className, "ui-kit__calendar-container")}
                 ref={ref}
             >
                 <div className={"calendar-header"}>
@@ -110,12 +125,6 @@ const CalendarMonth = React.forwardRef((props, ref) => {
                     </span>
                     {renderHeaderElement("HeaderEnd")}
                 </div>
-                {/*<div className={"week-days-container"}>*/}
-                {/*    {DAYS_OF_WEEK.map((el, id) => <div*/}
-                {/*            className={"calendar-element week-day"}*/}
-                {/*            key={id}> {el} </div>*/}
-                {/*    )}*/}
-                {/*</div>*/}
                 <div className={"calendar-view"}>
                     {DAYS_OF_WEEK.map((el, id) => <div
                         className={"calendar-element week-day"}
@@ -129,14 +138,15 @@ const CalendarMonth = React.forwardRef((props, ref) => {
 
 });
 
-CalendarMonth.Start = createSubComponent("HeaderStart");
-CalendarMonth.End = createSubComponent("HeaderEnd");
+CalendarMonth.HeaderStart = createSubComponent("HeaderStart");
+CalendarMonth.HeaderEnd = createSubComponent("HeaderEnd");
 
 CalendarMonth.defaultProps = {
     openedDate: new Date(),
     selectedDate: null,
     onSelected: () => void 0,
-    onMonthChange: () => void 0
+    onMonthChange: () => void 0,
+    className: ""
 }
 
 CalendarMonth.propTypes = {
@@ -149,7 +159,9 @@ CalendarMonth.propTypes = {
        // isFirstFixed: propTypes.bool,
         isFirstSelecting: propTypes.bool
     }),
-    onMonthChange: propTypes.func
+    hoveredDate: propTypes.object,
+    onMonthChange: propTypes.func,
+    classNames: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
 export default CalendarMonth;

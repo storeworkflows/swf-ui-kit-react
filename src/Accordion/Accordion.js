@@ -8,14 +8,14 @@ import {useCallback, useState} from "react";
 const Accordion = React.forwardRef((props, ref) => {
 
     const {children, selectMany, onItemClicked, className} = props;
-    const [selectedItemKey, setSelectedItemKey] = useState(-1)
+    const [selectedItemKey, setSelectedItemKey] = useState("-1")
 
     const itemSelected = useCallback(({key}) => {
-        let updatedKey = (selectedItemKey === key) ? -1 : key;
+        let updatedKey = (selectedItemKey === key) ? "-1" : key;
         !selectMany && setSelectedItemKey(updatedKey)
 
         onItemClicked({key});
-    }, [selectedItemKey, selectMany, onItemClicked])
+    }, [onItemClicked, selectedItemKey, selectMany])
 
     const renderItems = () => {
         const items = findByType(children, "Item");
@@ -23,21 +23,18 @@ const Accordion = React.forwardRef((props, ref) => {
         if (!items || !items.length)
             return null;
 
-        return items.map((el, i) => {
-            return (
-                <AccordionItem
+        return items.map((el, i) => <AccordionItem
                     key={el.key}
                     opened={el.key === selectedItemKey}
                     manageOpened={!selectMany}
-                    onSelected={() => itemSelected({key: el.key})}
+                    onSelected={itemSelected}
                     isLastItem={i === (items.length - 1)}
                     isFirstItem={i === 0}
+                    id={el.key}
                     {...el.props}
                 />
-            )
-        });
+        );
     }
-
 
     const classes = classnames(
         className,
