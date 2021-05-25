@@ -1,0 +1,30 @@
+.pagination {
+  &__container {
+    display: flex;
+    gap: 1px;
+  }
+
+  &__button {
+    height: max-content;
+    text-align: center;
+    border-color: rgba(206,206,206,1) !important;
+    min-width: 52px;
+
+    &:hover {
+      background-color: rgba(206,206,206,0.2) !important;
+    }
+
+    &_active {
+      background-color: rgba(30,133,109, 0.5) !important;
+    }
+  }
+
+  &__button_arrow {
+    background-color: transparent;
+
+    span {
+      position: relative;
+      bottom: 0.1rem;
+    }
+  }
+}
