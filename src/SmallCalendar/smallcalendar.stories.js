@@ -19,7 +19,7 @@ export const Range  = (args) => <div>
     <RangeCalendar
         startDay={new Date("2021-05-16")}
         endDay={new Date()}
-        isFirstSelecting={false}
+        isFirstSelecting={true}
     />
 </div>
 

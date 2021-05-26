@@ -19,7 +19,7 @@ const TextArea = (props) => {
 
     const onChange = (event) => {
         setValue(event.target.value);
-        onKeyDown(event)
+        event.type==="keydown" && onKeyDown(event)
         if (textAreaRef.current) {
             autosize(textAreaRef.current);
         }

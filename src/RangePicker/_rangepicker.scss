@@ -18,18 +18,19 @@
       cursor: default;
       background: rgb(228, 230, 231);
     }
-  }
 
-  .date-input-control:focus {
-    outline: none;
-    border-bottom: 1px solid #007bff;
-    box-shadow: 0 1px #007bff;
+    &.--focus {
+      outline: none;
+      border-bottom: 1px solid #007bff;
+      box-shadow: 0 1px #007bff;
 
-    &.--invalid{
-      border-bottom-color: red;
-      box-shadow: 0 1px red;
+      &.--invalid {
+        border-bottom-color: red;
+        box-shadow: 0 1px red;
+      }
     }
   }
+
 
   .range-picker-element{
     display: flex;

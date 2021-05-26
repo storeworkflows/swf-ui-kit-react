@@ -12,13 +12,17 @@ const defineExtreme = (start, end, curr) => {
 }
 
 export const defineProps = (selectedDates, range, current, hovered, dayInWeek) => {
-    let selected = selectedDates.some(el =>
-        el && _.isEqual(el, current)
-    );
+    let startDate = range && selectedDates[0]?.setHours(0,0,0,0) ;
+    let endDate = range && selectedDates[1]?.setHours(0,0,0,0) ;
 
-    const startDate = range && selectedDates[0] ;
-    const endDate = range && selectedDates[1] ;
+    if(endDate && startDate){
+        if(range.isFirstSelecting && endDate<startDate)
+            endDate = null;
+        if(!range.isFirstSelecting && endDate<startDate)
+            startDate = null;
+    }
 
+    let selected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
     let inSelectedPeriod = startDate && endDate && current>=startDate && current<=endDate;
     let isNowDate = _.isEqual(current, new Date().setHours(0,0,0,0) )
 
@@ -67,4 +71,34 @@ const defineBorder = (start, end, current, dayInWeek) => {
         diffDaysEnd < 7 && result.push("bottom");
     }
     return result;
+}
+
+export const defineSelected = (range, selected) => {
+    if (selected)
+        return selected;
+
+    if (range)
+        return range.isFirstSelecting ? range.startDay : range.endDay;
+
+    return null;
+}
+
+export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) => {
+    const selectedInSeconds = selectedDate?.setHours(0,0,0,0);
+
+    if(isFirstSelecting){
+        const endInSeconds = oldExtreme.endDay?.setHours(0,0,0,0);
+        const endFitSelected = oldExtreme.endDay && selectedInSeconds<=endInSeconds;
+        return {
+            startDay: selectedDate,
+            endDay: endFitSelected ? oldExtreme.endDay : null
+        }
+    } else {
+        const startInSeconds = oldExtreme.startDay?.setHours(0,0,0,0);
+        const startFitSelected = oldExtreme.startDay &&  selectedInSeconds>=startInSeconds;
+        return {
+            startDay: startFitSelected ? oldExtreme.startDay : null,
+            endDay: selectedDate
+        }
+    }
 }

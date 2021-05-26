@@ -1,5 +1,4 @@
 import {POPOVER} from "./constants";
-import { ResizeObserver } from 'resize-observer';
 const {ALIGNMENT, ARROW_SIZE, ARROW_ALIGN, NO_ARROW_POSITIONS, ARROW_SIDES, ARROW_SPACE, PADDING_SIZE} = POPOVER
 
 const verticalAlignment = [ALIGNMENT.TOP, ALIGNMENT.CENTER, ALIGNMENT.BOTTOM];

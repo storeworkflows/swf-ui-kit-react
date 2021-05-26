@@ -4,48 +4,40 @@ import propTypes from "prop-types";
 import classnames from 'classnames';
 
 
-import Icon from "../Icon/Icon"
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CalendarMonth from "./InnerComponents/CalendarMonth";
 import ArrowButton from "./InnerComponents/ArrowButton";
+import {updateExtremeDates} from "./utils";
 
 const RangeCalendar = React.forwardRef((props, ref) => {
 
     const {openedDate, onSelected,
-        startDay, endDay, isFirstSelecting} = props;
+        startDay, endDay, isFirstSelecting, manageSelected} = props;
 
-    const date = (openedDate) ? new Date(openedDate) : null;
-    const [selectedDate, setSelectedDate] = useState(isFirstSelecting ? startDay : endDay);
-    const [openedDateValue, setOpenedDateValue] = useState(date);
+    const [extremeDays, setExtremeDays] = useState({startDay, endDay})
+    const [openedDateValue, setOpenedDateValue] = useState((openedDate) ? new Date(openedDate) : null);
+    const [hoverDate, setHoverDate] = useState(null);
 
     const nextOpened =  moment(openedDateValue).add(1, "month").toDate();
-    const currentFirstDate = isFirstSelecting ? selectedDate : startDay;
-    const currentEndDate = isFirstSelecting ? endDay : selectedDate;
+
+    useEffect(() => {
+        manageSelected && setExtremeDays({startDay, endDay})
+    }, [manageSelected, startDay, endDay])
 
     const changeMonth = (selectedDate, isNext, e) => {
         e?.stopPropagation();
 
         let additionValue = isNext ? 1 : -1;
         let changedTo = moment(openedDateValue).add(additionValue, "month");
-        if (selectedDate)
-            setSelectedDate(new Date(selectedDate))
 
+        selectedDate && setSelected(selectedDate)
         setOpenedDateValue(changedTo.toDate())
     }
 
-    const renderArrow = (isNext) => {
-        const classes = classnames({
-            "calendar-arrow": true,
-            "next": isNext
-        });
-
-        return <div
-            className={classes}
-            onClick={(e) => changeMonth(e, isNext)}>
-            <Icon
-                icon={isNext ? "chevron-right" : "chevron-left"}
-                size={"sm"}/>
-        </div>
+    const setSelected = (date) => {
+        const updatedDates = updateExtremeDates(extremeDays, date, isFirstSelecting);
+        !manageSelected && setExtremeDays(updatedDates)
+        onSelected({old: extremeDays, updated: updatedDates})
     }
 
     const renderCalendarElement = (isNext = false) => {
@@ -56,30 +48,34 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         )
         return  <CalendarMonth
             openedDate={isNext ? nextOpened : openedDateValue}
-            onSelected={onSelected}
+            onSelected={setSelected}
             onMonthChange={changeMonth}
             className={classes}
+            onSetHover={date => setHoverDate(date)}
+            hoveredDate={hoverDate}
             range={{
-                startDay: currentFirstDate,
-                endDay: currentEndDate,
+                startDay: extremeDays.startDay,
+                endDay: extremeDays.endDay,
                 isFirstSelecting: isFirstSelecting
             }}
+            manageHover={true}
+            manageSelected={true}
         >
             {isNext
                 ?
                 <CalendarMonth.HeaderEnd>
-                    <ArrowButton isNext={isNext} onClick={changeMonth}/>
+                    <ArrowButton isNext={isNext} onClick={(e) => changeMonth(null, isNext, e)}/>
                 </CalendarMonth.HeaderEnd>
                 :
                 <CalendarMonth.HeaderStart>
-                    <ArrowButton onClick={changeMonth}/>
+                    <ArrowButton onClick={(e) => changeMonth(null, isNext, e)}/>
                 </CalendarMonth.HeaderStart>
             }
 
         </CalendarMonth>
     }
 
-    return <div>
+    return <div className={"range-calendar-container"}>
         {renderCalendarElement()}
         {renderCalendarElement(true)}
     </div>
@@ -87,7 +83,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
 
 RangeCalendar.defaultProps = {
     openedDate: new Date(),
-
+    onSelected: () => void 0,
 }
 
 RangeCalendar.propTypes = {
@@ -95,7 +91,8 @@ RangeCalendar.propTypes = {
     onSelected: propTypes.func,
     startDay: propTypes.object,
     endDay: propTypes.object,
-    isFirstSelecting: propTypes.bool
+    isFirstSelecting: propTypes.bool,
+    manageSelected: propTypes.bool
 }
 
 export default RangeCalendar;
