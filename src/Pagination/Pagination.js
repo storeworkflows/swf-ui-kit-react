@@ -14,7 +14,7 @@ const Pagination = (props) => {
 
 	useEffect(() => {
 		setPagesArray(getPagesArray());
-	}, [currentPage]);
+	}, [currentPage, totalRecords, pageLimit]);
 
 
 	const gotoPage = page => {
