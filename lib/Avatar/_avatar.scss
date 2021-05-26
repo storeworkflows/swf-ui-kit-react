@@ -4,9 +4,6 @@
   --size-m: 2rem;
   --size-l: 2.5rem;
 
-  min-width: 1.5rem;
-  width: 1.5rem;
-  height: 1.5rem;
   border-radius: 50%;
   box-shadow: 0 0 0 2pt var(--color-for-border);
   font-size: .7rem;
@@ -15,7 +12,15 @@
   justify-content: flex-start;
   align-items: center;
   transition: max-width 0.3s linear, width 0.3s linear, border-radius 1s linear;
+  -webkit-transition: max-width 0.3s linear, width 0.3s linear, border-radius 1s linear;
   overflow: hidden;
+
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+
+  min-width: var(--final-size);
+  width: 100%;
+  height: var(--final-size);
+  max-width: var(--final-size);
 
   &.--default {
     background-color: #e0e0e0;
@@ -37,39 +42,33 @@
   }
 
   &.--xs {
-    min-width: var(--size-s);
-    width: var(--size-s);
-    height: var(--size-s);
+    --final-size: var(--size-s);
     font-size: 0.85rem;
 
     &.--selected {
-      width: 8rem;
       border-radius: 1rem;
       font-size: 0.6rem;
-      max-width: 130px !important;
+      max-width: 10rem !important;
     }
   }
 
   &.--md {
-    min-width: var(--size-m);
-    width: var(--size-m);
-    height: var(--size-m);
+    --final-size: var(--size-m);
   }
 
   &.--lg {
-    min-width: var(--size-l);
-    width: var(--size-l);
-    height: var(--size-l);
+    --final-size: var(--size-l);
   }
 
   &.--selected {
     z-index: 2;
     transition: max-width 0.3s linear, width 0.3s linear;
-    padding: 10px 10px 10px 0;
-    width: 9rem;
+    -webkit-transition: max-width 0.3s linear, width 0.3s linear;
+    padding: 3px 3px 3px 0;
+    width: fit-content;
     border-radius: 1.3rem;
     font-size: 0.7rem;
-    max-width: 150px;
+    max-width: 15rem;
   }
 
   .photo-container {
@@ -98,6 +97,7 @@
     background: lightgray;
     border-radius: 50%;
     font-size: 1rem;
+    line-height: 1.5;
 
     p.initials {
       color: black;
@@ -109,9 +109,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-left: 5px;
+    margin: 0 10px 0 5px;
+    padding: 5px 0;
     overflow: hidden;
-    width: 100%;
+    width: fit-content;
     visibility: hidden;
 
     .name,
@@ -135,7 +136,7 @@
   .remove {
     transform: scale(1);
     transition: all .08s ease-in-out;
-    visibility: hidden;
+
     &:hover {
       transform: scale(1.2);
       color: #1a4aa4;
