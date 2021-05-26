@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import * as React from "react";
+import { useEffect, useState } from 'react';
+import propTypes from "prop-types";
 import PaginationView from "./PaginationView";
 import { LEFT_PAGE, RIGHT_PAGE } from "./constants";
 import { range } from "./utils";
 
 const Pagination = (props) => {
-	const { totalRecords = null, pageLimit = 20, currentPageSiblingsAmount = 0, onPageChange = () => {} } = props;
+	const { totalRecords, pageLimit, currentPageSiblingsAmount, onPageChange } = props;
 
 	const [currentPage, setCurrentPage] = useState(1);
-
+	const [pagesArray, setPagesArray] = useState([]);
 	const totalPages = Math.ceil(totalRecords / pageLimit);
+
+	useEffect(() => {
+		setPagesArray(getPagesArray());
+	}, [currentPage]);
+
 
 	const gotoPage = page => {
 		const currentPage = Math.max(0, Math.min(page, totalPages));
@@ -21,25 +28,10 @@ const Pagination = (props) => {
 		};
 
 		setCurrentPage(currentPage);
-		onPageChange(paginationData)
+		onPageChange(paginationData);
 	};
 
-	const onPageClick = page => e => {
-		e.preventDefault();
-		gotoPage(page);
-	}
-
-	const onLeftClick = e => {
-		e.preventDefault();
-		gotoPage(currentPage - (currentPageSiblingsAmount * 2) - 1);
-	}
-
-	const onRightClick = e => {
-		e.preventDefault();
-		gotoPage(currentPage + (currentPageSiblingsAmount * 2) + 1);
-	}
-
-	const getViewNumbersArray = () => {
+	const getPagesArray = () => {
 		const totalShownNumbers = (currentPageSiblingsAmount * 2) + 3;
 		const totalShownButtons = totalShownNumbers + 2;
 
@@ -81,10 +73,24 @@ const Pagination = (props) => {
 		return range(1, totalPages);
 	}
 
+	const onPageClick = page => e => {
+		e.preventDefault();
+		gotoPage(page);
+	}
+
+	const onLeftClick = e => {
+		e.preventDefault();
+		gotoPage(currentPage - (currentPageSiblingsAmount * 2) - 1);
+	}
+
+	const onRightClick = e => {
+		e.preventDefault();
+		gotoPage(currentPage + (currentPageSiblingsAmount * 2) + 1);
+	}
 
 	return (
 		<PaginationView
-			pages={getViewNumbersArray()}
+			pages={pagesArray}
 			currentPage={currentPage}
 			onLeftClick={onLeftClick}
 			onRightClick={onRightClick}
@@ -92,5 +98,19 @@ const Pagination = (props) => {
 		/>
 	);
 };
+
+Pagination.propTypes = {
+	totalRecords: propTypes.number,
+	pageLimit: propTypes.number,
+	currentPageSiblingsAmount: propTypes.oneOf([0, 1, 2]),
+	onPageChange: propTypes.func
+}
+
+Pagination.defaultProps = {
+	totalRecords: 1,
+	pageLimit: 1,
+	currentPageSiblingsAmount: 1,
+	onPageChange: () => {}
+}
 
 export default Pagination;
