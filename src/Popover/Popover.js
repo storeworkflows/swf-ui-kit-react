@@ -181,7 +181,7 @@ const Popover = React.forwardRef((props, ref) => {
     return <>
             {renderContent()}
             {renderTarget()}
-    </>;Z
+    </>;
 });
 
 Popover.Content = createSubComponent("Content");
