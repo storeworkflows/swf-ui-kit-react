@@ -1,5 +1,23 @@
+.range-calendar-container{
+  width: fit-content;
+  display: flex;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+.range-calendar{
+  display: inline-block;
+  margin: 0 .5rem 0 0;
+
+  &.--next{
+    display: inline;
+    margin: 0 0 0 0.5rem;
+  }
+}
+
 .ui-kit__calendar-container{
-  width: 16rem;
+  width: 14rem;
+  border-collapse: collapse;
 
   .calendar-header{
 
@@ -49,92 +67,129 @@
 
   }
 
-  .week-days-container{
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(7, max-content);
-    grid-gap: 0.25rem;
-    //margin: 0.25rem 0;
-    justify-content: center;
-  }
 
   .calendar-view{
     display: grid;
     grid-template-columns: repeat(7, max-content);
     grid-template-rows: repeat(6, max-content);
-    //grid-gap: 0.25rem;
     justify-content: center;
+    border-collapse: collapse;
+    box-sizing: border-box;
   }
-
-
 
 }
 
 .calendar-day-container{
+  border-collapse: collapse;
   padding: 0.125rem;
+  position: relative;
+  cursor: pointer;
 
-  &.--first-in-period{
-    border-radius: 50% 0 0 50%;
-  }
+  .border-container{
+    position: absolute;
+    width: calc(100% - 2px);
+    top:0;
+    left:0;
+    height: calc(100% - 2px);
+    border: 1px dashed transparent;
+    z-index: 10;
 
-  &.--last-in-period{
-    border-radius: 0 50% 50% 0;
-  }
+    &.--hovered {
+      &.--first-in-period {
+        border-radius: 50% 0 0 0;
 
-  &.--one-in-period{
-    border-radius: 50%;
+        &.--border-bottom {
+          border-radius: 50% 0 0 50%;
+        }
+      }
+
+      &.--last-in-period {
+        border-radius: 0 0 50% 0;
+
+        &.--border-top {
+          border-radius: 0 50% 50% 0;
+        }
+      }
+
+      &.--one-in-period {
+        border-radius: 50%;
+      }
+
+      &.--border-top{
+        border-top: 1px dashed rgb(30, 133, 109);
+      }
+      &.--border-bottom{
+        border-bottom: 1px dashed rgb(30, 133, 109);
+      }
+      &.--border-right{
+        border-right: 1px dashed rgb(30, 133, 109);
+      }
+      &.--border-left{
+        border-left: 1px dashed rgb(30, 133, 109);
+      }
+    }
   }
 
   &.--in-selected-period{
-    background: #c1f5e9;
-  }
+    background: rgba( 30, 133, 109, 0.15);
 
-  &.--hovered{
-    border: 1px dashed rgb(30, 133, 109);
+    &.--selected{
+      border-radius: 0 0 50% 0;
+
+      &.--selected-border-right{
+        &.--selected-border-bottom{
+          border-radius: 0 0 50% 0;
+
+          &.--selected-border-top{
+            border-radius: 0 50% 50% 0;
+          }
+        }
+      }
+
+      &.--selected-border-left{
+        &.--selected-border-top{
+          border-radius: 50% 0 0 0;
+
+          &.--selected-border-bottom{
+            border-radius: 50% 0 0 50%;
+
+            &.--selected-border-right{
+              border-radius: 50%;
+            }
+          }
+        }
+      }
+    }
   }
-  //
-  //&.--selected-period{
-  //  background: #c1f5e9;
-  //}
-  //
-  //&.--hovered-period{
-  //  background: #ededed;
-  //}
-  //
-  //&.--hover-selected-period{
-  //    background: #44c2a4;
-  //}
-  //
-  //&.--disabled-period{
-  //    background: #d9d9d9;
-  //}
 
 }
 
-.calendar-element {
-  border: 1px solid transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 2rem;
-  width: 2rem;
-  border-radius: 50%;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
-  line-height: 1.5;
-
-  &.day-element{
-    cursor: pointer;
-  }
-
-  &.day-element:hover{
+.calendar-day-container:hover{
+  .day-element{
     background: #ededed;
     color:  rgb(30, 133, 109);
+
+    &.--in-selected-period{
+      background: rgba(255, 255, 255, 0.9);
+    }
 
     &.selected{
       background: rgb(30, 133, 109);
       color: white;
     }
   }
+}
+
+.calendar-element {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 1.75rem;
+  width: 1.75rem;
+  border-radius: 50%;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+  line-height: 1.5;
+
 
   &.active{
     &.selected{
@@ -145,9 +200,6 @@
 
   &.notActive{
     color: #a5a5a5;
-    //&.selected{
-    //  font-weight: bold;
-    //}
   }
 
   &.week-day{

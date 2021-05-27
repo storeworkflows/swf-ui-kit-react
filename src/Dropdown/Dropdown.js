@@ -22,11 +22,12 @@ const Dropdown = React.forwardRef((props, ref) => {
 
     const [isOpened, setIsOpened] = useState(opened);
     const [isInvalid, setIsInvalid] = useState(invalid);
+    const [dropdownWidth, setDropdownWidth] = useState(2)
     const [selectedItemsState, setSelectedItemState] = useState(getCorrectSelected(items, selectedItems))
 
     const dropdownRef = useRef(null);
     const itemsContainerRef = useRef(null);
-    const itemToScroll = useRef(null)
+    const itemToScroll = useRef(null);
 
     const invalidValue = manageInvalid ? invalid : isInvalid;
     const openedValue = manageOpened ? opened : isOpened;
@@ -66,6 +67,10 @@ const Dropdown = React.forwardRef((props, ref) => {
             itemToScroll.current.scrollIntoView()
     }, [isOpened, opened])
 
+    useEffect(() => {
+        dropdownRef?.current && setDropdownWidth(dropdownRef.current.offsetWidth);
+    }, [])
+
     const renderItems = () => {
         const {scrollToSelected, itemClassName} = props;
 
@@ -74,7 +79,7 @@ const Dropdown = React.forwardRef((props, ref) => {
             '--popover-border': '1px solid rgb(228, 230, 231)',
             '--popover-shadow': 'none',
             'padding': '0',
-            'width': 'calc( 100% - 2px)',
+            'width': `calc( ${dropdownWidth}px - 2px)`,
             'maxHeight': '15rem'
         }
 

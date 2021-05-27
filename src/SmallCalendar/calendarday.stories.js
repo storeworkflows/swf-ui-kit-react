@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-import { default as CalendarDay} from './CalendarDay';
+import { default as CalendarDay} from './InnerComponents/CalendarDay';
 import {LabelValue} from "../index";
 
 export default {

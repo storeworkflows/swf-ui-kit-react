@@ -9,14 +9,14 @@ const AccordionItem = React.forwardRef((props, ref) => {
 
     const {
         manageOpened, onClick, onSelected, opened, children, className, label,
-        triggerIcon, iconToStart, headerClassName, isLastItem, isFirstItem
+        triggerIcon, iconToStart, headerClassName, isLastItem, isFirstItem, id
     } = props;
     const [isOpened, setIsOpened] = useState(opened)
 
     const itemClicked = () => {
         onClick({opened: manageOpened ? opened : !isOpened});
         !manageOpened && setIsOpened(!isOpened)
-        onSelected();
+        onSelected({key: id});
     }
 
     const renderHeader = () => {
@@ -109,7 +109,8 @@ AccordionItem.defaultProps = {
     onSelected: () => void 0,
     isLastItem: false,
     isFirstItem: false,
-    headerClassName: ""
+    headerClassName: "",
+    id: "-1"
 }
 
 AccordionItem.propTypes = {
@@ -123,7 +124,8 @@ AccordionItem.propTypes = {
     isLastItem: propTypes.bool,
     isFirstItem: propTypes.bool,
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-    headerClassName: propTypes.oneOfType([propTypes.object, propTypes.string])
+    headerClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    id: propTypes.string
 }
 
-export default AccordionItem
+export default React.memo(AccordionItem)

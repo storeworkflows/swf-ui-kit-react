@@ -58,7 +58,7 @@ const DatePicker = React.forwardRef((props, ref) => {
         onValueChange({oldValue: dateValue, input, newValue});
     }
 
-    const dateSelected = useCallback((date) => {
+    const dateSelected = (date) => {
         let newValue = moment(date).format(format);
 
         let errors = getErrorMessages(newValue, format, min, max);
@@ -68,7 +68,7 @@ const DatePicker = React.forwardRef((props, ref) => {
 
         !errors.length && onValueSet({value: newValue});
         onValueChange({oldValue: dateValue, newValue});
-    }, [format, min, max, manageValue, onValueSet, onValueChange, dateValue])
+    }
 
     const invalidInput = (errors = [], date) => {
         let isInvalidCurrent = errors.length > 0;
@@ -174,7 +174,7 @@ const DatePicker = React.forwardRef((props, ref) => {
 
     let popoverTarget = inputRef?.current?.getElementsByClassName("input-group")[0]
     return (
-        visible ?
+        visible &&
             <div ref={el => inputRef.current = el}>
                 {renderInput()}
                 {popoverTarget &&
@@ -188,14 +188,13 @@ const DatePicker = React.forwardRef((props, ref) => {
                 >
                     <Popover.Content>
                         <SmallCalendar
-                            onSelected={({date}) => dateSelected(date)}
+                            onSelected={dateSelected}
                             openedDate={dateValue}
                         />
                     </Popover.Content>
                 </Popover>
                 }
             </div>
-            : null
     )
 
 });

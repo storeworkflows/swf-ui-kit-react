@@ -9,6 +9,9 @@ import SmallCalendar from "../SmallCalendar/SmallCalendar";
 import RequiredLabel from "../RequiredLabel/RequiredLabel";
 import classnames from "classnames";
 import Icon from "../Icon/Icon";
+import RangeCalendar from "../SmallCalendar/Renge Calendar";
+import moment from "moment";
+import {addCharToDate, getErrorMessages} from "../DatePicker/utils";
 
 
 const RangePicker = React.forwardRef((props, ref) => {
@@ -20,23 +23,114 @@ const RangePicker = React.forwardRef((props, ref) => {
         firstValue, secondValue, className, value: {first, second}
     } = props;
 
+    const targetRef = useRef(null)
+
+    const [errorMessages, setErrorMessages] = useState([]);
     const [focused, setFocused] = useState(false);
+    const [isInvalid, setIsInvalid] = useState(invalid);
+    const [isOpened, setIsOpened] = useState(opened);
 
+    const [selectedDates, setSelectedDate] = useState({start: first.value, end: second.value});
+    const [isFirstSelecting, setIsFirstSelecting] = useState(true);
 
-    const invalidInput = () => {
+    const invalidValue = manageInvalid ? invalid : isInvalid;
+    const openedFinal = manageOpened ? opened : isOpened;
 
+    const onSelected = ({updated}) => {
+        setSelectedDate({start: updated.startDay, end: updated.endDay});
+        if(isFirstSelecting && !updated.endDay)
+            setIsFirstSelecting(false);
+        else if(!isFirstSelecting && !updated.startDay)
+            setIsFirstSelecting(true);
+        else
+            openCalendar();
     }
 
-    const changeValue = () => {
+    const invalidInput = (errors = [], date) => {
+        let isInvalidCurrent = errors.length > 0;
 
+        if (!manageInvalid) {
+            setIsInvalid(isInvalidCurrent);
+            setErrorMessages(errors);
+        }
+
+        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue))
+            onInvalid({
+                isInvalid: isInvalidCurrent,
+                errors, date
+            });
     }
+
+    const changeValue = (e, isFirst) => {
+        e.preventDefault();
+        let input = e.nativeEvent.data;
+
+        const value = isFirst ? selectedDates.start : selectedDates.end;
+        const strValue = value ? moment(value).format(format) : "";
+
+        let newValue = addCharToDate(format, strValue, input);
+
+        //!manageValue &&
+        setDateValue(newValue)
+
+        if (!newValue.length) {
+            onValueSet({value: ""});
+            invalidInput([], "");
+        } else if(moment(newValue, format, true).isValid()){
+            let errors = getErrorMessages(newValue, format, min, max);
+            invalidInput(errors, newValue);
+
+            !errors.length && onValueSet({value: newValue});
+        }
+
+        onValueChange({oldValue: strValue, input, newValue});
+    }
+
 
     const openCalendar = () => {
-
+        !manageOpened && setIsOpened(!openedFinal)
+        onOpen(manageOpened ? opened : !isOpened);
     }
 
-    const onBlur = () => {
-        setFocused(false)
+    const onFocused = (isFirst) => {
+        setFocused(true);
+        setIsFirstSelecting(isFirst);
+    }
+
+
+    const renderRangeCalendar = () => {
+
+        const calendarPositions = [
+            {target: "bottom-end", content: "top-end"},
+            {target: "top-end", content: "bottom-end"},
+            {target: "bottom-center", content: "top-center"},
+            {target: "top-center", content: "bottom-center"},
+            {target: "center-end", content: "center-start"},
+            {target: "center-start", content: "center-end"},
+        ]
+        const nextToEnd =  selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
+        const openedDate = isFirstSelecting ? selectedDates.start : nextToEnd;
+        const popoverTarget = targetRef?.current
+
+        return popoverTarget && <Popover
+                        hideTail
+                        manageOpened
+                        opened={openedFinal}
+                        positions={calendarPositions}
+                        positionTarget={{current: popoverTarget}}
+                        onOuterPopoverClicked={openCalendar}
+                    >
+                        <Popover.Content>
+                            <RangeCalendar
+                                 openedDate={openedDate}
+                                 onSelected={onSelected}
+                                 startDay={selectedDates.start}
+                                 endDay={selectedDates.end}
+                                 isFirstSelecting={isFirstSelecting}
+                                 manageSelected
+                            />
+            </Popover.Content>
+        </Popover>
     }
 
 
@@ -46,24 +140,29 @@ const RangePicker = React.forwardRef((props, ref) => {
             "date-input-control": true,
             "--invalid": invalid,
             "--readonly": readonly,
+            "--focus": (focused || openedFinal) && (isFirst === isFirstSelecting)
         })
+
+        const value = isFirst ? selectedDates.start : selectedDates.end;
+        const strValue = value ? moment(value).format(format) : "";
 
         return <input
             className={inputClasses}
             placeholder={ dateValue.placeholder || format}
-            value={dateValue.value}
+            value={strValue}
             name={dateValue.name || name}
             aria-required={required}
             aria-invalid={dateValue.invalid || invalid}
             onInvalid={(e) => invalidInput(e, dateValue, onInvalid)}
-            onChange={e => changeValue(e,onValueChange, isFirst)}
+            onChange={e => changeValue(e, isFirst)}
             max={max}
             min={min}
             required={required}
-            onBlur={onBlur}
-            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            onFocus={() => onFocused(isFirst)}
             readOnly={dateValue.readonly || readonly}
             disabled={dateValue.disabled || disabled}
+
         />
     }
 
@@ -71,15 +170,15 @@ const RangePicker = React.forwardRef((props, ref) => {
         "range-picker",
         "swf-form-group",
         className, {
-            "--focused": focused,
+            "--focused": focused || openedFinal,
             "--readonly": readonly,
             "--invalid": invalid
         });
 
     const labelClasses = classnames("inp-label", {"--readonly": readonly});
 
-
-    return <div ref={ref} className={containerStyles}>
+    return <div ref={el => {ref = el; targetRef.current = el;}}
+                className={containerStyles}>
         <RequiredLabel
             className={labelClasses}
             required={required}
@@ -89,13 +188,14 @@ const RangePicker = React.forwardRef((props, ref) => {
         />
         {renderDateInput(first)}
         <Icon icon={"arrow-right-short"} className={"range-picker-element"}/>
-        {renderDateInput(second, false)}
+        {renderDateInput( second, false)}
         {readonly ? <span/> : <Button
             className={"datepicker-button range-picker-element"}
             icon={"calendar"}
             variant={"tertiary"}
             onClick={openCalendar}
         />}
+        {renderRangeCalendar()}
   </div>;
 })
 

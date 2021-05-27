@@ -19,7 +19,6 @@ const Popover = React.forwardRef((props, ref) => {
     const contentRef = useRef(null);
 
     let openedFinal = manageOpened ? opened : isOpened;
-    let resizeObserver;
 
     const renderContent = () => {
         const content = findByType(children, "Content");
@@ -41,7 +40,7 @@ const Popover = React.forwardRef((props, ref) => {
             </div>
         );
     }
-    console.log(targetRef)
+
     const renderTarget = () => {
         const target = findByType(children, "Target");
 
@@ -90,7 +89,6 @@ const Popover = React.forwardRef((props, ref) => {
         let targetElement = targetRef?.current;
 
         if( openedFinal && contentElement && targetElement) {
-
             let isOutsideContent = !isPointInsideTheElement(contentElement, pointX, pointY);
             let isOutsideTarget = !isPointInsideTheElement(targetElement, pointX, pointY);
 
@@ -162,21 +160,23 @@ const Popover = React.forwardRef((props, ref) => {
 
 
     useEffect(() => {
-        resizeObserver = new ResizeObserver(contentResized)
-        updateOpenedState(opened);
-        return resizeObserver.disconnect();
+       updateOpenedState(opened);
     }, [])
 
     useEffect(() => {
-        document.addEventListener("click", e => documentClicked(e));
-        if(resizeObserver) {
-            resizeObserver.disconnect();
+        let resizeObserver = new ResizeObserver(contentResized)
+        if(targetRef?.current)
+            resizeObserver.observe(targetRef.current);
+        resizeObserver.observe(contentRef?.current.children[0].children[0]);
 
-            if(targetRef?.current)
-                resizeObserver.observe(targetRef.current);
-            resizeObserver.observe(contentRef?.current.children[0].children[0]);
-        }
-    })
+        return () => resizeObserver.disconnect();
+    }, [targetRef, contentRef, openedFinal])
+
+    useEffect(() => {
+        document.addEventListener("click", documentClicked);
+        return () => document.removeEventListener("click", documentClicked)
+    }, [targetRef, contentRef, openedFinal, manageOpened, onOuterPopoverClicked])
+
 
     return <>
             {renderContent()}
