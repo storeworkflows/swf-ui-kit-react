@@ -15,7 +15,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         startDay, endDay, isFirstSelecting, manageSelected} = props;
 
     const [extremeDays, setExtremeDays] = useState({startDay, endDay})
-    const [openedDateValue, setOpenedDateValue] = useState((openedDate) ? new Date(openedDate) : null);
+    const [openedDateValue, setOpenedDateValue] = useState(openedDate && new Date(openedDate));
     const [hoverDate, setHoverDate] = useState(null);
 
     const nextOpened =  moment(openedDateValue).add(1, "month").toDate();
