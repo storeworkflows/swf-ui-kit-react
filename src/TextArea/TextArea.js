@@ -13,13 +13,13 @@ const TextArea = (props) => {
     const [focused, setFocused] = useState(false);
 
     const {
-        onKeyDown, autofocus, readonly, label, className, resize,
+        onKeyDown, onChange, autofocus, readonly, label, className, resize,
         name, placeholder
     } = props
 
-    const onChange = (event) => {
+    const onChangeAction = (event) => {
         setValue(event.target.value);
-        event.type==="keydown" && onKeyDown(event)
+        event.type==="keydown" ? onKeyDown(event) : onChange(event)
         if (textAreaRef.current) {
             autosize(textAreaRef.current);
         }
@@ -71,8 +71,8 @@ const TextArea = (props) => {
                     name={name}
                     readOnly={readonly}
                     value={value}
-                    onChange={e => !readonly && onChange(e)}
-                    onKeyDown={e => !readonly && onChange(e)}
+                    onChange={e => !readonly && onChangeAction(e)}
+                    onKeyDown={e => !readonly && onChangeAction(e)}
                     onFocus={e => !readonly && onFocus(e)}
                     onBlur={e => !readonly && onBlur(e)}
                     placeholder={!_hasLabel ? placeholder : ""}

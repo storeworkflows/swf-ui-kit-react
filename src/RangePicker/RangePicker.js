@@ -12,6 +12,7 @@ import Icon from "../Icon/Icon";
 import RangeCalendar from "../SmallCalendar/Renge Calendar";
 import moment from "moment";
 import {addCharToDate, getErrorMessages} from "../DatePicker/utils";
+import {getErrors} from "./utils";
 
 
 const RangePicker = React.forwardRef((props, ref) => {
@@ -20,7 +21,7 @@ const RangePicker = React.forwardRef((props, ref) => {
         manageValue, onValueChange, onValueSet,
         manageInvalid, onInvalid, name,
         manageOpened, onOpen, label, required, readonly, disabled,
-        firstValue, secondValue, className, value: {first, second}
+        className, value: {first, second}
     } = props;
 
     const targetRef = useRef(null)
@@ -36,29 +37,11 @@ const RangePicker = React.forwardRef((props, ref) => {
     const invalidValue = manageInvalid ? invalid : isInvalid;
     const openedFinal = manageOpened ? opened : isOpened;
 
-    const onSelected = ({updated}) => {
-        setSelectedDate({start: updated.startDay, end: updated.endDay});
-        if(isFirstSelecting && !updated.endDay)
-            setIsFirstSelecting(false);
-        else if(!isFirstSelecting && !updated.startDay)
-            setIsFirstSelecting(true);
-        else
-            openCalendar();
-    }
-
-    const invalidInput = (errors = [], date) => {
-        let isInvalidCurrent = errors.length > 0;
-
-        if (!manageInvalid) {
-            setIsInvalid(isInvalidCurrent);
-            setErrorMessages(errors);
-        }
-
-        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue))
-            onInvalid({
-                isInvalid: isInvalidCurrent,
-                errors, date
-            });
+    const setValue = (isFirst, updatedValue) => {
+        onValueSet(updatedValue);
+        isFirst
+            ? first.onValueSet(updatedValue.start)
+            : second.onValueSet(updatedValue.end)
     }
 
     const changeValue = (e, isFirst) => {
@@ -69,27 +52,64 @@ const RangePicker = React.forwardRef((props, ref) => {
         const strValue = value ? moment(value).format(format) : "";
 
         let newValue = addCharToDate(format, strValue, input);
+        console.log(newValue)
+        let updatedDates = isFirst
+            ? { start: newValue,
+                end: selectedDates.end}
+            : { start: selectedDates.start,
+                end: newValue};
 
-        //!manageValue &&
-        setDateValue(newValue)
+        !manageValue && setSelectedDate(updatedDates);
 
         if (!newValue.length) {
-            onValueSet({value: ""});
+            setValue(isFirst, updatedDates);
             invalidInput([], "");
         } else if(moment(newValue, format, true).isValid()){
             let errors = getErrorMessages(newValue, format, min, max);
             invalidInput(errors, newValue);
-
-            !errors.length && onValueSet({value: newValue});
+            !errors.length && setValue(isFirst, updatedDates);
         }
 
         onValueChange({oldValue: strValue, input, newValue});
     }
 
+    const onSelected = ({updated}) => {
+
+        !manageValue && setSelectedDate({
+            start: moment(updated.startDay).format(format),
+            end: moment(updated.endDay).format(format)
+        });
+        setValue(isFirstSelecting, updated);
+
+        if(isFirstSelecting && !updated.endDay)
+            setIsFirstSelecting(false);
+        else if(!isFirstSelecting && !updated.startDay)
+            setIsFirstSelecting(true);
+        else
+            openCalendar();
+    }
+
+    const invalidInput = (errors = [], selectedDates) => {
+        let isInvalidCurrent = errors.length > 0;
+
+        if (!manageInvalid) {
+            setIsInvalid(isInvalidCurrent);
+            setErrorMessages(errors);
+        }
+
+        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue))
+            onInvalid({
+                isInvalid: isInvalidCurrent,
+                errors, selectedDates
+            });
+    }
 
     const openCalendar = () => {
         !manageOpened && setIsOpened(!openedFinal)
         onOpen(manageOpened ? opened : !isOpened);
+
+        let errors = getErrors(selectedDates, format, min, max);
+        invalidInput(errors, selectedDates);
     }
 
     const onFocused = (isFirst) => {
@@ -122,10 +142,10 @@ const RangePicker = React.forwardRef((props, ref) => {
                     >
                         <Popover.Content>
                             <RangeCalendar
-                                 openedDate={openedDate}
+                                 openedDate={openedDate ? new Date(openedDate) : new Date()}
                                  onSelected={onSelected}
-                                 startDay={selectedDates.start}
-                                 endDay={selectedDates.end}
+                                 startDay={new Date(selectedDates.start)}
+                                 endDay={new Date(selectedDates.end)}
                                  isFirstSelecting={isFirstSelecting}
                                  manageSelected
                             />
@@ -144,12 +164,11 @@ const RangePicker = React.forwardRef((props, ref) => {
         })
 
         const value = isFirst ? selectedDates.start : selectedDates.end;
-        const strValue = value ? moment(value).format(format) : "";
 
         return <input
             className={inputClasses}
             placeholder={ dateValue.placeholder || format}
-            value={strValue}
+            value={value}
             name={dateValue.name || name}
             aria-required={required}
             aria-invalid={dateValue.invalid || invalid}
@@ -177,7 +196,7 @@ const RangePicker = React.forwardRef((props, ref) => {
 
     const labelClasses = classnames("inp-label", {"--readonly": readonly});
 
-    return <div ref={el => {ref = el; targetRef.current = el;}}
+    return visible && <div ref={el => {ref = el; targetRef.current = el;}}
                 className={containerStyles}>
         <RequiredLabel
             className={labelClasses}
