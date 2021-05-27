@@ -92,6 +92,10 @@ const Pagination = (props) => {
 		gotoPage(currentPage + (currentPageSiblingsAmount * 2) + 1);
 	}
 
+	if (totalPages < 2) {
+		return null;
+	}
+
 	return (
 		<PaginationView
 			pages={pagesArray}
