@@ -2,7 +2,9 @@ import React from 'react';
 import Button from '../Button/Button';
 import { LEFT_PAGE, RIGHT_PAGE } from "./constants";
 
-const PaginationView = ({ pages = [], currentPage = 1, onLeftClick = () => {}, onRightClick = () => {}, onPageClick = () => {} }) => {
+const PaginationView = (props) => {
+	const { pages, currentPage, onLeftClick, onRightClick, onPageClick } = props;
+
 	const getButtonData = (page) => {
 		if (page === LEFT_PAGE) {
 			return {
