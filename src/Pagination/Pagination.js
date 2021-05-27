@@ -8,13 +8,17 @@ import { range } from "./utils";
 const Pagination = (props) => {
 	const { totalRecords, pageLimit, currentPageSiblingsAmount, onPageChange } = props;
 
+	const [totalPages, setTotalPages] = useState(1);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pagesArray, setPagesArray] = useState([]);
-	const totalPages = Math.ceil(totalRecords / pageLimit);
+
+	useEffect(() => {
+		setTotalPages(Math.ceil(totalRecords / pageLimit));
+	}, [totalRecords, pageLimit]);
 
 	useEffect(() => {
 		setPagesArray(getPagesArray());
-	}, [currentPage]);
+	}, [currentPage, totalPages]);
 
 
 	const gotoPage = page => {

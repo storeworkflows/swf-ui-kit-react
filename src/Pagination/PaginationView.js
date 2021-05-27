@@ -29,11 +29,11 @@ const PaginationView = ({ pages = [], currentPage = 1, onLeftClick = () => {}, o
 
 	return (
 		<nav className="pagination pagination__container">
-			{pages.map(page => {
+			{pages.map((page, i) => {
 				const buttonData = getButtonData(page);
 				return (
 					<Button
-						key={page}
+						key={i}
 						className={buttonData.className}
 						size="md"
 						onClick={buttonData.onClick}
