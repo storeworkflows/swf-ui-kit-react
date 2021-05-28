@@ -14,12 +14,12 @@ const Pagination = (props) => {
 
 	useEffect(() => {
 		setTotalPages(Math.ceil(totalRecords / pageLimit));
+		setCurrentPage(1);
 	}, [totalRecords, pageLimit]);
 
 	useEffect(() => {
 		setPagesArray(getPagesArray());
 	}, [currentPage, totalPages]);
-
 
 	const gotoPage = page => {
 		const currentPage = Math.max(0, Math.min(page, totalPages));
