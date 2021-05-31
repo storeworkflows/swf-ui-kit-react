@@ -176,7 +176,7 @@ const DatePicker = React.forwardRef((props, ref) => {
     let popoverTarget = inputRef?.current?.getElementsByClassName("input-group")[0]
     return (
         visible &&
-            <div ref={el => inputRef.current = el}>
+            <div ref={ el => {inputRef.current = el; ref={el};}}>
                 {renderInput()}
                 {popoverTarget && openedValue &&
                 <Popover

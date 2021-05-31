@@ -35,26 +35,21 @@ const RangePicker = React.forwardRef((props, ref) => {
     const invalidValue = manageInvalid ? invalid : isInvalid;
     const targetRef = useRef(null);
 
-    useEffect(() => {
-        if(!focused)
-            invalidInput(selectedDates);
-    }, [focused])
+    useEffect(() => invalidInput(selectedDates), [openedDate])
 
-    useEffect(() => {
-        setDateFromProps();
-        opened && changeOpenedDate();
-    }, [])
+    useEffect(() => !focused && invalidInput(selectedDates), [focused])
 
-    useEffect(() => {
-        manageValue && setDateFromProps();
-    }, [manageValue, start, end, format])
+    useEffect(() => manageValue && setDateFromProps(), [manageValue, start, end, format])
 
     useEffect(() => {
         if (manageOpened)
             opened ? changeOpenedDate() : setOpenedDate(null);
     }, [manageOpened, opened])
 
-    useEffect(() => invalidInput(selectedDates), [openedDate])
+    useEffect(() => {
+        setDateFromProps();
+        opened && changeOpenedDate();
+    }, [])
 
     const changeOpenedDate = () => {
         const nextToEnd = selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
@@ -62,7 +57,7 @@ const RangePicker = React.forwardRef((props, ref) => {
         setOpenedDate(openedDate ? new Date(openedDate) : new Date());
     }
 
-    const setDateFromProps = () => {
+    const setDateFromProps = useCallback(() => {
         const valueToSet = {start: start.value, end: end.value};
         if (moment(start, format, true).isValid() && moment(end, format, true).isValid()) {
             invalidInput(valueToSet);
@@ -72,7 +67,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             });
         } else
             setSelectedDate(valueToSet);
-    }
+    }, [start, end, format])
 
     const changeSelectedValue = (isFirst, updatedValue, input) => {
         !manageValue && setSelectedDate(updatedValue);
@@ -324,8 +319,8 @@ RangePicker.propTypes = {
     name: propTypes.string,
     label: propTypes.string,
     value: propTypes.shape({
-        first: propTypes.shape(dateInputShape),
-        second: propTypes.shape(dateInputShape)
+        start: propTypes.shape(dateInputShape),
+        end: propTypes.shape(dateInputShape)
     }),
 
     min: propTypes.oneOfType([propTypes.string, propTypes.object]),
