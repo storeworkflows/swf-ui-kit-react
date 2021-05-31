@@ -41,23 +41,25 @@ const Popover = React.forwardRef((props, ref) => {
         );
     }
 
-    const renderTarget = useCallback(() => {
-        console.log("render target")
-        const target = findByType(children, "Target");
-
-        if(positionTarget){
-            if(targetRef === null || targetRef?.current!==positionTarget.current)
+    useEffect(() => {
+        const targetValue = positionTarget?.current;
+        if(targetValue){
+            if(!targetRef.current || targetRef.current!==targetValue)
             {
-                targetRef.current = positionTarget.current;
-                if(contentRef?.current){
+                targetRef.current = targetValue;
+                if(contentRef.current){
                     resetStyles();
                     openedFinal && setStylesToContent()
                 }
             }
-            if(targetRef?.current)
+            if(targetRef.current)
                 targetRef.current.onclick = (e) => targetClicked(e)
-            return null;
         }
+    }, [positionTarget, openedFinal])
+
+    const renderTarget = useCallback(() => {
+        //console.log("render target")
+        const target = findByType(children, "Target");
 
         if (!target)
             return null;
@@ -70,7 +72,6 @@ const Popover = React.forwardRef((props, ref) => {
     }, [positionTarget, targetRef, openedFinal, children])
 
      const contentResized = () => {
-       //  console.log("content resized")
         resetStyles();
         openedFinal && setStylesToContent();
     }
@@ -179,7 +180,7 @@ const Popover = React.forwardRef((props, ref) => {
 
     return <>
             {renderContent()}
-            {renderTarget()}
+            {!positionTarget?.current && renderTarget()}
     </>;
 });
 

@@ -114,7 +114,7 @@ const RangePicker = React.forwardRef((props, ref) => {
         }
 
         changeSelectedValue(isFirstSelecting, updatedDates);
-        setValue(isFirstSelecting, updated);
+        setValue(isFirstSelecting, updatedDates);
 
         if (isFirstSelecting && !updatedDates.end)
             setIsFirstSelecting(false);
