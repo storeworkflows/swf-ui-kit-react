@@ -5,7 +5,7 @@ import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {ResizeObserver} from "resize-observer";
 
 const Popover = React.forwardRef((props, ref) => {
@@ -41,7 +41,8 @@ const Popover = React.forwardRef((props, ref) => {
         );
     }
 
-    const renderTarget = () => {
+    const renderTarget = useCallback(() => {
+        console.log("render target")
         const target = findByType(children, "Target");
 
         if(positionTarget){
@@ -66,9 +67,10 @@ const Popover = React.forwardRef((props, ref) => {
                     onClick={ (e) => targetClicked(e) }>
                         {target}
                 </div>
-    }
+    }, [positionTarget, targetRef, openedFinal, children])
 
      const contentResized = () => {
+       //  console.log("content resized")
         resetStyles();
         openedFinal && setStylesToContent();
     }
@@ -100,6 +102,7 @@ const Popover = React.forwardRef((props, ref) => {
     }
 
     const setStylesToContent = () => {
+    //    console.log("set style to content")
         if(contentRef?.current && targetRef?.current) {
 
             let padding = contentStyles && contentStyles['padding'] && contentStyles['padding'].split('px')[0] ;
@@ -135,6 +138,7 @@ const Popover = React.forwardRef((props, ref) => {
     }
 
     const resetStyles = () =>{
+   //     console.log("reset styles")
         let contentElement = contentRef?.current;
         if(contentElement)
         {
@@ -149,19 +153,14 @@ const Popover = React.forwardRef((props, ref) => {
     }
 
     const updateOpenedState = (value) => {
+  //      console.log("update opened state")
         resetStyles();
         value && setStylesToContent();
     }
 
-    useEffect(() => {
-        const currentValue = manageOpened ? opened : isOpened;
-        updateOpenedState(currentValue);
-    }, [opened, isOpened])
+    useEffect(() => updateOpenedState(manageOpened ? opened : isOpened), [opened, isOpened])
 
-
-    useEffect(() => {
-       updateOpenedState(opened);
-    }, [])
+    useEffect(() => updateOpenedState(opened), [])
 
     useEffect(() => {
         let resizeObserver = new ResizeObserver(contentResized)

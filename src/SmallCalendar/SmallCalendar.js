@@ -28,6 +28,7 @@ const SmallCalendar = React.forwardRef((props, ref) => {
     return (
         <>
             <CalendarMonth
+                ref={ref}
                 openedDate={openedDateValue}
                 selectedDate={selectedDate}
                 onSelected={onSelected}
