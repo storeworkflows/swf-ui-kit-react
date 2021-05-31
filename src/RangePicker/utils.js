@@ -1,7 +1,6 @@
 import {getErrorMessages} from "../DatePicker/utils";
 
-export const isRangeCorrect = (selectedDates) => {
-    const {start, end} = selectedDates;
+const isRangeCorrect = (start, end) => {
     if(!start || !end)
         return true;
 
@@ -11,14 +10,13 @@ export const isRangeCorrect = (selectedDates) => {
     return startInSeconds<=endInSeconds;
 }
 
-export const getErrors = (selectedDates, format, min, max) => {
-    const {start, end} = selectedDates;
+export const getErrors = ({start, end}, format, min, max) => {
 
     const startErrors = getErrorMessages(start, format, min, max);
     const endErrors = getErrorMessages(end, format, min, max);
-    let errors = startErrors.concat(endErrors);
+    let errors = _.unionWith(startErrors, endErrors, _.isEqual);
 
-    if(!isRangeCorrect(selectedDates)){
+    if(!isRangeCorrect(start, end)){
         errors.push({
             content: `Start date should be smaller than end date`,
             icon: "exclamation-circle"
@@ -26,3 +24,4 @@ export const getErrors = (selectedDates, format, min, max) => {
     }
     return errors;
 }
+

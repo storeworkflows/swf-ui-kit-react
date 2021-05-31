@@ -1,18 +1,18 @@
+import moment from "moment";
 import * as React from "react";
-import propTypes, {shape} from "prop-types";
+import propTypes from "prop-types";
+import classnames from "classnames";
 import {useCallback, useEffect, useRef, useState} from "react";
 
-import Input from "../Input/Input";
+import Icon from "../Icon/Icon";
 import Button from "../Button/Button";
 import Popover from "../Popover/Popover";
-import SmallCalendar from "../SmallCalendar/SmallCalendar";
 import RequiredLabel from "../RequiredLabel/RequiredLabel";
-import classnames from "classnames";
-import Icon from "../Icon/Icon";
 import RangeCalendar from "../SmallCalendar/Renge Calendar";
-import moment from "moment";
-import {addCharToDate, getErrorMessages} from "../DatePicker/utils";
+
 import {getErrors} from "./utils";
+import {addCharToDate} from "../DatePicker/utils";
+import InfoMessage from "../InfoMessage/InfoMessage";
 
 
 const RangePicker = React.forwardRef((props, ref) => {
@@ -21,75 +21,116 @@ const RangePicker = React.forwardRef((props, ref) => {
         manageValue, onValueChange, onValueSet,
         manageInvalid, onInvalid, name,
         manageOpened, onOpen, label, required, readonly, disabled,
-        className, value: {first, second}
+        className, value: {start, end}, message
     } = props;
-
-    const targetRef = useRef(null)
 
     const [errorMessages, setErrorMessages] = useState([]);
     const [focused, setFocused] = useState(false);
     const [isInvalid, setIsInvalid] = useState(invalid);
-    const [isOpened, setIsOpened] = useState(opened);
+    const [openedDate, setOpenedDate] = useState(null);
 
-    const [selectedDates, setSelectedDate] = useState({start: first.value, end: second.value});
+    const [selectedDates, setSelectedDate] = useState({start: start.value, end: end.value});
     const [isFirstSelecting, setIsFirstSelecting] = useState(true);
 
     const invalidValue = manageInvalid ? invalid : isInvalid;
-    const openedFinal = manageOpened ? opened : isOpened;
+    const targetRef = useRef(null);
+
+    useEffect(() => {
+        if(!focused)
+            invalidInput(selectedDates);
+    }, [focused])
+
+    useEffect(() => {
+        setDateFromProps();
+        opened && changeOpenedDate();
+    }, [])
+
+    useEffect(() => {
+        manageValue && setDateFromProps();
+    }, [manageValue, start, end, format])
+
+    useEffect(() => {
+        if (manageOpened)
+            opened ? changeOpenedDate() : setOpenedDate(null);
+    }, [manageOpened, opened])
+
+    useEffect(() => invalidInput(selectedDates), [openedDate])
+
+    const changeOpenedDate = () => {
+        const nextToEnd = selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
+        const openedDate = (isFirstSelecting || !selectedDates.end) ? selectedDates.start : nextToEnd;
+        setOpenedDate(openedDate ? new Date(openedDate) : new Date());
+    }
+
+    const setDateFromProps = () => {
+        const valueToSet = {start: start.value, end: end.value};
+        if (moment(start, format, true).isValid() && moment(end, format, true).isValid()) {
+            invalidInput(valueToSet);
+            setSelectedDate({
+                start: moment(start.value).format(format),
+                end: moment(end.value).format(format)
+            });
+        } else
+            setSelectedDate(valueToSet);
+    }
+
+    const changeSelectedValue = (isFirst, updatedValue, input) => {
+        !manageValue && setSelectedDate(updatedValue);
+        onValueChange({oldValue: selectedDates, input, updatedValue, isFirstSelecting});
+
+        isFirst
+            ? start.onValueChange({oldValue: selectedDates.start, input, updatedValue: updatedValue.start})
+            : end.onValueChange({oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
+    }
 
     const setValue = (isFirst, updatedValue) => {
         onValueSet(updatedValue);
         isFirst
-            ? first.onValueSet(updatedValue.start)
-            : second.onValueSet(updatedValue.end)
+            ? start.onValueSet(updatedValue.start)
+            : end.onValueSet(updatedValue.end)
     }
 
     const changeValue = (e, isFirst) => {
         e.preventDefault();
-        let input = e.nativeEvent.data;
-
+        const input = e.nativeEvent.data;
         const value = isFirst ? selectedDates.start : selectedDates.end;
-        const strValue = value ? moment(value).format(format) : "";
+        let newValue = addCharToDate(format, value, input);
 
-        let newValue = addCharToDate(format, strValue, input);
-        console.log(newValue)
         let updatedDates = isFirst
-            ? { start: newValue,
-                end: selectedDates.end}
-            : { start: selectedDates.start,
-                end: newValue};
+            ? {start: newValue, end: selectedDates.end}
+            : {start: selectedDates.start, end: newValue};
 
-        !manageValue && setSelectedDate(updatedDates);
+        changeSelectedValue(isFirst, updatedDates, input);
 
         if (!newValue.length) {
             setValue(isFirst, updatedDates);
-            invalidInput([], "");
-        } else if(moment(newValue, format, true).isValid()){
-            let errors = getErrorMessages(newValue, format, min, max);
-            invalidInput(errors, newValue);
-            !errors.length && setValue(isFirst, updatedDates);
+            invalidInput();
+        } else if (moment(newValue, format, true).isValid()) {
+            setValue(isFirst, updatedDates);
+            invalidInput(updatedDates);
         }
 
-        onValueChange({oldValue: strValue, input, newValue});
     }
 
     const onSelected = ({updated}) => {
+        const updatedDates = {
+            start: updated.start && moment(updated.start).format(format),
+            end: updated.end && moment(updated.end).format(format)
+        }
 
-        !manageValue && setSelectedDate({
-            start: moment(updated.startDay).format(format),
-            end: moment(updated.endDay).format(format)
-        });
+        changeSelectedValue(isFirstSelecting, updatedDates);
         setValue(isFirstSelecting, updated);
 
-        if(isFirstSelecting && !updated.endDay)
+        if (isFirstSelecting && !updatedDates.end)
             setIsFirstSelecting(false);
-        else if(!isFirstSelecting && !updated.startDay)
+        else if (!isFirstSelecting && !updatedDates.start)
             setIsFirstSelecting(true);
         else
             openCalendar();
     }
 
-    const invalidInput = (errors = [], selectedDates) => {
+    const invalidInput = (selectedDates) => {
+        let errors = selectedDates ? getErrors( selectedDates, format, min, max) : [];
         let isInvalidCurrent = errors.length > 0;
 
         if (!manageInvalid) {
@@ -97,19 +138,27 @@ const RangePicker = React.forwardRef((props, ref) => {
             setErrorMessages(errors);
         }
 
-        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue))
+        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue)) {
             onInvalid({
                 isInvalid: isInvalidCurrent,
                 errors, selectedDates
             });
+            isFirstSelecting
+                ? start.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
+                : end.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
+        }
     }
 
     const openCalendar = () => {
-        !manageOpened && setIsOpened(!openedFinal)
-        onOpen(manageOpened ? opened : !isOpened);
+        const isOpened = Boolean(openedDate)
 
-        let errors = getErrors(selectedDates, format, min, max);
-        invalidInput(errors, selectedDates);
+        if (!manageOpened) {
+            isOpened
+                ? setOpenedDate(null)
+                : changeOpenedDate()
+            onOpen(!isOpened)
+        } else
+            onOpen(isOpened)
     }
 
     const onFocused = (isFirst) => {
@@ -117,42 +166,40 @@ const RangePicker = React.forwardRef((props, ref) => {
         setIsFirstSelecting(isFirst);
     }
 
-
-    const renderRangeCalendar = () => {
+    const renderRangeCalendar = useCallback(() => {
 
         const calendarPositions = [
             {target: "bottom-end", content: "top-end"},
+            {target: "bottom-end", content: "top-center"},
             {target: "top-end", content: "bottom-end"},
             {target: "bottom-center", content: "top-center"},
             {target: "top-center", content: "bottom-center"},
             {target: "center-end", content: "center-start"},
             {target: "center-start", content: "center-end"},
         ]
-        const nextToEnd =  selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
-        const openedDate = isFirstSelecting ? selectedDates.start : nextToEnd;
+
         const popoverTarget = targetRef?.current
 
-        return popoverTarget && <Popover
-                        hideTail
-                        manageOpened
-                        opened={openedFinal}
-                        positions={calendarPositions}
-                        positionTarget={{current: popoverTarget}}
-                        onOuterPopoverClicked={openCalendar}
-                    >
-                        <Popover.Content>
-                            <RangeCalendar
-                                 openedDate={openedDate ? new Date(openedDate) : new Date()}
-                                 onSelected={onSelected}
-                                 startDay={new Date(selectedDates.start)}
-                                 endDay={new Date(selectedDates.end)}
-                                 isFirstSelecting={isFirstSelecting}
-                                 manageSelected
-                            />
+        return popoverTarget && openedDate && <Popover
+            hideTail
+            manageOpened
+            opened={Boolean(openedDate)}
+            positions={calendarPositions}
+            positionTarget={{current: popoverTarget}}
+            onOuterPopoverClicked={openCalendar}
+        >
+            <Popover.Content>
+                <RangeCalendar
+                    openedDate={openedDate}
+                    onSelected={onSelected}
+                    startDay={selectedDates.start}
+                    endDay={selectedDates.end}
+                    isFirstSelecting={isFirstSelecting}
+                    manageSelected
+                />
             </Popover.Content>
         </Popover>
-    }
-
+    }, [targetRef, openedDate, selectedDates, isFirstSelecting])
 
 
     const renderDateInput = (dateValue, isFirst = true) => {
@@ -160,15 +207,14 @@ const RangePicker = React.forwardRef((props, ref) => {
             "date-input-control": true,
             "--invalid": invalid,
             "--readonly": readonly,
-            "--focus": (focused || openedFinal) && (isFirst === isFirstSelecting)
+            "--focus": (focused || openedDate) && (isFirst === isFirstSelecting)
         })
 
         const value = isFirst ? selectedDates.start : selectedDates.end;
-
         return <input
             className={inputClasses}
-            placeholder={ dateValue.placeholder || format}
-            value={value}
+            placeholder={dateValue.placeholder || format}
+            value={value || ""}
             name={dateValue.name || name}
             aria-required={required}
             aria-invalid={dateValue.invalid || invalid}
@@ -181,41 +227,54 @@ const RangePicker = React.forwardRef((props, ref) => {
             onFocus={() => onFocused(isFirst)}
             readOnly={dateValue.readonly || readonly}
             disabled={dateValue.disabled || disabled}
-
         />
+    }
+
+    const renderMessages = () => {
+        const allMessages = errorMessages.concat(message);
+        if (!allMessages)
+            return;
+
+        return allMessages.map((el, index) => el &&
+            <InfoMessage
+                {...el}
+                key={index}
+            />)
     }
 
     const containerStyles = classnames(
         "range-picker",
         "swf-form-group",
         className, {
-            "--focused": focused || openedFinal,
+            "--focused": focused || openedDate,
             "--readonly": readonly,
             "--invalid": invalid
         });
 
     const labelClasses = classnames("inp-label", {"--readonly": readonly});
 
-    return visible && <div ref={el => {ref = el; targetRef.current = el;}}
-                className={containerStyles}>
-        <RequiredLabel
-            className={labelClasses}
-            required={required}
-            invalid={invalid}
-            label={label}
-            htmlFor={name}
-        />
-        {renderDateInput(first)}
-        <Icon icon={"arrow-right-short"} className={"range-picker-element"}/>
-        {renderDateInput( second, false)}
-        {readonly ? <span/> : <Button
-            className={"datepicker-button range-picker-element"}
-            icon={"calendar"}
-            variant={"tertiary"}
-            onClick={openCalendar}
-        />}
-        {renderRangeCalendar()}
-  </div>;
+    return visible && <div ref={ref} className={"range-picker-container"}>
+        <div ref={targetRef} className={containerStyles}>
+            <RequiredLabel
+                className={labelClasses}
+                required={required}
+                invalid={invalid}
+                label={label}
+                htmlFor={name}
+            />
+            {renderDateInput(start)}
+            <Icon icon={"arrow-right-short"} className={"range-picker-element"}/>
+            {renderDateInput(end, false)}
+            {readonly ? <span/> : <Button
+                className={"datepicker-button range-picker-element"}
+                icon={"calendar"}
+                variant={"tertiary"}
+                onClick={openCalendar}
+            />}
+            {renderRangeCalendar()}
+        </div>
+        {renderMessages()}
+    </div>;
 })
 
 RangePicker.defaultProps = {
@@ -234,15 +293,15 @@ RangePicker.defaultProps = {
     visible: true,
     disabled: false,
     value: {
-        first: {
-            onValueSet:  () => void 0,
-            onInvalid:  () => void 0,
-            onValueChange:  () => void 0
+        start: {
+            onValueSet: () => void 0,
+            onInvalid: () => void 0,
+            onValueChange: () => void 0
         },
-        second: {
-            onValueSet:  () => void 0,
-            onInvalid:  () => void 0,
-            onValueChange:  () => void 0
+        end: {
+            onValueSet: () => void 0,
+            onInvalid: () => void 0,
+            onValueChange: () => void 0
         }
     }
 }

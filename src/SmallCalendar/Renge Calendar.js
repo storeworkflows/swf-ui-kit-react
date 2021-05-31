@@ -7,22 +7,29 @@ import classnames from 'classnames';
 import {useEffect, useState} from "react";
 import CalendarMonth from "./InnerComponents/CalendarMonth";
 import ArrowButton from "./InnerComponents/ArrowButton";
-import {updateExtremeDates} from "./utils";
+import {convertToDate, updateExtremeDates} from "./utils";
 
 const RangeCalendar = React.forwardRef((props, ref) => {
-
     const {openedDate, onSelected,
-        startDay, endDay, isFirstSelecting, manageSelected} = props;
+        startDay: start, endDay: end, isFirstSelecting, manageSelected} = props;
 
-    const [extremeDays, setExtremeDays] = useState({startDay, endDay})
-    const [openedDateValue, setOpenedDateValue] = useState(openedDate && new Date(openedDate));
+    const [extremeDays, setExtremeDays] = useState({
+        start: convertToDate(start),
+        end: convertToDate(end)
+    })
+    const [openedDateValue, setOpenedDateValue] = useState(convertToDate(openedDate)|| new Date());
     const [hoverDate, setHoverDate] = useState(null);
 
     const nextOpened =  moment(openedDateValue).add(1, "month").toDate();
 
+    useEffect(() => setOpenedDateValue(convertToDate(openedDate) || new Date()), [openedDate])
+
     useEffect(() => {
-        manageSelected && setExtremeDays({startDay, endDay})
-    }, [manageSelected, startDay, endDay])
+        manageSelected && setExtremeDays({
+            start: convertToDate(start),
+            end: convertToDate(end)
+        })
+    }, [manageSelected, start, end])
 
     const changeMonth = (selectedDate, isNext, e) => {
         e?.stopPropagation();
@@ -54,8 +61,8 @@ const RangeCalendar = React.forwardRef((props, ref) => {
             onSetHover={date => setHoverDate(date)}
             hoveredDate={hoverDate}
             range={{
-                startDay: extremeDays.startDay,
-                endDay: extremeDays.endDay,
+                start: extremeDays.start,
+                end: extremeDays.end,
                 isFirstSelecting: isFirstSelecting
             }}
             manageHover={true}
@@ -75,7 +82,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         </CalendarMonth>
     }
 
-    return <div className={"range-calendar-container"}>
+    return <div className={"range-calendar-container"} ref={ref}>
         {renderCalendarElement()}
         {renderCalendarElement(true)}
     </div>
@@ -87,12 +94,12 @@ RangeCalendar.defaultProps = {
 }
 
 RangeCalendar.propTypes = {
-    openedDate: propTypes.object,
-    onSelected: propTypes.func,
-    startDay: propTypes.object,
-    endDay: propTypes.object,
+    openedDate:  propTypes.oneOfType([propTypes.object, propTypes.string]),
+    onSelected:  propTypes.func,
+    startDay: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    endDay: propTypes.oneOfType([propTypes.string, propTypes.object]),
     isFirstSelecting: propTypes.bool,
     manageSelected: propTypes.bool
 }
 
-export default RangeCalendar;
+export default React.memo(RangeCalendar);

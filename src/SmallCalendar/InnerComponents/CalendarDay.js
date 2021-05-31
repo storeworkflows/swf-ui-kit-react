@@ -22,7 +22,7 @@ const CalendarDay = React.forwardRef( (props, ref) => {
         className,
         "calendar-day-container", {
             "--selected": selected,
-            "--in-selected-period": inSelectedPeriod,
+            "--in-selected-period": active && inSelectedPeriod,
             "--border-top": borders.includes("top"),
             "--border-bottom": borders.includes("bottom"),
             "--selected-border-top": selectedBorders.includes("top"),
@@ -41,6 +41,7 @@ const CalendarDay = React.forwardRef( (props, ref) => {
         "now-date": isNowDate,
     })
 
+  //  console.log("render calendar day")
     return <div
         className={dayContainerClasses}
         ref={ref}
@@ -56,7 +57,7 @@ const CalendarDay = React.forwardRef( (props, ref) => {
 })
 
 CalendarDay.propTypes = {
-    number: propTypes.number,
+    number: propTypes.oneOfType([propTypes.number, propTypes.string]),
     isNowDate: propTypes.bool,
 
     active: propTypes.bool,

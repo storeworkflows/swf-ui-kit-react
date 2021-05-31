@@ -9,7 +9,6 @@ const isNumber = (char) => {
 }
 
 const isExpectedTypeOfChar = (char, expectedChar) => {
-   // console.log("compare", char, expectedChar)
     switch (true){
         case isLetter(expectedChar) :
             return  isLetter(char);

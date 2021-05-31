@@ -55,7 +55,7 @@ InfoMessage.propTypes = {
     status: PropTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
     content: PropTypes.string,
     icon: PropTypes.string,
-    className: propTypes.object,
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
     iconSize: PropTypes.number,
     delay: propTypes.number
 }

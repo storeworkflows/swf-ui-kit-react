@@ -1,10 +1,11 @@
 import moment from 'moment';
 import * as React from 'react';
 import propTypes from "prop-types";
+import * as Hammer from 'hammerjs';
 import classnames from 'classnames';
 
-import {defineProps, defineSelected} from "../utils";
-import {useCallback, useEffect, useState} from "react";
+import {defineProps, defineSelected, getMonthDates} from "../utils";
+import {useCallback, useEffect, useRef, useState} from "react";
 import findByType, {createSubComponent} from "../../utils/findByType";
 import CalendarDay from "./CalendarDay";
 
@@ -15,18 +16,26 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     const {openedDate, onSelected, children, range, selectedDate, onMonthChange, className, hoveredDate,
         onSetHover, manageHover, manageSelected} = props;
 
+    const [monthDates, setMonthDates] = useState([]);
     const [selected, setSelected] = useState(defineSelected(range, selectedDate));
     const [hovered, setHovered] = useState(hoveredDate);
 
-    let calendarElem = null;
+    const calendarElem = useRef(null);
+    let hummer = null;
+
+    useEffect( () => setMonthDates(getMonthDates(openedDate)), [openedDate])
 
     useEffect(() => {
-        if (calendarElem) {
-            let mc = new Hammer(calendarElem);
-            mc.on("swipeleft", (e) => onMonthChange(null, true, e))
-            mc.on("swiperight", (e) => onMonthChange(null, false, e));
+        if (calendarElem?.current) {
+            hummer = new Hammer(calendarElem.current);
+            hummer.on("swipeleft", () => onMonthChange(null, true))
+            hummer.on("swiperight", () => onMonthChange(null, false));
         }
-    }, [])
+        return () => {
+            hummer.off("swipeleft");
+            hummer.off("swiperight");
+        }
+    }, [calendarElem, onMonthChange])
 
     useEffect(() => {
         manageHover && setHovered(hoveredDate)
@@ -37,8 +46,16 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     }, [manageSelected, range, selectedDate])
 
     const changeHover = (date) => {
-        !manageHover && setHovered(date);
-        onSetHover(date);
+        if(!range)
+            return;
+
+        const needHoverForStart = range.isFirstSelecting && range.end;
+        const needHoverForEnd = !range.isFirstSelecting && range.start;
+
+        if(needHoverForStart || needHoverForEnd) {
+            !manageHover && setHovered(date);
+            onSetHover(date);
+        }
     }
 
     const setDate = ({dateObj, isActive, e}) =>{
@@ -53,7 +70,6 @@ const CalendarMonth = React.forwardRef((props, ref) => {
 
     const renderHeaderElement = (name) => {
         const element = findByType(children, name);
-
         const classes = classnames({
             "header-part": true,
             "--end": name === "HeaderEnd"
@@ -61,20 +77,17 @@ const CalendarMonth = React.forwardRef((props, ref) => {
         return <div className={classes}>{element}</div>
     }
 
-    const renderCalendarElement = useCallback((date, isActive, dayInWeek) => {
-        let dateObj = date.toDate().setHours(0,0,0,0);
-        let day = date.format('D');
+    const renderCalendarElement = (currentDay) => {
+        const isActive = currentDay.getMonth() === openedDate.getMonth();
+        let dateObj = currentDay.setHours(0,0,0,0);
 
-        const currentStartDate = range && (range.isFirstSelecting ? selected : range.startDay);
-        const currentEndDate = range && (range.isFirstSelecting ? range.endDay : selected);
-
-        const selectedDates = range ? [currentStartDate, currentEndDate] : [selected]
-        const {selected: isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders,selectedBorders}
-            = defineProps(selectedDates, range, dateObj, hovered, dayInWeek);
+        const {isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders}
+            = defineProps(selected, range, dateObj, hovered);
 
         return <CalendarDay
+            key = {dateObj}
             active={isActive}
-            number={day}
+            number={currentDay.getDate()}
             isNowDate={isNowDate}
             selected={isSelected}
 
@@ -88,30 +101,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
             onMouseLeave={() => changeHover(null)}
             onClick={(e) => setDate({dateObj, isActive, e}) }
         />
-    }, [hovered, selected, range, openedDate])
-
-
-    const renderMonth = useCallback(() => {
-        let result = [];
-
-        let openedMonth = openedDate.getMonth() + 1;
-        let currentWeek = moment(openedDate);
-        currentWeek.startOf("month").startOf("week")
-
-        for (let w = 0; w < 6; w++) {
-            (w > 0) && currentWeek.add(1, 'week');
-            let currentDay = currentWeek.startOf("week");
-
-            for (let d = 0; d < 7; d++) {
-                (d > 0) && currentDay.add(1, "day");
-
-                const isActive = currentDay.format('M') === `${openedMonth}`;
-                result.push(renderCalendarElement(currentDay, isActive, d));
-            }
-        }
-
-        return result;
-    }, [openedDate, selected, hovered, range])
+    }
 
     const currentDate = moment(openedDate)
     let curMonthLabel = `${currentDate.format('MMMM')} ${currentDate.year()}`;
@@ -120,7 +110,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
         <>
             <div
                 className={classnames(className, "ui-kit__calendar-container")}
-                ref={ref}
+                ref={el => {calendarElem.current = el; ref = el;}}
             >
                 <div className={"calendar-header"}>
                     {renderHeaderElement("HeaderStart")}
@@ -132,9 +122,10 @@ const CalendarMonth = React.forwardRef((props, ref) => {
                 <div className={"calendar-view"}>
                     {DAYS_OF_WEEK.map((el, id) => <div
                         className={"calendar-element week-day"}
-                        key={id}> {el} </div>
+                        key={id}> {el}
+                    </div>
                     )}
-                    {renderMonth()}
+                    {monthDates.map(renderCalendarElement)}
                 </div>
             </div>
         </>
@@ -159,8 +150,8 @@ CalendarMonth.propTypes = {
     onSelected: propTypes.func,
     selectedDate: propTypes.object,
     range: propTypes.shape({
-        startDay: propTypes.oneOfType([propTypes.string, propTypes.object]),
-        endDay: propTypes.oneOfType([propTypes.string, propTypes.object]),
+        start: propTypes.oneOfType([propTypes.string, propTypes.object]),
+        end: propTypes.oneOfType([propTypes.string, propTypes.object]),
         isFirstSelecting: propTypes.bool
     }),
     hoveredDate: propTypes.oneOfType([propTypes.number, propTypes.object]),

@@ -9,6 +9,7 @@ import Popover from "../Popover/Popover";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 
 import {addCharToDate, getErrorMessages} from "./utils";
+import {convertToDate} from "../SmallCalendar/utils";
 
 const DatePicker = React.forwardRef((props, ref) => {
 
@@ -19,7 +20,7 @@ const DatePicker = React.forwardRef((props, ref) => {
         manageOpened, onOpen
     } = props;
 
-    const [dateValue, setDateValue] = useState(value);
+    const [dateValue, setDateValue] = useState(moment(convertToDate(value)).format(format));
     const [isOpened, setIsOpened] = useState(opened);
     const [isInvalid, setIsInvalid] = useState(invalid);
     const [errorMessages, setErrorMessages] = useState([]);
@@ -33,7 +34,7 @@ const DatePicker = React.forwardRef((props, ref) => {
         if(moment(value, format, true).isValid()){
             let errors = getErrorMessages(value, format, min, max);
             invalidInput(errors, value);
-            setDateValue( moment(value).format(format));
+            setDateValue(moment(value).format(format));
         } else
             setDateValue(value);
     }
@@ -94,7 +95,7 @@ const DatePicker = React.forwardRef((props, ref) => {
                 setIsOpened(openState)
 
                 let isValidStringDate = moment(dateValue, format).isValid();
-                !isValidStringDate && setDateValue('');
+                setDateValue(isValidStringDate ? moment(dateValue).format(format) : '');
             }
 
             onOpen({openState})
@@ -177,7 +178,7 @@ const DatePicker = React.forwardRef((props, ref) => {
         visible &&
             <div ref={el => inputRef.current = el}>
                 {renderInput()}
-                {popoverTarget &&
+                {popoverTarget && openedValue &&
                 <Popover
                     hideTail={true}
                     manageOpened={true}

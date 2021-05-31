@@ -1,3 +1,4 @@
+import moment from "moment";
 
 const defineExtreme = (start, end, curr) => {
     switch (curr) {
@@ -11,9 +12,9 @@ const defineExtreme = (start, end, curr) => {
 
 }
 
-export const defineProps = (selectedDates, range, current, hovered, dayInWeek) => {
-    let startDate = range && selectedDates[0]?.setHours(0,0,0,0) ;
-    let endDate = range && selectedDates[1]?.setHours(0,0,0,0) ;
+export const defineProps = (selected, range, current, hovered) => {
+    let startDate = (!range || range.isFirstSelecting ? selected : range.start)?.setHours(0,0,0,0);
+    let endDate = range && (range.isFirstSelecting ? range.end : selected)?.setHours(0,0,0,0);
 
     if(endDate && startDate){
         if(range.isFirstSelecting && endDate<startDate)
@@ -22,7 +23,7 @@ export const defineProps = (selectedDates, range, current, hovered, dayInWeek) =
             startDate = null;
     }
 
-    let selected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
+    let isSelected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
     let inSelectedPeriod = startDate && endDate && current>=startDate && current<=endDate;
     let isNowDate = _.isEqual(current, new Date().setHours(0,0,0,0) )
 
@@ -41,17 +42,18 @@ export const defineProps = (selectedDates, range, current, hovered, dayInWeek) =
 
         isHovered = hoveredForSecond || hoveredForFirst;
         borders = range.isFirstSelecting
-            ? defineBorder(hovered, endDate, current, dayInWeek)
-            : defineBorder(startDate, hovered, current, dayInWeek)
+            ? defineBorder(hovered, endDate, current)
+            : defineBorder(startDate, hovered, current)
     }
     let selectedBorders = []
-    if(selected && range)
-        selectedBorders = defineBorder(startDate, endDate, current, dayInWeek)
+    if(isSelected && range)
+        selectedBorders = defineBorder(startDate, endDate, current)
 
-    return {selected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders}
+    return {isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders}
 }
 
-const defineBorder = (start, end, current, dayInWeek) => {
+const defineBorder = (start, end, current) => {
+    const dayInWeek = new Date(current).getDay();
     let result = [];
 
     if(_.isEqual(start, current) || dayInWeek === 0)
@@ -78,7 +80,7 @@ export const defineSelected = (range, selected) => {
         return selected;
 
     if (range)
-        return range.isFirstSelecting ? range.startDay : range.endDay;
+        return range.isFirstSelecting ? range.start : range.end;
 
     return null;
 }
@@ -87,18 +89,41 @@ export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) =
     const selectedInSeconds = selectedDate?.setHours(0,0,0,0);
 
     if(isFirstSelecting){
-        const endInSeconds = oldExtreme.endDay?.setHours(0,0,0,0);
-        const endFitSelected = oldExtreme.endDay && selectedInSeconds<=endInSeconds;
+        const endInSeconds = oldExtreme.end?.setHours(0,0,0,0);
+        const endFitSelected = oldExtreme.end && selectedInSeconds<=endInSeconds;
         return {
-            startDay: selectedDate,
-            endDay: endFitSelected ? oldExtreme.endDay : null
+            start: selectedDate,
+            end: endFitSelected ? oldExtreme.end : undefined
         }
     } else {
-        const startInSeconds = oldExtreme.startDay?.setHours(0,0,0,0);
-        const startFitSelected = oldExtreme.startDay &&  selectedInSeconds>=startInSeconds;
+        const startInSeconds = oldExtreme.start?.setHours(0,0,0,0);
+        const startFitSelected = oldExtreme.start &&  selectedInSeconds>=startInSeconds;
         return {
-            startDay: startFitSelected ? oldExtreme.startDay : null,
-            endDay: selectedDate
+            start: startFitSelected ? oldExtreme.start : undefined,
+            end: selectedDate
         }
     }
+}
+
+export const convertToDate = (input) => {
+    if(input && moment(input).isValid())
+        return new Date(input)
+}
+
+export const getMonthDates = (openedDate) => {
+    let result = [];
+    let currentWeek = moment(openedDate);
+    currentWeek.startOf("month").startOf("week")
+
+    for (let w = 0; w < 6; w++) {
+        (w > 0) && currentWeek.add(1, 'week');
+        let currentDay = currentWeek.startOf("week");
+
+        for (let d = 0; d < 7; d++) {
+            (d > 0) && currentDay.add(1, "day");
+            result.push(currentDay.toDate());
+        }
+    }
+
+    return result;
 }
