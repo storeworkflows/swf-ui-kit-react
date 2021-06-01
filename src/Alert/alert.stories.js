@@ -2,6 +2,7 @@ import React from 'react';
 
 import { default as Alert } from './Alert';
 import {TABLE_CATEGORIES} from "../../.storybook/tableCategories";
+import propTypes from "prop-types";
 
 export default {
     title: 'swf-ui-kit/Messages/Alert',
@@ -47,9 +48,10 @@ export const Acknowledge = Template.bind({});
 Acknowledge.args = {
     ...Dismiss.args,
     action: { type: "acknowledge" },
-    expanded: true,
+    //expanded: true,
     header: "Header",
-    color: "red"
+    color: "red",
+    verticalPositions: "center"
 };
 
 export const Open = Template.bind({});
@@ -63,7 +65,9 @@ Open.args = {
         openWindows: "true"
     },
     icon: "alarm",
-    color: "green"
+    color: "green",
+    verticalPositions: "bottom",
+    delay: 2000
 };
 
 

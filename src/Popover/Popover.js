@@ -43,47 +43,61 @@ const Popover = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         const targetValue = positionTarget?.current;
-        if(targetValue){
-            if(!targetRef.current || targetRef.current!==targetValue)
-            {
-                targetRef.current = targetValue;
-                if(contentRef.current){
-                    resetStyles();
-                    openedFinal && setStylesToContent()
-                }
-            }
-            if(targetRef.current)
-                targetRef.current.onclick = (e) => targetClicked(e)
-        }
-    }, [positionTarget, openedFinal])
+        if(targetValue)
+            targetRef.current = targetValue;
+    }, [ positionTarget])
 
-    const renderTarget = useCallback(() => {
-        //console.log("render target")
+    useEffect(() => {
+        updateOpenedState(openedFinal);
+
+        const targetValue = targetRef.current
+        if(targetValue){
+            targetValue.addEventListener("click", targetClicked)
+            return () => targetValue.removeEventListener("click", targetClicked)
+        }
+    }, [targetRef.current, openedFinal, manageOpened, opened, isOpened])
+
+
+    useEffect(() => {
+        let resizeObserver = new ResizeObserver(contentResized)
+
+        if(targetRef.current)
+            resizeObserver.observe(targetRef.current);
+        resizeObserver.observe(contentRef.current.children[0].children[0]);
+
+        return () => resizeObserver.disconnect();
+    }, [targetRef, contentRef, openedFinal])
+
+    useEffect(() => {
+        document.addEventListener("click", documentClicked);
+        return () => document.removeEventListener("click", documentClicked)
+    }, [targetRef, contentRef, openedFinal, manageOpened, onOuterPopoverClicked])
+
+
+    const renderTarget = () => {
         const target = findByType(children, "Target");
 
         if (!target)
             return null;
 
         return <div className={"popover-target"}
-                    ref={ el => targetRef.current = el}
-                    onClick={ (e) => targetClicked(e) }>
-                        {target}
-                </div>
-    }, [positionTarget, targetRef, openedFinal, children])
+                    ref={targetRef}>{target}</div>
+    }
 
      const contentResized = () => {
         resetStyles();
         openedFinal && setStylesToContent();
     }
 
-    const targetClicked = (e) =>{
+    const targetClicked = useCallback((e) => {
         e.preventDefault();
 
         if(isPointInsideTheElement(targetRef?.current, e.clientX, e.clientY)) {
             !manageOpened &&  setIsOpened(!isOpened)
-            onTargetClick({value: manageOpened ? opened : !isOpened})
+            let value = manageOpened ? opened : !isOpened;
+            onTargetClick({value})
         }
-    }
+    }, [targetRef, manageOpened, opened, isOpened])
 
     const documentClicked = (event) =>{
         let pointX = event.clientX;
@@ -103,12 +117,12 @@ const Popover = React.forwardRef((props, ref) => {
     }
 
     const setStylesToContent = () => {
-    //    console.log("set style to content")
-        if(contentRef?.current && targetRef?.current) {
+        let contentElement = contentRef?.current;
+        let targetElement = targetRef?.current;
 
+        if(contentElement && targetElement) {
             let padding = contentStyles && contentStyles['padding'] && contentStyles['padding'].split('px')[0] ;
-            let contentElement = contentRef.current;
-            let targetDimensions = targetRef.current.getBoundingClientRect()
+            let targetDimensions = targetElement.getBoundingClientRect()
             let contentDimensions = contentElement.getBoundingClientRect();
 
             let windowParam = {
@@ -158,24 +172,6 @@ const Popover = React.forwardRef((props, ref) => {
         resetStyles();
         value && setStylesToContent();
     }
-
-    useEffect(() => updateOpenedState(manageOpened ? opened : isOpened), [opened, isOpened])
-
-    useEffect(() => updateOpenedState(opened), [])
-
-    useEffect(() => {
-        let resizeObserver = new ResizeObserver(contentResized)
-        if(targetRef?.current)
-            resizeObserver.observe(targetRef.current);
-        resizeObserver.observe(contentRef?.current.children[0].children[0]);
-
-        return () => resizeObserver.disconnect();
-    }, [targetRef, contentRef, openedFinal])
-
-    useEffect(() => {
-        document.addEventListener("click", documentClicked);
-        return () => document.removeEventListener("click", documentClicked)
-    }, [targetRef, contentRef, openedFinal, manageOpened, onOuterPopoverClicked])
 
 
     return <>

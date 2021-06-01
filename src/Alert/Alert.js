@@ -14,7 +14,8 @@ const Alert = React.forwardRef((props, ref) => {
         action, content, header, icon, color, visible, textLinkProps,
         manageExpanded, manageVisibility, manageButtonClick,
         onTextLinkClicked, onButtonClick, onExpandAction,
-        expanded, onCloseAction, delay
+        expanded, onCloseAction, delay, className,
+        defaultPosition, verticalPositions, horizontalPositions
     } = props;
 
     const [oneLineText, setOneLineText] = useState(false);
@@ -79,16 +80,14 @@ const Alert = React.forwardRef((props, ref) => {
 
     useEffect( defineSizes, [content, header])
 
+    useEffect(() => manageExpanded && setIsOverflowed(!expanded), [expanded, manageExpanded])
+
     useEffect(() => {
         if(manageVisibility){
             setDelay();
             defineSizes();
         }
     }, [visible, manageVisibility])
-
-    useEffect(() => {
-        manageExpanded && setIsOverflowed(!expanded)
-    }, [expanded, manageExpanded])
 
     useEffect(() => {
         defineSizes();
@@ -98,14 +97,21 @@ const Alert = React.forwardRef((props, ref) => {
     }, []);
 
 
-    const mainContainerClasses = classnames(color, {
-        "swf-alert-container": true,
-        "--alignCenter": !isOverflowed && !expandedFinal,
-        "--overflowed": isOverflowed,
-        "--oneLineContent": oneLineText,
-        "--expanded": expandedFinal,
-        "--no-icon": !icon
-    })
+    const mainContainerClasses = classnames(
+        color,
+        className,
+        "swf-alert-container",
+        {
+            "--fixed": !defaultPosition,
+            "--alignCenter": !isOverflowed && !expandedFinal,
+            "--overflowed": isOverflowed,
+            "--oneLineContent": oneLineText,
+            "--expanded": expandedFinal,
+            "--no-icon": !icon,
+            [`--vertical-${verticalPositions}`]: verticalPositions,
+            [`--horizontal-${horizontalPositions}`]: horizontalPositions,
+        }
+    )
 
     const textStyles = classnames({
         "text-container": true,
@@ -172,6 +178,7 @@ Alert.defaultProps = {
 
     visible: true,
     expanded: false,
+    className: "",
 
     manageExpanded: false,
     manageVisibility: false,
@@ -180,7 +187,10 @@ Alert.defaultProps = {
     onTextLinkClicked: () => void 0,
     onExpandAction: () => void 0,
     onButtonClick: () => void 0,
-    onCloseAction: () => void 0
+    onCloseAction: () => void 0,
+
+    verticalPositions: "top",
+    horizontalPositions: "center"
 }
 
 Alert.propTypes = {
@@ -217,7 +227,11 @@ Alert.propTypes = {
      */
     delay: propTypes.number,
     onCloseAction: propTypes.func,
-    manageButtonClick: propTypes.bool
+    manageButtonClick: propTypes.bool,
+    className: propTypes.oneOfType([propTypes.string, propTypes.object]),
+    defaultPosition: propTypes.bool,
+    verticalPositions: propTypes.oneOf(["top", "center", "bottom"]),
+    horizontalPositions: propTypes.oneOf(["start", "center", "end"])
 }
 
 export default React.memo(Alert)
