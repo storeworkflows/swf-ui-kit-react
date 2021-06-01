@@ -1,5 +1,15 @@
 .pagination {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+
   &__container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__buttons-container {
     display: flex;
     gap: 1px;
   }
@@ -26,6 +36,21 @@
     span {
       position: relative;
       bottom: 0.1rem;
+    }
+  }
+
+  &__dropdown-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .swf-dropdown-main-container {
+    width: max-content;
+
+    .dropdown-button {
+      width: initial;
+      //min-width: 4rem;
     }
   }
 }
