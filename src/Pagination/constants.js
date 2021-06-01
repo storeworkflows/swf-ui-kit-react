@@ -3,10 +3,6 @@ export const RIGHT_PAGE = 'RIGHT';
 
 export const DROPDOWN_ITEMS = [
     {
-        id: 10,
-        label: 10
-    },
-    {
         id: 20,
         label: 20
     },
@@ -17,10 +13,6 @@ export const DROPDOWN_ITEMS = [
     {
         id: 100,
         label: 100
-    },
-    {
-        id: 200,
-        label: 200
     },
     {
         id: 1000,

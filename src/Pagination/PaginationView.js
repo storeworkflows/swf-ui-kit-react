@@ -58,6 +58,7 @@ const PaginationView = (props) => {
 						selectedItems={[recordsPerPage]}
 						onItemSelected={onRecordsPerPageSelect}
 						items={DROPDOWN_ITEMS}
+						scrollToSelected={false}
 					/>
 				</div>
 			)}

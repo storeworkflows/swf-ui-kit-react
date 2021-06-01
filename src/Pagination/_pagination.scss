@@ -47,10 +47,12 @@
 
   .swf-dropdown-main-container {
     width: max-content;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 4.5rem;
 
     .dropdown-button {
       width: initial;
-      //min-width: 4rem;
     }
   }
 }
