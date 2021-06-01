@@ -6,16 +6,21 @@ import { LEFT_PAGE, RIGHT_PAGE } from "./constants";
 import { range } from "./utils";
 
 const Pagination = (props) => {
-	const { totalRecords, pageLimit, currentPageSiblingsAmount, onPageChange } = props;
+	const {
+		totalRecords, currentPageSiblingsAmount,
+		pageLimit, displayPageLimitDropdown,
+		onPageChange, onPageLimitChange
+	} = props;
 
 	const [totalPages, setTotalPages] = useState(1);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [pagesArray, setPagesArray] = useState([]);
+	const [recordsPerPage, setRecordsPerPage] = useState(pageLimit);
 
 	useEffect(() => {
-		setTotalPages(Math.ceil(totalRecords / pageLimit));
+		setTotalPages(Math.ceil(totalRecords / recordsPerPage));
 		setCurrentPage(1);
-	}, [totalRecords, pageLimit]);
+	}, [totalRecords, pageLimit, recordsPerPage]);
 
 	useEffect(() => {
 		setPagesArray(getPagesArray());
@@ -27,7 +32,7 @@ const Pagination = (props) => {
 		const paginationData = {
 			currentPage,
 			totalPages: totalPages,
-			pageLimit: pageLimit,
+			pageLimit: recordsPerPage,
 			totalRecords: totalRecords
 		};
 
@@ -92,17 +97,22 @@ const Pagination = (props) => {
 		gotoPage(currentPage + (currentPageSiblingsAmount * 2) + 1);
 	}
 
-	if (totalPages < 2) {
-		return null;
+	const onRecordsPerPageSelect = e => {
+		onPageLimitChange(e.clickedItem.id);
+		setRecordsPerPage(e.clickedItem.id);
 	}
 
 	return (
 		<PaginationView
 			pages={pagesArray}
+			totalPages={totalPages}
 			currentPage={currentPage}
 			onLeftClick={onLeftClick}
 			onRightClick={onRightClick}
 			onPageClick={onPageClick}
+			recordsPerPage={recordsPerPage}
+			onRecordsPerPageSelect={onRecordsPerPageSelect}
+			displayPageLimitDropdown={displayPageLimitDropdown}
 		/>
 	);
 };
@@ -110,15 +120,19 @@ const Pagination = (props) => {
 Pagination.propTypes = {
 	totalRecords: propTypes.number,
 	pageLimit: propTypes.number,
+	displayPageLimitDropdown: propTypes.bool,
 	currentPageSiblingsAmount: propTypes.oneOf([0, 1, 2]),
-	onPageChange: propTypes.func
+	onPageChange: propTypes.func,
+	onPageLimitChange: propTypes.func
 }
 
 Pagination.defaultProps = {
 	totalRecords: 1,
-	pageLimit: 1,
+	pageLimit: 20,
+	displayPageLimitDropdown: true,
 	currentPageSiblingsAmount: 1,
-	onPageChange: () => {}
+	onPageChange: () => {},
+	onPageLimitChange: () => {}
 }
 
 export default Pagination;

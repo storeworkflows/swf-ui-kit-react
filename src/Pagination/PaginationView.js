@@ -1,9 +1,14 @@
 import React from 'react';
 import Button from '../Button/Button';
-import { LEFT_PAGE, RIGHT_PAGE } from "./constants";
+import Dropdown from "../Dropdown/Dropdown";
+import { DROPDOWN_ITEMS, LEFT_PAGE, RIGHT_PAGE } from "./constants";
 
 const PaginationView = (props) => {
-	const { pages, currentPage, onLeftClick, onRightClick, onPageClick } = props;
+	const {
+		pages, totalPages, currentPage,
+		onLeftClick, onRightClick, onPageClick,
+		recordsPerPage, onRecordsPerPageSelect, displayPageLimitDropdown
+	} = props;
 
 	const getButtonData = (page) => {
 		if (page === LEFT_PAGE) {
@@ -31,19 +36,31 @@ const PaginationView = (props) => {
 
 	return (
 		<nav className="pagination pagination__container">
-			{pages.map((page, i) => {
-				const buttonData = getButtonData(page);
-				return (
-					<Button
-						key={i}
-						className={buttonData.className}
-						size="md"
-						onClick={buttonData.onClick}
-					>
-						<span>{buttonData.label}</span>
-					</Button>
-				)
-			})}
+			<div className="pagination__buttons-container">
+				{totalPages > 1 && pages.map((page, i) => {
+					const buttonData = getButtonData(page);
+					return (
+						<Button
+							key={i}
+							className={buttonData.className}
+							size="md"
+							onClick={buttonData.onClick}
+						>
+							<span>{buttonData.label}</span>
+						</Button>
+					)
+				})}
+			</div>
+			{displayPageLimitDropdown && (
+				<div className="pagination__dropdown-container">
+					<span>Records per page:</span>
+					<Dropdown
+						selectedItems={[recordsPerPage]}
+						onItemSelected={onRecordsPerPageSelect}
+						items={DROPDOWN_ITEMS}
+					/>
+				</div>
+			)}
 		</nav>
 	);
 };

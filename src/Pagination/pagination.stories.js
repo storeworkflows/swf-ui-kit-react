@@ -22,7 +22,7 @@ export const Default = Template.bind({});
 
 Default.args = {
     totalRecords: 1000,
-    pageLimit: 15,
+    pageLimit: 20,
     currentPageSiblingsAmount: 1,
     onPageChange: () => {}
 }
