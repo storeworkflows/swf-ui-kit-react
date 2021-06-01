@@ -67,6 +67,7 @@ Open.args = {
     icon: "alarm",
     color: "green",
     verticalPositions: "bottom",
+    delay: 2000
 };
 
 

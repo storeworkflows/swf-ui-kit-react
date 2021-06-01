@@ -55,17 +55,16 @@
   &.--fixed {
     position: fixed;
     z-index: 100;
-    animation-duration: 2s;
+    animation-duration: 1s;
     animation-name: slidein;
     --start-animation: 0;
     --end-animation: 0;
 
     &.--vertical-top{
       top: 1rem;
-      --start-animation: -0.5rem;
+      --start-animation: -1rem;
       --end-animation: 1rem;
     }
-
 
     &.--vertical-center{
       --taransformY: -50%;
