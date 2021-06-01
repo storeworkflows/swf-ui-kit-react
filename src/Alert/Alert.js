@@ -15,7 +15,8 @@ const Alert = React.forwardRef((props, ref) => {
         manageExpanded, manageVisibility, manageButtonClick,
         onTextLinkClicked, onButtonClick, onExpandAction,
         expanded, onCloseAction, delay, className,
-        defaultPosition, verticalPositions, horizontalPositions
+        defaultPosition, verticalPositions, horizontalPositions,
+        onVisibilityChange
     } = props;
 
     const [oneLineText, setOneLineText] = useState(false);
@@ -79,6 +80,8 @@ const Alert = React.forwardRef((props, ref) => {
 
 
     useEffect( defineSizes, [content, header])
+
+    useEffect(() => onVisibilityChange(visibleFinal), [visibleFinal])
 
     useEffect(() => manageExpanded && setIsOverflowed(!expanded), [expanded, manageExpanded])
 
@@ -184,6 +187,7 @@ Alert.defaultProps = {
     manageVisibility: false,
     manageButtonClick: false,
 
+    onVisibilityChange: () => void 0,
     onTextLinkClicked: () => void 0,
     onExpandAction: () => void 0,
     onButtonClick: () => void 0,
@@ -214,6 +218,7 @@ Alert.propTypes = {
         openWindows: propTypes.bool,
         download: propTypes.oneOfType([propTypes.string, propTypes.object])
     }),
+    onVisibilityChange: propTypes.func,
     onExpandAction: propTypes.func,
     onTextLinkClicked: propTypes.func,
     onButtonClick: propTypes.func,

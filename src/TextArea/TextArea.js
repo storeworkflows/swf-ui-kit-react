@@ -59,7 +59,7 @@ const TextArea = (props) => {
     return (
         <>
             <div
-                //ref={elm => props.innerRef.current = elm}
+                ref={elm => props.innerRef.current = elm}
                 className="form-group"
                 style={{
                     minHeight: parentHeight

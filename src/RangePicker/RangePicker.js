@@ -58,15 +58,18 @@ const RangePicker = React.forwardRef((props, ref) => {
     }
 
     const setDateFromProps = useCallback(() => {
-        const valueToSet = {start: start.value, end: end.value};
-        if (moment(start, format, true).isValid() && moment(end, format, true).isValid()) {
-            invalidInput(valueToSet);
+        const startValue = start.value;
+        const endValue = end.value;
+
+        if (moment(startValue, format, true).isValid() && moment(endValue, format, true).isValid()) {
             setSelectedDate({
-                start: moment(start.value).format(format),
-                end: moment(end.value).format(format)
+                start: moment(startValue).format(format),
+                end: moment(endValue.value).format(format)
             });
-        } else
+        } else {
+            const valueToSet = {start: startValue, end: endValue};
             setSelectedDate(valueToSet);
+        }
     }, [start, end, format])
 
     const changeSelectedValue = (isFirst, updatedValue, input) => {
@@ -74,15 +77,15 @@ const RangePicker = React.forwardRef((props, ref) => {
         onValueChange({oldValue: selectedDates, input, updatedValue, isFirstSelecting});
 
         isFirst
-            ? start.onValueChange({oldValue: selectedDates.start, input, updatedValue: updatedValue.start})
-            : end.onValueChange({oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
+            ? start.onValueChange && start.onValueChange({oldValue: selectedDates.start, input, updatedValue: updatedValue.start})
+            : end.onValueChange && end.onValueChange({oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
     }
 
     const setValue = (isFirst, updatedValue) => {
         onValueSet(updatedValue);
         isFirst
-            ? start.onValueSet(updatedValue.start)
-            : end.onValueSet(updatedValue.end)
+            ? start.onValueSet && start.onValueSet(updatedValue.start)
+            : end.onValueSet && end.onValueSet(updatedValue.end)
     }
 
     const changeValue = (e, isFirst) => {
@@ -139,8 +142,8 @@ const RangePicker = React.forwardRef((props, ref) => {
                 errors, selectedDates
             });
             isFirstSelecting
-                ? start.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
-                : end.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
+                ? start.onInvalid && start.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
+                : end.onInvalid && end.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
         }
     }
 
@@ -287,18 +290,18 @@ RangePicker.defaultProps = {
     onValueChange: () => void 0,
     visible: true,
     disabled: false,
-    value: {
-        start: {
-            onValueSet: () => void 0,
-            onInvalid: () => void 0,
-            onValueChange: () => void 0
-        },
-        end: {
-            onValueSet: () => void 0,
-            onInvalid: () => void 0,
-            onValueChange: () => void 0
-        }
-    }
+    // value: {
+    //     start: {
+    //         onValueSet: () => void 0,
+    //         onInvalid: () => void 0,
+    //         onValueChange: () => void 0
+    //     },
+    //     end: {
+    //         onValueSet: () => void 0,
+    //         onInvalid: () => void 0,
+    //         onValueChange: () => void 0
+    //     }
+    // }
 }
 
 const dateInputShape = {
