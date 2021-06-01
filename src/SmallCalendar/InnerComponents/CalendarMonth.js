@@ -1,7 +1,7 @@
 import moment from 'moment';
 import * as React from 'react';
 import propTypes from "prop-types";
-import * as Hammer from 'hammerjs';
+//import * as Hammer from 'hammerjs';
 import classnames from 'classnames';
 
 import {defineProps, defineSelected, getMonthDates} from "../utils";
@@ -21,21 +21,21 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     const [hovered, setHovered] = useState(hoveredDate);
 
     const calendarElem = useRef(null);
-    let hummer = null;
+   // let hummer = null;
 
     useEffect( () => setMonthDates(getMonthDates(openedDate)), [openedDate])
 
-    useEffect(() => {
-        if (calendarElem?.current) {
-            hummer = new Hammer(calendarElem.current);
-            hummer.on("swipeleft", () => onMonthChange(null, true))
-            hummer.on("swiperight", () => onMonthChange(null, false));
-        }
-        return () => {
-            hummer.off("swipeleft");
-            hummer.off("swiperight");
-        }
-    }, [calendarElem, onMonthChange])
+    // useEffect(() => {
+    //     if (calendarElem?.current) {
+    //         hummer = new Hammer(calendarElem.current);
+    //         hummer.on("swipeleft", () => onMonthChange(null, true))
+    //         hummer.on("swiperight", () => onMonthChange(null, false));
+    //     }
+    //     return () => {
+    //         hummer.off("swipeleft");
+    //         hummer.off("swiperight");
+    //     }
+    // }, [calendarElem, onMonthChange])
 
     useEffect(() => {
         manageHover && setHovered(hoveredDate)

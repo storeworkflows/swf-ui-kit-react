@@ -6,7 +6,15 @@ export default {
     title: 'swf-ui-kit/Input/RangePicker',
     component: RangePicker,
     args: {
-        min: new Date("2021-05-11")
+        min: new Date("2021-05-11"),
+        value: {
+            start: {
+                value: "2021-05-22"
+            },
+            end: {
+                value: new Date()
+            }
+        }
     }
 };
 
