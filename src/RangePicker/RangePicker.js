@@ -72,20 +72,24 @@ const RangePicker = React.forwardRef((props, ref) => {
         }
     }, [start, end, format])
 
+    const actAction = (isFirst, action, startParam, endParam) => {
+        isFirst
+            ? start[action] && start[action](startParam)
+            : end[action] && end[action](endParam)
+    }
+
     const changeSelectedValue = (isFirst, updatedValue, input) => {
         !manageValue && setSelectedDate(updatedValue);
         onValueChange({oldValue: selectedDates, input, updatedValue, isFirstSelecting});
 
-        isFirst
-            ? start.onValueChange && start.onValueChange({oldValue: selectedDates.start, input, updatedValue: updatedValue.start})
-            : end.onValueChange && end.onValueChange({oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
+        actAction(isFirst, 'onValueChange',
+            {oldValue: selectedDates.start, input, updatedValue: updatedValue.start},
+            {oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
     }
 
     const setValue = (isFirst, updatedValue) => {
         onValueSet(updatedValue);
-        isFirst
-            ? start.onValueSet && start.onValueSet(updatedValue.start)
-            : end.onValueSet && end.onValueSet(updatedValue.end)
+        actAction(isFirst, 'onValueSet', updatedValue.start, updatedValue.end)
     }
 
     const changeValue = (e, isFirst) => {
@@ -137,13 +141,9 @@ const RangePicker = React.forwardRef((props, ref) => {
         }
 
         if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue)) {
-            onInvalid({
-                isInvalid: isInvalidCurrent,
-                errors, selectedDates
-            });
-            isFirstSelecting
-                ? start.onInvalid && start.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
-                : end.onInvalid && end.onInvalid({isInvalid: isInvalidCurrent, errors, selectedDates})
+            const onInvalidObj = {isInvalid: isInvalidCurrent, errors, selectedDates};
+            onInvalid(onInvalidObj);
+            actAction(isFirstSelecting, 'onInvalid', onInvalidObj, onInvalidObj)
         }
     }
 
