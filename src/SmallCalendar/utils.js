@@ -30,6 +30,13 @@ export const defineProps = (selected, range, current, hovered) => {
     let isHovered = false;
     let extreme =  "none";
     let borders = [];
+    let disabled = false;
+
+    if(range)
+        disabled = range.isFirstSelecting
+            ? current > endDate
+            : current < startDate
+
 
     if(range && hovered) {
 
@@ -49,7 +56,7 @@ export const defineProps = (selected, range, current, hovered) => {
     if(isSelected && range)
         selectedBorders = defineBorder(startDate, endDate, current)
 
-    return {isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders}
+    return {isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders, disabled}
 }
 
 const defineBorder = (start, end, current) => {

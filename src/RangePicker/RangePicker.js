@@ -290,18 +290,6 @@ RangePicker.defaultProps = {
     onValueChange: () => void 0,
     visible: true,
     disabled: false,
-    // value: {
-    //     start: {
-    //         onValueSet: () => void 0,
-    //         onInvalid: () => void 0,
-    //         onValueChange: () => void 0
-    //     },
-    //     end: {
-    //         onValueSet: () => void 0,
-    //         onInvalid: () => void 0,
-    //         onValueChange: () => void 0
-    //     }
-    // }
 }
 
 const dateInputShape = {

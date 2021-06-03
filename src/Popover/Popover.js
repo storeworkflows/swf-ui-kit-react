@@ -24,8 +24,10 @@ const Popover = React.forwardRef((props, ref) => {
 
     let openedFinal = manageOpened ? opened : isOpened;
 
-    useEffect( () => calculateStyles(),
-        [targetDimensions, targetRef.current, contentRef.current, contentDimensions, hideTail, positions, contentStyles])
+    useEffect( () => {
+        setStyles(true)
+        calculateStyles()
+    },[targetDimensions, targetRef.current, contentRef.current, contentDimensions, hideTail, positions, contentStyles])
 
     useEffect(() => setStyles(!openedFinal),
         [openedFinal, hideTail, contentRef.current, popoverStyles])
@@ -40,7 +42,6 @@ const Popover = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         let resizeObserver = new ResizeObserver((e) => {
-            setStyles(true)
             const target = e[0].target
             target.parentElement.classList.contains("popover-content-keeper")
                 ? setContentDimensions(target.getBoundingClientRect())
@@ -82,6 +83,7 @@ const Popover = React.forwardRef((props, ref) => {
         let targetElement = targetRef.current;
 
         if( openedFinal && contentElement && targetElement) {
+
             let isOutsideContent = !isPointInsideTheElement(contentElement, pointX, pointY);
             let isOutsideTarget = !isPointInsideTheElement(targetElement, pointX, pointY);
 

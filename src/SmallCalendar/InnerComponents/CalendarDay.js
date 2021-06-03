@@ -6,7 +6,7 @@ const CalendarDay = React.forwardRef( (props, ref) => {
     const { number,  active, selected,
         extreme, className, onClick, isNowDate,
         onMouseLeave, onMouseEnter, hovered, inSelectedPeriod, borders,
-        selectedBorders
+        selectedBorders, disabled
     } = props;
 
     const borderStyles = classnames({
@@ -41,7 +41,6 @@ const CalendarDay = React.forwardRef( (props, ref) => {
         "now-date": isNowDate,
     })
 
-  //  console.log("render calendar day")
     return <div
         className={dayContainerClasses}
         ref={ref}
@@ -62,6 +61,7 @@ CalendarDay.propTypes = {
 
     active: propTypes.bool,
     selected: propTypes.bool,
+    disabled: propTypes.bool,
 
     hovered: propTypes.bool,
     inSelectedPeriod: propTypes.bool,

@@ -7,7 +7,6 @@ import Icon from "../Icon/Icon";
 import propTypes from "prop-types";
 
 const Stepper = React.forwardRef((props, ref) => {
-    console.log("render stepper");
     const {palette, vertical, completedCounter, steps, iconSize,
         selectedItem, disableScroll, hideLabels, onStepClick} = props;
 
@@ -36,7 +35,7 @@ const Stepper = React.forwardRef((props, ref) => {
             shiftStepsAccordinglyToSelectedItem();
         }
         return window.removeEventListener('resize', updateVisibleStepsAmount);
-    }, [])
+    }, [updateVisibleStepsAmount])
 
     useEffect(() => {
         !disableScroll && shiftStepsAccordinglyToSelectedItem();
@@ -221,4 +220,4 @@ Stepper.defaultProps = {
     onStepClick: () => void 0
 }
 
-export default Stepper;
+export default React.useMemo(Stepper);
