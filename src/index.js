@@ -34,3 +34,5 @@ export {default as Preloader} from "./Preloader/Preloader";
 export {default as FilterCondition} from "./FilterConditionBuilder/FilterConditionBuilder"
 
 export {default as Badge} from "./Badge/Badge";
+export {default as Table} from "./Table/index";
+export {default as SNTable} from "./SNTable/SNTable";

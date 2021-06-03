@@ -32,3 +32,8 @@
 @import "./Wrapper/wrapper";
 @import "./RangePicker/rangepicker";
 @import "./AlertGroup/alert_group";
+@import "./Table/Table.scss";
+
+:root {
+    --swf-light-gray: #f5f5f5;
+}
