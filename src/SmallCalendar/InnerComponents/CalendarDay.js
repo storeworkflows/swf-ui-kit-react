@@ -2,7 +2,7 @@ import classnames from "classnames";
 import * as React from "react";
 import propTypes from "prop-types";
 
-const CalendarDay = React.forwardRef( (props, ref) => {
+const CalendarDay = React.forwardRef( (props) => {
     const { number,  active, selected,
         extreme, className, onClick, isNowDate,
         onMouseLeave, onMouseEnter, hovered, inSelectedPeriod, borders,
@@ -48,10 +48,10 @@ const CalendarDay = React.forwardRef( (props, ref) => {
 
     const actEvent = (event) => !disabled ? event : () => void 0;
 
-    //console.log("render")
+    console.log("render")
     return <div
         className={dayContainerClasses}
-        ref={ref}
+        //ref={ref}
         onClick={actEvent(onClick)}
         onMouseEnter={  actEvent( onMouseEnter)}
         onMouseLeave={  actEvent( onMouseLeave)}
