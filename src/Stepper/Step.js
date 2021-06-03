@@ -73,4 +73,4 @@ Step.defaultProps = {
     hideLabel: false
 };
 
-export default Step
+export default React.memo(Step)

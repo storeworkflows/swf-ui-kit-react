@@ -16,7 +16,7 @@ const Alert = React.forwardRef((props, ref) => {
         onTextLinkClicked, onButtonClick, onExpandAction,
         expanded, onCloseAction, delay, className,
         defaultPosition, verticalPositions, horizontalPositions,
-        onVisibilityChange
+        onVisibilityChange, textAlignCenter
     } = props;
 
     const [oneLineText, setOneLineText] = useState(false);
@@ -107,13 +107,16 @@ const Alert = React.forwardRef((props, ref) => {
         {
             "--fixed": !defaultPosition,
             "--alignCenter": !isOverflowed && !expandedFinal,
-            "--overflowed": isOverflowed,
             "--oneLineContent": oneLineText,
             "--expanded": expandedFinal,
             "--no-icon": !icon,
             [`--vertical-${verticalPositions}`]: verticalPositions,
             [`--horizontal-${horizontalPositions}`]: horizontalPositions,
         }
+    )
+
+    const alertContentClasses = classnames("alert-content",
+        { "text-align-center": textAlignCenter }
     )
 
     const textStyles = classnames({
@@ -132,7 +135,7 @@ const Alert = React.forwardRef((props, ref) => {
                 <div className={mainContainerClasses} ref={ref}>
                     {icon && <Icon className={"alert-icon"} icon={icon}/>}
 
-                    <div className={"alert-content"}
+                    <div className={alertContentClasses}
                          ref={el => contentRef.current = el}
                     >
                         {header && <div className={"alert-header"}>{header}</div>}
@@ -210,6 +213,8 @@ Alert.propTypes = {
     expanded: propTypes.bool,
     header: propTypes.string,
     icon: propTypes.string,
+    textAlignCenter: propTypes.bool,
+
     manageExpanded: propTypes.bool,
     color: propTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
     textLinkProps: propTypes.shape({

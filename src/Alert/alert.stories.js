@@ -48,7 +48,6 @@ export const Acknowledge = Template.bind({});
 Acknowledge.args = {
     ...Dismiss.args,
     action: { type: "acknowledge" },
-    //expanded: true,
     header: "Header",
     color: "red",
     verticalPositions: "center"
@@ -62,7 +61,7 @@ Open.args = {
     textLinkProps: {
         label: "link",
         href: "href",
-        openWindows: "true"
+        openWindows: true
     },
     icon: "alarm",
     color: "green",

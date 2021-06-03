@@ -258,10 +258,17 @@ const getAvailableDimensions = (position, targetDimensions, contentDimensions, w
 }
 
 
-export const getPopoverStyle = (positions, targetDimensions, contentDimensions, windowParam, hideTail, roundBorder, padding) => {
+export const getPopoverStyle = (positions, targetDimensions, contentDimensions, hideTail, roundBorder, padding) => {
     let result = {};
     let hasArrow, availableDimensions;
     let paddings = (padding) ? padding: PADDING_SIZE;
+
+    let windowParam = {
+        startY: 0,
+        startX: 0,
+        endY: window.innerHeight,
+        endX: window.innerWidth
+    }
 
     for(let i = 0; i<positions.length; i++){
         hasArrow = !hideTail && hasArrowByPosition(positions[i], roundBorder);
