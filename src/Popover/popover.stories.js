@@ -53,7 +53,6 @@ export const TargetRef = (args) => {
 
 
         render () {
-            console.log(this.popoverRef)
             return (
                 <>
                     <InfoMessage content={"Message content"}/>
