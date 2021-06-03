@@ -21,28 +21,24 @@ const AlertGroup = React.forwardRef((props, ref) => {
         }
     )
 
-
     return <div ref={ref} className={alertGroupClasses}>
         {alerts.map((el, i) => {
             return <Alert
-                key={i}
+                key={i + el.content}
                 {...el}
                 defaultPosition={true}
                 delay = {delay || el.delay}
             />
-        }
-        )}
+        })}
     </div>
 
 });
 
 AlertGroup.defaultProps = {
-    color: "blue",
-    action: {type: "dismiss"},
     className: "",
 
-    verticalPositions: "center",
-    horizontalPositions: "end",
+    verticalPositions: "top",
+    horizontalPositions: "start",
 }
 
 const alertObj = {

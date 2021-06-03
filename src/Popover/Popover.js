@@ -1,18 +1,22 @@
 import * as React from "react";
 import propTypes from "prop-types";
+import classnames from "classnames";
+import {ResizeObserver} from "resize-observer";
+import {useEffect, useRef, useState} from "react";
 
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
-import classnames from "classnames";
 import {isPointInsideTheElement} from "../DatePicker/utils";
-import {useCallback, useEffect, useRef, useState} from "react";
-import {ResizeObserver} from "resize-observer";
+import {POPOVER} from "./constants";
 
 const Popover = React.forwardRef((props, ref) => {
 
     const {children, roundBorder, contentStyles, positionTarget, manageOpened,
         onTargetClick, onOuterPopoverClicked, positions, hideTail, opened} = props;
 
+    const [contentDimensions, setContentDimensions] = useState(null);
+    const [targetDimensions, setTargetDimensions] = useState(null);
+    const [popoverStyles, setPopoverStyles] = useState({})
     const [isOpened, setIsOpened] = useState(opened);
 
     const targetRef = useRef(null);
@@ -20,36 +24,15 @@ const Popover = React.forwardRef((props, ref) => {
 
     let openedFinal = manageOpened ? opened : isOpened;
 
-    const renderContent = () => {
-        const content = findByType(children, "Content");
+    useEffect( () => {
+        setStyles(true)
+        calculateStyles()
+    },[targetDimensions, targetRef.current, contentRef.current, contentDimensions, hideTail, positions, contentStyles])
 
-        if (!content)
-            return null;
-
-        return (
-            <div className={classnames({
-                        "popover-content": true,
-                        "noRoundBorder": !roundBorder
-                    })}
-                 ref={el => {contentRef.current = el; ref=el}}
-                 style={contentStyles}
-                 onClick={e => e?.stopPropagation()}
-            >
-                <div className={"popover-content-keeper"}>
-                    {content}</div>
-            </div>
-        );
-    }
+    useEffect(() => setStyles(!openedFinal),
+        [openedFinal, hideTail, contentRef.current, popoverStyles])
 
     useEffect(() => {
-        const targetValue = positionTarget?.current;
-        if(targetValue)
-            targetRef.current = targetValue;
-    }, [ positionTarget])
-
-    useEffect(() => {
-        updateOpenedState(openedFinal);
-
         const targetValue = targetRef.current
         if(targetValue){
             targetValue.addEventListener("click", targetClicked)
@@ -57,22 +40,96 @@ const Popover = React.forwardRef((props, ref) => {
         }
     }, [targetRef.current, openedFinal, manageOpened, opened, isOpened])
 
-
     useEffect(() => {
-        let resizeObserver = new ResizeObserver(contentResized)
+        let resizeObserver = new ResizeObserver((e) => {
+            const target = e[0].target
+            target.parentElement.classList.contains("popover-content-keeper")
+                ? setContentDimensions(target.getBoundingClientRect())
+                : setTargetDimensions(target.getBoundingClientRect())
+        });
 
         if(targetRef.current)
             resizeObserver.observe(targetRef.current);
         resizeObserver.observe(contentRef.current.children[0].children[0]);
 
         return () => resizeObserver.disconnect();
-    }, [targetRef, contentRef, openedFinal])
+    }, [targetRef.current, contentRef.current])
 
     useEffect(() => {
         document.addEventListener("click", documentClicked);
         return () => document.removeEventListener("click", documentClicked)
-    }, [targetRef, contentRef, openedFinal, manageOpened, onOuterPopoverClicked])
+    }, [targetRef.current, contentRef.current, openedFinal, manageOpened, onOuterPopoverClicked])
 
+    useEffect(() => {
+        const targetValue = positionTarget?.current;
+        if(targetValue)
+            targetRef.current = targetValue;
+    }, [ positionTarget])
+
+    const targetClicked = (e) => {
+        e.preventDefault();
+
+        if(isPointInsideTheElement(targetRef?.current, e.clientX, e.clientY)) {
+            !manageOpened &&  setIsOpened(!isOpened)
+            let value = manageOpened ? opened : !isOpened;
+            onTargetClick({value})
+        }
+    }
+
+    const documentClicked = (event) =>{
+        let pointX = event.clientX;
+        let pointY = event.clientY;
+        let contentElement = contentRef.current;
+        let targetElement = targetRef.current;
+
+        if( openedFinal && contentElement && targetElement) {
+
+            let isOutsideContent = !isPointInsideTheElement(contentElement, pointX, pointY);
+            let isOutsideTarget = !isPointInsideTheElement(targetElement, pointX, pointY);
+
+            if(isOutsideContent && isOutsideTarget) {
+                !manageOpened && setIsOpened(!isOpened)
+                onOuterPopoverClicked(event);
+            }
+        }
+    }
+
+    const setStyles = (isHidden) => {
+        let contentElement = contentRef?.current;
+        if(!contentElement) return;
+
+        const stylesToSet = isHidden ? POPOVER.hiddenStyles : popoverStyles.style;
+        if (!stylesToSet) return;
+
+        Object.entries(stylesToSet).map(([key, value])=> {
+            if(key === 'maxHeight' || key === 'maxWidth')
+                contentElement.children[0].style[`${key}`] = value ;
+            else contentElement.style[`${key}`] = value
+        })
+
+        if(isHidden) {
+            contentElement.children[0].style.maxHeight = contentElement.style.maxHeight || contentElement.style.height;
+            contentElement.children[0].style.maxWidth = contentElement.style.maxWidth || contentElement.style.width;
+
+        } else if(!hideTail && stylesToSet.hasArrow){
+            Object.entries(popoverStyles.arrowStyle).map(([key, value])=>
+                contentElement.style[`${key}`] = value
+            )
+        }
+    }
+
+    const calculateStyles = () => {
+        let contentElement = contentRef?.current;
+
+        if(contentElement && targetDimensions) {
+            let padding = contentStyles && contentStyles['padding'] && contentStyles['padding'].split('px')[0] ;
+            let contentDimensions = contentElement.getBoundingClientRect();
+
+            let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, hideTail, roundBorder, padding);
+            stylesInfo.style.visibility = "visible";
+            setPopoverStyles(stylesInfo)
+        }
+    }
 
     const renderTarget = () => {
         const target = findByType(children, "Target");
@@ -84,95 +141,26 @@ const Popover = React.forwardRef((props, ref) => {
                     ref={targetRef}>{target}</div>
     }
 
-     const contentResized = () => {
-        resetStyles();
-        openedFinal && setStylesToContent();
+    const renderContent = () => {
+        const content = findByType(children, "Content");
+
+        if (!content)
+            return null;
+
+        return (
+            <div className={classnames({
+                "popover-content": true,
+                "noRoundBorder": !roundBorder
+            })}
+                 ref={el => {contentRef.current = el; ref=el}}
+                 style={contentStyles}
+                 onClick={e => e?.stopPropagation()}
+            >
+                <div className={"popover-content-keeper"}>
+                    {content}</div>
+            </div>
+        );
     }
-
-    const targetClicked = useCallback((e) => {
-        e.preventDefault();
-
-        if(isPointInsideTheElement(targetRef?.current, e.clientX, e.clientY)) {
-            !manageOpened &&  setIsOpened(!isOpened)
-            let value = manageOpened ? opened : !isOpened;
-            onTargetClick({value})
-        }
-    }, [targetRef, manageOpened, opened, isOpened])
-
-    const documentClicked = (event) =>{
-        let pointX = event.clientX;
-        let pointY = event.clientY;
-        let contentElement = contentRef?.current;
-        let targetElement = targetRef?.current;
-
-        if( openedFinal && contentElement && targetElement) {
-            let isOutsideContent = !isPointInsideTheElement(contentElement, pointX, pointY);
-            let isOutsideTarget = !isPointInsideTheElement(targetElement, pointX, pointY);
-
-            if(isOutsideContent && isOutsideTarget) {
-                !manageOpened && setIsOpened(!isOpened)
-                onOuterPopoverClicked(event);
-            }
-        }
-    }
-
-    const setStylesToContent = () => {
-        let contentElement = contentRef?.current;
-        let targetElement = targetRef?.current;
-
-        if(contentElement && targetElement) {
-            let padding = contentStyles && contentStyles['padding'] && contentStyles['padding'].split('px')[0] ;
-            let targetDimensions = targetElement.getBoundingClientRect()
-            let contentDimensions = contentElement.getBoundingClientRect();
-
-            let windowParam = {
-                startY: 0,
-                startX: 0,
-                endY: window.innerHeight,
-                endX: window.innerWidth
-            }
-
-            let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, windowParam, hideTail, roundBorder, padding);
-            let styles = stylesInfo.style;
-
-            contentElement.style.transform = styles.transform;
-            contentElement.style.left = styles.left;
-            contentElement.style.top = styles.top;
-            contentElement.style.visibility = "visible";
-
-            if(styles.maxHeight)
-                contentElement.children[0].style.maxHeight = styles.maxHeight ;
-            if(styles.maxWidth)
-                contentElement.children[0].style.maxWidth = styles.maxWidth;
-
-            if (!hideTail && stylesInfo.hasArrow) {
-                for (const [key, value] of Object.entries(stylesInfo.arrowStyle))
-                    contentElement.style.setProperty(key, value);
-            }
-        }
-    }
-
-    const resetStyles = () =>{
-   //     console.log("reset styles")
-        let contentElement = contentRef?.current;
-        if(contentElement)
-        {
-            contentElement.style.visibility = "hidden";
-            contentElement.style.transform = `translate3d(0, 0, 0)`;
-            contentElement.style.left =  0;
-            contentElement.style.top = 0;
-            contentElement.children[0].style.maxHeight = contentElement.style.maxHeight || contentElement.style.height;
-            contentElement.children[0].style.maxWidth = contentElement.style.maxWidth || contentElement.style.width ;
-            contentElement.style.margin = 0;
-        }
-    }
-
-    const updateOpenedState = (value) => {
-  //      console.log("update opened state")
-        resetStyles();
-        value && setStylesToContent();
-    }
-
 
     return <>
             {renderContent()}

@@ -7,16 +7,12 @@
     z-index: 100;
     animation-duration: 1s;
     animation-name: slidein;
-    //--start-animation: 0;
-    //--end-animation: 0;
 
     &.--vertical-top{
       top: 1rem;
 
       --start-taransformY: -50%;
       --end-taransformY: 0;
-      //--start-taransformY: -1rem;
-      //--end-taransformY: 1rem;
     }
 
     &.--vertical-center{

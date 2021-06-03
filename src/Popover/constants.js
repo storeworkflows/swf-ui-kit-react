@@ -25,4 +25,12 @@ export const POPOVER = {
     ARROW_SIZE: 9,
     ARROW_SPACE: 3,
     PADDING_SIZE: 8,
+    hiddenStyles: {
+        visibility: "hidden",
+        transform: `translate3d(0, 0, 0)`,
+        left:  0,
+        top: 0,
+        margin: 0
+    }
+
 }

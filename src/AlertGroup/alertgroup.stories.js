@@ -27,15 +27,8 @@ Standard.args = {
         },
         {
             content: "Small content",
-            action: {type: "open"},
+            action: {type: "dismiss"},
             header: "Header",
-            textLinkProps: {
-                label: "link",
-                href: "href",
-                openWindows: true
-            },
-            icon: "alarm",
-            color: "green",
            // delay: 2000
         }
     ],

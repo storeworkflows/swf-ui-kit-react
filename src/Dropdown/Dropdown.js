@@ -17,7 +17,7 @@ const Dropdown = React.forwardRef((props, ref) => {
         opened, invalid, selectedItems, items, visible,
         manageInvalid, onInvalid,
         manageOpened, onOpened,
-        manageSelectedItems, onItemSelected, select
+        manageSelectedItems, onItemSelected, select, autoWidth
     } = props;
 
     const [isOpened, setIsOpened] = useState(opened);
@@ -67,9 +67,7 @@ const Dropdown = React.forwardRef((props, ref) => {
             itemToScroll.current.scrollIntoView()
     }, [isOpened, opened])
 
-    useEffect(() => {
-        dropdownRef?.current && setDropdownWidth(dropdownRef.current.offsetWidth);
-    }, [])
+    useEffect(() =>  dropdownRef.current && setDropdownWidth(dropdownRef.current.offsetWidth), [dropdownRef.current, autoWidth])
 
     const renderItems = () => {
         const {scrollToSelected, itemClassName} = props;
@@ -139,9 +137,15 @@ const Dropdown = React.forwardRef((props, ref) => {
             "placeholder": !hasSelected
         })
 
+        const containerClasses = classnames(
+            className,
+            "swf-dropdown-main-container",
+            "dropdown-container",
+            {"--autoWidth": autoWidth })
+
         return (
             <>
-                <div className={classnames(className, "swf-dropdown-main-container")}
+                <div className={containerClasses}
                      ref={ref}>
                     <input
                         type="hidden"
@@ -275,6 +279,8 @@ Dropdown.propTypes = {
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
     labelClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
     itemClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
+
+    autoWidth: propTypes.bool
 
     //todo
     //icon: propTypes.string,

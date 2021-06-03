@@ -39,23 +39,18 @@ export const TargetRef = (args) => {
     class PopoverWithRef extends React.Component{
         constructor(props) {
             super(props);
-          //  this.
             this.state = {
-               // hasTarget: false,
                 styles: {width: "100px", height: "100px", padding: "10px"},
                 current: null
             }
+
+            this.popoverRef = createRef();
         }
 
         shouldComponentUpdate(nextProps, nextState, nextContext) {
             return !_.isEqual(nextState, this.state)
         }
 
-        componentDidMount() {
-            // if(this.target && this.target.current){
-            //     this.setState({hasTarget: true})
-            // }
-        }
 
         render () {
             return (
@@ -66,6 +61,7 @@ export const TargetRef = (args) => {
                     <Popover {...this.props}
                              positionTarget={{current: this.state.current}}
                              opened={true}
+                             ref={el=> this.popoverRef.current = el}
                     >
                         <Popover.Content>
                             <div style={this.state.styles}
