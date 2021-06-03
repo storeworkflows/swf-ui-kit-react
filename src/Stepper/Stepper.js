@@ -220,4 +220,4 @@ Stepper.defaultProps = {
     onStepClick: () => void 0
 }
 
-export default React.useMemo(Stepper);
+export default React.memo(Stepper);

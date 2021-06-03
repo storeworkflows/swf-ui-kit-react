@@ -46,16 +46,15 @@ const CalendarDay = React.forwardRef( (props, ref) => {
         "--can-hover": !disabled
     })
 
-    const actEvent = (e, event) => {
-        !disabled && event(e);
-    }
+    const actEvent = (event) => !disabled ? event : () => void 0;
 
+    //console.log("render")
     return <div
         className={dayContainerClasses}
         ref={ref}
-        onClick={ e => actEvent(e, onClick)}
-        onMouseEnter={ e => actEvent(e, onMouseEnter)}
-        onMouseLeave={ e => actEvent(e, onMouseLeave)}
+        onClick={actEvent(onClick)}
+        onMouseEnter={  actEvent( onMouseEnter)}
+        onMouseLeave={  actEvent( onMouseLeave)}
     >
         <div className={borderStyles}/>
         <div className={dayClasses}>

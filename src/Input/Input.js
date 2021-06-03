@@ -133,7 +133,7 @@ const Input = (props) => {
     return (
         <>
             <div className={containerClasses}
-                 //ref={elm => props.internalRef.current = elm}
+                 ref={elm => props.internalRef.current = elm}
             >
                 {_hasLabel &&
                 <span className={labelClasses}>

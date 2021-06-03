@@ -15,6 +15,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     const {openedDate, onSelected, children, range, selectedDate, onMonthChange, className, hoveredDate,
         onSetHover, manageHover, manageSelected} = props;
 
+  //  const [monthElements, setMonthElements] = useState([]);
     const [monthDates, setMonthDates] = useState([]);
     const [selected, setSelected] = useState(defineSelected(range, selectedDate));
     const [hovered, setHovered] = useState(hoveredDate);
@@ -30,6 +31,21 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     useEffect(() => {
         manageSelected && setSelected(defineSelected(range, selectedDate))
     }, [manageSelected, range, selectedDate])
+
+    // useEffect(() => {
+    //     let updatedArr = [];
+    //     monthDates.map(currentDay => {
+    //         const isActive = currentDay.getMonth() === openedDate.getMonth();
+    //         let dateObj = currentDay.setHours(0,0,0,0);
+    //
+    //         const currProps = defineProps(selected, range, dateObj, hovered);
+    //         currProps.isActive = isActive;
+    //         currProps.dateObj = dateObj;
+    //         currProps.number = currentDay.getDate();
+    //         updatedArr.push(<)
+    //     })
+    //     setMonthElements(updatedArr)
+    // }, [monthDates, hovered, selected, range])
 
     const changeHover = useCallback((date) => {
         if(!range)
@@ -113,6 +129,32 @@ const CalendarMonth = React.forwardRef((props, ref) => {
                     </div>
                     )}
                     {monthDates.map(renderCalendarElement)}
+                    {/*{monthElements.map(el =>*/}
+                    {/*{*/}
+                    {/*    const {isSelected, inSelectedPeriod, isNowDate, isHovered,*/}
+                    {/*        extreme, borders, selectedBorders, disabled, isActive, dateObj, number}*/}
+                    {/*    = el;*/}
+                    {/*   // isSelected && console.log(el)*/}
+
+                    {/*    return <CalendarDay*/}
+                    {/*    key = {dateObj}*/}
+                    {/*    active={isActive}*/}
+                    {/*    number={number}*/}
+                    {/*    isNowDate={isNowDate}*/}
+                    {/*    selected={isSelected}*/}
+                    {/*    disabled={disabled}*/}
+
+                    {/*    inSelectedPeriod={inSelectedPeriod}*/}
+                    {/*    hovered={isHovered}*/}
+                    {/*    extreme={extreme}*/}
+                    {/*    borders={borders}*/}
+                    {/*    selectedBorders={selectedBorders}*/}
+
+                    {/*    onMouseEnter={() => changeHover(dateObj)}*/}
+                    {/*    onMouseLeave={() => changeHover(null)}*/}
+                    {/*    onClick={(e) => setDate({dateObj, isActive, e}) }*/}
+                    {/*    />*/}
+                    {/*})}*/}
                 </div>
             </div>
         </>

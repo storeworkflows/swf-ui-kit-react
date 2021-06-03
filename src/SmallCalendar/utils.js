@@ -24,9 +24,9 @@ const defineDisabledValue = (startDate, endDate, current, isFirstSelecting) => {
         const e = nextEnd.setHours(0,0,0,0)
 
         switch (true) {
-            case isFirstSelecting && e && current === e :
+            case isFirstSelecting && current === e :
                 return "start";
-            case !isFirstSelecting && s && current === s :
+            case !isFirstSelecting && current === s :
                 return "end";
             default:
                 return "none";
