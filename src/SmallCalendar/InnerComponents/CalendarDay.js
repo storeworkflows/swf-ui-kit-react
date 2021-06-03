@@ -16,11 +16,14 @@ const CalendarDay = React.forwardRef( (props, ref) => {
         "--border-bottom": borders.includes("bottom"),
         "--border-right": borders.includes("right"),
         "--border-left": borders.includes("left"),
-        "--hovered": hovered,
+        "--hovered": hovered && !disabled,
+        "--disabled": disabled
     })
     const dayContainerClasses = classnames(
         className,
         "calendar-day-container", {
+            "--disabled": disabled && active,
+            "--cursor-default": disabled,
             "--selected": selected,
             "--in-selected-period": active && inSelectedPeriod,
             "--border-top": borders.includes("top"),
@@ -29,6 +32,7 @@ const CalendarDay = React.forwardRef( (props, ref) => {
             "--selected-border-bottom": selectedBorders.includes("bottom"),
             "--selected-border-right": selectedBorders.includes("right"),
             "--selected-border-left": selectedBorders.includes("left"),
+            [`--${disabled}-disabled`]: disabled
         }
     )
 
@@ -39,14 +43,19 @@ const CalendarDay = React.forwardRef( (props, ref) => {
         "active": active,
         "selected": selected,
         "now-date": isNowDate,
+        "--can-hover": !disabled
     })
+
+    const actEvent = (e, event) => {
+        !disabled && event(e);
+    }
 
     return <div
         className={dayContainerClasses}
         ref={ref}
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
+        onClick={ e => actEvent(e, onClick)}
+        onMouseEnter={ e => actEvent(e, onMouseEnter)}
+        onMouseLeave={ e => actEvent(e, onMouseLeave)}
     >
         <div className={borderStyles}/>
         <div className={dayClasses}>
@@ -61,8 +70,10 @@ CalendarDay.propTypes = {
 
     active: propTypes.bool,
     selected: propTypes.bool,
-    disabled: propTypes.bool,
-
+    disabled: propTypes.oneOfType([
+        propTypes.oneOf(["none", "start", "end"]),
+        propTypes.bool
+    ]),
     hovered: propTypes.bool,
     inSelectedPeriod: propTypes.bool,
     extreme: propTypes.oneOf(["first", "last", "one", "none"]),

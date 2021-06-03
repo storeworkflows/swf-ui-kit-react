@@ -12,6 +12,28 @@ const defineExtreme = (start, end, curr) => {
 
 }
 
+const defineDisabledValue = (startDate, endDate, current, isFirstSelecting) => {
+    if( (isFirstSelecting && current>endDate) || (!isFirstSelecting && current<startDate))
+    {
+        const nextStart = new Date(startDate)
+        nextStart.setDate(nextStart.getDate() - 1)
+        const s = nextStart.setHours(0,0,0,0)
+
+        const nextEnd = new Date(endDate)
+        nextEnd.setDate(nextEnd.getDate() + 1)
+        const e = nextEnd.setHours(0,0,0,0)
+
+        switch (true) {
+            case isFirstSelecting && e && current === e :
+                return "start";
+            case !isFirstSelecting && s && current === s :
+                return "end";
+            default:
+                return "none";
+        }
+    }
+}
+
 export const defineProps = (selected, range, current, hovered) => {
     let startDate = (!range || range.isFirstSelecting ? selected : range.start)?.setHours(0,0,0,0);
     let endDate = range && (range.isFirstSelecting ? range.end : selected)?.setHours(0,0,0,0);
@@ -32,11 +54,8 @@ export const defineProps = (selected, range, current, hovered) => {
     let borders = [];
     let disabled = false;
 
-    if(range)
-        disabled = range.isFirstSelecting
-            ? current > endDate
-            : current < startDate
-
+    if(range && !inSelectedPeriod)
+        disabled = defineDisabledValue(startDate, endDate, current, range.isFirstSelecting)
 
     if(range && hovered) {
 
