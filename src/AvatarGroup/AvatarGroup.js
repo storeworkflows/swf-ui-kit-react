@@ -33,7 +33,7 @@ const AvatarGroup = (props) => {
     return (
         <>
             <div
-                ref={elm => props.innerRef.current = elm}
+              //  ref={elm => props.innerRef.current = elm}
                 className={
                     classnames({
                         "swf-avatar-container": true,
@@ -59,7 +59,7 @@ const AvatarGroup = (props) => {
                     <p className="additional-avatar">{String.fromCharCode(43)}{additionalMembers}</p>
                 </div>}
 
-                {viewers.map((viewer, index) => (
+                {viewers.map((viewer, index) =>  (
                     <div key={index + viewer.name.replace("", "_")}>
                         <Avatar
                             id={viewer.id || index}
@@ -69,7 +69,7 @@ const AvatarGroup = (props) => {
                             member={viewer}
                             manageOpened={true}
                             onClick={() => handleClick({index, avatar: viewer})}
-                            open={openedAvatar === index}
+                            open={manageOpened ? viewer.open : openedAvatar === index}
                         />
                     </div>
                 ))
@@ -103,6 +103,7 @@ AvatarGroup.propTypes = {
         name: PropTypes.string.isRequired,
         title: PropTypes.string,
         avatar: PropTypes.string,
+        open: PropTypes.bool
     })),
     canRemove: propTypes.bool,
     onClick: propTypes.func,
@@ -110,7 +111,8 @@ AvatarGroup.propTypes = {
     customIcon: propTypes.string,
     onAdd: propTypes.func,
     onRemove: propTypes.func,
-    innerRef: propTypes.object
+    innerRef: propTypes.object,
+
 }
 
 export default AvatarGroup
