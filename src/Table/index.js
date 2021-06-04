@@ -16,7 +16,8 @@ TableContainer.defaultProp = {
     },
     paginationBottom: {
         alignment: "end"
-    }
+    },
+    total: undefined
 }
 
 TableContainer.propTypes = {
@@ -34,7 +35,8 @@ TableContainer.propTypes = {
     }),
     offsetChanged: propTypes.func,
     currentPageChanged: propTypes.func,
-    peerPageChanged: propTypes.func
+    peerPageChanged: propTypes.func,
+    total: propTypes.number
 }
 
 export default TableContainer

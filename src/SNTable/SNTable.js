@@ -14,6 +14,7 @@ const SNTable = (props) => {
     const [dataSource, setDataSource] = useState([]);
     const [limit, setLimit] = useState(50);
     const [offset, setOffset] = useState(0);
+    const [total, setTotal] = useState(0);
 
     const controllerRef = useRef(null);
 
@@ -61,6 +62,7 @@ const SNTable = (props) => {
             }, {})
         });
 
+        setTotal(layoutQuery.count);
         setHeaders(headers);
         setDataSource(dataSource);
     }
@@ -87,6 +89,6 @@ const SNTable = (props) => {
         fetchTableRecords();
     }, [table, view, query, offset, limit]);
 
-    return <TableContainer headers={headers} dataSource={dataSource} offsetChanged={handleOffset} peerPageChanged={handleLimit} />
+    return <TableContainer headers={headers} dataSource={dataSource} offsetChanged={handleOffset} peerPageChanged={handleLimit} total={total} />
 }
 export default SNTable

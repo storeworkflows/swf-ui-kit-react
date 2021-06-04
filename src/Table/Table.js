@@ -16,7 +16,7 @@ const tableRow = ({data: record, key, render}) => {
     return <Td key={`${key}`}>{render ? render({record, value}) : value}</Td>
 }
 
-export const Table = ({headers = [], dataSource = [], paginationBottom, paginationTop}) => {
+export const Table = ({headers = [], dataSource = [], paginationBottom, paginationTop, total}) => {
     const rowsCount = Array(dataSource.length).fill(null);
 
     return <div className="tableResponsive">
@@ -33,7 +33,7 @@ export const Table = ({headers = [], dataSource = [], paginationBottom, paginati
                 }
             </Tbody>
         </table>
-        <Pagination total={rowsCount.length} {...paginationBottom}/>
+        <Pagination total={total || rowsCount.length} {...paginationBottom}/>
     </div>
 }
 
@@ -45,7 +45,8 @@ Table.defaultProp = {
     },
     paginationBottom: {
         alignment: "end"
-    }
+    },
+    total: undefined
 }
 
 Table.propTypes = {
@@ -60,5 +61,6 @@ Table.propTypes = {
     }),
     paginationBottom: propTypes.shape({
         alignment: propTypes.oneOf(["start", "center", "end"])
-    })
+    }),
+    total: propTypes.number
 }
