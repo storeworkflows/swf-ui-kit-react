@@ -53,6 +53,7 @@ export const Pagination = (props) => {
     peerPage,
     setCurrentPage: setTab,
     setPeerPage,
+    setOffset,
   } = useContext(TableContext);
   const pages = Math.ceil(total / peerPage) || 1;
 
@@ -67,17 +68,31 @@ export const Pagination = (props) => {
   const showMoreIconRight = !isLastNElements;
   const showMoreIconLeft = !isFirstNElements;
 
-  const handleNextPage = () => setTab((current) => current + 1);
-  const handlePrevPage = () => setTab((current) => current - 1);
+  const setCurrentPageGap = (gap) => {
+    setTab((current) => {
+      const newPage = current + gap;
+      setOffset(peerPage * (newPage - 1));
+      return newPage;
+    });
+  };
 
-  const handleClick = (i) => () => setTab(i);
+  const handleNextPage = () => {
+    setCurrentPageGap(1);
+  };
+  const handlePrevPage = () => {
+    setCurrentPageGap(-1);
+  };
+
+  const handleClick = (i) => () => {
+    setCurrentPageGap(i - page);
+  };
 
   const jumpToNext = () => {
-    setTab((current) => current + 5);
+    setCurrentPageGap(5);
   };
 
   const jumpToPrev = () => {
-    setTab((current) => current - 5);
+    setCurrentPageGap(-5);
   };
 
   const generatePaginationItems = (start, end) => {
@@ -138,21 +153,19 @@ export const Pagination = (props) => {
   };
 
   const handleSelectedItem = ({ clickedItem }) => {
-    console.log("handleSelectedItem");
-
     setPeerPageOpened(() => false);
     setPeerPage(clickedItem.label);
+    const pages = Math.ceil(total / clickedItem.label) || 1;
+    if (pages > page) return setCurrentPageGap(0);
+    return setCurrentPageGap(pages - page);
   };
 
   const handleOpened = ({ opened }) => {
-    console.log("handleOpened", opened);
     setPeerPageOpened((current) => {
       if (opened === undefined) return false;
       return !current;
     });
   };
-
-  console.log({ peerPageOpened, peerPage });
 
   return (
     <div className={classNames("pagination-container", alignment)}>

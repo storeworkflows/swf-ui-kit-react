@@ -1,6 +1,6 @@
 import fetch from "cross-fetch";
 
-const DEFAULT_GQL_ENDPOINT = 'api/now/graphql';
+const DEFAULT_GQL_ENDPOINT = 'https://ven04075.service-now.com/api/now/graphql';
 
 export default function graphqlRequest({operationName = '', query = {}, variables = {}, params = {}}) {
     const options = {
