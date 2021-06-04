@@ -12,7 +12,32 @@ export default function Loader({size = 32}) {
     }, [size])
 
   return (
-    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+    <div className="boxes" ref={boxesRef}>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div className="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
   );
 }
 

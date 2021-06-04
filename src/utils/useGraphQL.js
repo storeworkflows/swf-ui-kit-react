@@ -14,7 +14,7 @@ export default function useGraphQL ({
     const controllerRef = useRef(null);
 
     const getQraphQLData = async () => {
-        const response = graphQl({
+        const response = await graphQl({
             operationName,
             query,
             variables,
@@ -25,10 +25,10 @@ export default function useGraphQL ({
 
         const data = await response.json();
 
-        setGraphqlState({
+        setGraphqlState(() => ({
             loading: false,
             data
-        })
+        }))
     }
 
     useEffect(() => {
@@ -37,10 +37,10 @@ export default function useGraphQL ({
         }
         controllerRef.current = new AbortController();
 
-        setGraphqlState({
+        setGraphqlState(() => ({
             loading: true,
             data: null
-        });
+        }));
         getQraphQLData();
     }, deps)
 
