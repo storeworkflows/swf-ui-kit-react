@@ -20,7 +20,7 @@ export const Table = ({headers = [], dataSource = [], paginationBottom, paginati
     const rowsCount = Array(dataSource.length).fill(null);
 
     return <div className="tableResponsive">
-        <Pagination total={rowsCount.length} {...paginationTop}/>
+        <Pagination total={total || rowsCount.length} {...paginationTop}/>
         <table className="table" cellPadding={0} cellSpacing={0}>
             <Thead>
                 {headers.map(({label, key}) => <Th key={`${key}:${label}`}>{label}</Th>)}
