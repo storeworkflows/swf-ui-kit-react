@@ -1,15 +1,6 @@
 import propTypes from "prop-types";
-import {Table} from "./Table";
-import {TableProvider} from "./context/table";
-import { TablePropTypes } from "./table.shema";
 
-const TableContainer = (props) => {
-    return <TableProvider {...props}>
-        <Table {...props}/>
-    </TableProvider>
-}
-
-TableContainer.defaultProp = {
+export const TableDefaultProps = {
     headers: [],
     dataSource: [],
     paginationTop: {
@@ -18,10 +9,11 @@ TableContainer.defaultProp = {
     paginationBottom: {
         alignment: "end"
     },
-    total: undefined
+    total: undefined,
+    loading: false
 }
 
-TableContainer.propTypes = {
+export const TablePropTypes = {
     headers: propTypes.arrayOf(propTypes.shape({
         label: propTypes.string,
         key: propTypes.string,
@@ -35,10 +27,5 @@ TableContainer.propTypes = {
         alignment: propTypes.oneOf(["start", "center", "end"])
     }),
     total: propTypes.number,
-    loading: propTypes.bool,
-    offsetChanged: propTypes.func,
-    currentPageChanged: propTypes.func,
-    peerPageChanged: propTypes.func,
+    loading: propTypes.bool
 }
-
-export default TableContainer

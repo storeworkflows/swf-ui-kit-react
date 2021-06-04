@@ -5,6 +5,8 @@ import {Tbody} from "./Tbody";
 import {Td} from "./Td";
 import {Pagination} from "./Pagination";
 import propTypes from "prop-types";
+import Loader from "../Loader/Loader";
+import { TableDefaultProps, TablePropTypes } from "./table.shema";
 
 const tableRow = ({data: record, key, render}) => {
     if (!key) {
@@ -16,10 +18,11 @@ const tableRow = ({data: record, key, render}) => {
     return <Td key={`${key}`}>{render ? render({record, value}) : value}</Td>
 }
 
-export const Table = ({headers = [], dataSource = [], paginationBottom, paginationTop, total}) => {
+export const Table = ({headers = [], dataSource = [], paginationBottom, paginationTop, total, loading}) => {
     const rowsCount = Array(dataSource.length).fill(null);
 
     return <div className="tableResponsive">
+        {loading && <div className="table-loader"><Loader/></div>}
         <Pagination total={total || rowsCount.length} {...paginationTop}/>
         <table className="table" cellPadding={0} cellSpacing={0}>
             <Thead>
@@ -37,30 +40,6 @@ export const Table = ({headers = [], dataSource = [], paginationBottom, paginati
     </div>
 }
 
-Table.defaultProp = {
-    headers: [],
-    dataSource: [],
-    paginationTop: {
-        alignment: "end"
-    },
-    paginationBottom: {
-        alignment: "end"
-    },
-    total: undefined
-}
+Table.defaultProp = TableDefaultProps;
 
-Table.propTypes = {
-    headers: propTypes.arrayOf(propTypes.shape({
-        label: propTypes.string,
-        key: propTypes.string,
-        render: propTypes.func
-    })),
-    dataSource: propTypes.arrayOf(propTypes.object),
-    paginationTop: propTypes.shape({
-        alignment: propTypes.oneOf(["start", "center", "end"])
-    }),
-    paginationBottom: propTypes.shape({
-        alignment: propTypes.oneOf(["start", "center", "end"])
-    }),
-    total: propTypes.number
-}
+Table.propTypes = TablePropTypes;
