@@ -34,9 +34,9 @@ const defineDisabledValue = (startDate, endDate, current, isFirstSelecting) => {
     }
 }
 
-export const defineProps = (selected, range, current, hovered) => {
-    let startDate = (!range || range.isFirstSelecting ? selected : range.start)?.setHours(0,0,0,0);
-    let endDate = range && (range.isFirstSelecting ? range.end : selected)?.setHours(0,0,0,0);
+export const defineProps = (selectedDate, range, current, hoveredDate) => {
+    let startDate = (!range || range.isFirstSelecting ? selectedDate : range.start)?.setHours(0,0,0,0);
+    let endDate = range && (range.isFirstSelecting ? range.end : selectedDate)?.setHours(0,0,0,0);
 
     if(endDate && startDate){
         if(range.isFirstSelecting && endDate<startDate)
@@ -45,11 +45,11 @@ export const defineProps = (selected, range, current, hovered) => {
             startDate = null;
     }
 
-    let isSelected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
+    let selected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
     let inSelectedPeriod = startDate && endDate && current>=startDate && current<=endDate;
     let isNowDate = _.isEqual(current, new Date().setHours(0,0,0,0) )
 
-    let isHovered = false;
+    let hovered = false;
     let extreme =  "none";
     let borders = [];
     let disabled = false;
@@ -57,25 +57,25 @@ export const defineProps = (selected, range, current, hovered) => {
     if(range && !inSelectedPeriod)
         disabled = defineDisabledValue(startDate, endDate, current, range.isFirstSelecting)
 
-    if(range && hovered) {
+    if(range && hoveredDate) {
 
-        const hoveredForFirst = range.isFirstSelecting && endDate && current <= endDate && current >= hovered;
-        const hoveredForSecond = !range.isFirstSelecting && startDate && current >= startDate && current <= hovered;
+        const hoveredForFirst = range.isFirstSelecting && endDate && current <= endDate && current >= hoveredDate;
+        const hoveredForSecond = !range.isFirstSelecting && startDate && current >= startDate && current <= hoveredDate;
 
         extreme = range.isFirstSelecting
-            ? defineExtreme(hovered, endDate, current)
-            : defineExtreme(startDate, hovered, current);
+            ? defineExtreme(hoveredDate, endDate, current)
+            : defineExtreme(startDate, hoveredDate, current);
 
-        isHovered = hoveredForSecond || hoveredForFirst;
+        hovered = hoveredForSecond || hoveredForFirst;
         borders = range.isFirstSelecting
-            ? defineBorder(hovered, endDate, current)
-            : defineBorder(startDate, hovered, current)
+            ? defineBorder(hoveredDate, endDate, current)
+            : defineBorder(startDate, hoveredDate, current)
     }
     let selectedBorders = []
-    if(isSelected && range)
+    if(selected && range)
         selectedBorders = defineBorder(startDate, endDate, current)
 
-    return {isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders, disabled}
+    return {selected, inSelectedPeriod, isNowDate, hovered, extreme, borders, selectedBorders, disabled}
 }
 
 const defineBorder = (start, end, current) => {
@@ -152,4 +152,15 @@ export const getMonthDates = (openedDate) => {
     }
 
     return result;
+}
+
+export const checkIfEqual = (newValue, oldValue) => {
+    let res = true;
+     Object.entries(newValue).map(([key, value] )=> {
+        if(oldValue[`${key}`] !== value){
+            res = false
+            return false;
+        }
+    })
+    return res;
 }

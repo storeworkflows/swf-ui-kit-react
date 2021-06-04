@@ -3,7 +3,7 @@ import * as React from 'react';
 import propTypes from "prop-types";
 import classnames from 'classnames';
 
-import {defineProps, defineSelected, getMonthDates} from "../utils";
+import {checkIfEqual, defineProps, defineSelected, getMonthDates} from "../utils";
 import {useCallback, useEffect, useRef, useState} from "react";
 import findByType, {createSubComponent} from "../../utils/findByType";
 import CalendarDay from "./CalendarDay";
@@ -15,7 +15,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     const {openedDate, onSelected, children, range, selectedDate, onMonthChange, className, hoveredDate,
         onSetHover, manageHover, manageSelected} = props;
 
-  //  const [monthElements, setMonthElements] = useState([]);
+    const [monthElements, setMonthElements] = useState([]);
     const [monthDates, setMonthDates] = useState([]);
     const [selected, setSelected] = useState(defineSelected(range, selectedDate));
     const [hovered, setHovered] = useState(hoveredDate);
@@ -34,15 +34,24 @@ const CalendarMonth = React.forwardRef((props, ref) => {
 
     // useEffect(() => {
     //     let updatedArr = [];
-    //     monthDates.map(currentDay => {
+    //     monthDates.map((currentDay, i) => {
     //         const isActive = currentDay.getMonth() === openedDate.getMonth();
     //         let dateObj = currentDay.setHours(0,0,0,0);
     //
     //         const currProps = defineProps(selected, range, dateObj, hovered);
-    //         currProps.isActive = isActive;
-    //         currProps.dateObj = dateObj;
-    //         currProps.number = currentDay.getDate();
-    //         updatedArr.push(<)
+    //         if(monthElements.length> 0 && checkIfEqual(currProps, monthElements[i]))
+    //             updatedArr.push(monthElements[i])
+    //         else {
+    //
+    //             currProps.key = dateObj;
+    //             currProps.active = isActive;
+    //             currProps.number = currentDay.getDate();
+    //             currProps.onMouseEnter = () => changeHover(dateObj);
+    //             currProps.onMouseLeave = () => changeHover(null);
+    //             currProps.onClick = (e) => setDate({dateObj, isActive, e})
+    //
+    //             updatedArr.push(currProps)
+    //         }
     //     })
     //     setMonthElements(updatedArr)
     // }, [monthDates, hovered, selected, range])
@@ -83,22 +92,13 @@ const CalendarMonth = React.forwardRef((props, ref) => {
         const isActive = currentDay.getMonth() === openedDate.getMonth();
         let dateObj = currentDay.setHours(0,0,0,0);
 
-        const {isSelected, inSelectedPeriod, isNowDate, isHovered, extreme, borders, selectedBorders, disabled}
-            = defineProps(selected, range, dateObj, hovered);
+        const props = defineProps(selected, range, dateObj, hovered);
 
         return <CalendarDay
             key = {dateObj}
+            {...props}
             active={isActive}
             number={currentDay.getDate()}
-            isNowDate={isNowDate}
-            selected={isSelected}
-            disabled={disabled}
-
-            inSelectedPeriod={inSelectedPeriod}
-            hovered={isHovered}
-            extreme={extreme}
-            borders={borders}
-            selectedBorders={selectedBorders}
 
             onMouseEnter={() => changeHover(dateObj)}
             onMouseLeave={() => changeHover(null)}
@@ -129,32 +129,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
                     </div>
                     )}
                     {monthDates.map(renderCalendarElement)}
-                    {/*{monthElements.map(el =>*/}
-                    {/*{*/}
-                    {/*    const {isSelected, inSelectedPeriod, isNowDate, isHovered,*/}
-                    {/*        extreme, borders, selectedBorders, disabled, isActive, dateObj, number}*/}
-                    {/*    = el;*/}
-                    {/*   // isSelected && console.log(el)*/}
-
-                    {/*    return <CalendarDay*/}
-                    {/*    key = {dateObj}*/}
-                    {/*    active={isActive}*/}
-                    {/*    number={number}*/}
-                    {/*    isNowDate={isNowDate}*/}
-                    {/*    selected={isSelected}*/}
-                    {/*    disabled={disabled}*/}
-
-                    {/*    inSelectedPeriod={inSelectedPeriod}*/}
-                    {/*    hovered={isHovered}*/}
-                    {/*    extreme={extreme}*/}
-                    {/*    borders={borders}*/}
-                    {/*    selectedBorders={selectedBorders}*/}
-
-                    {/*    onMouseEnter={() => changeHover(dateObj)}*/}
-                    {/*    onMouseLeave={() => changeHover(null)}*/}
-                    {/*    onClick={(e) => setDate({dateObj, isActive, e}) }*/}
-                    {/*    />*/}
-                    {/*})}*/}
+                    {/*{monthElements.map(el => <CalendarDay {...el} />)}*/}
                 </div>
             </div>
         </>
