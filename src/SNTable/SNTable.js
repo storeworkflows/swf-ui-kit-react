@@ -61,8 +61,6 @@ const SNTable = (props) => {
             }, {})
         });
 
-        console.log({headers, dataSource});
-
         setHeaders(headers);
         setDataSource(dataSource);
     }
@@ -87,9 +85,7 @@ const SNTable = (props) => {
         }
         controllerRef.current = new AbortController();
         fetchTableRecords();
-    }, []);
-
-    console.log({table, view, query, offset, limit});
+    }, [table, view, query, offset, limit]);
 
     return <TableContainer headers={headers} dataSource={dataSource} offsetChanged={handleOffset} peerPageChanged={handleLimit} />
 }
