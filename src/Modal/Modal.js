@@ -16,7 +16,7 @@ const Modal = (props) => {
     const [mobileFooterOpened, setMobileFooterOpened] = useState(true)
 
     const {showPrint, closeRef, manageOpened, onClose, display,
-        headerElements, animation, children} = props;
+        headerElements, animation, children, onSizeChanged} = props;
 
     const expand = () => {
         const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
@@ -90,17 +90,19 @@ const Modal = (props) => {
     }
 
     useEffect(() => {
-        modalRef?.current?.addEventListener("click", (event) => {
-            mobileFooterOpened && setMobileFooterOpened(false);
-        })
-    }, [])
+        onSizeChanged(currentStatus);
+    }, [currentStatus])
 
     useEffect(() => {
+        modalRef?.current?.addEventListener("click", (event) => {
+            mobileFooterOpened && setMobileFooterOpened(false);
+        });
+
         if (mobileFooterOpened) {
             const footerContentHeight = modalRef?.current?.querySelector(".footer-content")?.offsetHeight;
             modalRef?.current?.style.setProperty("--swf-modal-footer-height", footerContentHeight + "px");
         }
-    })
+    }, [mobileFooterOpened])
 
     const isFullSize = currentStatus === SWF_MODAL.MODAL_SIZE.FULL;
 
@@ -189,7 +191,8 @@ Modal.defaultProps = {
     headerElements: 2,
     showPrint: false,
     closeRef: React.createRef(),
-    withAnimation: false
+    withAnimation: false,
+    onSizeChanged: noop
 }
 
 Modal.propTypes = {
@@ -215,7 +218,8 @@ Modal.propTypes = {
     ]),
     headerElements: PropTypes.number,
     showPrint: PropTypes.bool,
-    closeRef: PropTypes.object
+    closeRef: PropTypes.object,
+    onSizeChanged: PropTypes.func
 }
 
 export default Modal

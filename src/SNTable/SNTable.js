@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import propTypes from "prop-types";
 import TableContainer from "../Table";
 import { listQueryModel } from "./shemas";
 import useGraphQL from "../utils/useGraphQL";
@@ -89,4 +90,12 @@ const SNTable = (props) => {
     />
   );
 };
+
+
+SNTable.propTypes = {
+    table: propTypes.string,
+    view: propTypes.string,
+    query: propTypes.string
+}
+
 export default SNTable;
