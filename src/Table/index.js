@@ -29,10 +29,10 @@ TableContainer.propTypes = {
     })),
     dataSource: propTypes.arrayOf(propTypes.object),
     paginationTop: propTypes.shape({
-        alignment: propTypes.oneOf(["start", "center", "end"])
+        alignment: propTypes.oneOf(["start", "center", "end", "none"])
     }),
     paginationBottom: propTypes.shape({
-        alignment: propTypes.oneOf(["start", "center", "end"])
+        alignment: propTypes.oneOf(["start", "center", "end", "none"])
     }),
     total: propTypes.number,
     loading: propTypes.bool,
