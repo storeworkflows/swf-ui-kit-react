@@ -5,7 +5,14 @@ import { listQueryModel } from "./shemas";
 import useGraphQL from "../utils/useGraphQL";
 
 const SNTable = (props) => {
-  const { table = "incident", view = "default", query = "" } = props;
+  const {
+    table = "incident",
+    view = "default",
+    query = "",
+    paginationTop,
+    paginationBottom,
+    onClick,
+  } = props;
 
   const [headers, setHeaders] = useState([]);
   const [dataSource, setDataSource] = useState([]);
@@ -68,10 +75,14 @@ const SNTable = (props) => {
     });
 
     const dataSource = layoutQuery.queryRows.map(({ rowData }) => {
-      return rowData.reduce((acc, { columnName, columnData }) => {
+      const dataSource = rowData.reduce((acc, { columnName, columnData }) => {
         acc[columnName] = columnData.displayValue;
         return acc;
-      }, {});
+      });
+      dataSource["onClick"] = () => {
+        return { table: rowData.className, sys_id: rowData.uniqueId };
+      };
+      return dataSource;
     });
 
     setTotal(layoutQuery.count);
@@ -87,15 +98,23 @@ const SNTable = (props) => {
       peerPageChanged={handleLimit}
       total={total}
       loading={loading}
+      paginationTop={paginationTop}
+      paginationBottom={paginationBottom}
     />
   );
 };
 
-
 SNTable.propTypes = {
-    table: propTypes.string,
-    view: propTypes.string,
-    query: propTypes.string
-}
+  table: propTypes.string,
+  view: propTypes.string,
+  query: propTypes.string,
+  paginationTop: propTypes.shape({
+    alignment: propTypes.oneOf(["start", "center", "end", "none"]),
+  }),
+  paginationBottom: propTypes.shape({
+    alignment: propTypes.oneOf(["start", "center", "end", "none"]),
+  }),
+  onClick: propTypes.func,
+};
 
 export default SNTable;

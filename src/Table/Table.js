@@ -7,6 +7,7 @@ import {Pagination} from "./Pagination";
 import propTypes from "prop-types";
 import Loader from "../Loader/Loader";
 import { TableDefaultProps, TablePropTypes } from "./table.shema";
+import { noop } from "../utils";
 
 const tableRow = ({data: record, key, render}) => {
     if (!key) {
@@ -30,7 +31,7 @@ export const Table = ({headers = [], dataSource = [], paginationBottom, paginati
             </Thead>
             <Tbody>
                 {
-                    rowsCount.map((_, index) => <Tr key={`tr:${index}`}>{
+                    rowsCount.map((_, index) => <Tr key={`tr:${index}`} onClick={dataSource[index]["onClick"] ?? noop}>{
                         headers.map(({key, render}) => tableRow({data: dataSource[index], key, render}))
                     }</Tr>)
                 }

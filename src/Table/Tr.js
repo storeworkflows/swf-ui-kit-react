@@ -1,3 +1,3 @@
-export const Tr = ({children}) => {
-    return <tr>{children}</tr>
+export const Tr = ({onClick, children}) => {
+    return <tr onClick={onClick}>{children}</tr>
 }
