@@ -2,72 +2,48 @@ import moment from 'moment';
 import * as React from 'react';
 import propTypes from "prop-types";
 import classnames from 'classnames';
+import isEqual from "react-fast-compare";
 
-import {checkIfEqual, defineProps, defineSelected, getMonthDates} from "../utils";
+import {defineProps, defineSelected, getMonthDates} from "../utils";
 import {useCallback, useEffect, useRef, useState} from "react";
 import findByType, {createSubComponent} from "../../utils/findByType";
 import CalendarDay from "./CalendarDay";
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-const CalendarMonth = React.forwardRef((props, ref) => {
+const CalendarMonth = (props) => {
 
-    const {openedDate, onSelected, children, range, selectedDate, onMonthChange, className, hoveredDate,
+    const {openedDate, onSelected, children,
+        range, selectedDate, onMonthChange, className, hoveredDate,
         onSetHover, manageHover, manageSelected} = props;
+    const {end, start, isFirstSelecting} = range;
 
-    const [monthElements, setMonthElements] = useState([]);
-    const [monthDates, setMonthDates] = useState([]);
+    const [monthDates, setMonthDates] = useState(getMonthDates(openedDate));
     const [selected, setSelected] = useState(defineSelected(range, selectedDate));
     const [hovered, setHovered] = useState(hoveredDate);
 
+    const hoveredFinal = manageHover ? hoveredDate : hovered;
     const calendarElem = useRef(null);
 
     useEffect( () => setMonthDates(getMonthDates(openedDate)), [openedDate])
 
     useEffect(() => {
-        manageHover && setHovered(hoveredDate)
-    }, [hoveredDate, manageHover])
-
-    useEffect(() => {
+        const range = { end, start, isFirstSelecting}
         manageSelected && setSelected(defineSelected(range, selectedDate))
-    }, [manageSelected, range, selectedDate])
-
-    // useEffect(() => {
-    //     let updatedArr = [];
-    //     monthDates.map((currentDay, i) => {
-    //         const isActive = currentDay.getMonth() === openedDate.getMonth();
-    //         let dateObj = currentDay.setHours(0,0,0,0);
-    //
-    //         const currProps = defineProps(selected, range, dateObj, hovered);
-    //         if(monthElements.length> 0 && checkIfEqual(currProps, monthElements[i]))
-    //             updatedArr.push(monthElements[i])
-    //         else {
-    //
-    //             currProps.key = dateObj;
-    //             currProps.active = isActive;
-    //             currProps.number = currentDay.getDate();
-    //             currProps.onMouseEnter = () => changeHover(dateObj);
-    //             currProps.onMouseLeave = () => changeHover(null);
-    //             currProps.onClick = (e) => setDate({dateObj, isActive, e})
-    //
-    //             updatedArr.push(currProps)
-    //         }
-    //     })
-    //     setMonthElements(updatedArr)
-    // }, [monthDates, hovered, selected, range])
+    },[manageSelected,  end, start, isFirstSelecting, selectedDate])
 
     const changeHover = useCallback((date) => {
         if(!range)
             return;
 
-        const needHoverForStart = range.isFirstSelecting && range.end;
-        const needHoverForEnd = !range.isFirstSelecting && range.start;
+        const needHoverForStart = isFirstSelecting && end;
+        const needHoverForEnd = !isFirstSelecting && start;
 
         if(needHoverForStart || needHoverForEnd) {
             !manageHover && setHovered(date);
             onSetHover(date);
         }
-    }, [range, manageHover])
+    }, [manageHover, end, start, isFirstSelecting, range, onSetHover])
 
     const setDate = useCallback(({dateObj, isActive, e}) =>{
         e?.stopPropagation();
@@ -89,20 +65,19 @@ const CalendarMonth = React.forwardRef((props, ref) => {
     }
 
     const renderCalendarElement = (currentDay) => {
-        const isActive = currentDay.getMonth() === openedDate.getMonth();
+        const isActive = currentDay.getMonth() === new Date(openedDate).getMonth();
         let dateObj = currentDay.setHours(0,0,0,0);
 
-        const props = defineProps(selected, range, dateObj, hovered);
-
+        const props = defineProps(selected, range, dateObj, hoveredFinal);
+        console.log(props)
         return <CalendarDay
             key = {dateObj}
             {...props}
             active={isActive}
-            number={currentDay.getDate()}
-
-            onMouseEnter={() => changeHover(dateObj)}
-            onMouseLeave={() => changeHover(null)}
-            onClick={(e) => setDate({dateObj, isActive, e}) }
+            dateInMilliseconds={dateObj}
+            onMouseEnter={changeHover}
+            onMouseLeave={changeHover}
+            onClick={setDate}
         />
     }
 
@@ -113,7 +88,7 @@ const CalendarMonth = React.forwardRef((props, ref) => {
         <>
             <div
                 className={classnames(className, "ui-kit__calendar-container")}
-                ref={el => {calendarElem.current = el; ref = el;}}
+                ref={el => {calendarElem.current = el}}
             >
                 <div className={"calendar-header"}>
                     {renderHeaderElement("HeaderStart")}
@@ -129,33 +104,33 @@ const CalendarMonth = React.forwardRef((props, ref) => {
                     </div>
                     )}
                     {monthDates.map(renderCalendarElement)}
-                    {/*{monthElements.map(el => <CalendarDay {...el} />)}*/}
                 </div>
             </div>
         </>
     )
 
-});
+};
 
 CalendarMonth.HeaderStart = createSubComponent("HeaderStart");
 CalendarMonth.HeaderEnd = createSubComponent("HeaderEnd");
 
 CalendarMonth.defaultProps = {
-    openedDate: new Date(),
+    openedDate: new Date().setHours(0,0,0,0),
     selectedDate: null,
     onSelected: () => void 0,
     onMonthChange: () => void 0,
     onSetHover: () => void 0,
-    className: ""
+    className: "",
+    range: {}
 }
 
 CalendarMonth.propTypes = {
-    openedDate: propTypes.object,
+    openedDate: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
     onSelected: propTypes.func,
-    selectedDate: propTypes.object,
+    selectedDate: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
     range: propTypes.shape({
-        start: propTypes.oneOfType([propTypes.string, propTypes.object]),
-        end: propTypes.oneOfType([propTypes.string, propTypes.object]),
+        start: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
+        end: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
         isFirstSelecting: propTypes.bool
     }),
     hoveredDate: propTypes.oneOfType([propTypes.number, propTypes.object]),
@@ -166,4 +141,6 @@ CalendarMonth.propTypes = {
     manageSelected: propTypes.bool
 }
 
-export default CalendarMonth;
+export default React.memo(CalendarMonth, (prev, next) => {
+    return isEqual(prev, next);
+});

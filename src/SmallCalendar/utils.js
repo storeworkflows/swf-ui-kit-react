@@ -1,7 +1,7 @@
 import moment from "moment";
 
-const defineExtreme = (start, end, curr) => {
-    switch (curr) {
+const defineExtreme = (start, end, current) => {
+    switch (current) {
         case start:
             return start===end ? "one" : "first"
         case end:
@@ -9,95 +9,92 @@ const defineExtreme = (start, end, curr) => {
         default:
             return "none"
     }
+}
 
+const getMilliseconds = (date, gap) => {
+    const dateInMilliseconds  = new Date(date)
+    dateInMilliseconds.setDate(dateInMilliseconds.getDate() + gap)
+    return  dateInMilliseconds.setHours(0,0,0,0)
 }
 
 const defineDisabledValue = (startDate, endDate, current, isFirstSelecting) => {
     if( (isFirstSelecting && current>endDate) || (!isFirstSelecting && current<startDate))
     {
-        const nextStart = new Date(startDate)
-        nextStart.setDate(nextStart.getDate() - 1)
-        const s = nextStart.setHours(0,0,0,0)
-
-        const nextEnd = new Date(endDate)
-        nextEnd.setDate(nextEnd.getDate() + 1)
-        const e = nextEnd.setHours(0,0,0,0)
-
         switch (true) {
-            case isFirstSelecting && current === e :
+            case isFirstSelecting && current === getMilliseconds(endDate, 1) :
                 return "start";
-            case !isFirstSelecting && current === s :
+            case !isFirstSelecting && current ===  getMilliseconds(startDate, -1) :
                 return "end";
             default:
                 return "none";
         }
-    }
+    } else
+        return false
 }
 
 export const defineProps = (selectedDate, range, current, hoveredDate) => {
     let startDate = (!range || range.isFirstSelecting ? selectedDate : range.start)?.setHours(0,0,0,0);
     let endDate = range && (range.isFirstSelecting ? range.end : selectedDate)?.setHours(0,0,0,0);
 
-    if(endDate && startDate){
-        if(range.isFirstSelecting && endDate<startDate)
-            endDate = null;
-        if(!range.isFirstSelecting && endDate<startDate)
-            startDate = null;
-    }
-
     let selected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
-    let inSelectedPeriod = startDate && endDate && current>=startDate && current<=endDate;
     let isNowDate = _.isEqual(current, new Date().setHours(0,0,0,0) )
+    let inSelectedPeriod = startDate && endDate && current>=startDate && current<=endDate;
 
-    let hovered = false;
-    let extreme =  "none";
+    if(!range)
+        return  {selected, inSelectedPeriod, isNowDate};
+
+    let disabled = !inSelectedPeriod && defineDisabledValue(startDate, endDate, current, range.isFirstSelecting);
+    let selectedBorders = selected ? defineBorder(startDate, endDate, current) : []
+
+    let hoveredData = {}
+    if(!disabled)
+        hoveredData = range.isFirstSelecting
+            ? defineHoverProps({ start: hoveredDate, end: endDate, current})
+            : defineHoverProps({ start: startDate, end: hoveredDate, current});
+
+    return {...hoveredData, selected, inSelectedPeriod, isNowDate, selectedBorders, disabled}
+}
+
+const defineHoverProps = ({start, end, current}) => {
+    if(!start || !end)
+        return;
+
+    const hovered = current>=start && current<=end;
+    if(!hovered)
+        return
+
     let borders = [];
-    let disabled = false;
+    const extreme = defineExtreme(start, end, current);
 
-    if(range && !inSelectedPeriod)
-        disabled = defineDisabledValue(startDate, endDate, current, range.isFirstSelecting)
+    if(hovered)
+        borders = defineBorder(start, end, current)
 
-    if(range && hoveredDate) {
+    return {hovered, extreme, borders}
+}
 
-        const hoveredForFirst = range.isFirstSelecting && endDate && current <= endDate && current >= hoveredDate;
-        const hoveredForSecond = !range.isFirstSelecting && startDate && current >= startDate && current <= hoveredDate;
+const checkIfHorizontalExtreme = (date, current, compareWith) => {
+    const dayInWeek = new Date(current).getDay();
+    return date && _.isEqual(date, current) || dayInWeek === compareWith;
+}
 
-        extreme = range.isFirstSelecting
-            ? defineExtreme(hoveredDate, endDate, current)
-            : defineExtreme(startDate, hoveredDate, current);
+const checkIfVerticalExtreme = (date, current) => {
+    if(!date || !current)
+        return false;
 
-        hovered = hoveredForSecond || hoveredForFirst;
-        borders = range.isFirstSelecting
-            ? defineBorder(hoveredDate, endDate, current)
-            : defineBorder(startDate, hoveredDate, current)
-    }
-    let selectedBorders = []
-    if(selected && range)
-        selectedBorders = defineBorder(startDate, endDate, current)
-
-    return {selected, inSelectedPeriod, isNowDate, hovered, extreme, borders, selectedBorders, disabled}
+    const diff = Math.abs(current - date);
+    const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return diffDays<7
 }
 
 const defineBorder = (start, end, current) => {
-    const dayInWeek = new Date(current).getDay();
-    let result = [];
+    let result = []
 
-    if(_.isEqual(start, current) || dayInWeek === 0)
-        result.push("left");
-    if(_.isEqual(end, current) || dayInWeek === 6)
-        result.push("right");
+    checkIfHorizontalExtreme( start, current, 0) && result.push("left");
+    checkIfHorizontalExtreme( end, current, 6) && result.push("right");
 
-    if(start) {
-        const diffStart = Math.abs(current - start);
-        const diffDaysStart = Math.ceil(diffStart / (1000 * 60 * 60 * 24));
-        diffDaysStart<7 &&  result.push("top");
-    }
+    checkIfVerticalExtreme(start, current) && result.push("top")
+    checkIfVerticalExtreme(end, current) && result.push("bottom")
 
-    if(end) {
-        const diffEnd = Math.abs(end - current);
-        const diffDaysEnd = Math.ceil(diffEnd / (1000 * 60 * 60 * 24));
-        diffDaysEnd < 7 && result.push("bottom");
-    }
     return result;
 }
 
@@ -111,23 +108,20 @@ export const defineSelected = (range, selected) => {
     return null;
 }
 
-export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) => {
-    const selectedInSeconds = selectedDate?.setHours(0,0,0,0);
 
-    if(isFirstSelecting){
-        const endInSeconds = oldExtreme.end?.setHours(0,0,0,0);
-        const endFitSelected = oldExtreme.end && selectedInSeconds<=endInSeconds;
-        return {
-            start: selectedDate,
-            end: endFitSelected ? oldExtreme.end : undefined
-        }
-    } else {
-        const startInSeconds = oldExtreme.start?.setHours(0,0,0,0);
-        const startFitSelected = oldExtreme.start &&  selectedInSeconds>=startInSeconds;
-        return {
-            start: startFitSelected ? oldExtreme.start : undefined,
-            end: selectedDate
-        }
+export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) => {
+    const oldDate = isFirstSelecting ? oldExtreme.end : oldExtreme.start;
+
+    const selectedInSeconds = selectedDate?.setHours(0,0,0,0);
+    const oldInSeconds = oldDate?.setHours(0,0,0,0);
+    const oldFitSelected = oldDate &&
+        (isFirstSelecting && selectedInSeconds<=oldInSeconds)
+        || (!isFirstSelecting && selectedInSeconds>=oldInSeconds);
+
+    const result = oldFitSelected ? oldDate : undefined
+    return {
+        start: isFirstSelecting ? selectedDate : result,
+        end: isFirstSelecting ? result : selectedDate
     }
 }
 
@@ -152,15 +146,4 @@ export const getMonthDates = (openedDate) => {
     }
 
     return result;
-}
-
-export const checkIfEqual = (newValue, oldValue) => {
-    let res = true;
-     Object.entries(newValue).map(([key, value] )=> {
-        if(oldValue[`${key}`] !== value){
-            res = false
-            return false;
-        }
-    })
-    return res;
 }

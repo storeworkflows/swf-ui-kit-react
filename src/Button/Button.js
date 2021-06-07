@@ -17,7 +17,8 @@ const Button = (props) => {
         customStyle,
         children,
         onClick,
-        className
+        className,
+        type
     } = props;
 
     const additionalStyle = addStyles(customStyle);
@@ -53,15 +54,16 @@ const Button = (props) => {
                 disabled={disabled}
                 title={tooltipContent}
                 style={additionalStyle}
+                type={type}
             >
                 <div className="content">
                     {_hasIcon &&
-                    <div className={iconClasses}>
-                        <Icon
-                            icon={icon}
-                            customSize={_iconSize}
-                        />
-                    </div>
+                        <div className={iconClasses}>
+                            <Icon
+                                icon={icon}
+                                customSize={_iconSize}
+                            />
+                        </div>
                     }
 
                     {_hasLabel && <label className={"button-label"}>{label}</label>}
@@ -81,7 +83,8 @@ Button.defaultProps = {
     variant: "secondary",
     customStyle: null,
     className: {},
-    innerRef: React.createRef()
+    innerRef: React.createRef(),
+    type: "button"
 }
 
 Button.propTypes = {
@@ -95,8 +98,9 @@ Button.propTypes = {
     customStyle: propTypes.object,
     onClick: propTypes.func,
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-    innerRef: propTypes.object
+    innerRef: propTypes.object,
+    type: propTypes.oneOf(["button", "reset", "submit"])
 }
 
-export default Button;
+export default React.memo(Button);
 

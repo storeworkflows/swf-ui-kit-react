@@ -17,12 +17,16 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         start: convertToDate(start),
         end: convertToDate(end)
     })
-    const [openedDateValue, setOpenedDateValue] = useState(convertToDate(openedDate)|| new Date());
+    const [openedDateValue, setOpenedDateValue] = useState(convertToDate(openedDate) || new Date());
     const [hoverDate, setHoverDate] = useState(null);
 
     const nextOpened =  moment(openedDateValue).add(1, "month").toDate();
 
-    useEffect(() => setOpenedDateValue(convertToDate(openedDate) || new Date()), [openedDate])
+    useEffect(() => {
+        const updatedDate = convertToDate(openedDate) || new Date()
+        setOpenedDateValue(updatedDate)
+    }, [openedDate])
+
 
     useEffect(() => {
         manageSelected && setExtremeDays({
@@ -54,7 +58,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
             }
         )
         return  <CalendarMonth
-            openedDate={isNext ? nextOpened : openedDateValue}
+            openedDate={(isNext ? nextOpened : openedDateValue)?.setHours(0,0,0,0)}
             onSelected={setSelected}
             onMonthChange={changeMonth}
             className={classes}
@@ -89,15 +93,15 @@ const RangeCalendar = React.forwardRef((props, ref) => {
 });
 
 RangeCalendar.defaultProps = {
-    openedDate: new Date(),
+    openedDate: new Date().setHours(0,0,0,0),
     onSelected: () => void 0,
 }
 
 RangeCalendar.propTypes = {
-    openedDate:  propTypes.oneOfType([propTypes.object, propTypes.string]),
+    openedDate:  propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
     onSelected:  propTypes.func,
-    startDay: propTypes.oneOfType([propTypes.object, propTypes.string]),
-    endDay: propTypes.oneOfType([propTypes.string, propTypes.object]),
+    startDay: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
+    endDay: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
     isFirstSelecting: propTypes.bool,
     manageSelected: propTypes.bool
 }

@@ -17,8 +17,8 @@ export const Standard  = Template.bind({});
 
 export const Range  = (args) => <div>
     <RangeCalendar
-        endDay={new Date("2021-07-10")}
-        startDay={new Date()}
+        endDay={new Date("2021-07-10").setHours(0,0,0,0)}
+        startDay={new Date().setHours(0,0,0,0)}
         isFirstSelecting={true}
     />
 </div>
@@ -27,8 +27,8 @@ export const Range  = (args) => <div>
 export const Month = (args) => <div>
     <CalendarMonth
         range= {{
-            startDay: new Date("2021-06-16"),
-            endDay: new Date(),
+            startDay: new Date("2021-06-16").setHours(0,0,0,0),
+            endDay: new Date().setHours(0,0,0,0),
             isFirstSelecting: false
         }}
     />
