@@ -91,4 +91,4 @@ Toggle.propTypes = {
     visible: propTypes.bool
 }
 
-export default Toggle;
+export default React.memo(Toggle);

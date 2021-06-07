@@ -110,4 +110,4 @@ Pill.propTypes = {
     onClick: PropTypes.func,
 }
 
-export default Pill
+export default React.memo(Pill)

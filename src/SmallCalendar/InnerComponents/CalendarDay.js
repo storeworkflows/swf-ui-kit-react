@@ -1,9 +1,12 @@
 import classnames from "classnames";
 import * as React from "react";
 import propTypes from "prop-types";
+import isEqual from "react-fast-compare";
+import {noop} from "../../utils";
 
-const CalendarDay = React.forwardRef( (props) => {
-    const { number,  active, selected,
+const CalendarDay = React.forwardRef((props, ref) => {
+    const {
+        dateInMilliseconds, active, selected,
         extreme, className, onClick, isNowDate,
         onMouseLeave, onMouseEnter, hovered, inSelectedPeriod, borders,
         selectedBorders, disabled
@@ -46,25 +49,26 @@ const CalendarDay = React.forwardRef( (props) => {
         "--can-hover": !disabled
     })
 
-    const actEvent = (event) => !disabled ? event : () => void 0;
 
-    console.log("render")
+    const actEvent = (event, params) => !disabled ? event(params) : () => void 0;
+    const date = new Date(dateInMilliseconds)
+
     return <div
         className={dayContainerClasses}
-        //ref={ref}
-        onClick={actEvent(onClick)}
-        onMouseEnter={  actEvent( onMouseEnter)}
-        onMouseLeave={  actEvent( onMouseLeave)}
+        ref={ref}
+        onClick={e => actEvent(onClick, {dateInMilliseconds, active, e})}
+        onMouseEnter={() => actEvent(onMouseEnter, dateInMilliseconds)}
+        onMouseLeave={() => actEvent(onMouseLeave, null)}
     >
         <div className={borderStyles}/>
         <div className={dayClasses}>
-            {number}
+            {date.getDate()}
         </div>
     </div>
 })
 
 CalendarDay.propTypes = {
-    number: propTypes.oneOfType([propTypes.number, propTypes.string]),
+    dateInMilliseconds: propTypes.number,
     isNowDate: propTypes.bool,
 
     active: propTypes.bool,
@@ -88,12 +92,28 @@ CalendarDay.propTypes = {
 CalendarDay.defaultProps = {
     borders: [],
     selectedBorders: [],
-    number: 0,
+    dateInMilliseconds: 0,
     active: true,
     className: "",
-    onClick: () => void 0,
-    onMouseEnter: () => void 0,
-    onMouseLeave: () => void 0
+    onClick: noop,
+    onMouseEnter: noop,
+    onMouseLeave: noop
 }
 
-export default React.memo(CalendarDay);
+export default React.memo(CalendarDay, (prev, next) => {
+    const previousProps = {
+        ...prev,
+        onClick: noop,
+        onMouseEnter: noop,
+        onMouseLeave: noop,
+    };
+
+    const nextProps = {
+        ...next,
+        onClick: noop,
+        onMouseEnter: noop,
+        onMouseLeave: noop,
+    }
+
+    return isEqual(previousProps, nextProps);
+});
