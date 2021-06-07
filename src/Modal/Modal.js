@@ -111,7 +111,7 @@ const Modal = (props) => {
     const isMobile = SWF_MODAL.MOBILE_REGEXP.test(navigator.userAgent);
 
     return showModal ? <>
-        <div className={classnames({"swf-modal-overlay": true, "--mobile": isMobile})}
+        <div className={classnames("swf-modal-overlay", isMobile && "--mobile")}
              ref={elm => modalRef.current = elm}
         >
             <div className={classnames({

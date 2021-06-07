@@ -43,6 +43,9 @@
 
 .thead {
   vertical-align: bottom;
+  position: sticky;
+  top: 1.6rem;
+  background: #fff;
 }
 
 tbody {
@@ -98,10 +101,10 @@ tbody {
     }
 
     .roundedButton {
-      border-radius: 50%;
-      padding: 0;
+      border-radius: 1.5rem;
+      padding: 0 0.5rem;
       height: 1.5rem;
-      width: 1.5rem;
+      min-width: 1.5rem;
       font-size: 0.7rem;
     }
   }
@@ -117,6 +120,11 @@ tbody {
 
 .pagination-container,
 .pagination {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding-top: 0.1rem;
+  
   &.start {
     justify-content: flex-start;
   }
