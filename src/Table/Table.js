@@ -18,7 +18,7 @@ const tableRow = ({data: record, key, render}) => {
 
     const value = record[key];
 
-    return <Td key={`${key}`}>{render ? render({record, value}) : <span title={value}>value</span>}</Td>
+    return <Td key={`${key}`}>{render ? render({record, value}) : <span title={value}>{value}</span>}</Td>
 }
 
 export const Table = ({name = "", headers = [], dataSource = [], paginationBottom, paginationTop, total, loading}) => {
