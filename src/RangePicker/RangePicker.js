@@ -148,7 +148,6 @@ const RangePicker = React.forwardRef((props, ref) => {
     }
 
     const openCalendar = () => {
-        console.log("open")
         const isOpened = Boolean(openedDate)
 
         if (!manageOpened) {

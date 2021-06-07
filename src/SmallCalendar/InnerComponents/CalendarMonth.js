@@ -69,7 +69,7 @@ const CalendarMonth = (props) => {
         let dateObj = currentDay.setHours(0,0,0,0);
 
         const props = defineProps(selected, range, dateObj, hoveredFinal);
-        console.log(props)
+        
         return <CalendarDay
             key = {dateObj}
             {...props}
