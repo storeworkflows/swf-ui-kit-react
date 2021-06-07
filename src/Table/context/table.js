@@ -9,9 +9,9 @@ export const TableContext = createContext({
 });
 
 const TableProvider = ({
-  offsetChanged,
-  currentPageChanged,
-  peerPageChanged,
+  offsetChanged = noop,
+  currentPageChanged = noop,
+  peerPageChanged = noop,
   children,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,7 +24,6 @@ const TableProvider = ({
   };
 
   const handleOffsetChanged = (value) => {
-      console.log("handleOffsetChanged", {value});
     setOffset(value);
     offsetChanged(value);
   };

@@ -77,34 +77,10 @@ tbody {
   display: flex;
   gap: 0.5rem;
 
-  &.start {
-    justify-content: flex-start;
-  }
-  &.center {
-    justify-content: center;
-  }
-  &.end {
-    justify-content: flex-end;
-  }
-
   .pagination {
     display: flex;
     align-items: center;
     gap: 0.3rem;
-
-    &.start {
-      justify-content: flex-start;
-    }
-    &.center {
-      justify-content: center;
-    }
-    &.end {
-      justify-content: flex-end;
-    }
-
-    &.none {
-      display: none;
-    }
 
     .moreButton {
       background: transparent;
@@ -133,5 +109,21 @@ tbody {
     .dropdown-button {
       height: 1.5rem !important;
     }
+  }
+}
+
+.pagination-container,
+.pagination {
+  &.start {
+    justify-content: flex-start;
+  }
+  &.center {
+    justify-content: center;
+  }
+  &.end {
+    justify-content: flex-end;
+  }
+  &.none {
+    display: none;
   }
 }

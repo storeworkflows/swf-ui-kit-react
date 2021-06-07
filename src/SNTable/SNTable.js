@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import propTypes from "prop-types";
 import TableContainer from "../Table";
 import { listQueryModel } from "./shemas";
 import useGraphQL from "../utils/useGraphQL";
+import { noop } from "../utils";
 
 const SNTable = (props) => {
   const {
@@ -73,14 +74,14 @@ const SNTable = (props) => {
         key: columnName,
       };
     });
-
-    const dataSource = layoutQuery.queryRows.map(({ rowData }) => {
+    const dataSource = layoutQuery.queryRows.map(({ className, rowData, uniqueId }) => {
       const dataSource = rowData.reduce((acc, { columnName, columnData }) => {
         acc[columnName] = columnData.displayValue;
         return acc;
-      });
+      }, {});
       dataSource["onClick"] = () => {
-        return { table: rowData.className, sys_id: rowData.uniqueId };
+        onClick({ table: className, sys_id: uniqueId });
+        return { table: className, sys_id: uniqueId };
       };
       return dataSource;
     });
@@ -92,6 +93,7 @@ const SNTable = (props) => {
 
   return (
     <TableContainer
+      name={table}
       headers={headers}
       dataSource={dataSource}
       offsetChanged={handleOffset}
@@ -103,6 +105,10 @@ const SNTable = (props) => {
     />
   );
 };
+
+SNTable.defaultProps = {
+  onClick: noop
+}
 
 SNTable.propTypes = {
   table: propTypes.string,

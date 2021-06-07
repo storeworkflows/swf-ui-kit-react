@@ -14,6 +14,7 @@ export const TableDefaultProps = {
 }
 
 export const TablePropTypes = {
+    name: propTypes.string,
     headers: propTypes.arrayOf(propTypes.shape({
         label: propTypes.string,
         key: propTypes.string,
