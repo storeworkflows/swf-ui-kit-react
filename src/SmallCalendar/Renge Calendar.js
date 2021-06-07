@@ -4,7 +4,7 @@ import propTypes from "prop-types";
 import classnames from 'classnames';
 
 
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import CalendarMonth from "./InnerComponents/CalendarMonth";
 import ArrowButton from "./InnerComponents/ArrowButton";
 import {convertToDate, updateExtremeDates} from "./utils";
@@ -35,7 +35,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         })
     }, [manageSelected, start, end])
 
-    const changeMonth = (selectedDate, isNext, e) => {
+    const changeMonth = useCallback((selectedDate, isNext, e) => {
         e?.stopPropagation();
 
         let additionValue = isNext ? 1 : -1;
@@ -43,7 +43,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
 
         selectedDate && setSelected(selectedDate)
         setOpenedDateValue(changedTo.toDate())
-    }
+    }, [setOpenedDateValue,openedDateValue])
 
     const setSelected = (date) => {
         const updatedDates = updateExtremeDates(extremeDays, date, isFirstSelecting);
@@ -57,8 +57,10 @@ const RangeCalendar = React.forwardRef((props, ref) => {
                 "--next": isNext
             }
         )
-        return  <CalendarMonth
-            openedDate={(isNext ? nextOpened : openedDateValue)?.setHours(0,0,0,0)}
+        const openedDate = isNext ? nextOpened : openedDateValue
+      //  console.log(openedDate)
+        return <CalendarMonth
+            openedDate={openedDate?.setHours(0,0,0,0)}
             onSelected={setSelected}
             onMonthChange={changeMonth}
             className={classes}

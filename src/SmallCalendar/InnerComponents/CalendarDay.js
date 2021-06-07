@@ -81,7 +81,7 @@ CalendarDay.propTypes = {
     inSelectedPeriod: propTypes.bool,
     extreme: propTypes.oneOf(["first", "last", "one", "none"]),
 
-    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    className: propTypes.oneOfType([propTypes.object, propTypes.string, undefined]),
     onClick: propTypes.func,
     onMouseEnter: propTypes.func,
     onMouseLeave: propTypes.func,

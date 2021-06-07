@@ -63,11 +63,8 @@ const defineHoverProps = ({start, end, current}) => {
     if(!hovered)
         return
 
-    let borders = [];
+    const borders = defineBorder(start, end, current);
     const extreme = defineExtreme(start, end, current);
-
-    if(hovered)
-        borders = defineBorder(start, end, current)
 
     return {hovered, extreme, borders}
 }

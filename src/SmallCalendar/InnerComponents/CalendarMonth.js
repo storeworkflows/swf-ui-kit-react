@@ -69,7 +69,7 @@ const CalendarMonth = (props) => {
         let dateObj = currentDay.setHours(0,0,0,0);
 
         const props = defineProps(selected, range, dateObj, hoveredFinal);
-        
+
         return <CalendarDay
             key = {dateObj}
             {...props}
@@ -83,7 +83,7 @@ const CalendarMonth = (props) => {
 
     const currentDate = moment(openedDate)
     let curMonthLabel = `${currentDate.format('MMMM')} ${currentDate.year()}`;
-
+    console.log(props)
     return (
         <>
             <div
