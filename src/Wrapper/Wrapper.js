@@ -6,7 +6,7 @@ import {useState} from "react";
 import propTypes from "prop-types";
 
 const Wrapper = React.forwardRef((props, ref) => {
-    const {children, open, title, showWrapper, manageOpened, onOpen, className} = props;
+    const {children, open, title, showWrapper, manageOpened, onOpen, className, iconSize} = props;
 
     const [openSate, setOpenState] = useState(open);
     const openFinal = manageOpened ? open : openSate;
@@ -30,7 +30,7 @@ const Wrapper = React.forwardRef((props, ref) => {
         <div className={wrapperClasses} ref={ref}>
             <div className="wrapper-header">
                 <div className="header-group" onClick={setOpen}>
-                    <Icon icon={arrowIcon}/>
+                    <Icon icon={arrowIcon} size={iconSize}/>
                     <h3 className="title">&nbsp;{title}</h3>
                 </div>
             </div>
@@ -59,6 +59,7 @@ Wrapper.propTypes = {
     showWrapper: propTypes.bool,
     manageOpened: propTypes.bool,
     onOpen: propTypes.func,
+    iconSize: propTypes.oneOf(['xs', 'sm', 'md', 'lg', 'xl', 'xxl']),
     className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 

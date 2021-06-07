@@ -86,4 +86,4 @@ Tab.propTypes = {
     disabled: propTypes.bool
 }
 
-export default Tab;
+export default React.memo(Tab);

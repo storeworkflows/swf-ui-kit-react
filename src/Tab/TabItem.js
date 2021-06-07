@@ -75,4 +75,4 @@ const TabItem = React.forwardRef((props, ref) => {
     </div>
 });
 
-export default TabItem;
+export default React.memo(TabItem);

@@ -89,4 +89,4 @@ RadioOption.propTypes = {
 }
 
 
-export default RadioOption
+export default React.memo(RadioOption)

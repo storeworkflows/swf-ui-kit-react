@@ -8,17 +8,13 @@ export default {
     args: {
         min: new Date("2021-05-11"),
         value: {
-            start: {
-                value: "2021-05-22"
-            },
-            end: {
-                value: new Date()
-            }
+            start: { value: "2021-05-22" },
+            end: { value: new Date()}
         }
     }
 };
 
 
 const Template = (args) => <RangePicker {...args}/>;
-
 export const Standard = Template.bind({});
+
