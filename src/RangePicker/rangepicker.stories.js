@@ -7,10 +7,10 @@ export default {
     title: 'swf-ui-kit/Input/RangePicker',
     component: RangePicker,
     args: {
-        min: new Date("2021-05-11"),
+       // min: new Date("2021-05-11"),
         value: {
-            start: { value: "2021-05-22" },
-            end: { value: new Date()}
+            start: { value: "" },
+            end: { value: ""}
         }
     }
 };
@@ -22,7 +22,12 @@ export const Standard = Template.bind({});
 // export const Check = (args) => <div>
 //     <Modal>
 //         <Modal.Body>
-//             <DatePicker/>
+//             <RangePicker
+//                 value={{
+//                 start: { value: "" },
+//                 end: { value: ""}
+//             }}
+//             />
 //
 //         </Modal.Body>
 //

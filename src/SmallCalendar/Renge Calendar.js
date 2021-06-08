@@ -35,7 +35,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         })
     }, [manageSelected, start, end])
 
-    const changeMonth = (e, isNext, selectedDate) => {
+    const changeMonth = useCallback((e, isNext, selectedDate) => {
         e?.stopPropagation();
 
         let additionValue = isNext ? 1 : -1;
@@ -43,15 +43,14 @@ const RangeCalendar = React.forwardRef((props, ref) => {
 
         selectedDate && setSelected(selectedDate)
         setOpenedDateValue(changedTo.toDate())
-    }
-    console.log("isFirstSelecting", isFirstSelecting)
-    const setSelected = (date) => {
+    }, [openedDateValue, setOpenedDateValue])
+
+
+    const setSelected = useCallback((date) => {
         const updatedDates = updateExtremeDates(extremeDays, date, isFirstSelecting);
-       // console.log(extremeDays, updatedDates, isFirstSelecting)
         !manageSelected && setExtremeDays(updatedDates)
         onSelected({old: extremeDays, updated: updatedDates})
-    }
-
+    }, [isFirstSelecting, onSelected, manageSelected, extremeDays])
 
     const renderCalendarElement = (isNext = false) => {
         const classes = classnames(

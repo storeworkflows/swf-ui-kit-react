@@ -20,6 +20,7 @@ export {default as HighlightedValue} from "./HighlightedValue/HighlightedValue"
 export {default as Wrapper} from "./Wrapper/Wrapper"
 export {default as RangePicker} from "./RangePicker/RangePicker"
 export {default as AlertGroup} from "./AlertGroup/AlertGroup"
+export {default as Loader} from "./Loader/Loader"
 
 export {default as Stepper} from "./Stepper/Stepper";
 export {default as LookupField} from "./LookupField/LookupField";
