@@ -56,7 +56,7 @@ const CalendarDay = React.forwardRef((props, ref) => {
     return <div
         className={dayContainerClasses}
         ref={ref}
-        onClick={e => actEvent(onClick, {dateInMilliseconds, active, e})}
+        onClick={e => actEvent(onClick, {dateInMilliseconds, isActive: active, e})}
         onMouseEnter={() => actEvent(onMouseEnter, dateInMilliseconds)}
         onMouseLeave={() => actEvent(onMouseLeave, null)}
     >
@@ -81,7 +81,7 @@ CalendarDay.propTypes = {
     inSelectedPeriod: propTypes.bool,
     extreme: propTypes.oneOf(["first", "last", "one", "none"]),
 
-    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
+    className: propTypes.oneOfType([propTypes.object, propTypes.string, undefined]),
     onClick: propTypes.func,
     onMouseEnter: propTypes.func,
     onMouseLeave: propTypes.func,

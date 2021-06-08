@@ -83,12 +83,12 @@ const Dropdown = React.forwardRef((props, ref) => {
 
         return (
             <Popover
-                positionTarget={dropdownRef}
-                manageOpened={true}
+                hideTail
+                manageOpened
                 opened={openedValue}
-                hideTail={true}
-                onOuterPopoverClicked={dropdownClicked}
                 positions={[{target: "bottom-start", content: "top-start"}]}
+                positionTarget={dropdownRef}
+                onOuterPopoverClicked={dropdownClicked}
                 contentStyles={listStyles}
             >
                 <Popover.Content>

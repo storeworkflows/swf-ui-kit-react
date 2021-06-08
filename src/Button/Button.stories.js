@@ -2,6 +2,7 @@ import React from 'react';
 
 import { default as Button } from './Button';
 import {TABLE_CATEGORIES} from "../../.storybook/tableCategories";
+import {withDesign} from "storybook-addon-designs";
 
 
 export default {
@@ -21,8 +22,16 @@ export default {
 
         onClick: TABLE_CATEGORIES.ACTION
     },
-
-    parameters: { controls: { sort: 'requiredFirst' } }
+    decorators: [withDesign],
+    parameters: {
+        controls: {
+            sort: 'requiredFirst'
+        },
+        design: {
+            type: 'figma',
+            url: 'https://www.figma.com/file/UNUiwIzQiaJzr42cHV3rki/Storybook?node-id=0%3A1'
+        }
+    }
 };
 
 

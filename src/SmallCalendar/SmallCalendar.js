@@ -2,7 +2,7 @@ import moment from 'moment';
 import * as React from 'react';
 import propTypes from "prop-types";
 
-import { useState} from "react";
+import {useCallback, useState} from "react";
 import CalendarMonth from "./InnerComponents/CalendarMonth";
 import ArrowButton from "./InnerComponents/ArrowButton";
 
@@ -14,7 +14,7 @@ const SmallCalendar = React.forwardRef((props, ref) => {
     const [selectedDate, setSelectedDate] = useState(date);
     const [openedDateValue, setOpenedDateValue] = useState((date) ? date : new Date());
 
-    const changeMonth = (selectedDate, isNext, e) =>{
+    const changeMonth = useCallback((e, isNext, selectedDate) =>{
         e?.stopPropagation();
 
         let additionValue = isNext ? 1 : -1;
@@ -23,12 +23,10 @@ const SmallCalendar = React.forwardRef((props, ref) => {
             setSelectedDate(new Date(selectedDate))
 
         setOpenedDateValue(changedTo.toDate())
-    }
+    }, [openedDateValue])
 
-    return (
-        <>
+    return <div ref={ref}>
             <CalendarMonth
-                ref={ref}
                 openedDate={openedDateValue}
                 selectedDate={selectedDate}
                 onSelected={onSelected}
@@ -44,9 +42,7 @@ const SmallCalendar = React.forwardRef((props, ref) => {
                 </CalendarMonth.HeaderEnd>
 
             </CalendarMonth>
-        </>
-    )
-
+    </div>
 });
 
 SmallCalendar.defaultProps = {

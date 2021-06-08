@@ -9,7 +9,8 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     '@storybook/preset-scss',
-    "storybook-addon-mock/register"
+    "storybook-addon-mock/register",
+    'storybook-addon-designs'
   ],
   webpackFinal: async (config, { configType }) => {
     config.module.rules.push(

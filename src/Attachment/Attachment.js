@@ -33,7 +33,7 @@ const Attachment = React.forwardRef((props, ref) => {
     const [activeDeleting, setActiveDeleting] = useState(false);
 
     const input = useRef(null)
-    const invalidValue = manageInvalid ? input : isInvalid;
+    const invalidValue = manageInvalid ? invalid : isInvalid;
 
     const uploadNewFile = async (fileToUpload) => {
         if (!file && !readonly && !disabled) {

@@ -52,8 +52,10 @@ const RangePicker = React.forwardRef((props, ref) => {
     }, [])
 
     const changeOpenedDate = () => {
+        //setIsFirstSelecting(true)
         const nextToEnd = selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
         const openedDate = (isFirstSelecting || !selectedDates.end) ? selectedDates.start : nextToEnd;
+       // const openedDate =  !selectedDates.start ? nextToEnd : selectedDates.start;
         setOpenedDate(openedDate ? new Date(openedDate) : new Date());
     }
 
@@ -119,7 +121,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             start: updated.start && moment(updated.start).format(format),
             end: updated.end && moment(updated.end).format(format)
         }
-
+      //  console.log(isFirstSelecting, updated)
         changeSelectedValue(isFirstSelecting, updatedDates);
         setValue(isFirstSelecting, updatedDates);
 
@@ -132,7 +134,7 @@ const RangePicker = React.forwardRef((props, ref) => {
     }
 
     const invalidInput = (selectedDates) => {
-        let errors = selectedDates ? getErrors( selectedDates, format, min, max) : [];
+        let errors = selectedDates ? getErrors(selectedDates, format, min, max) : [];
         let isInvalidCurrent = errors.length > 0;
 
         if (!manageInvalid) {
@@ -178,7 +180,7 @@ const RangePicker = React.forwardRef((props, ref) => {
 
         const popoverTarget = targetRef?.current
 
-        return popoverTarget && openedDate && <Popover
+        return popoverTarget && <Popover
             hideTail
             manageOpened
             opened={Boolean(openedDate)}
@@ -252,7 +254,7 @@ const RangePicker = React.forwardRef((props, ref) => {
     const labelClasses = classnames("inp-label", {"--readonly": readonly});
 
     return visible && <div ref={ref} className={"range-picker-container"}>
-        <div ref={targetRef} className={containerStyles}>
+        <div className={containerStyles} ref={targetRef}>
             <RequiredLabel
                 className={labelClasses}
                 required={required}
@@ -269,8 +271,8 @@ const RangePicker = React.forwardRef((props, ref) => {
                 variant={"tertiary"}
                 onClick={openCalendar}
             />}
-            {renderRangeCalendar()}
         </div>
+        {renderRangeCalendar()}
         {renderMessages()}
     </div>;
 })
