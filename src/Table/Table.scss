@@ -122,10 +122,12 @@
 
 .swfPaginationContainer,
 .swfPagination {
-  &.sticky {
+  &.--sticky {
     position: sticky;
     background: #fff;
     padding: 0.1rem 0;
+    top: var(--positionTop);
+    bottom: var(--positionBottom)
   }
 
   &.start {
