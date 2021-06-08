@@ -102,17 +102,11 @@ CalendarDay.defaultProps = {
 
 export default React.memo(CalendarDay, (prev, next) => {
     const previousProps = {
-        ...prev,
-        onClick: noop,
-        onMouseEnter: noop,
-        onMouseLeave: noop,
+        ...prev
     };
 
     const nextProps = {
-        ...next,
-        onClick: noop,
-        onMouseEnter: noop,
-        onMouseLeave: noop,
+        ...next
     }
 
     return isEqual(previousProps, nextProps);

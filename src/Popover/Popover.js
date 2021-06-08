@@ -62,7 +62,7 @@ const Popover = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         const targetValue = positionTarget?.current;
-        if(targetValue)
+       // if(targetValue)
             targetRef.current = targetValue;
     }, [ positionTarget])
 

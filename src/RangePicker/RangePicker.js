@@ -52,10 +52,10 @@ const RangePicker = React.forwardRef((props, ref) => {
     }, [])
 
     const changeOpenedDate = () => {
-        //setIsFirstSelecting(true)
-        const nextToEnd = selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
-        const openedDate = (isFirstSelecting || !selectedDates.end) ? selectedDates.start : nextToEnd;
-       // const openedDate =  !selectedDates.start ? nextToEnd : selectedDates.start;
+        const isStartOpen = !start.disabled && !start.readonly
+        onFocused(isStartOpen);
+
+        const openedDate =  selectedDates.start && isStartOpen ? selectedDates.start : selectedDates.end;
         setOpenedDate(openedDate ? new Date(openedDate) : new Date());
     }
 
@@ -166,7 +166,7 @@ const RangePicker = React.forwardRef((props, ref) => {
         setIsFirstSelecting(isFirst);
     }
 
-    const renderRangeCalendar = useCallback(() => {
+    const renderRangeCalendar = () => {
 
         const calendarPositions = [
             {target: "bottom-end", content: "top-end"},
@@ -180,7 +180,7 @@ const RangePicker = React.forwardRef((props, ref) => {
 
         const popoverTarget = targetRef?.current
 
-        return popoverTarget && <Popover
+        return popoverTarget && Boolean(openedDate) &&  <Popover
             hideTail
             manageOpened
             opened={Boolean(openedDate)}
@@ -199,7 +199,7 @@ const RangePicker = React.forwardRef((props, ref) => {
                 />
             </Popover.Content>
         </Popover>
-    }, [targetRef, openedDate, selectedDates, isFirstSelecting])
+    }
 
 
     const renderDateInput = (dateValue, isFirst = true) => {
@@ -292,6 +292,7 @@ RangePicker.defaultProps = {
     onValueChange: () => void 0,
     visible: true,
     disabled: false,
+    value: {}
 }
 
 const dateInputShape = {

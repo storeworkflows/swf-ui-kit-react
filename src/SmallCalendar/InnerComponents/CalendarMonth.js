@@ -101,9 +101,9 @@ const CalendarMonth = React.memo((props) => {
                 </div>
                 <div className={"calendar-view"}>
                     {DAYS_OF_WEEK.map((el, id) => <div
-                        className={"calendar-element week-day"}
-                        key={id}> {el}
-                    </div>
+                            className={"calendar-element week-day"}
+                            key={id}> {el}
+                        </div>
                     )}
                     {monthDates.map(renderCalendarElement)}
                 </div>
