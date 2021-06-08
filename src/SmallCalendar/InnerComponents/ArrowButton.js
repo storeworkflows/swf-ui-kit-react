@@ -2,8 +2,9 @@ import classnames from "classnames";
 import * as React from "react";
 import propTypes from "prop-types";
 import Icon from "../../Icon/Icon";
+import {noop} from "../../utils";
 
-const ArrowButton = React.forwardRef((props, ref) => {
+const ArrowButton = (props) => {
     const {isNext, onClick} = props;
 
     const classes = classnames({
@@ -11,19 +12,17 @@ const ArrowButton = React.forwardRef((props, ref) => {
         "next": isNext
     });
 
-    return (
-        <div
+    return  <div
             className={classes}
             onClick={(e) => onClick(e, isNext)}>
             <Icon
                 icon={isNext ? "chevron-right" : "chevron-left"}
                 size={"sm"}/>
         </div>
-    )
-})
+}
 
 ArrowButton.defaultProps = {
-    onClick: () => void 0
+    onClick: noop
 }
 
 ArrowButton.propTypes = {
@@ -31,4 +30,4 @@ ArrowButton.propTypes = {
     onClick: propTypes.func
 }
 
-export default ArrowButton;
+export default React.memo(ArrowButton);

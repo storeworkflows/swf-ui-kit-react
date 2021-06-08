@@ -56,7 +56,7 @@ const CalendarDay = React.forwardRef((props, ref) => {
     return <div
         className={dayContainerClasses}
         ref={ref}
-        onClick={e => actEvent(onClick, {dateInMilliseconds, active, e})}
+        onClick={e => actEvent(onClick, {dateInMilliseconds, isActive: active, e})}
         onMouseEnter={() => actEvent(onMouseEnter, dateInMilliseconds)}
         onMouseLeave={() => actEvent(onMouseLeave, null)}
     >

@@ -71,6 +71,7 @@
     "rimraf": "^3.0.2",
     "sass": "^1.32.10",
     "sass-loader": "^10.1.1",
+    "storybook-addon-designs": "^6.0.0",
     "storybook-addon-mock": "^0.1.0",
     "style-loader": "^2.0.0"
   },

@@ -52,8 +52,10 @@ const RangePicker = React.forwardRef((props, ref) => {
     }, [])
 
     const changeOpenedDate = () => {
+        //setIsFirstSelecting(true)
         const nextToEnd = selectedDates.end && moment(selectedDates.end).add(-1, "month").toDate();
         const openedDate = (isFirstSelecting || !selectedDates.end) ? selectedDates.start : nextToEnd;
+       // const openedDate =  !selectedDates.start ? nextToEnd : selectedDates.start;
         setOpenedDate(openedDate ? new Date(openedDate) : new Date());
     }
 
@@ -119,7 +121,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             start: updated.start && moment(updated.start).format(format),
             end: updated.end && moment(updated.end).format(format)
         }
-
+      //  console.log(isFirstSelecting, updated)
         changeSelectedValue(isFirstSelecting, updatedDates);
         setValue(isFirstSelecting, updatedDates);
 

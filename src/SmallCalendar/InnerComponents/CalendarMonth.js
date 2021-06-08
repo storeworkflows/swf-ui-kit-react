@@ -8,10 +8,12 @@ import {defineProps, defineSelected, getMonthDates} from "../utils";
 import {useCallback, useEffect, useRef, useState} from "react";
 import findByType, {createSubComponent} from "../../utils/findByType";
 import CalendarDay from "./CalendarDay";
+import {noop} from "../../utils";
 
 const DAYS_OF_WEEK = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-const CalendarMonth = (props) => {
+
+const CalendarMonth = React.memo((props) => {
 
     const {openedDate, onSelected, children,
         range, selectedDate, onMonthChange, className, hoveredDate,
@@ -45,11 +47,11 @@ const CalendarMonth = (props) => {
         }
     }, [manageHover, end, start, isFirstSelecting, range, onSetHover])
 
-    const setDate = useCallback(({dateObj, isActive, e}) =>{
+    const setDate = useCallback(({dateInMilliseconds, isActive, e}) =>{
         e?.stopPropagation();
 
-        const date = new Date(dateObj);
-        !isActive && onMonthChange(date, !(date.getDate() > 15))
+        const date = new Date(dateInMilliseconds);
+        !isActive && onMonthChange(e, !(date.getDate() > 15), date)
 
         !manageSelected && setSelected(date)
         onSelected(date);
@@ -83,7 +85,7 @@ const CalendarMonth = (props) => {
 
     const currentDate = moment(openedDate)
     let curMonthLabel = `${currentDate.format('MMMM')} ${currentDate.year()}`;
-    console.log(props)
+
     return (
         <>
             <div
@@ -109,7 +111,9 @@ const CalendarMonth = (props) => {
         </>
     )
 
-};
+}, (prev, next) => {
+    return isEqual(prev, next);
+});
 
 CalendarMonth.HeaderStart = createSubComponent("HeaderStart");
 CalendarMonth.HeaderEnd = createSubComponent("HeaderEnd");
@@ -117,9 +121,9 @@ CalendarMonth.HeaderEnd = createSubComponent("HeaderEnd");
 CalendarMonth.defaultProps = {
     openedDate: new Date().setHours(0,0,0,0),
     selectedDate: null,
-    onSelected: () => void 0,
-    onMonthChange: () => void 0,
-    onSetHover: () => void 0,
+    onSelected: noop,
+    onMonthChange: noop,
+    onSetHover: noop,
     className: "",
     range: {}
 }
@@ -141,6 +145,4 @@ CalendarMonth.propTypes = {
     manageSelected: propTypes.bool
 }
 
-export default React.memo(CalendarMonth, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default CalendarMonth

@@ -245,7 +245,7 @@ const LookupField = React.forwardRef((props, ref) => {
                 focused: false
             })
         }
-    })
+    }, [type, value, displayValue])
 
     const renderListPills = () =>{
         return <Input.Start>
