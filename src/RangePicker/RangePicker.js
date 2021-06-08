@@ -66,7 +66,7 @@ const RangePicker = React.forwardRef((props, ref) => {
         if (moment(startValue, format, true).isValid() && moment(endValue, format, true).isValid()) {
             setSelectedDate({
                 start: moment(startValue).format(format),
-                end: moment(endValue.value).format(format)
+                end: moment(endValue).format(format)
             });
         } else {
             const valueToSet = {start: startValue, end: endValue};
@@ -263,7 +263,9 @@ const RangePicker = React.forwardRef((props, ref) => {
                 htmlFor={name}
             />
             {renderDateInput(start)}
-            <Icon icon={"arrow-right-short"} className={"range-picker-element"}/>
+            <div className={"range-picker-element"}>
+            <Icon icon={"arrow-right-short"} />
+            </div>
             {renderDateInput(end, false)}
             {readonly ? <span/> : <Button
                 className={"datepicker-button range-picker-element"}

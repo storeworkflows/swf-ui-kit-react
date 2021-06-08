@@ -1,6 +1,4 @@
 .range-picker-container {
-  width: fit-content;
-
 
   .range-picker {
     display: flex;
@@ -9,7 +7,7 @@
 
 
     .date-input-control {
-      display: inline-flex;
+      display: flex;
       height: auto;
       padding: 0.5rem 0;
       font-size: 0.95rem;
@@ -17,6 +15,7 @@
       margin: auto 0;
       color: #495057;
       border: none;
+      width: inherit;
 
       &.--readonly {
         cursor: default;
