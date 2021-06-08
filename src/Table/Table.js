@@ -21,7 +21,11 @@ const tableRow = ({data: record, key, render}) => {
     return <Td key={`${key}`}>{render ? render({record, value}) : <span title={value}>{value}</span>}</Td>
 }
 
-export const Table = ({name = "", headers = [], dataSource = [], paginationBottom, paginationTop, total, loading}) => {
+export const Table = (props) => {
+    const {name = "", headers = [], dataSource = [], paginationBottom, paginationTop, total, loading, stickyHeader, headerPosition} = props;
+
+    console.log({props});
+
     const {
         setCurrentPage,
         setOffset,
@@ -34,11 +38,11 @@ export const Table = ({name = "", headers = [], dataSource = [], paginationBotto
         setOffset(0);
     }, [name])
 
-    return <div className="tableResponsive">
-        {loading && <div className="table-loader"><Loader/></div>}
+    return <div className="swfTableResponsive">
+        {loading && <div className="swfTableLoader"><Loader/></div>}
         <Pagination total={total || rowsCount.length} {...paginationTop}/>
-        <table className="table" cellPadding={0} cellSpacing={0}>
-            <Thead>
+        <table className="swfTable" cellPadding={0} cellSpacing={0}>
+            <Thead sticky={stickyHeader} position={headerPosition}>
                 {headers.map(({label, key}) => <Th key={`${key}:${label}`}>{label}</Th>)}
             </Thead>
             <Tbody>
@@ -49,7 +53,7 @@ export const Table = ({name = "", headers = [], dataSource = [], paginationBotto
                 }
             </Tbody>
         </table>
-        <Pagination total={total || rowsCount.length} {...paginationBottom}/>
+        <Pagination total={total || rowsCount.length} property="--positionBottom" {...paginationBottom}/>
     </div>
 }
 

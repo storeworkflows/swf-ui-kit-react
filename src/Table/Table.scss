@@ -1,4 +1,4 @@
-.tableResponsive {
+.swfTableResponsive {
   //overflow-x: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
@@ -11,7 +11,7 @@
   width: 100%;
   height: 100%;
 
-  .table-loader {
+  .swfTableLoader {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -23,7 +23,7 @@
   }
 }
 
-.table {
+.swfTable {
   width: 100%;
   margin-bottom: 1rem;
   color: #67748e;
@@ -41,15 +41,17 @@
   }
 }
 
-.thead {
+.swfThead {
   vertical-align: bottom;
-  position: sticky;
-  top: 1.6rem;
-  background: #fff;
+  &.--sticky {
+    position: sticky;
+    background: #fff;
+    top: var(--position);
+  }
 }
 
-tbody {
-  tr {
+.swfTBody {
+  .swfTr {
     cursor: pointer;
 
     &:hover {
@@ -58,7 +60,7 @@ tbody {
   }
 }
 
-.th {
+.swfTh {
   padding: 0.75rem 1.5rem;
   letter-spacing: 0;
   border-bottom: 3px solid #e9ecef !important;
@@ -70,7 +72,7 @@ tbody {
   color: var(--swf-secondary);
 }
 
-.td {
+.swfTd {
   vertical-align: middle;
   white-space: nowrap;
   text-align: center;
@@ -79,16 +81,16 @@ tbody {
   overflow: hidden;
 }
 
-.pagination-container {
+.swfPaginationContainer {
   display: flex;
   gap: 0.5rem;
 
-  .pagination {
+  .swfPagination {
     display: flex;
     align-items: center;
     gap: 0.3rem;
 
-    .moreButton {
+    .swfMoreButton {
       background: transparent;
       border-color: transparent;
       padding: 0;
@@ -100,7 +102,7 @@ tbody {
       }
     }
 
-    .roundedButton {
+    .swfRoundedButton {
       border-radius: 1.5rem;
       padding: 0 0.5rem;
       height: 1.5rem;
@@ -109,7 +111,7 @@ tbody {
     }
   }
 
-  .pagination-dropdown {
+  .swfPaginationDropdown {
     width: fit-content;
 
     .dropdown-button {
@@ -118,13 +120,14 @@ tbody {
   }
 }
 
-.pagination-container,
-.pagination {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  padding-top: 0.1rem;
-  
+.swfPaginationContainer,
+.swfPagination {
+  &.sticky {
+    position: sticky;
+    background: #fff;
+    padding: 0.1rem 0;
+  }
+
   &.start {
     justify-content: flex-start;
   }
@@ -136,5 +139,13 @@ tbody {
   }
   &.none {
     display: none;
+  }
+
+  &.top {
+    top: 0
+  }
+
+  &.bottom {
+    bottom: 0;
   }
 }

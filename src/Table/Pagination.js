@@ -1,4 +1,4 @@
-import { memo, useContext, useState } from "react";
+import { memo, useContext, useEffect, useRef, useState } from "react";
 import { Button, Icon, Dropdown } from "../index";
 import classNames from "classnames";
 import { TableContext } from "./context/table";
@@ -18,7 +18,7 @@ interface IPagination {
 const PaginationItem = ({ label, active, onClick }) => {
   return (
     <Button
-      className="roundedButton"
+      className="swfRoundedButton"
       variant={active ? "primary" : "secondary"}
       onClick={onClick}
     >
@@ -31,7 +31,7 @@ const More = memo(
   ({ icon, show, onClick }) => {
     if (!show) return null;
     return (
-      <Button icon={icon} className="moreButton" size="sm" onClick={onClick} />
+      <Button icon={icon} className="swfMoreButton" size="sm" onClick={onClick} />
     );
   },
   (p, n) => p.show === n.show
@@ -46,7 +46,17 @@ export const Pagination = (props) => {
     pageSizeOptions = [10, 20, 50, 100],
     showQuickJumper = true,
     alignment = "end",
+    sticky,
+    position,
+    property = "--positionTop"
   } = props;
+
+  const paginationRef = useRef(null);
+
+  useEffect(() => {
+    paginationRef.current.style.setProperty(property, `${position}px`);
+  }, [position])
+
   const [peerPageOpened, setPeerPageOpened] = useState(false);
   const {
     currentPage: page,
@@ -168,12 +178,12 @@ export const Pagination = (props) => {
   };
 
   return (
-    <div className={classNames("pagination-container", alignment)}>
-      <div className={classNames("pagination", alignment)}>
+    <div ref={paginationRef} className={classNames("swfPaginationContainer", alignment, sticky && "--sticky")}>
+      <div className={classNames("swfPagination", alignment)}>
         <Button
           icon="arrow-left-short"
           disabled={isFirstPage}
-          className="roundedButton"
+          className="swfRoundedButton"
           onClick={handlePrevPage}
         />
         {firstItem()}
@@ -192,7 +202,7 @@ export const Pagination = (props) => {
         <Button
           icon="arrow-right-short"
           disabled={isLastPage}
-          className="roundedButton"
+          className="swfRoundedButton"
           onClick={handleNextPage}
         />
       </div>
@@ -201,7 +211,7 @@ export const Pagination = (props) => {
           id: number,
           label: number,
         }))}
-        className="pagination-dropdown"
+        className="swfPaginationDropdown"
         selectedItems={[peerPage]}
         scrollToSelected={false}
         opened={peerPageOpened}

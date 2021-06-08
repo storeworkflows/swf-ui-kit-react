@@ -25,6 +25,12 @@ TableContainer.defaultProp = {
     offsetChanged: noop
 }
 
+const paginationPropTypes = {
+    alignment: propTypes.oneOf(["start", "center", "end", "none"]),
+    sticky: propTypes.bool,
+    position: propTypes.number
+}
+
 TableContainer.propTypes = {
     name: propTypes.string,
     headers: propTypes.arrayOf(propTypes.shape({
@@ -32,13 +38,11 @@ TableContainer.propTypes = {
         key: propTypes.string,
         render: propTypes.func
     })),
+    stickyHeader: propTypes.bool,
+    headerPosition: propTypes.number,
     dataSource: propTypes.arrayOf(propTypes.object),
-    paginationTop: propTypes.shape({
-        alignment: propTypes.oneOf(["start", "center", "end", "none"])
-    }),
-    paginationBottom: propTypes.shape({
-        alignment: propTypes.oneOf(["start", "center", "end", "none"])
-    }),
+    paginationTop: propTypes.shape(paginationPropTypes),
+    paginationBottom: propTypes.shape(paginationPropTypes),
     total: propTypes.number,
     loading: propTypes.bool,
     offsetChanged: propTypes.func,

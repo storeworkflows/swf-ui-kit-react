@@ -1,5 +1,5 @@
 export const Tbody = ({children}) => {
-    return <tbody>
+    return <tbody className="swfTBody">
         {children}
     </tbody>
 }

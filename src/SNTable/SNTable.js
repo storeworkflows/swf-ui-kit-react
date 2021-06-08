@@ -13,6 +13,8 @@ const SNTable = (props) => {
     paginationTop,
     paginationBottom,
     onClick,
+    stickyHeader,
+    headerPosition
   } = props;
 
   const [headers, setHeaders] = useState([]);
@@ -102,24 +104,42 @@ const SNTable = (props) => {
       loading={loading}
       paginationTop={paginationTop}
       paginationBottom={paginationBottom}
+      stickyHeader={stickyHeader}
+      headerPosition={headerPosition}
     />
   );
 };
 
 SNTable.defaultProps = {
+  stickyHeader: false,
+  headerPosition: 0,
+  paginationTop: {
+    alignment: "end",
+    sticky: false,
+    position: 0
+  },
+  paginationBottom: {
+    alignment: "end",
+    sticky: false,
+    position: 0
+  },
   onClick: noop
+}
+
+const paginationPropTypes = {
+  alignment: propTypes.oneOf(["start", "center", "end", "none"]),
+  sticky: propTypes.bool,
+  position: propTypes.number
 }
 
 SNTable.propTypes = {
   table: propTypes.string,
   view: propTypes.string,
   query: propTypes.string,
-  paginationTop: propTypes.shape({
-    alignment: propTypes.oneOf(["start", "center", "end", "none"]),
-  }),
-  paginationBottom: propTypes.shape({
-    alignment: propTypes.oneOf(["start", "center", "end", "none"]),
-  }),
+  paginationTop: propTypes.shape(paginationPropTypes),
+  paginationBottom: propTypes.shape(paginationPropTypes),
+  stickyHeader: propTypes.bool,
+  headerPosition: propTypes.number,
   onClick: propTypes.func,
 };
 
