@@ -13,10 +13,9 @@
     top: 0;
     left: 0;
     z-index: 1;
-    background: linear-gradient(transparent, #fff);
+    background:  #fff;
     transition: color 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms, transform 0.2s cubic-bezier(0, 0, 0.2, 1) 0ms;
     transform: translate(19px, -10px);
-
 
     &.--readonly{
       background: linear-gradient(transparent 45%, #e4e6e7 50%)

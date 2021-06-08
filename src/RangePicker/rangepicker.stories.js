@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import { default as RangePicker } from './RangePicker';
 import {DatePicker, Dropdown, Modal} from "../index";
@@ -10,27 +10,38 @@ export default {
        // min: new Date("2021-05-11"),
         value: {
             start: { value: "" },
-            end: { value: ""}
+            end: { value: "" }
         }
     }
 };
 
 
+
 const Template = (args) => <RangePicker {...args}/>;
 export const Standard = Template.bind({});
 
-// export const Check = (args) => <div>
-//     <Modal>
-//         <Modal.Body>
-//             <RangePicker
-//                 value={{
-//                 start: { value: "" },
-//                 end: { value: ""}
-//             }}
-//             />
-//
-//         </Modal.Body>
-//
-//     </Modal>
-// </div>
+export const Control = (args) => {
 
+    const controller = (props) => {
+
+        const [range, setRange] = useState({
+            start: {value: ""},
+            end: {value: ""}
+        })
+
+        return <RangePicker
+            label={ "Duration"}
+            min = {new Date()}
+            value={range}
+            manageValue
+            onValueChange={ ({updatedValue}) => {
+                const {start, end} = updatedValue;
+                setRange({ start: {value: start ?? ""}, end: {value: end ?? ""} })
+            }}
+            onValueSet={({ start, end }) => {
+                setRange({ start: {value: start ?? ""}, end: {value: end ?? ""} })
+            }}
+        />
+    }
+    return controller();
+}

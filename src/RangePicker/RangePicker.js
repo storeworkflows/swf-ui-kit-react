@@ -66,7 +66,7 @@ const RangePicker = React.forwardRef((props, ref) => {
         if (moment(startValue, format, true).isValid() && moment(endValue, format, true).isValid()) {
             setSelectedDate({
                 start: moment(startValue).format(format),
-                end: moment(endValue.value).format(format)
+                end: moment(endValue).format(format)
             });
         } else {
             const valueToSet = {start: startValue, end: endValue};
