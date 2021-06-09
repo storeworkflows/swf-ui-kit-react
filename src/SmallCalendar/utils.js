@@ -11,28 +11,30 @@ const defineExtreme = (start, end, current) => {
     }
 }
 
-const getMilliseconds = (date, gap) => {
+const getMilliseconds = (date, gap = 0) => {
+    if(!date)
+        return;
+
     const dateInMilliseconds  = new Date(date)
     dateInMilliseconds.setDate(dateInMilliseconds.getDate() + gap)
     return  dateInMilliseconds.setHours(0,0,0,0)
 }
 
-const defineDisabledValue = (startDate, endDate, current, isFirstSelecting) => {
-    if( (isFirstSelecting && current>endDate) || (!isFirstSelecting && current<startDate))
+const defineDisabled = ({min, max, current}) => {
+    if(current>=max || current<=min)
     {
         switch (true) {
-            case isFirstSelecting && current === getMilliseconds(endDate, 1) :
+            case current === max :
                 return "start";
-            case !isFirstSelecting && current ===  getMilliseconds(startDate, -1) :
+            case current === min :
                 return "end";
             default:
                 return "none";
         }
-    } else
-        return false
+    }
 }
 
-export const defineProps = (selectedDate, range, current, hoveredDate, addDisabled) => {
+export const defineProps = (selectedDate, range, current, hoveredDate, addDisabled, min, max) => {
     let startDate = (!range || range.isFirstSelecting ? selectedDate : range.start)?.setHours(0,0,0,0);
     let endDate = range && (range.isFirstSelecting ? range.end : selectedDate)?.setHours(0,0,0,0);
 
@@ -43,7 +45,20 @@ export const defineProps = (selectedDate, range, current, hoveredDate, addDisabl
     if(!range)
         return  {selected, inSelectedPeriod, isNowDate};
 
-    let disabled = addDisabled && !inSelectedPeriod && defineDisabledValue(startDate, endDate, current, range.isFirstSelecting);
+    let disabled = addDisabled && !inSelectedPeriod
+        && defineDisabled({
+            min: getMilliseconds(startDate, -1),
+            max: getMilliseconds(endDate, 1),
+            current})
+
+    if(!disabled && (min || max))
+    {
+        disabled = defineDisabled({
+            min: getMilliseconds(min),
+            max: getMilliseconds(max),
+            current})
+    }
+
     let selectedBorders = selected ? defineBorder(startDate, endDate, current) : []
 
     let hoveredData = {}

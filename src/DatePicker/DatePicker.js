@@ -156,7 +156,7 @@ const DatePicker = React.forwardRef((props, ref) => {
             <Input.End>
                 {readonly ? <span/> : <Button
                     className={"datepicker-button"}
-                    icon={"calendar"}
+                    icon={"calendar-event"}
                     variant={"tertiary"}
                     onClick={openCalendar}
                 />}

@@ -10,7 +10,7 @@ import ArrowButton from "./InnerComponents/ArrowButton";
 import {convertToDate, updateExtremeDates} from "./utils";
 
 const RangeCalendar = React.forwardRef((props, ref) => {
-    const {openedDate, onSelected, addDisabled,
+    const {openedDate, onSelected, addDisabled, min, max,
         startDay: start, endDay: end, isFirstSelecting, manageSelected} = props;
 
     const [extremeDays, setExtremeDays] = useState({
@@ -76,6 +76,8 @@ const RangeCalendar = React.forwardRef((props, ref) => {
             manageHover={true}
             manageSelected={true}
             addDisabled={addDisabled}
+            max={max}
+            min={min}
         >
             {isNext
                 ?
@@ -110,7 +112,9 @@ RangeCalendar.propTypes = {
     endDay: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
     isFirstSelecting: propTypes.bool,
     manageSelected: propTypes.bool,
-    addDisabled: propTypes.bool
+    addDisabled: propTypes.bool,
+    min: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
+    max: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number])
 }
 
 export default React.memo(RangeCalendar);
