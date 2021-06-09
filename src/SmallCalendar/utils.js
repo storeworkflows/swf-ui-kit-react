@@ -32,7 +32,7 @@ const defineDisabledValue = (startDate, endDate, current, isFirstSelecting) => {
         return false
 }
 
-export const defineProps = (selectedDate, range, current, hoveredDate) => {
+export const defineProps = (selectedDate, range, current, hoveredDate, addDisabled) => {
     let startDate = (!range || range.isFirstSelecting ? selectedDate : range.start)?.setHours(0,0,0,0);
     let endDate = range && (range.isFirstSelecting ? range.end : selectedDate)?.setHours(0,0,0,0);
 
@@ -43,11 +43,11 @@ export const defineProps = (selectedDate, range, current, hoveredDate) => {
     if(!range)
         return  {selected, inSelectedPeriod, isNowDate};
 
-    let disabled = !inSelectedPeriod && defineDisabledValue(startDate, endDate, current, range.isFirstSelecting);
+    let disabled = addDisabled && !inSelectedPeriod && defineDisabledValue(startDate, endDate, current, range.isFirstSelecting);
     let selectedBorders = selected ? defineBorder(startDate, endDate, current) : []
 
     let hoveredData = {}
-    if(!disabled)
+    if(!disabled && addDisabled)
         hoveredData = range.isFirstSelecting
             ? defineHoverProps({ start: hoveredDate, end: endDate, current})
             : defineHoverProps({ start: startDate, end: hoveredDate, current});

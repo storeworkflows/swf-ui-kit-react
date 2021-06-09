@@ -31,6 +31,7 @@ const RangePicker = React.forwardRef((props, ref) => {
 
     const [selectedDates, setSelectedDate] = useState({start: start.value, end: end.value});
     const [isFirstSelecting, setIsFirstSelecting] = useState(true);
+    const [isOpenedInFirst, setIsOpenedInFirst] = useState(true);
 
     const invalidValue = manageInvalid ? invalid : isInvalid;
     const targetRef = useRef(null);
@@ -53,16 +54,11 @@ const RangePicker = React.forwardRef((props, ref) => {
 
     const changeOpenedDate = () => {
         const isStartOpen = !start.disabled && !start.readonly
+        setIsOpenedInFirst(true)
         onFocused(isStartOpen);
 
-        const updatedValue = {start: "", end: ""}
-        onValueSet(updatedValue);
-        setSelectedDate(updatedValue)
-
-        start.onValueSet && start.onValueSet("");
-        end.onValueSet && end.onValueSet("");
-
-        setOpenedDate( new Date());
+        const openedDate =  selectedDates.start && isStartOpen ? selectedDates.start : selectedDates.end;
+        setOpenedDate(openedDate ? new Date(openedDate) : new Date());
     }
 
     const setDateFromProps = useCallback(() => {
@@ -123,11 +119,13 @@ const RangePicker = React.forwardRef((props, ref) => {
     }
 
     const onSelected = ({updated}) => {
+        const endValue = isOpenedInFirst ? "" : (updated.end && moment(updated.end).format(format))
         const updatedDates = {
             start: updated.start && moment(updated.start).format(format),
-            end: updated.end && moment(updated.end).format(format)
+            end: endValue
         }
 
+        isOpenedInFirst && setIsOpenedInFirst(false);
         changeSelectedValue(isFirstSelecting, updatedDates);
         setValue(isFirstSelecting, updatedDates);
 
@@ -202,6 +200,7 @@ const RangePicker = React.forwardRef((props, ref) => {
                     endDay={selectedDates.end}
                     isFirstSelecting={isFirstSelecting}
                     manageSelected
+                    addDisabled={!isFirstSelecting}
                 />
             </Popover.Content>
         </Popover>
@@ -217,6 +216,8 @@ const RangePicker = React.forwardRef((props, ref) => {
         })
 
         const value = isFirst ? selectedDates.start : selectedDates.end;
+        const canFocus = !(Boolean(openedDate) && isOpenedInFirst)
+
         return <input
             className={inputClasses}
             placeholder={dateValue.placeholder || format}
@@ -230,7 +231,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             min={min}
             required={required}
             onBlur={() => setFocused(false)}
-            onFocus={() => onFocused(isFirst)}
+            onFocus={() => canFocus && onFocused(isFirst)}
             readOnly={dateValue.readonly || readonly}
             disabled={dateValue.disabled || disabled}
         />
