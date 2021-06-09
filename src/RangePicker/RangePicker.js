@@ -55,8 +55,14 @@ const RangePicker = React.forwardRef((props, ref) => {
         const isStartOpen = !start.disabled && !start.readonly
         onFocused(isStartOpen);
 
-        const openedDate =  selectedDates.start && isStartOpen ? selectedDates.start : selectedDates.end;
-        setOpenedDate(openedDate ? new Date(openedDate) : new Date());
+        const updatedValue = {start: "", end: ""}
+        onValueSet(updatedValue);
+        setSelectedDate(updatedValue)
+
+        start.onValueSet && start.onValueSet("");
+        end.onValueSet && end.onValueSet("");
+
+        setOpenedDate( new Date());
     }
 
     const setDateFromProps = useCallback(() => {
@@ -121,7 +127,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             start: updated.start && moment(updated.start).format(format),
             end: updated.end && moment(updated.end).format(format)
         }
-      //  console.log(isFirstSelecting, updated)
+
         changeSelectedValue(isFirstSelecting, updatedDates);
         setValue(isFirstSelecting, updatedDates);
 
