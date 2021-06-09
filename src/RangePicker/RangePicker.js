@@ -200,7 +200,9 @@ const RangePicker = React.forwardRef((props, ref) => {
                     endDay={selectedDates.end}
                     isFirstSelecting={isFirstSelecting}
                     manageSelected
-                    addDisabled={!isFirstSelecting}
+                    addDisabled={!isOpenedInFirst}
+                    min={min}
+                    max={max}
                 />
             </Popover.Content>
         </Popover>
@@ -276,7 +278,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             {renderDateInput(end, false)}
             {readonly ? <span/> : <Button
                 className={"datepicker-button range-picker-element"}
-                icon={"calendar"}
+                icon={"calendar-range"}
                 variant={"tertiary"}
                 onClick={openCalendar}
             />}
