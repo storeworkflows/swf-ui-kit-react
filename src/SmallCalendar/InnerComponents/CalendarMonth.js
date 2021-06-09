@@ -17,7 +17,7 @@ const CalendarMonth = React.memo((props) => {
 
     const {openedDate, onSelected, children,
         range, selectedDate, onMonthChange, className, hoveredDate,
-        onSetHover, manageHover, manageSelected} = props;
+        onSetHover, manageHover, manageSelected, addDisabled} = props;
     const {end, start, isFirstSelecting} = range;
 
     const [monthDates, setMonthDates] = useState(getMonthDates(openedDate));
@@ -70,7 +70,7 @@ const CalendarMonth = React.memo((props) => {
         const isActive = currentDay.getMonth() === new Date(openedDate).getMonth();
         let dateObj = currentDay.setHours(0,0,0,0);
 
-        const props = defineProps(selected, range, dateObj, hoveredFinal);
+        const props = defineProps(selected, range, dateObj, hoveredFinal, addDisabled);
 
         return <CalendarDay
             key = {dateObj}
@@ -125,7 +125,8 @@ CalendarMonth.defaultProps = {
     onMonthChange: noop,
     onSetHover: noop,
     className: "",
-    range: {}
+    range: {},
+    addDisabled: true
 }
 
 CalendarMonth.propTypes = {
@@ -142,7 +143,8 @@ CalendarMonth.propTypes = {
     classNames: propTypes.oneOfType([propTypes.string, propTypes.object]),
     onSetHover: propTypes.func,
     manageHover: propTypes.bool,
-    manageSelected: propTypes.bool
+    manageSelected: propTypes.bool,
+    addDisabled: propTypes.bool
 }
 
 export default CalendarMonth

@@ -34,6 +34,10 @@
       }
     }
 
+    .date-input-control:focus {
+      outline: none;
+    }
+
 
     .range-picker-element {
       display: flex;
