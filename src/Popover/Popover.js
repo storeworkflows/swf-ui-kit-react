@@ -2,14 +2,16 @@ import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
 import {ResizeObserver} from "resize-observer";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 import {POPOVER} from "./constants";
+import isEqual from "react-fast-compare";
+import {noop} from "../utils";
 
-const Popover = React.forwardRef((props, ref) => {
+const Popover = React.memo(React.forwardRef((props, ref) => {
 
     const {children, roundBorder, contentStyles, positionTarget, manageOpened,
         onTargetClick, onOuterPopoverClicked, positions, hideTail, opened} = props;
@@ -118,6 +120,7 @@ const Popover = React.forwardRef((props, ref) => {
         }
     }
 
+
     const calculateStyles = () => {
         let contentElement = contentRef?.current;
 
@@ -166,6 +169,8 @@ const Popover = React.forwardRef((props, ref) => {
             {renderContent()}
             {!positionTarget?.current && renderTarget()}
     </>;
+}), (prev, next) => {
+    return isEqual(prev, next);
 });
 
 Popover.Content = createSubComponent("Content");
@@ -177,8 +182,8 @@ Popover.defaultProps = {
     opened: false,
     positions: getAllPossibleVariants(),
     roundBorder: true,
-    onTargetClick: () => void 0,
-    onOuterPopoverClicked: () => void 0,
+    onTargetClick: noop,
+    onOuterPopoverClicked: noop,
     fitTargetWidth: false
 }
 

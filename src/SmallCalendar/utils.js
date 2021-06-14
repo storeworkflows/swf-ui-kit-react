@@ -1,4 +1,5 @@
 import moment from "moment";
+import {useState} from "react";
 
 const defineExtreme = (start, end, current) => {
     switch (current) {
@@ -15,12 +16,18 @@ const getMilliseconds = (date, gap = 0) => {
     if(!date)
         return;
 
+    if(!gap)
+        return (new Date(date)).setHours(0,0,0,0)
+
     const dateInMilliseconds  = new Date(date)
     dateInMilliseconds.setDate(dateInMilliseconds.getDate() + gap)
     return  dateInMilliseconds.setHours(0,0,0,0)
 }
 
 const defineDisabled = ({min, max, current}) => {
+    if(!min && !max)
+        return;
+
     if(current>=max || current<=min)
     {
         switch (true) {
@@ -35,29 +42,29 @@ const defineDisabled = ({min, max, current}) => {
 }
 
 export const defineProps = (selectedDate, range, current, hoveredDate, addDisabled, min, max) => {
-    let startDate = (!range || range.isFirstSelecting ? selectedDate : range.start)?.setHours(0,0,0,0);
-    let endDate = range && (range.isFirstSelecting ? range.end : selectedDate)?.setHours(0,0,0,0);
+
+    let startDate = (!_.isEmpty(range) || range.isFirstSelecting) ?  range.start : selectedDate ;
+    let endDate = !_.isEmpty(range) && (range.isFirstSelecting ? range.end : selectedDate);
 
     let selected = _.isEqual(startDate, current) || _.isEqual(endDate, current)
     let isNowDate = _.isEqual(current, new Date().setHours(0,0,0,0) )
     let inSelectedPeriod = startDate && endDate && current>=startDate && current<=endDate;
 
-    if(!range)
+    if(_.isEmpty(range))
         return  {selected, inSelectedPeriod, isNowDate};
+
+    const needDisableStart = (range.start && range.end) || (range.start && !range.isFirstSelecting);
+    const needDisableEnd = (range.start && range.end) || (range.end && range.isFirstSelecting);
+
+    const disabledStart = needDisableStart ? startDate : min
+    const disabledEnd = needDisableEnd ? endDate : max
 
     let disabled = addDisabled && !inSelectedPeriod
         && defineDisabled({
-            min: getMilliseconds(startDate, -1),
-            max: getMilliseconds(endDate, 1),
+            min: getMilliseconds(disabledStart, -1),
+            max: getMilliseconds(disabledEnd, 1),
             current})
 
-    if(!disabled && (min || max))
-    {
-        disabled = defineDisabled({
-            min: getMilliseconds(min),
-            max: getMilliseconds(max),
-            current})
-    }
 
     let selectedBorders = selected ? defineBorder(startDate, endDate, current) : []
 
@@ -110,11 +117,12 @@ const defineBorder = (start, end, current) => {
     return result;
 }
 
-export const defineSelected = (range, selected) => {
-    if (selected)
-        return selected;
+export const defineSelected = ({range, selectedDate}) => {
 
-    if (range)
+    if (selectedDate)
+        return selectedDate;
+
+    if (!_.isEmpty(range))
         return range.isFirstSelecting ? range.start : range.end;
 
     return null;
@@ -124,11 +132,9 @@ export const defineSelected = (range, selected) => {
 export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) => {
     const oldDate = isFirstSelecting ? oldExtreme.end : oldExtreme.start;
 
-    const selectedInSeconds = selectedDate?.setHours(0,0,0,0);
-    const oldInSeconds = oldDate?.setHours(0,0,0,0);
     const oldFitSelected = oldDate &&
-        (isFirstSelecting && selectedInSeconds<=oldInSeconds)
-        || (!isFirstSelecting && selectedInSeconds>=oldInSeconds);
+        (isFirstSelecting && selectedDate<=oldDate)
+        || (!isFirstSelecting && selectedDate>=oldDate);
 
     const result = oldFitSelected ? oldDate : undefined
     return {
@@ -137,9 +143,16 @@ export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) =
     }
 }
 
-export const convertToDate = (input) => {
+export const checkDate = (input) => {
     if(input && moment(input).isValid())
-        return new Date(input)
+        return new Date(input).setHours(0,0,0,0)
+}
+
+export const getExtremeDates = ({start, end}) => {
+    return {
+        start: checkDate(start),
+        end: checkDate(end)
+    }
 }
 
 export const getMonthDates = (openedDate) => {
@@ -158,4 +171,14 @@ export const getMonthDates = (openedDate) => {
     }
 
     return result;
+}
+
+export const getDefinedDate = (date) => {
+    return checkDate(date) || new Date().setHours(0,0,0,0)
+}
+
+export const useWrappedState = (value, func = () => void 0) => {
+    const [state, setState] = useState(func(value));
+    const setWrappedState = (value) => setState(func(value));
+    return [state, setWrappedState]
 }

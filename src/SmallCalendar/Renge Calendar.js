@@ -7,33 +7,23 @@ import classnames from 'classnames';
 import {useCallback, useEffect, useState} from "react";
 import CalendarMonth from "./InnerComponents/CalendarMonth";
 import ArrowButton from "./InnerComponents/ArrowButton";
-import {convertToDate, updateExtremeDates} from "./utils";
+import {getDefinedDate, getExtremeDates, updateExtremeDates, useWrappedState} from "./utils";
+import {noop} from "../utils";
+
 
 const RangeCalendar = React.forwardRef((props, ref) => {
-    const {openedDate, onSelected, addDisabled, min, max,
-        startDay: start, endDay: end, isFirstSelecting, manageSelected} = props;
+    const {
+        openedDate, onSelected, addDisabled, min, max,
+        startDay: start, endDay: end, isFirstSelecting, manageSelected
+    } = props;
 
-    const [extremeDays, setExtremeDays] = useState({
-        start: convertToDate(start),
-        end: convertToDate(end)
-    })
-    const [openedDateValue, setOpenedDateValue] = useState(convertToDate(openedDate) || new Date());
+    const [extremeDays, setExtremeDays] = useWrappedState({start, end}, getExtremeDates)
+    const [openedDateValue, setOpenedDateValue] = useWrappedState(openedDate, getDefinedDate);
     const [hoverDate, setHoverDate] = useState(null);
 
-    const nextOpened =  moment(openedDateValue).add(1, "month").toDate();
+    useEffect(() => setOpenedDateValue(openedDate), [openedDate])
 
-    useEffect(() => {
-        const updatedDate = convertToDate(openedDate) || new Date()
-        setOpenedDateValue(updatedDate)
-    }, [openedDate])
-
-
-    useEffect(() => {
-        manageSelected && setExtremeDays({
-            start: convertToDate(start),
-            end: convertToDate(end)
-        })
-    }, [manageSelected, start, end])
+    useEffect(() => manageSelected && setExtremeDays({start, end}), [manageSelected, start, end])
 
     const changeMonth = useCallback((e, isNext, selectedDate) => {
         e?.stopPropagation();
@@ -43,7 +33,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
 
         selectedDate && setSelected(selectedDate)
         setOpenedDateValue(changedTo.toDate())
-    }, [openedDateValue, setOpenedDateValue])
+    }, [openedDateValue])
 
 
     const setSelected = useCallback((date) => {
@@ -52,6 +42,22 @@ const RangeCalendar = React.forwardRef((props, ref) => {
         onSelected({old: extremeDays, updated: updatedDates})
     }, [isFirstSelecting, onSelected, manageSelected, extremeDays])
 
+    const renderArrow = useCallback(
+        (isNext) => <ArrowButton isNext={isNext} onClick={changeMonth}/>
+        ,[changeMonth])
+
+    const renderArrows = useCallback((isNext) => {
+        return  isNext
+            ?
+            <CalendarMonth.HeaderEnd>
+                {renderArrow(isNext)}
+            </CalendarMonth.HeaderEnd>
+            :
+            <CalendarMonth.HeaderStart>
+                {renderArrow(isNext)}
+            </CalendarMonth.HeaderStart>
+    }, [renderArrow])
+
     const renderCalendarElement = (isNext = false) => {
         const classes = classnames(
             "range-calendar", {
@@ -59,14 +65,15 @@ const RangeCalendar = React.forwardRef((props, ref) => {
             }
         )
 
+        const nextOpened = moment(openedDateValue).add(1, "month").toDate().setHours(0,0,0,0);
         const openedDate = isNext ? nextOpened : openedDateValue
 
         return <CalendarMonth
-            openedDate={openedDate?.setHours(0,0,0,0)}
+            openedDate={openedDate}
             onSelected={setSelected}
             onMonthChange={changeMonth}
             className={classes}
-            onSetHover={date => setHoverDate(date)}
+            onSetHover={setHoverDate}
             hoveredDate={hoverDate}
             range={{
                 start: extremeDays.start,
@@ -79,17 +86,7 @@ const RangeCalendar = React.forwardRef((props, ref) => {
             max={max}
             min={min}
         >
-            {isNext
-                ?
-                <CalendarMonth.HeaderEnd>
-                    <ArrowButton isNext={isNext} onClick={changeMonth}/>
-                </CalendarMonth.HeaderEnd>
-                :
-                <CalendarMonth.HeaderStart>
-                    <ArrowButton onClick={changeMonth}/>
-                </CalendarMonth.HeaderStart>
-            }
-
+            {renderArrows(isNext)}
         </CalendarMonth>
     }
 
@@ -100,14 +97,14 @@ const RangeCalendar = React.forwardRef((props, ref) => {
 });
 
 RangeCalendar.defaultProps = {
-    openedDate: new Date().setHours(0,0,0,0),
-    onSelected: () => void 0,
+    openedDate: new Date(),
+    onSelected: noop,
     addDisabled: true
 }
 
 RangeCalendar.propTypes = {
-    openedDate:  propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
-    onSelected:  propTypes.func,
+    openedDate: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
+    onSelected: propTypes.func,
     startDay: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
     endDay: propTypes.oneOfType([propTypes.string, propTypes.object, propTypes.number]),
     isFirstSelecting: propTypes.bool,

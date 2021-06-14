@@ -81,7 +81,7 @@ CalendarDay.propTypes = {
     inSelectedPeriod: propTypes.bool,
     extreme: propTypes.oneOf(["first", "last", "one", "none"]),
 
-    className: propTypes.oneOfType([propTypes.object, propTypes.string, undefined]),
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
     onClick: propTypes.func,
     onMouseEnter: propTypes.func,
     onMouseLeave: propTypes.func,
@@ -101,13 +101,5 @@ CalendarDay.defaultProps = {
 }
 
 export default React.memo(CalendarDay, (prev, next) => {
-    const previousProps = {
-        ...prev
-    };
-
-    const nextProps = {
-        ...next
-    }
-
-    return isEqual(previousProps, nextProps);
+    return isEqual(prev, next);
 });
