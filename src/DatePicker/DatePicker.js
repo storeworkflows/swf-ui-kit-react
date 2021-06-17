@@ -8,7 +8,7 @@ import Button from "../Button/Button";
 import Popover from "../Popover/Popover";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 
-import {addCharToDate, getErrorMessages} from "./utils";
+import {addCharToDate, compareErrors, getErrorMessages, hasChanges} from "./utils";
 import {checkDate} from "../SmallCalendar/utils";
 
 const DatePicker = React.forwardRef((props, ref) => {
@@ -62,7 +62,7 @@ const DatePicker = React.forwardRef((props, ref) => {
 
     const invalidInput = useCallback((errors = [], date) => {
         let isInvalidCurrent = errors.length > 0;
-        const hasChanges = !_.isEqual(errorMessages.sort(), errors.sort());
+        const hasChanges = hasChanges(errors, errorMessages)
 
         if (!manageInvalid) {
             setIsInvalid(isInvalidCurrent);

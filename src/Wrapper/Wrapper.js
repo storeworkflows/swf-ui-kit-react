@@ -62,6 +62,4 @@ Wrapper.propTypes = {
     className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
-export default React.memo(Wrapper, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default React.memo(Wrapper);

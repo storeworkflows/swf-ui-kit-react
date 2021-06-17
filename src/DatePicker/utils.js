@@ -114,3 +114,10 @@ export const getErrorMessages = (stringDate, format, min, max) => {
 
     return [];
 }
+
+export const hasChanges = (a, b) => {
+    return  !_.isEqual(
+        _.sortBy( a, 'content' ),
+        _.sortBy( b, 'content' )
+    )
+}
