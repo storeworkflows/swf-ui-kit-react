@@ -25,6 +25,10 @@ export default function Form(props) {
 
     return (
         <div className='form'>
+            <div className='form__title'>
+                <span className='form__title-header'>{formRecord.sections[0].captionDisplay}</span>
+                <span className='form__title-value'>{formRecord.formFields[0].displayValue}</span>
+            </div>
             <div className='form__fields'>
                 {
                     defaultSection &&
