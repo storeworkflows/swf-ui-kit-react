@@ -24,16 +24,16 @@ export default {
 };
 
 
-export const Default = (args) => <Popover {...args}>
-    <Popover.Target>
-        Target
-    </Popover.Target>
-    <Popover.Content>
-        <div style={{width: "800px", height: "100px", padding: "10px"}}>
-            Example Content
-        </div>
-    </Popover.Content>
-</Popover>;
+// export const Default = (args) => <Popover {...args}>
+//     <Popover.Target>
+//         Target
+//     </Popover.Target>
+//     <Popover.Content>
+//         <div style={{width: "800px", height: "100px", padding: "10px"}}>
+//             Example Content
+//         </div>
+//     </Popover.Content>
+// </Popover>;
 
 export const TargetRef = (args) => {
     class PopoverWithRef extends React.Component{
