@@ -30,9 +30,9 @@ Default.args = {
 
 }
 
-// export const WithHeader = (args) => <AccordionItem {...args}>
-//     <Accordion.Header>
-//         <div>Example of header</div>
-//     </Accordion.Header>
-//     <div>AccordionItem content</div>
-// </AccordionItem>;
+export const WithHeader = (args) => <AccordionItem {...args}>
+    <Accordion.Header>
+        <div>Example of header</div>
+    </Accordion.Header>
+    <div>AccordionItem content</div>
+</AccordionItem>;

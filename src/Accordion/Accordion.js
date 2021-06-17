@@ -6,7 +6,7 @@ import AccordionItem from "./AccordionItem";
 import {useCallback, useState} from "react";
 import isEqual from "react-fast-compare";
 
-const Accordion = React.forwardRef((props, ref) => {
+const Accordion = React.memo(React.forwardRef((props, ref) => {
 
     const {children, selectMany, onItemClicked, className} = props;
     const [selectedItemKey, setSelectedItemKey] = useState("-1")
@@ -45,7 +45,7 @@ const Accordion = React.forwardRef((props, ref) => {
     return <div className={classes} ref={ref}>
                 {renderItems()}
             </div>
-});
+}));
 
 Accordion.Item = createSubComponent("Item");
 Accordion.Header = createSubComponent("Header");
@@ -62,6 +62,4 @@ Accordion.propTypes = {
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
 }
 
-export default React.memo(Accordion, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default Accordion;
