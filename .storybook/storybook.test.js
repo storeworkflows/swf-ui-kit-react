@@ -3,9 +3,9 @@ import { shallow, configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 
 configure({ adapter: new Adapter() });
-
-import initStoryshots from '@storybook/addon-storyshots';
- initStoryshots();
+//
+// import initStoryshots from '@storybook/addon-storyshots';
+//  initStoryshots();
 
 it("test", () => {
     expect(2+2).toBe(4);
