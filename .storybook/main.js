@@ -14,6 +14,6 @@ module.exports = {
     //'@storybook/addon-storyshots',
     "storybook-addon-mock/register",
     'storybook-addon-designs',
-    '@storybook/addon-jest'
+    //'@storybook/addon-jest'
   ]
 }
