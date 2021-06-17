@@ -9,12 +9,6 @@ export default function FormFieldType({ field, onReferenceFieldClick }) {
         onReferenceFieldClick({ value, reference, referenceKey });
     }
 
-    // const handleTextLinkClick = async ({ value, reference, referenceKey }) => {
-    // 	const layout = await getRecordData(reference, value, referenceKey);
-    //
-    // 	history.push({ search: `table=${layout.table}&sys_id=${layout.sysId}` });
-    // }
-
     switch (type) {
         case 'reference':
             return (
