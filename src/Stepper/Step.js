@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from "prop-types";
 import Icon from '../Icon/Icon';
+import isEqual from "react-fast-compare";
 
 const Step = React.forwardRef((props, ref) => {
     const {step: {progress, icon, label, sublabel}, iconColor, hideLabel} = props;
@@ -73,4 +74,6 @@ Step.defaultProps = {
     hideLabel: false
 };
 
-export default React.memo(Step)
+export default React.memo(Step, (prev, next) => {
+    return isEqual(prev, next);
+});

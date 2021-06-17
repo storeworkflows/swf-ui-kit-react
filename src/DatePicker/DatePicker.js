@@ -56,18 +56,20 @@ const DatePicker = React.forwardRef((props, ref) => {
             !errors.length && onValueSet({value: newValue});
         }
 
-        onValueChange({oldValue: dateValue, input, newValue});
+        //onValueChange({oldValue: dateValue, input, newValue});
+        onValueChange({input, newValue});
     }
 
     const invalidInput = useCallback((errors = [], date) => {
         let isInvalidCurrent = errors.length > 0;
+        const hasChanges = !_.isEqual(errorMessages.sort(), errors.sort());
 
         if (!manageInvalid) {
             setIsInvalid(isInvalidCurrent);
-            !_.isEqual(errorMessages.sort(), errors.sort()) && setErrorMessages(errors);
+            hasChanges && setErrorMessages(errors);
         }
 
-        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== isInvalid))
+        if (hasChanges || (isInvalidCurrent !== isInvalid))
             onInvalid({
                 isInvalid: isInvalidCurrent,
                 errors, date
@@ -82,8 +84,9 @@ const DatePicker = React.forwardRef((props, ref) => {
         !manageValue && setDateValue(newValue);
 
         !errors.length && onValueSet({value: newValue});
-        onValueChange({oldValue: dateValue, newValue});
-    }, [format, min, max, manageValue, onValueChange, onValueSet, dateValue, invalidInput])
+        //onValueChange({oldValue: dateValue, newValue});
+        onValueChange({newValue});
+    }, [format, min, max, manageValue, onValueChange, onValueSet, invalidInput])
 
     const openCalendar = useCallback((e, onFocusClose) => {
         if (!onFocusClose || isOpened) {
@@ -177,23 +180,23 @@ const DatePicker = React.forwardRef((props, ref) => {
         visible &&
             <div ref={ el => {inputRef.current = el; ref={el};}}>
                 {renderInput()}
-                {popoverTarget && isOpened &&
-                <Popover
-                    hideTail={true}
-                    manageOpened={true}
-                    opened={isOpened}
-                    positions={calendarPositions}
-                    positionTarget={{current: popoverTarget}}
-                    onOuterPopoverClicked={openCalendar}
-                >
-                    <Popover.Content>
-                        <SmallCalendar
-                            onSelected={dateSelected}
-                            selectedDate={dateValue}
-                            manageValue
-                        />
-                    </Popover.Content>
-                </Popover>
+                {popoverTarget &&
+                    <Popover
+                        hideTail={true}
+                        manageOpened={true}
+                        opened={isOpened}
+                        positions={calendarPositions}
+                        positionTarget={{current: popoverTarget}}
+                        onOuterPopoverClicked={openCalendar}
+                    >
+                        <Popover.Content>
+                            <SmallCalendar
+                                onSelected={dateSelected}
+                                selectedDate={dateValue}
+                                manageValue
+                            />
+                        </Popover.Content>
+                    </Popover>
                 }
             </div>
     )

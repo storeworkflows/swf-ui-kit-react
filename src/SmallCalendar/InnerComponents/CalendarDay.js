@@ -49,7 +49,6 @@ const CalendarDay = React.forwardRef((props, ref) => {
         "--can-hover": !disabled
     })
 
-
     const actEvent = (event, params) => !disabled ? event(params) : () => void 0;
     const date = new Date(dateInMilliseconds)
 

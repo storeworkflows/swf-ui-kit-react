@@ -71,7 +71,7 @@ SmallCalendar.defaultProps = {
 }
 
 SmallCalendar.propTypes = {
-    selectedDate: propTypes.oneOf([propTypes.number, propTypes.string, propTypes.object]),
+    selectedDate: propTypes.oneOfType([propTypes.number, propTypes.string, propTypes.object]),
     onSelected: propTypes.func,
     manageValue: propTypes.bool
 }
