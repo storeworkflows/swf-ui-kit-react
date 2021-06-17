@@ -32,8 +32,6 @@
     outline: none;
   }
 
-
-
   .inp-label {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
     font-size: 1rem;
@@ -60,14 +58,12 @@
     &.--readonly {
       background: linear-gradient(transparent 22%, #e4e6e7 70%)
     }
-
   }
 
 
   .inp-required {
     transform: translateY(-50%);
   }
-
 
   .input-group {
     position: relative;
@@ -76,7 +72,6 @@
     align-items: stretch;
     width: 100%;
   }
-
 
   .input-group > .form-control {
     position: relative;
@@ -97,7 +92,6 @@
     line-height: 1.5;
     color: #212529;
     white-space: nowrap;
-
   }
 
   .form-control {
