@@ -1,6 +1,3 @@
-const path = require('path');
-
-//const custom = require('./webpack.config.js');
 
 module.exports = {
   preset: "jest-puppeteer",
@@ -14,14 +11,9 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     '@storybook/preset-scss',
-    '@storybook/addon-storyshots',
+    //'@storybook/addon-storyshots',
     "storybook-addon-mock/register",
     'storybook-addon-designs',
     '@storybook/addon-jest'
-  ],
-
-  //!style-loader!css-loader!sass-loader
-  // webpackFinal: async (config) => {
-  //   return { ...config, module: { ...config.module, rules: custom.module.rules } };
-  // },
+  ]
 }
