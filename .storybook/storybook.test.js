@@ -16,6 +16,6 @@ it("Alert test", () => {
         action={{type: "dismiss"}}
         visible
     />)
-   // expect(component).toMatchSnapshot();
+    expect(component).toMatchSnapshot();
     expect(component.find(".swf-alert-container").length).toBe(1);
 })

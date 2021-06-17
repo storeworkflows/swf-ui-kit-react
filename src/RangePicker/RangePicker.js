@@ -11,7 +11,7 @@ import RequiredLabel from "../RequiredLabel/RequiredLabel";
 import RangeCalendar from "../SmallCalendar/Renge Calendar";
 
 import {getErrors} from "./utils";
-import {addCharToDate} from "../DatePicker/utils";
+import {addCharToDate, hasChanges} from "../DatePicker/utils";
 import InfoMessage from "../InfoMessage/InfoMessage";
 
 
@@ -169,7 +169,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             setErrorMessages(errors);
         }
 
-        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue)) {
+        if (hasChanges(errors, errorMessages) || (isInvalidCurrent !== invalidValue)) {
             const onInvalidObj = {isInvalid: isInvalidCurrent, errors, selectedDates};
             onInvalid(onInvalidObj);
             actAction(isFirstSelecting, 'onInvalid', onInvalidObj, onInvalidObj)

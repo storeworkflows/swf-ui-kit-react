@@ -222,6 +222,4 @@ Stepper.defaultProps = {
     onStepClick: noop
 }
 
-export default React.memo(Stepper, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default React.memo(Stepper);
