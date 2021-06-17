@@ -52,7 +52,7 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
         let contentElement = contentRef?.current;
         if(!contentElement) return;
 
-        const stylesToSet = isHidden ? POPOVER.hiddenStyles : popoverStyles.style;
+        const stylesToSet = isHidden ? POPOVER.hiddenStyles : popoverStyles?.style;
         if (!stylesToSet) return;
 
         Object.entries(stylesToSet).map(([key, value])=> {
@@ -87,7 +87,7 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
         }
     }
 
-    useEffect(() => targetRef.current = positionTarget?.current, [ positionTarget.current])
+    useEffect(() => targetRef.current = positionTarget?.current, [ positionTarget?.current])
     useEffect(() => manageOpened && setIsOpened(opened), [opened, manageOpened])
 
     useEffect( () => {

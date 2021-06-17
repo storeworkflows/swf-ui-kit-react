@@ -7,7 +7,7 @@ import {useState} from "react";
 import isEqual from "react-fast-compare";
 import {noop} from "../utils";
 
-const AccordionItem = React.forwardRef((props, ref) => {
+const AccordionItem = React.memo(React.forwardRef((props, ref) => {
 
     const {
         manageOpened, onClick, onSelected, opened, children, className, label,
@@ -95,6 +95,8 @@ const AccordionItem = React.forwardRef((props, ref) => {
                 {currentOpened && renderContent()}
     </div>
 
+}), (prev, next) => {
+    return isEqual(prev, next);
 });
 
 AccordionItem.defaultProps = {
@@ -121,6 +123,4 @@ AccordionItem.propTypes = {
     id: propTypes.string
 }
 
-export default React.memo(AccordionItem, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default AccordionItem
