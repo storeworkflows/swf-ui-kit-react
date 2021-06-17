@@ -9,7 +9,7 @@ export const renderFormSection = ({ rows, formFieldValues, onReferenceFieldClick
 			<FormFieldType
 				key={`item-${index}`}
 				field={formFieldValues[item]}
-				onReferenceClick={onReferenceFieldClick}
+				onReferenceFieldClick={onReferenceFieldClick}
 			/>
 		)
 	}

@@ -21,12 +21,6 @@ export default function RelatedList(props) {
         }
     ));
 
-    // const handleRowClick = (event) => {
-    //     const { table, sys_id } = event;
-    //
-    //     history.push({ search: `table=${table}&sys_id=${sys_id}` });
-    // }
-
     const query = (() => {
         switch (baseTable) {
             case 'x_aaro2_swf_store':
