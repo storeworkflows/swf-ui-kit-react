@@ -44,6 +44,7 @@
     align-items: center;
     justify-content: center;
     margin: -2px;
+
   }
 
   &.--xs {
@@ -52,6 +53,7 @@
     .additional-avatar {
       height: var(--height-s);
       width: var(--height-s);
+      min-width: var(--height-s);
     }
   }
 
@@ -61,6 +63,7 @@
     .additional-avatar {
       height: var(--height-m);
       width: var(--height-m);
+      min-width: var(--height-s);
     }
   }
 
@@ -70,6 +73,7 @@
     .additional-avatar {
       height: var(--height-l);
       width: var(--height-l);
+      min-width: var(--height-s);
     }
   }
 
