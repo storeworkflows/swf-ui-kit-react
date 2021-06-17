@@ -9,7 +9,7 @@ import Popover from "../Popover/Popover";
 import SmallCalendar from "../SmallCalendar/SmallCalendar";
 
 import {addCharToDate, getErrorMessages} from "./utils";
-import {convertToDate} from "../SmallCalendar/utils";
+import {checkDate} from "../SmallCalendar/utils";
 
 const DatePicker = React.forwardRef((props, ref) => {
 
@@ -20,15 +20,15 @@ const DatePicker = React.forwardRef((props, ref) => {
         manageOpened, onOpen
     } = props;
 
-    const [dateValue, setDateValue] = useState(moment(convertToDate(value)).format(format));
+    const [dateValue, setDateValue] = useState(moment(checkDate(value)).format(format));
     const [isOpened, setIsOpened] = useState(opened);
     const [isInvalid, setIsInvalid] = useState(invalid);
     const [errorMessages, setErrorMessages] = useState([]);
 
     const inputRef = useRef(null);
 
-    const invalidValue = manageInvalid ? invalid : isInvalid;
-    const openedValue = manageOpened ? opened : isOpened;
+    useEffect(() => manageOpened && setIsOpened(opened), [manageOpened, opened])
+    useEffect(() => manageInvalid && setIsInvalid(invalid), [manageInvalid, invalid])
 
     const setDateFromProps = () => {
         if(moment(value, format, true).isValid()){
@@ -56,42 +56,44 @@ const DatePicker = React.forwardRef((props, ref) => {
             !errors.length && onValueSet({value: newValue});
         }
 
-        onValueChange({oldValue: dateValue, input, newValue});
+        //onValueChange({oldValue: dateValue, input, newValue});
+        onValueChange({input, newValue});
     }
 
-    const dateSelected = (date) => {
-        let newValue = moment(date).format(format);
-
-        let errors = getErrorMessages(newValue, format, min, max);
-        invalidInput(errors, newValue);
-
-        !manageValue && setDateValue(newValue);
-
-        !errors.length && onValueSet({value: newValue});
-        onValueChange({oldValue: dateValue, newValue});
-    }
-
-    const invalidInput = (errors = [], date) => {
+    const invalidInput = useCallback((errors = [], date) => {
         let isInvalidCurrent = errors.length > 0;
+        const hasChanges = !_.isEqual(errorMessages.sort(), errors.sort());
 
         if (!manageInvalid) {
             setIsInvalid(isInvalidCurrent);
-            setErrorMessages(errors);
+            hasChanges && setErrorMessages(errors);
         }
 
-        if (!_.isEqual(errorMessages.sort(), errors.sort()) || (isInvalidCurrent !== invalidValue))
+        if (hasChanges || (isInvalidCurrent !== isInvalid))
             onInvalid({
                 isInvalid: isInvalidCurrent,
                 errors, date
             });
-    }
+    }, [manageInvalid, onInvalid, isInvalid, errorMessages])
 
-    const openCalendar = (e, onFocusClose) => {
-        if (!onFocusClose || openedValue) {
-            let openState = openedValue;
+    const dateSelected = useCallback((date) => {
+        let newValue = moment(date).format(format);
+
+        let errors = getErrorMessages(newValue, format, min, max);
+        invalidInput(errors, newValue);
+        !manageValue && setDateValue(newValue);
+
+        !errors.length && onValueSet({value: newValue});
+        //onValueChange({oldValue: dateValue, newValue});
+        onValueChange({newValue});
+    }, [format, min, max, manageValue, onValueChange, onValueSet, invalidInput])
+
+    const openCalendar = useCallback((e, onFocusClose) => {
+        if (!onFocusClose || isOpened) {
+            let openState = isOpened;
 
             if (!manageOpened) {
-                openState = !openedValue;
+                openState = !isOpened;
                 setIsOpened(openState)
 
                 let isValidStringDate = moment(dateValue, format).isValid();
@@ -104,7 +106,7 @@ const DatePicker = React.forwardRef((props, ref) => {
                 invalidInput(errors, dateValue);
             }
        }
-    }
+    }, [isOpened, invalidInput, dateValue, format, min, max, onOpen])
 
     const onBlur = (e) => {
         let sameParent = e.target?.parentElement === e.relatedTarget?.parentElement?.parentElement;
@@ -142,7 +144,7 @@ const DatePicker = React.forwardRef((props, ref) => {
             value={dateStr}
             name={name}
             manageInvalid={true}
-            invalid={invalidValue}
+            invalid={isInvalid}
             onInvalid={(e) => invalidInput([e], dateValue)}
             onChange={changeValue}
             onFocus={(e) => openCalendar(e, true)}
@@ -178,22 +180,23 @@ const DatePicker = React.forwardRef((props, ref) => {
         visible &&
             <div ref={ el => {inputRef.current = el; ref={el};}}>
                 {renderInput()}
-                {popoverTarget && openedValue &&
-                <Popover
-                    hideTail={true}
-                    manageOpened={true}
-                    opened={openedValue}
-                    positions={calendarPositions}
-                    positionTarget={{current: popoverTarget}}
-                    onOuterPopoverClicked={openCalendar}
-                >
-                    <Popover.Content>
-                        <SmallCalendar
-                            onSelected={dateSelected}
-                            openedDate={dateValue}
-                        />
-                    </Popover.Content>
-                </Popover>
+                {popoverTarget &&
+                    <Popover
+                        hideTail={true}
+                        manageOpened={true}
+                        opened={isOpened}
+                        positions={calendarPositions}
+                        positionTarget={{current: popoverTarget}}
+                        onOuterPopoverClicked={openCalendar}
+                    >
+                        <Popover.Content>
+                            <SmallCalendar
+                                onSelected={dateSelected}
+                                selectedDate={dateValue}
+                                manageValue
+                            />
+                        </Popover.Content>
+                    </Popover>
                 }
             </div>
     )

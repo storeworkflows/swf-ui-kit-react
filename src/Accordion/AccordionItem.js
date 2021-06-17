@@ -4,6 +4,8 @@ import classnames from "classnames";
 import findByType from "../utils/findByType";
 import Button from "../Button/Button";
 import {useState} from "react";
+import isEqual from "react-fast-compare";
+import {noop} from "../utils";
 
 const AccordionItem = React.forwardRef((props, ref) => {
 
@@ -79,9 +81,7 @@ const AccordionItem = React.forwardRef((props, ref) => {
             "opened": currentOpened
         })
 
-    return (
-        <>
-            <div className={itemStyles} ref={ref}>
+    return  <div className={itemStyles} ref={ref}>
                 <div
                     className={classnames(headerClassName, "accordion-item-header")}
                     onClick={itemClicked}
@@ -93,22 +93,15 @@ const AccordionItem = React.forwardRef((props, ref) => {
                     {!iconToStart && renderIcon()}
                 </div>
                 {currentOpened && renderContent()}
-            </div>
-        </>
-    )
+    </div>
 
 });
 
 AccordionItem.defaultProps = {
-    opened: false,
-    manageOpened: false,
     triggerIcon: "chevron-down",
-    iconToStart: false,
     className: "",
-    onClick: () => void 0,
-    onSelected: () => void 0,
-    isLastItem: false,
-    isFirstItem: false,
+    onClick: noop,
+    onSelected: noop,
     headerClassName: "",
     id: "-1"
 }
@@ -128,4 +121,6 @@ AccordionItem.propTypes = {
     id: propTypes.string
 }
 
-export default React.memo(AccordionItem)
+export default React.memo(AccordionItem, (prev, next) => {
+    return isEqual(prev, next);
+});

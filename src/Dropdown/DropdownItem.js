@@ -3,6 +3,7 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 
 import Icon from "../Icon/Icon";
+import isEqual from "react-fast-compare";
 
 const DropdownItem = React.forwardRef((props, ref) => {
 
@@ -20,9 +21,7 @@ const DropdownItem = React.forwardRef((props, ref) => {
             "--no-icon": !icon
         });
 
-    return (
-        <>
-            <div className={classes}
+    return <div className={classes}
                  onClick={() => !disabled && onSelectAction({id})}
                  data-key={id}
                  ref={ref}
@@ -37,15 +36,13 @@ const DropdownItem = React.forwardRef((props, ref) => {
                     {sublabel && <div className={"sublabel"}>{sublabel}</div>}
                 </div>
                 {number && <span className={"item-element item-end"}>{number}</span>}
-            </div>
-        </>
-    )
+    </div>
 });
 
 DropdownItem.defaultProps = {
     disabled: false,
     isSelected: false,
-    className: {}
+    className: ""
 }
 
 DropdownItem.propTypes = {
@@ -57,10 +54,12 @@ DropdownItem.propTypes = {
     disabled: propTypes.bool,
     onSelectAction: propTypes.func,
     isSelected: propTypes.bool,
-    className: propTypes.object,
+    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
     sublabel: propTypes.string,
     number: propTypes.number,
     icon: propTypes.string,
 }
 
-export default React.memo(DropdownItem)
+export default React.memo(DropdownItem, (prev, next) => {
+    return isEqual(prev, next);
+});

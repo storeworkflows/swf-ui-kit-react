@@ -44,8 +44,7 @@ const Tooltip = React.forwardRef((props, ref) => {
         return clearTimeout(timer);
     }, [])
 
-    return (
-        <>
+    return  <>
             <Popover
                 manageOpened={true}
                 opened={openedFinal}
@@ -59,9 +58,7 @@ const Tooltip = React.forwardRef((props, ref) => {
                     {renderContent()}
                 </Popover.Content>
             </Popover>
-        </>
-    );
-
+    </>
 });
 
 Tooltip.Content = createSubComponent("Content");

@@ -4,6 +4,7 @@ import classnames from "classnames";
 import findByType, {createSubComponent} from "../utils/findByType";
 import AccordionItem from "./AccordionItem";
 import {useCallback, useState} from "react";
+import isEqual from "react-fast-compare";
 
 const Accordion = React.forwardRef((props, ref) => {
 
@@ -41,13 +42,9 @@ const Accordion = React.forwardRef((props, ref) => {
         "accordion-container"
     )
 
-    return (
-        <>
-            <div className={classes} ref={ref}>
+    return <div className={classes} ref={ref}>
                 {renderItems()}
             </div>
-        </>
-    )
 });
 
 Accordion.Item = createSubComponent("Item");
@@ -65,4 +62,6 @@ Accordion.propTypes = {
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
 }
 
-export default Accordion
+export default React.memo(Accordion, (prev, next) => {
+    return isEqual(prev, next);
+});

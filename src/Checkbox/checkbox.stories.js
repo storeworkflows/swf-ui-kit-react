@@ -8,7 +8,7 @@ export default {
 };
 
 
-const Template = (args) => <Checkbox {...args}/>;
+const Template = (args) => <div style={{[`z-index`]: 1}}><Checkbox {...args}/></div>;
 
 export const Standard = Template.bind({});
 Standard.args = {

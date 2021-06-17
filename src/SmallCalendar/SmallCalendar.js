@@ -2,25 +2,45 @@ import moment from 'moment';
 import * as React from 'react';
 import propTypes from "prop-types";
 
-import {useCallback, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import CalendarMonth from "./InnerComponents/CalendarMonth";
 import ArrowButton from "./InnerComponents/ArrowButton";
+import {checkDate, getDefinedDate, useWrappedState} from "./utils";
+import isEqual from "react-fast-compare";
+import {noop} from "../utils";
 
 const SmallCalendar = React.forwardRef((props, ref) => {
 
-    const {openedDate, onSelected} = props;
+    const {selectedDate, onSelected, manageValue} = props;
 
-    const date = (openedDate) ? new Date(openedDate) : null;
-    const [selectedDate, setSelectedDate] = useState(date);
-    const [openedDateValue, setOpenedDateValue] = useState((date) ? date : new Date());
+    const [selected, setSelectedDate] = useWrappedState(selectedDate, checkDate);
+    const [openedDateValue, setOpenedDateValue] = useWrappedState(selectedDate, getDefinedDate);
+
+    useEffect(() => {
+        if (manageValue) {
+            setSelectedDate(selectedDate);
+            setOpenedDateValue(selectedDate)
+        }
+    }, [selectedDate, manageValue])
+
+    const selectAction = useCallback((date) => {
+        if (!manageValue) {
+            setSelectedDate(date);
+            setOpenedDateValue(date)
+        }
+        onSelected(date)
+    }, [manageValue, onSelected])
 
     const changeMonth = useCallback((e, isNext, selectedDate) =>{
         e?.stopPropagation();
 
         let additionValue = isNext ? 1 : -1;
         let changedTo = moment(openedDateValue).add(additionValue, "month");
-        if(selectedDate)
-            setSelectedDate(new Date(selectedDate))
+
+        if(selectedDate) {
+            !manageValue && setSelectedDate(selectedDate)
+            onSelected(selectedDate)
+        }
 
         setOpenedDateValue(changedTo.toDate())
     }, [openedDateValue])
@@ -28,9 +48,9 @@ const SmallCalendar = React.forwardRef((props, ref) => {
     return <div ref={ref}>
             <CalendarMonth
                 openedDate={openedDateValue}
-                selectedDate={selectedDate}
-                onSelected={onSelected}
-                onMonthChange={changeMonth}
+                selectedDate={selected}
+                onSelected={selectAction}
+                manageSelected
             >
 
                 <CalendarMonth.HeaderStart>
@@ -47,12 +67,15 @@ const SmallCalendar = React.forwardRef((props, ref) => {
 
 SmallCalendar.defaultProps = {
     openedDate: null,
-
+    onSelected: noop
 }
 
 SmallCalendar.propTypes = {
-    openedDate: propTypes.any,
+    selectedDate: propTypes.oneOfType([propTypes.number, propTypes.string, propTypes.object]),
     onSelected: propTypes.func,
+    manageValue: propTypes.bool
 }
 
-export default SmallCalendar;
+export default React.memo(SmallCalendar, (prev, next) => {
+    return isEqual(prev, next);
+});

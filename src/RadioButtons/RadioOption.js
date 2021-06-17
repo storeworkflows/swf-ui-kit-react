@@ -2,6 +2,8 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import classnames from "classnames";
+import isEqual from "react-fast-compare";
+import {noop} from "../utils";
 
 const RadioOption = React.forwardRef((props, ref) => {
 
@@ -32,12 +34,8 @@ const RadioOption = React.forwardRef((props, ref) => {
         })
 
     let canChangeValue = !readonly && !disabled;
-    return (
-        <>
-            <div className={optionClasses}
-                 onClick={() => {
-                     canChangeValue && onChangeAction({id: id, name: name, value: value})
-                 }}
+    return <div className={optionClasses}
+                 onClick={() => canChangeValue && onChangeAction({id: id, name: name, value: value})}
                  ref={ref}
             >
                 <input
@@ -45,31 +43,24 @@ const RadioOption = React.forwardRef((props, ref) => {
                     type="radio"
                     id={id}
                     checked={checked}
-                    value={value ? value : label}
+                    value={value ? value : label || ""}
                     disabled={disabled}
                     readOnly={readonly}
                     name={name}
                     required={required}
-                    onChange={() => {
-                    }}
+                    onChange={() => void 0}
                     onInvalid={(e) => onInvalidAction({e, id: id})}
                 />
                 <label className={"radio-option-label"}>{label}</label>
-            </div>
-        </>
-    );
+    </div>
 });
 
 RadioOption.defaultProps = {
-    checked: false,
-    readonly: false,
-    disabled: false,
-    invalid: false,
-    isHorizontal: false,
-    required: false,
     name: "",
     label: "",
-    className: {}
+    className: "",
+    onChangeAction: noop,
+    onInvalidAction: noop,
 };
 
 RadioOption.propTypes = {
@@ -85,8 +76,10 @@ RadioOption.propTypes = {
     onChangeAction: propTypes.func,
     onInvalidAction: propTypes.func,
     required: propTypes.bool,
-    className: propTypes.object
+    className: propTypes.oneOfType([propTypes.object, propTypes.string])
 }
 
 
-export default React.memo(RadioOption)
+export default React.memo(RadioOption, (prev, next) => {
+    return isEqual(prev, next);
+});

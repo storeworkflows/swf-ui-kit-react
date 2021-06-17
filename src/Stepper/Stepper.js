@@ -5,6 +5,8 @@ import classnames from "classnames";
 import {createCssVariables, getCircleSize} from "./utils";
 import Icon from "../Icon/Icon";
 import propTypes from "prop-types";
+import isEqual from "react-fast-compare";
+import {noop} from "../utils";
 
 const Stepper = React.forwardRef((props, ref) => {
     const {palette, vertical, completedCounter, steps, iconSize,
@@ -217,7 +219,9 @@ Stepper.defaultProps = {
     completedCounter: false,
     selectedItem: 0,
     disableScroll: false,
-    onStepClick: () => void 0
+    onStepClick: noop
 }
 
-export default React.memo(Stepper);
+export default React.memo(Stepper, (prev, next) => {
+    return isEqual(prev, next);
+});

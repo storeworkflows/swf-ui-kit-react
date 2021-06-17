@@ -5,7 +5,8 @@ import classnames from "classnames";
 import RadioOption from "./RadioOption.js"
 import {RADIO_BUTTONS_LAYOUT} from "./constants";
 import RequiredLabel from "../RequiredLabel/RequiredLabel";
-import {useState} from "react";
+import {useCallback, useState} from "react";
+import {noop} from "../utils";
 
 const RadioButtons = React.forwardRef((props, ref) => {
     const {value, invalid, manageValue, onChange, readonly, manageInvalid, onInvalid, layout, required} = props;
@@ -16,17 +17,17 @@ const RadioButtons = React.forwardRef((props, ref) => {
     const selectedFinal = manageValue ? value : selectedValue;
     const invalidFinal = manageInvalid ? invalid : isInvalid
 
-    const optionClicked = (option) => {
+    const optionClicked = useCallback((option) => {
         if (!readonly) {
             !manageValue && setSelectedValue(option.id);
             onChange(option)
         }
-    }
+    }, [readonly, manageValue, onChange])
 
-    const optionInvalid = (e) => {
+    const optionInvalid = useCallback( (e) => {
         !manageInvalid && setIsInvalid(true);
         onInvalid(e)
-    }
+    }, [manageInvalid, onInvalid])
 
     const renderValue = (option, name) => {
         const { id, label, value, checked, readonly, disabled} = option;
@@ -94,8 +95,8 @@ RadioButtons.defaultProps = {
     required: false,
     manageInvalid: false,
     visible: true,
-    onChange: () => void 0,
-    onInvalid: () => void 0,
+    onChange: noop,
+    onInvalid: noop,
     className: {},
     labelClassName: {}
 };

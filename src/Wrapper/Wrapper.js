@@ -4,6 +4,7 @@ import {createSubComponent, findByType} from "./utils";
 import Icon from "../Icon/Icon";
 import {useState} from "react";
 import propTypes from "prop-types";
+import isEqual from "react-fast-compare";
 
 const Wrapper = React.forwardRef((props, ref) => {
     const {children, open, title, showWrapper, manageOpened, onOpen, className, iconSize} = props;
@@ -26,8 +27,7 @@ const Wrapper = React.forwardRef((props, ref) => {
         }
     )
 
-    return <>
-        <div className={wrapperClasses} ref={ref}>
+    return <div className={wrapperClasses} ref={ref}>
             <div className="wrapper-header">
                 <div className="header-group" onClick={setOpen}>
                     <Icon icon={arrowIcon} size={iconSize}/>
@@ -38,8 +38,7 @@ const Wrapper = React.forwardRef((props, ref) => {
                 {findByType(children, "Content")}
             </div>
             }
-        </div>
-    </>;
+    </div>
 });
 
 Wrapper.Content = createSubComponent("Content");
@@ -63,4 +62,6 @@ Wrapper.propTypes = {
     className: propTypes.oneOfType([propTypes.string, propTypes.object])
 }
 
-export default Wrapper
+export default React.memo(Wrapper, (prev, next) => {
+    return isEqual(prev, next);
+});

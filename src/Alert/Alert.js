@@ -7,6 +7,8 @@ import Icon from "../Icon/Icon";
 import Button from "../Button/Button";
 import TextLink from "../TextLink/TextLink";
 import {openLink} from "./utils";
+import {noop} from "../utils";
+import isEqual from "react-fast-compare";
 
 const Alert = React.forwardRef((props, ref) => {
 
@@ -183,18 +185,13 @@ Alert.defaultProps = {
     action: {type: "dismiss"},
 
     visible: true,
-    expanded: false,
     className: "",
 
-    manageExpanded: false,
-    manageVisibility: false,
-    manageButtonClick: false,
-
-    onVisibilityChange: () => void 0,
-    onTextLinkClicked: () => void 0,
-    onExpandAction: () => void 0,
-    onButtonClick: () => void 0,
-    onCloseAction: () => void 0,
+    onVisibilityChange: noop,
+    onTextLinkClicked: noop,
+    onExpandAction: noop,
+    onButtonClick: noop,
+    onCloseAction: noop,
 
     verticalPositions: "top",
     horizontalPositions: "center"
@@ -244,4 +241,6 @@ Alert.propTypes = {
     horizontalPositions: propTypes.oneOf(["start", "center", "end"])
 }
 
-export default React.memo(Alert)
+export default React.memo(Alert, (prev, next) => {
+    return isEqual(prev, next);
+});

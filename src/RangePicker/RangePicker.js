@@ -52,14 +52,31 @@ const RangePicker = React.forwardRef((props, ref) => {
         opened && changeOpenedDate();
     }, [])
 
-    const changeOpenedDate = () => {
+    const onFocused = useCallback((isFirst) => {
+        setFocused(true);
+        setIsFirstSelecting(isFirst);
+    }, [])
+
+    const changeOpenedDate = useCallback(() => {
         const isStartOpen = !start.disabled && !start.readonly
         setIsOpenedInFirst(true)
         onFocused(isStartOpen);
 
         const openedDate =  selectedDates.start && isStartOpen ? selectedDates.start : selectedDates.end;
         setOpenedDate(openedDate ? new Date(openedDate) : new Date());
-    }
+    }, [start, end, onFocused, selectedDates])
+
+    const openCalendar = useCallback(() => {
+        const isOpened = Boolean(openedDate)
+
+        if (!manageOpened) {
+            isOpened
+                ? setOpenedDate(null)
+                : changeOpenedDate()
+            onOpen(!isOpened)
+        } else
+            onOpen(isOpened)
+    } , [openedDate, manageOpened, onOpen, changeOpenedDate])
 
     const setDateFromProps = useCallback(() => {
         const startValue = start.value;
@@ -76,25 +93,31 @@ const RangePicker = React.forwardRef((props, ref) => {
         }
     }, [start, end, format])
 
-    const actAction = (isFirst, action, startParam, endParam) => {
+    const actAction = useCallback((isFirst, action, startParam, endParam) => {
         isFirst
             ? start[action] && start[action](startParam)
             : end[action] && end[action](endParam)
-    }
+    }, [start, end])
 
-    const changeSelectedValue = (isFirst, updatedValue, input) => {
+    const changeSelectedValue = useCallback((isFirst, updatedValue, input) => {
         !manageValue && setSelectedDate(updatedValue);
-        onValueChange({oldValue: selectedDates, input, updatedValue, isFirstSelecting});
+        // onValueChange({oldValue: selectedDates, input, updatedValue, isFirstSelecting});
+        //
+        // actAction(isFirst, 'onValueChange',
+        //     {oldValue: selectedDates.start, input, updatedValue: updatedValue.start},
+        //     {oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
+
+        onValueChange({input, updatedValue, isFirstSelecting});
 
         actAction(isFirst, 'onValueChange',
-            {oldValue: selectedDates.start, input, updatedValue: updatedValue.start},
-            {oldValue: selectedDates.end, input, updatedValue: updatedValue.end})
-    }
+            { input, updatedValue: updatedValue.start},
+            { input, updatedValue: updatedValue.end})
+    }, [manageValue, onValueChange, actAction, isFirstSelecting])
 
-    const setValue = (isFirst, updatedValue) => {
+    const setValue = useCallback((isFirst, updatedValue) => {
         onValueSet(updatedValue);
         actAction(isFirst, 'onValueSet', updatedValue.start, updatedValue.end)
-    }
+    }, [onValueSet, actAction])
 
     const changeValue = (e, isFirst) => {
         e.preventDefault();
@@ -118,7 +141,7 @@ const RangePicker = React.forwardRef((props, ref) => {
 
     }
 
-    const onSelected = ({updated}) => {
+    const onSelected = useCallback(({updated}) => {
         const endValue = isOpenedInFirst ? "" : (updated.end && moment(updated.end).format(format))
         const updatedDates = {
             start: updated.start && moment(updated.start).format(format),
@@ -135,7 +158,7 @@ const RangePicker = React.forwardRef((props, ref) => {
             setIsFirstSelecting(true);
         else
             openCalendar();
-    }
+    }, [isOpenedInFirst, format, changeSelectedValue, setValue, openCalendar])
 
     const invalidInput = (selectedDates) => {
         let errors = selectedDates ? getErrors(selectedDates, format, min, max) : [];
@@ -151,23 +174,6 @@ const RangePicker = React.forwardRef((props, ref) => {
             onInvalid(onInvalidObj);
             actAction(isFirstSelecting, 'onInvalid', onInvalidObj, onInvalidObj)
         }
-    }
-
-    const openCalendar = () => {
-        const isOpened = Boolean(openedDate)
-
-        if (!manageOpened) {
-            isOpened
-                ? setOpenedDate(null)
-                : changeOpenedDate()
-            onOpen(!isOpened)
-        } else
-            onOpen(isOpened)
-    }
-
-    const onFocused = (isFirst) => {
-        setFocused(true);
-        setIsFirstSelecting(isFirst);
     }
 
     const renderRangeCalendar = () => {

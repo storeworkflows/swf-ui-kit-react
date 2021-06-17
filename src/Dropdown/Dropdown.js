@@ -11,13 +11,14 @@ import RequiredLabel from "../RequiredLabel/RequiredLabel";
 
 import {getCorrectSelected, getDisplayValue, getItemById, getUpdatedSelectedItems} from "./utils";
 import {DROPDOWN} from "./constants";
+import {noop} from "../utils";
 
 const Dropdown = React.forwardRef((props, ref) => {
     const {
         opened, invalid, selectedItems, items, visible,
         manageInvalid, onInvalid,
         manageOpened, onOpened,
-        manageSelectedItems, onItemSelected, select, autoWidth
+        manageSelectedItems, onItemSelected, select, autoWidth, onClick
     } = props;
 
     const [isOpened, setIsOpened] = useState(opened);
@@ -38,7 +39,8 @@ const Dropdown = React.forwardRef((props, ref) => {
         !manageInvalid && setIsInvalid(true)
     }
 
-    const dropdownClicked = () => {
+    const dropdownClicked = (e) => {
+        onClick(e);
         onOpened({opened: manageOpened ? opened : !isOpened})
         !manageOpened && setIsOpened(!isOpened);
     }
@@ -67,7 +69,8 @@ const Dropdown = React.forwardRef((props, ref) => {
             itemToScroll.current.scrollIntoView()
     }, [isOpened, opened])
 
-    useEffect(() =>  dropdownRef.current && setDropdownWidth(dropdownRef.current.offsetWidth), [dropdownRef.current, autoWidth])
+    useEffect(() => dropdownRef.current && setDropdownWidth(dropdownRef.current.offsetWidth),
+        [dropdownRef.current, autoWidth])
 
     const renderItems = () => {
         const {scrollToSelected, itemClassName} = props;
@@ -81,8 +84,7 @@ const Dropdown = React.forwardRef((props, ref) => {
             'maxHeight': '15rem'
         }
 
-        return (
-            <Popover
+        return <Popover
                 hideTail
                 manageOpened
                 opened={openedValue}
@@ -113,7 +115,7 @@ const Dropdown = React.forwardRef((props, ref) => {
                     </div>
                 </Popover.Content>
             </Popover>
-        )
+
     }
 
     const renderElement = () => {
@@ -138,10 +140,10 @@ const Dropdown = React.forwardRef((props, ref) => {
         })
 
         const containerClasses = classnames(
-            className,
             "swf-dropdown-main-container",
             "dropdown-container",
-            {"--autoWidth": autoWidth })
+            {"--autoWidth": autoWidth },
+            className)
 
         return (
             <>
@@ -202,9 +204,10 @@ Dropdown.defaultProps = {
     itemClassName: {},
     visible: true,
     manageInvalid: true,
-    onOpened: () => void 0,
-    onInvalid: () => void 0,
-    onItemSelected: () => void 0,
+    onOpened: () => noop,
+    onInvalid: () => noop,
+    onItemSelected: () => noop,
+    onClick: () => noop,
     select: DROPDOWN.SELECT.SINGLE,
     hideCaret: false
 }
@@ -274,6 +277,7 @@ Dropdown.propTypes = {
     onOpened: propTypes.func,
     onInvalid: propTypes.func,
     onItemSelected: propTypes.func,
+    onClick: propTypes.func,
 
     //style
     className: propTypes.oneOfType([propTypes.object, propTypes.string]),
@@ -281,10 +285,6 @@ Dropdown.propTypes = {
     itemClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
 
     autoWidth: propTypes.bool
-
-    //todo
-    //icon: propTypes.string,
-    //search: propTypes.oneOf(["none", "managed", "initial", "contains"]),
 }
 
 export default Dropdown

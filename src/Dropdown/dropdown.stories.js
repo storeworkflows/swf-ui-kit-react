@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import { default as Dropdown } from './Dropdown';
 
@@ -73,4 +73,22 @@ Standard.args = {
             subLabel: "sublabel"
         }
     ]
+}
+
+export const Test = (args) => {
+    const TestDropdown = (props) => {
+        const [height, setHeight] = useState(100)
+
+        return <div style={{height: `${height}px`, border: "1px solid red"}}
+                    onClick={() => setHeight(height+10)}>
+            <Dropdown
+                {...args}
+
+            />
+        </div>
+    }
+    return <TestDropdown {...args}/>
+}
+Test.args = {
+    ...Standard.args
 }

@@ -1,70 +1,24 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import classnames from "classnames";
-import {ResizeObserver} from "resize-observer";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import {isPointInsideTheElement} from "../DatePicker/utils";
 import {POPOVER} from "./constants";
+import isEqual from "react-fast-compare";
+import {noop} from "../utils";
 
-const Popover = React.forwardRef((props, ref) => {
+const Popover = React.memo(React.forwardRef((props, ref) => {
 
     const {children, roundBorder, contentStyles, positionTarget, manageOpened,
         onTargetClick, onOuterPopoverClicked, positions, hideTail, opened} = props;
 
-    const [contentDimensions, setContentDimensions] = useState(null);
-    const [targetDimensions, setTargetDimensions] = useState(null);
-    const [popoverStyles, setPopoverStyles] = useState({})
     const [isOpened, setIsOpened] = useState(opened);
 
     const targetRef = useRef(null);
     const contentRef = useRef(null);
-
-    let openedFinal = manageOpened ? opened : isOpened;
-
-    useEffect( () => {
-        setStyles(true)
-        calculateStyles()
-    },[targetDimensions, targetRef.current, contentRef.current, contentDimensions, hideTail, positions, contentStyles])
-
-    useEffect(() => setStyles(!openedFinal),
-        [openedFinal, hideTail, contentRef.current, popoverStyles])
-
-    useEffect(() => {
-        const targetValue = targetRef.current
-        if(targetValue){
-            targetValue.addEventListener("click", targetClicked)
-            return () => targetValue.removeEventListener("click", targetClicked)
-        }
-    }, [targetRef.current, openedFinal, manageOpened, opened, isOpened])
-
-    useEffect(() => {
-        let resizeObserver = new ResizeObserver((e) => {
-            const target = e[0].target
-            target.parentElement.classList.contains("popover-content-keeper")
-                ? setContentDimensions(target.getBoundingClientRect())
-                : setTargetDimensions(target.getBoundingClientRect())
-        });
-
-        if(targetRef.current)
-            resizeObserver.observe(targetRef.current);
-        resizeObserver.observe(contentRef.current.children[0].children[0]);
-
-        return () => resizeObserver.disconnect();
-    }, [targetRef.current, contentRef.current])
-
-    useEffect(() => {
-        document.addEventListener("click", documentClicked);
-        return () => document.removeEventListener("click", documentClicked)
-    }, [targetRef.current, contentRef.current, openedFinal, manageOpened, onOuterPopoverClicked])
-
-    useEffect(() => {
-        const targetValue = positionTarget?.current;
-       // if(targetValue)
-            targetRef.current = targetValue;
-    }, [ positionTarget])
 
     const targetClicked = (e) => {
         e.preventDefault();
@@ -82,7 +36,7 @@ const Popover = React.forwardRef((props, ref) => {
         let contentElement = contentRef.current;
         let targetElement = targetRef.current;
 
-        if( openedFinal && contentElement && targetElement) {
+        if( isOpened && contentElement && targetElement) {
 
             let isOutsideContent = !isPointInsideTheElement(contentElement, pointX, pointY);
             let isOutsideTarget = !isPointInsideTheElement(targetElement, pointX, pointY);
@@ -94,7 +48,7 @@ const Popover = React.forwardRef((props, ref) => {
         }
     }
 
-    const setStyles = (isHidden) => {
+    const setStyles = (isHidden, popoverStyles) => {
         let contentElement = contentRef?.current;
         if(!contentElement) return;
 
@@ -120,16 +74,39 @@ const Popover = React.forwardRef((props, ref) => {
 
     const calculateStyles = () => {
         let contentElement = contentRef?.current;
+        let targetElement = targetRef?.current;
 
-        if(contentElement && targetDimensions) {
+        if(contentElement && targetElement) {
             let padding = contentStyles && contentStyles['padding'] && contentStyles['padding'].split('px')[0] ;
             let contentDimensions = contentElement.getBoundingClientRect();
+            let targetDimensions = targetElement.getBoundingClientRect();
 
             let stylesInfo = getPopoverStyle(positions, targetDimensions, contentDimensions, hideTail, roundBorder, padding);
             stylesInfo.style.visibility = "visible";
-            setPopoverStyles(stylesInfo)
+            return stylesInfo
         }
     }
+
+    useEffect(() => targetRef.current = positionTarget?.current, [ positionTarget.current])
+    useEffect(() => manageOpened && setIsOpened(opened), [opened, manageOpened])
+
+    useEffect( () => {
+        setStyles(true)
+        isOpened && setStyles(false, calculateStyles())
+    },[isOpened])
+
+    useEffect(() => {
+        const targetValue = targetRef.current
+        if(targetValue){
+            targetValue.addEventListener("click", targetClicked)
+            return () => targetValue.removeEventListener("click", targetClicked)
+        }
+    }, [targetRef.current, onTargetClick, manageOpened])
+
+    useEffect(() => {
+        document.addEventListener("click", documentClicked);
+        return () => document.removeEventListener("click", documentClicked)
+    }, [contentRef.current, targetRef.current, isOpened, manageOpened, onOuterPopoverClicked])
 
     const renderTarget = () => {
         const target = findByType(children, "Target");
@@ -166,6 +143,8 @@ const Popover = React.forwardRef((props, ref) => {
             {renderContent()}
             {!positionTarget?.current && renderTarget()}
     </>;
+}), (prev, next) => {
+    return isEqual(prev, next);
 });
 
 Popover.Content = createSubComponent("Content");
@@ -177,8 +156,8 @@ Popover.defaultProps = {
     opened: false,
     positions: getAllPossibleVariants(),
     roundBorder: true,
-    onTargetClick: () => void 0,
-    onOuterPopoverClicked: () => void 0,
+    onTargetClick: noop,
+    onOuterPopoverClicked: noop,
     fitTargetWidth: false
 }
 
