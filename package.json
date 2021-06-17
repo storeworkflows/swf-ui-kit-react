@@ -38,7 +38,8 @@
     "build-storybook": "build-storybook",
     "test": "jest",
     "lint": "echo \"Error: no lint specified\" && exit 0",
-    "chromatic": "chromatic"
+    "chromatic": "chromatic",
+    "test:generate-output": "jest --json --outputFile=.jest-test-results.json"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
