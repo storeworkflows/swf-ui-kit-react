@@ -170,9 +170,7 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
             {renderContent()}
             {!positionTarget?.current && renderTarget()}
     </>;
-}), (prev, next) => {
-    return isEqual(prev, next);
-});
+}));
 
 Popover.Content = createSubComponent("Content");
 Popover.Target = createSubComponent("Target");

@@ -38,4 +38,3 @@ export {default as Badge} from "./Badge/Badge";
 export {default as Table} from "./Table/index";
 export {default as SNTable} from "./SNTable/SNTable";
 
-export {default as Form} from "./Form/Form"
