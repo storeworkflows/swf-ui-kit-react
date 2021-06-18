@@ -11,7 +11,6 @@ module.exports = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     '@storybook/preset-scss',
-    //'@storybook/addon-storyshots',
     "storybook-addon-mock/register",
     'storybook-addon-designs',
     '@storybook/addon-jest'
