@@ -24,11 +24,8 @@ export const Default = Template.bind({});
 
 Default.args = {
     // formRecord: FORM_RECORD_SAMPLE,
-    formRecord: null,
-    formData: {
-        table: 'x_aaro2_swf_station',
-        sysId: '6bcb824c1b868c949bf099fabc4bcbe2'
-    },
+    table: 'x_aaro2_swf_station',
+    sysId: '044b860c1b868c949bf099fabc4bcbd8',
     isFullScreen: false,
     onRelatedListRowClick: () => {},
     onReferenceFieldClick: () => {}
