@@ -16,6 +16,10 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
         onTargetClick, onOuterPopoverClicked, positions, hideTail, opened} = props;
 
     const [isOpened, setIsOpened] = useState(opened);
+    const [hasOwnTarget, setHasOwnTarget] = useState(false);
+    const [targetValue, setTargetValue] = useState(null);
+    const [contentDimensions, setContentDimensions] = useState(null);
+    const [targetDimensions, setTargetDimensions] = useState(null);
 
     const targetRef = useRef(null);
     const contentRef = useRef(null);
@@ -24,7 +28,7 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
         e.preventDefault();
 
         if(isPointInsideTheElement(targetRef?.current, e.clientX, e.clientY)) {
-            !manageOpened &&  setIsOpened(!isOpened)
+            !manageOpened && setIsOpened(!isOpened)
             let value = manageOpened ? opened : !isOpened;
             onTargetClick({value})
         }
@@ -87,13 +91,20 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
         }
     }
 
-    useEffect(() => targetRef.current = positionTarget?.current, [ positionTarget?.current])
+    useEffect(() => {
+        if(!hasOwnTarget && positionTarget)
+        {
+            targetRef.current = positionTarget.current
+            setTargetValue(positionTarget.current)
+        }
+    }, [ positionTarget?.current, hasOwnTarget])
+
     useEffect(() => manageOpened && setIsOpened(opened), [opened, manageOpened])
 
     useEffect( () => {
         setStyles(true)
         isOpened && setStyles(false, calculateStyles())
-    },[isOpened])
+    },[isOpened, targetValue, targetRef, contentDimensions, targetDimensions])
 
     useEffect(() => {
         const targetValue = targetRef.current
@@ -101,19 +112,35 @@ const Popover = React.memo(React.forwardRef((props, ref) => {
             targetValue.addEventListener("click", targetClicked)
             return () => targetValue.removeEventListener("click", targetClicked)
         }
-    }, [targetRef.current, onTargetClick, manageOpened])
+    }, [targetRef, manageOpened, isOpened, onTargetClick, targetValue])
 
     useEffect(() => {
         document.addEventListener("click", documentClicked);
         return () => document.removeEventListener("click", documentClicked)
-    }, [contentRef.current, targetRef.current, isOpened, manageOpened, onOuterPopoverClicked])
+    }, [targetRef, contentRef, targetValue, isOpened, manageOpened, onOuterPopoverClicked])
+
+    useEffect(() => {
+        let resizeObserver = new ResizeObserver((e) => {
+            const target = e[0].target
+            target.parentElement.classList.contains("popover-content-keeper")
+                ? setContentDimensions(target.getBoundingClientRect())
+                : setTargetDimensions(target.getBoundingClientRect())
+        });
+
+        if(targetRef.current)
+            resizeObserver.observe(targetRef.current);
+        resizeObserver.observe(contentRef.current.children[0].children[0]);
+
+        return () => resizeObserver.disconnect();
+    }, [targetRef.current, contentRef.current, targetValue])
 
     const renderTarget = () => {
         const target = findByType(children, "Target");
 
-        if (!target)
+        if (!target || !target?.length)
             return null;
 
+        !hasOwnTarget && setHasOwnTarget(true);
         return <div className={"popover-target"}
                     ref={targetRef}>{target}</div>
     }
