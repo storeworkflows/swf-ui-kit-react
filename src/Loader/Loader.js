@@ -1,5 +1,5 @@
 import propTypes from "prop-types";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 export default function Loader({size = 32}) {
 
@@ -12,7 +12,12 @@ export default function Loader({size = 32}) {
     }, [size])
 
   return (
-    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+    <div className="lds-ellipsis">
+        <div/>
+        <div/>
+        <div/>
+        <div/>
+    </div>
   );
 }
 
