@@ -53,6 +53,7 @@ export const TargetRef = (args) => {
 
 
         render () {
+           // console.log(this.state.current)
             return (
                 <>
                     <InfoMessage content={"Message content"}/>
@@ -60,7 +61,7 @@ export const TargetRef = (args) => {
                     {/*{this.state.hasTarget &&*/}
                     <Popover {...this.props}
                              positionTarget={{current: this.state.current}}
-                             opened={true}
+                             opened={false}
                              ref={el=> this.popoverRef.current = el}
                     >
                         <Popover.Content>
