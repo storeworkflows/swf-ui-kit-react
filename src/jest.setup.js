@@ -1,5 +1,4 @@
-const JScreenshot = require("jest-screenshot");
+import { configure } from 'enzyme';
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 
-JScreenshot.setupJestScreenshot();
-
-jest.setTimeout(120000);
+configure({ adapter: new Adapter() });

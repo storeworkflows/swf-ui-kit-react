@@ -11,4 +11,8 @@ export default {
 const Template = (args) => <Badge {...args} />;
 
 export const Default = Template.bind({});
+Default.parameters = {
+    jest: ['Badge.test.js']
+}
+
 

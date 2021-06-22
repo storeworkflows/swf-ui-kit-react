@@ -3,6 +3,7 @@ import propTypes from "prop-types";
 import classnames from "classnames";
 import {useCallback, useEffect, useRef, useState} from "react";
 
+import {ResizeObserver} from "resize-observer";
 import findByType, {createSubComponent} from "../utils/findByType";
 import {getAllPossibleVariants, getPopoverStyle} from "./utils";
 import {isPointInsideTheElement} from "../DatePicker/utils";

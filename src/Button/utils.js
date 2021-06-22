@@ -21,7 +21,7 @@ const getCustomIconSize = (sizeStr) => {
             result = parseInt(sizeStr.replace("px", ''));
             break;
         case (sizeStr.includes("rem")):
-            result = parseInt(sizeStr.replace("rem", ''));
+            result = parseFloat(sizeStr.replace("rem", ''));
             result*=16;
             break;
         default:
@@ -46,7 +46,7 @@ const getStandardIconSize = (size) => {
 
 const getIconSize = (customStyle, icon, size) => {
     const hasStyles = customStyle !== null;
-    const hasIcon= icon.length>0;
+    const hasIcon= icon?.length>0;
 
     let hasCustomIconSize = hasStyles && customStyle["font-size"]!==undefined;
     let iconSize = 16;
@@ -58,9 +58,6 @@ const getIconSize = (customStyle, icon, size) => {
 
     return iconSize;
 }
-
-
-
 
 export {
     getIconSize, addStyles

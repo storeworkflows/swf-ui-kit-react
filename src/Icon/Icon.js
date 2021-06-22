@@ -51,7 +51,7 @@ Icon.defaultProps = {
     icon: "",
     size: 'md',
     color: "",
-    className: {},
+    className: "",
     innerRef: React.createRef(),
     onClick: () => void 0
 }
