@@ -35,9 +35,7 @@
     "@storybook/addons": "^6.1.14"
   },
   "scripts": {
-    "test:generate-output": "jest --json --outputFile=.jest-test-results.json || true",
     "test": "jest",
-    "prebuild:storybook": "npm run test:generate-output",
     "rename": "json -I -f package.json -e \"this.name=\\\"@storeworkflows/ui-kit\\\"\"",
     "clean": "rimraf lib/*",
     "watch": "babel --watch src --out-dir lib --source-maps inline --copy-files",

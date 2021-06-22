@@ -4,45 +4,44 @@ import {addStyles, getIconSize} from "./utils";
 
 
 describe("Button component", () => {
-
-    it("contains text", () => {
+    it("Should contain text", () => {
         const component = shallow(<Button label={"Button"}/>)
 
-        expect(component.find('label').exists()).toEqual(true);
-        expect(component.text()).toEqual("Button");
+        expect(component.find('label').exists()).toBe(true);
+        expect(component.text()).toBe("Button");
 
-        expect(component.find('Icon').exists()).toEqual(false);
+        expect(component.find('Icon').exists()).toBe(false);
     })
 
-    it("contains icon", () => {
+    it("Should contain icon", () => {
         const component = shallow(<Button icon={"alarm"}/>)
-        expect(component.find('Icon').exists()).toEqual(true);
+        expect(component.find('Icon').exists()).toBe(true);
 
-        expect(component.find('label').exists()).toEqual(false);
+        expect(component.find('label').exists()).toBe(false);
     })
 
-    it("contains icon and text", () => {
+    it("Should contain icon and text", () => {
         const component = shallow(<Button icon={"alarm"}  label={"Button"}/>)
 
+        expect(component.find('Icon').exists()).toBe(true);
+
+        expect(component.find('label').exists()).toBe(true);
+        expect(component.find('label').text()).toBe("Button");
+    })
+
+    it("No ability to click when disabled", () => {
+        const component = shallow(<Button label={"Button"} disabled/>)
+        component.simulate('click')
         expect(component.find('Icon').exists()).toEqual(true);
 
         expect(component.find('label').exists()).toEqual(true);
         expect(component.find('label').text()).toEqual("Button");
     })
 
-    // it("Button can`t click when disabled", () => {
-    //     const component = shallow(<Button label={"Button"} disabled/>)
-    //     component.simulate('click')
-    //     expect(component.find('Icon').exists()).toEqual(true);
-    //
-    //     expect(component.find('label').exists()).toEqual(true);
-    //     expect(component.find('label').text()).toEqual("Button");
-    // })
-
 })
 
 describe("Button utils", () => {
-    it("test custom style addition", () => {
+    it("Custom style addition", () => {
         const customStyle = {
             "base-color": 'red',
             "color": 'blue',
