@@ -29,24 +29,28 @@ describe("Button component", () => {
         expect(component.find('label').text()).toBe("Button");
     })
 
-    // it("Ability to click", () => {
-    //     let clicked = 0;
-    //     const onClick = () => clicked++;
-    //     const component = shallow(<Button label={"Button"} onClick={onClick}/>)
-    //
-    //     component.find('button').simulate('click')
-    //     expect(clicked).toBe(1);
-    // })
-    //
-    // it("No ability to click when disabled", () => {
-    //     let clicked = false;
-    //     const onClick = () => clicked = true;
-    //     const component = shallow(<Button label={"Button"} disabled onClick={onClick}/>)
-    //
-    //     component.find('button').simulate('click')
-    //     expect(clicked).toBe(false);
-    // })
+    it("Ability to click", () => {
+        let clicked = 0;
+        const onClick = () => clicked++;
+        const component = mount(<Button label={"Button"} onClick={onClick}/>)
 
+        component.find('.content').simulate('click')
+        expect(clicked).toBe(1);
+    })
+
+    it("No ability to click when disabled", () => {
+        let clicked = 0;
+        const onClick = () => clicked++;
+        const component = mount(<Button label={"Button"} disabled onClick={onClick}/>)
+
+        component.find('.content').simulate('click')
+        expect(clicked).toBe(0);
+    })
+
+    it("Should render children", () => {
+        const component = shallow(<Button><p>Hello</p></Button>);
+        expect()
+    })
 })
 
 describe("Button utils", () => {

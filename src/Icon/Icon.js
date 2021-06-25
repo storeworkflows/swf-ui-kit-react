@@ -39,6 +39,7 @@ const Icon = (props) => {
             className={className}
             onClick={onClick}
         >
+            <title>{icon}</title>
           {[...node.children].map((child, id) => {
             const {tagName: Tag, attributes} = child
             return <Tag {...getAttrs(attributes)} key={id} style={{fill: "currentColor"}}/>
