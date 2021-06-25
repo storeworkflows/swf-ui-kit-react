@@ -5,7 +5,7 @@ import {Component, Fragment, Children} from "react";
 import CardPreloader from "./Preloader";
 
 const Card = React.forwardRef((props, ref) => {
-    const {vertical, loading, customStyles, size, children} = props;
+    const {vertical, loading, customStyles, size, children, className} = props;
 
     if (loading) return <CardPreloader/>
 
@@ -13,11 +13,11 @@ const Card = React.forwardRef((props, ref) => {
         <>
             <div
                 className={
-                    classnames({
+                    classnames( {
                         "swf-card": true,
                         "vertical": vertical,
                         [`--${size}`]: true
-                    })
+                    }, className)
                 }
                 style={customStyles}
                 ref={ref}
@@ -33,7 +33,8 @@ Card.propTypes = {
     loading: propTypes.bool,
     customStyles: propTypes.object,
     size: propTypes.oneOf(["s", "m", "l"]),
-    dispatch: propTypes.func
+    dispatch: propTypes.func,
+    className: propTypes.string
 }
 
 Card.defaultProps = {
@@ -41,7 +42,8 @@ Card.defaultProps = {
     loading: false,
     customStyles: {},
     size: "m",
-    dispatch: () => void 0
+    dispatch: () => void 0,
+    className: ""
 }
 
 export default Card
