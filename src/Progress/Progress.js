@@ -1,0 +1,54 @@
+import * as React from "react";
+import propTypes from "prop-types";
+import classnames from "classnames";
+import {Icon} from "../index";
+
+const Progress = React.memo(React.forwardRef((props, ref) => {
+    const {value, status, showInfo, showStatus} = props
+    const hasValue = !(value === null || value === undefined)
+    const valueStr = `${value}%`;
+
+    const statusByValue = value===100 ? "done" : "active";
+    const realStatus = status === "done"
+        ? statusByValue
+        : status
+
+    const classes = classnames("swf-progress-container", {
+        [realStatus]: showStatus,
+    })
+
+
+    return hasValue && <div className={classes}>
+        <div className={"progress-bar"}>
+            <div className={"progress-bar-fill"} style={{width: `${value}%`}}>
+
+            </div>
+        </div>
+        {showInfo &&
+            <div className={"progress-info-container"}>
+                {realStatus === 'active' || !showStatus
+                    ? <span className={"progress-info"}>{valueStr}</span>
+                    : <Icon
+                        icon={realStatus === "done" ? "check-circle-fill" : "x-circle-fill"}
+                        customSize={20}
+                    />
+                }
+            </div>}
+    </div>
+}))
+
+Progress.defaultProps = {
+    showStatus: true,
+    showInfo: true,
+    status: "active"
+}
+
+Progress.propTypes = {
+    value: propTypes.number,
+    status: propTypes.oneOf(["active", "done", "exception"]),
+    showInfo: propTypes.bool,
+    showStatus: propTypes.bool
+}
+
+
+export default Progress;

@@ -79,6 +79,7 @@ const TextArea = (props) => {
                     })}
                     ref={(elm) => textAreaRef.current = elm}
                     name={name}
+                    aria-readonly={readonly}
                     readOnly={readonly}
                     value={value}
                     onPaste={onPaste}
