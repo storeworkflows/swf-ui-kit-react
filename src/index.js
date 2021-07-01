@@ -38,4 +38,5 @@ export {default as Badge} from "./Badge/Badge";
 export {default as Table} from "./Table/index";
 export {default as SNTable} from "./SNTable/SNTable";
 export {default as InfoMessage} from "./InfoMessage/InfoMessage";
+export {default as Progress} from "./Progress/Progress"
 
