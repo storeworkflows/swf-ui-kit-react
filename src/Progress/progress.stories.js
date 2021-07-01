@@ -16,12 +16,12 @@ const Template = (args) => <Progress {...args}/>;
 
 export const Default = Template.bind({});
 
-// export const Test = (args) => <div>
-//     <Progress value={0} />
-//     <Progress value={30}/>
-//     <Progress value={100} status={"done"}/>
-//     <Progress value={55} status={"exception"}/>
-//     <Progress value={100} status={"done"} showStatus={false}/>
-//     <Progress value={78} showInfo={false}/>
-// </div>
+export const Test = (args) => <div>
+    <Progress value={0} />
+    <Progress value={30}/>
+    <Progress value={100} status={"done"}/>
+    <Progress value={55} status={"exception"}/>
+    <Progress value={100} status={"done"} showStatus={true}/>
+    <Progress value={78} showInfo={false}/>
+</div>
 

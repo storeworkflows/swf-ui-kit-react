@@ -7,11 +7,7 @@ const Progress = React.memo(React.forwardRef((props, ref) => {
     const {value, status, showInfo, showStatus, className} = props
     const hasValue = !isNaN(value)
     const valueStr = `${value}%`;
-
-    const statusByValue = value===100 ? "done" : "active";
-    const realStatus = status === "done"
-        ? statusByValue
-        : status
+    const realStatus = (status === "done" && value!==100) ? "active": status
 
     const classes = classnames("swf-progress-container", {
         [realStatus]: showStatus,
