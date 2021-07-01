@@ -152,6 +152,7 @@ const Input = (props) => {
                         type={type}
                         aria-required={required}
                         aria-invalid={invalidFinal}
+                        aria-readonly={readonly}
                         value={valueFinal}
                         readOnly={readonly}
                         required={required}

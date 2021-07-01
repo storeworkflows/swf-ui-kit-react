@@ -16,7 +16,7 @@ const Progress = React.memo(React.forwardRef((props, ref) => {
 
     return hasValue && <div className={classes} ref={ref}>
         <div className={"progress-bar"}>
-            <div className={"progress-bar-fill"} style={{width: `${value}%`}}>
+            <div className={"progress-bar-fill"} style={{width: valueStr}}>
 
             </div>
         </div>
