@@ -4,8 +4,8 @@ import classnames from "classnames";
 import {Icon} from "../index";
 
 const Progress = React.memo(React.forwardRef((props, ref) => {
-    const {value, status, showInfo, showStatus} = props
-    const hasValue = !(value === null || value === undefined)
+    const {value, status, showInfo, showStatus, className} = props
+    const hasValue = !isNaN(value)
     const valueStr = `${value}%`;
 
     const statusByValue = value===100 ? "done" : "active";
@@ -15,10 +15,10 @@ const Progress = React.memo(React.forwardRef((props, ref) => {
 
     const classes = classnames("swf-progress-container", {
         [realStatus]: showStatus,
-    })
+    }, className)
 
 
-    return hasValue && <div className={classes}>
+    return hasValue && <div className={classes} ref={ref}>
         <div className={"progress-bar"}>
             <div className={"progress-bar-fill"} style={{width: `${value}%`}}>
 
@@ -40,14 +40,16 @@ const Progress = React.memo(React.forwardRef((props, ref) => {
 Progress.defaultProps = {
     showStatus: true,
     showInfo: true,
-    status: "active"
+    status: "active",
+    className: ""
 }
 
 Progress.propTypes = {
     value: propTypes.number,
     status: propTypes.oneOf(["active", "done", "exception"]),
     showInfo: propTypes.bool,
-    showStatus: propTypes.bool
+    showStatus: propTypes.bool,
+    className: propTypes.string
 }
 
 
