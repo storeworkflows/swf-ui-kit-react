@@ -149,7 +149,7 @@ const LookupTable = (props) => {
 
 };
 
-LookupField.defaultProps = {
+LookupTable.defaultProps = {
     onValueChange: () => void 0,
     name: "",
     readonly: false,
@@ -162,7 +162,7 @@ LookupField.defaultProps = {
     required: false,
 }
 
-LookupField.propTypes = {
+LookupTable.propTypes = {
     onValueChange: propTypes.func,
     name: propTypes.string,
     readonly: propTypes.bool,
