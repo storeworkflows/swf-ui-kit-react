@@ -6,7 +6,7 @@ import Icon from "../Icon/Icon";
 import {noop} from "../utils";
 import {useRef} from "react";
 
-const Pill = React.forwardRef((props, ref) => {
+const Pill = React.memo(React.forwardRef((props, ref) => {
     const {
         canDismiss,
         icon,
@@ -71,7 +71,7 @@ const Pill = React.forwardRef((props, ref) => {
         </>
 
     )
-});
+}));
 
 Pill.defaultProps = {
     canDismiss: false,
@@ -110,4 +110,4 @@ Pill.propTypes = {
     onClick: PropTypes.func,
 }
 
-export default React.memo(Pill)
+export default Pill
