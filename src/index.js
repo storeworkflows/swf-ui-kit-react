@@ -24,6 +24,7 @@ export {default as Loader} from "./Loader/Loader"
 
 export {default as Stepper} from "./Stepper/Stepper";
 export {default as LookupField} from "./LookupField/LookupField";
+export {default as LookupTable} from "./LookupTable/LookupTable";
 export {default as Input} from "./Input/Input";
 export {default as TextArea} from "./TextArea/TextArea";
 export {default as Pill} from "./Pill/Pill";
