@@ -11,7 +11,7 @@ export const getAttrs = (attrs) =>{
     let length = attrs.length;
 
     for (let i = 0; i < length; i++) {
-        let curProps = attrs.item(i);
+        let curProps = attrs[i];
         let name = curProps.name;
 
         if (curProps.name === "class")

@@ -43,7 +43,8 @@
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -c .storybook -o build/",
     "lint": "echo \"Error: no lint specified\" && exit 0",
-    "chromatic": "chromatic"
+    "chromatic": "chromatic",
+    "test-coverage": "npx jest --coverage"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.16",
