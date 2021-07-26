@@ -7,23 +7,21 @@ import {useState} from "react";
 
 const _addStyles = (customStyle) => {
     let styles = {};
-    const hasStyles = customStyle !== null;
-    if (hasStyles)
-        SWF_TOGGLE.AVAILABLE_CUSTOM_STYLES.forEach((styleName) => {
-            if (customStyle[styleName] !== undefined)
-                styles[`--${styleName}`] = customStyle[styleName];
-        })
+    customStyle && SWF_TOGGLE.AVAILABLE_CUSTOM_STYLES.forEach((styleName) => {
+        if (customStyle[styleName] !== undefined)
+            styles[`--${styleName}`] = customStyle[styleName];
+    })
 
     return styles;
 }
 
-const Toggle = React.forwardRef((props, ref) => {
+const Toggle = React.memo(React.forwardRef((props, ref) => {
 
     const {disabled, size, customStyle, className, manageChecked, checked, visible, onClick} = props;
     const [isChecked, setIsChecked] = useState(checked)
 
     const onToggleClick = () => {
-        if(manageChecked){
+        if (manageChecked) {
             onClick({value: checked});
         } else {
             setIsChecked(!isChecked);
@@ -40,35 +38,25 @@ const Toggle = React.forwardRef((props, ref) => {
             "disabled": disabled
         })
 
-    return (
-        !visible ?
-            <>
-                <label className={toggleClasses}
-                       style={additionalStyle}
-                       ref={ref}
-                >
-                    <input type="checkbox"
-                           checked={manageChecked ? checked : isChecked}
-                           disabled={disabled}
-                           onChange={onToggleClick}
-                    />
-                    <span className="slider"/>
-                </label>
-            </>
-            : null
-    )
-
-});
+    return visible && <label className={toggleClasses}
+                           style={additionalStyle}
+                           ref={ref}
+        >
+            <input type="checkbox"
+                   checked={manageChecked ? checked : isChecked}
+                   disabled={disabled}
+                   onChange={() => !disabled && onToggleClick()}
+            />
+            <span className="slider"/>
+        </label>
+}));
 
 Toggle.defaultProps = {
-    checked: false,
-    disabled: false,
-    manageChecked: false,
     size: "md",
-    customStyle: null,
     onClick: () => void 0,
     className: "",
-    visible: false
+    visible: true,
+    checked: false
 }
 
 Toggle.propTypes = {
@@ -91,4 +79,4 @@ Toggle.propTypes = {
     visible: propTypes.bool
 }
 
-export default React.memo(Toggle);
+export default Toggle;

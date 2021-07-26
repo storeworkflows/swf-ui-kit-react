@@ -6,5 +6,5 @@ export const SWF_BUTTON = {
 		 "border-color", "hover-border-color", "active-border-color",
 		 "text-color",   "hover-text-color",   "active-text-color",
 		 "border-radius", "border-width", "border-style",
-		 "height", "font-size"],
+		 "height", "font-size" ]
 }

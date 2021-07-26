@@ -45,18 +45,14 @@ const LabelValue = React.forwardRef((props, ref) => {
         }
     )
 
-    return (
-        <>
-            <div
+    return  <div
                 className={classes}
                 onClick={onClick}
                 ref={ref}
             >
                 {label && <label className={labelClasses}>{label}</label>}
                 {renderValue()}
-            </div>
-        </>
-    )
+    </div>
 });
 
 LabelValue.Value = createSubComponent("Value");

@@ -8,19 +8,9 @@ import InfoMessage from "../InfoMessage/InfoMessage";
 export default {
     title: 'swf-ui-kit/Containers/Popover',
     component: Popover,
-    args: {
-        positions: [
-            {
-                target: "bottom-start",
-                content: "top-start"
-            },
-            {
-                target: "center-end",
-                content: "center-start"
-            }
-        ],
-        hideTail: true
-    }
+    // args: {
+    //
+    // }
 };
 
 
@@ -34,6 +24,19 @@ export const Default = (args) => <Popover {...args}>
         </div>
     </Popover.Content>
 </Popover>;
+    // Default.args = {
+    //     positions: [
+    //         {
+    //             target: "bottom-start",
+    //             content: "top-start"
+    //         },
+    //         {
+    //             target: "center-end",
+    //             content: "center-start"
+    //         }
+    //     ],
+    //     hideTail: true
+    // }
 
 export const TargetRef = (args) => {
     class PopoverWithRef extends React.Component{
@@ -83,6 +86,19 @@ export const TargetRef = (args) => {
     return <PopoverWithRef {...args}/>
 
 };
+// TargetRef.args = {
+//     positions: [
+//         {
+//             target: "bottom-start",
+//             content: "top-start"
+//         },
+//         {
+//             target: "center-end",
+//             content: "center-start"
+//         }
+//     ],
+//     hideTail: true
+// }
 TargetRef.parameters ={
     docs: {
         source: {

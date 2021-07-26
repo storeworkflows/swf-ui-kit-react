@@ -45,9 +45,7 @@ const Button = (props) => {
         "label-button-icon": !_hasOnlyIcon
     });
 
-    return (
-        <>
-            <button
+    return <button
                 ref={elm => props.innerRef.current = elm}
                 className={buttonClasses}
                 onClick={onClick}
@@ -69,9 +67,7 @@ const Button = (props) => {
                     {_hasLabel && <label className={"button-label"}>{label}</label>}
                     { children }
                 </div>
-            </button>
-        </>
-    )
+    </button>
 }
 
 Button.defaultProps = {

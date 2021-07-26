@@ -11,7 +11,7 @@ const Template = (args) => <Icon {...args} />;
 
 export const Standard = Template.bind({});
 Standard.args = {
-    icon: 'alarm',
+    icon: 'lightning-charge-fill',
 };
 
 

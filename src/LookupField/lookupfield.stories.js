@@ -53,7 +53,7 @@ export const MockRequest = (args) => <LookupField {...args}/>;
  export const ExampleData = (args) => <LookupField {...args}/>;
  ExampleData.args = {
  //label: "LookupField",
-  content: "d5640bdadbfb2300f0ee760a689619e6",
+ // content: "d5640bdadbfb2300f0ee760a689619e6",
  // declarativeUiActions: Proxy {0: Proxy, 1: Proxy, Symbol(mobx administration): e},
   displayValue: "Viktor Bardakov - Admin",
   label: "Creator",
