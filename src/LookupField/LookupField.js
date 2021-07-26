@@ -356,7 +356,7 @@ LookupField.propTypes = {
     onValueChange: propTypes.func,
     value: propTypes.string,
     displayValue: propTypes.string,
-    declarativeUiActions: propTypes.object,
+    declarativeUiActions: propTypes.array,
     label: propTypes.string,
     name: propTypes.string,
     type: propTypes.oneOf(["reference", "glide_list"]),
