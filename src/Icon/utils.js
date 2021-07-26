@@ -3,6 +3,9 @@ import icons from "./icons";
 export const generateSvg = (icon) => {
     const wrapper = document.createElement("span");
     wrapper.innerHTML = icons[icon];
+    // wrapper.innerHTML = <svg className="bi" width="16" height="16" fill="currentColor">
+    //     <use xlink:href="bootstrap-icons.svg#bootstrap"/>
+    // </svg>
     return wrapper.children[0];
 }
 

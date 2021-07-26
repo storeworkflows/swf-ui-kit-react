@@ -84,7 +84,7 @@ describe("LabelValue", () => {
         })
 
         it("Should contain class to make label bold", () => {
-            component.setProps({label: "Hello"});
+            component.setProps({label: "Hыello"});
             expect(component.hasClass('--unimportant')).toBeFalsy();
             expect(component.find("label").hasClass('--unimportant')).toBeFalsy();
 
