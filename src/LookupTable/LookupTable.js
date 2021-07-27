@@ -12,7 +12,7 @@ const LookupTable = (props) => {
     const {
         onValueChange, name, readonly, table,
         internalRef, onInvalid, message, label,
-        invalid, required,
+        invalid, required, searchFields
     } = props;
 
     const inputRef = useRef(null);
@@ -26,9 +26,9 @@ const LookupTable = (props) => {
             operationName: "reference",
             query,
             variables: {
-                query: `${name}LIKE${chars}`,
-                field: name,
-                table: table
+                searchFields,
+                value: chars,
+                table
             },
         });
         return await response.json();
@@ -151,6 +151,7 @@ const LookupTable = (props) => {
 
 LookupTable.defaultProps = {
     onValueChange: () => void 0,
+    searchFields:[],
     name: "",
     readonly: false,
     table: "",
@@ -165,6 +166,7 @@ LookupTable.defaultProps = {
 LookupTable.propTypes = {
     onValueChange: propTypes.func,
     name: propTypes.string,
+    searchFields: PropTypes.arrayOf(PropTypes.string),
     readonly: propTypes.bool,
     table: propTypes.string,
     internalRef: PropTypes.oneOfType([
