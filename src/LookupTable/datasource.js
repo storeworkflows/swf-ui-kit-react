@@ -4,7 +4,7 @@ query($table: String!, $query: String, $field: String) {
       referenceList {
           getListItems(table: $table, query: $query, field: $field) {
               sys_id,
-              name
+              value
           }
       }
   }
