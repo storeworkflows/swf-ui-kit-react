@@ -130,14 +130,14 @@ const LookupTable = (props) => {
                         {loading ? <span className="message">Loading...</span> : null}
                         {!loading && !records.length ? <span className="message">No Results Found</span> : null}
                         {!loading && records.map(record => {
-                            const { sys_id, name } = record;
+                            const { sys_id, value } = record;
                             return (
                                 <div
                                     key={sys_id}
                                     className="result--item"
                                     onClick={() => onClick(record)}
                                 >
-                                    <span className="additional">{name}</span>
+                                    <span className="additional">{value}</span>
                                 </div>
                             )
                         })}
