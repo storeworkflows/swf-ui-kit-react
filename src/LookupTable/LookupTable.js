@@ -59,7 +59,7 @@ const LookupTable = (props) => {
 
     const onClick = (record) => {
         setFocused(false);
-        setSearchValue(record.name)
+        setSearchValue(record.value)
         onValueChange(record);
     }
 
