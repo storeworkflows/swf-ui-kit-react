@@ -1,8 +1,8 @@
 export const query = `
-query($table: String!, $query: String, $field: String) {
+query($table: String!, $searchFields: String, $value: String) {
   xAaro2Swf {
       referenceList {
-          getListItems(table: $table, query: $query, field: $field) {
+          getListItems(table: $table, searchFields: $searchFields, value: $value) {
               sys_id,
               value
           }
