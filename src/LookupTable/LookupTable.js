@@ -96,7 +96,8 @@ const LookupTable = (props) => {
                 className="swf-reference--input"
                 value={searchValue}
                 label={label}
-                manageValue={true}
+                manageValue
+                manageInvalid
                 name={name}
                 onInput={onChange}
                 readonly={readonly}
