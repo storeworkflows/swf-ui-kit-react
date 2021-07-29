@@ -1,5 +1,4 @@
 import React from "react";
-import propTypes from "prop-types";
 import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
 import { query } from "./datasource";
 import _ from "lodash";
@@ -12,7 +11,8 @@ const LookupTable = (props) => {
     const {
         onValueChange, name, readonly, table,
         internalRef, onInvalid, message, label,
-        invalid, required, searchFields
+        invalid, required, searchFields,
+        manageValue, value
     } = props;
 
     const inputRef = useRef(null);
@@ -21,12 +21,12 @@ const LookupTable = (props) => {
     const [focused, setFocused] = useState(false);
     const [searchValue, setSearchValue] = useState("");
 
-    const makeRequest = async (chars = "") => {
+    const makeRequest = async (chars = "", isList = true) => {
         const response = await graphqlRequest({
             operationName: "reference",
             query,
             variables: {
-                searchFields,
+                searchFields: isList ? searchFields : ["sys_id"],
                 value: chars,
                 table
             },
@@ -48,6 +48,12 @@ const LookupTable = (props) => {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    const getReferenceItem = async (id) => {
+        const data = await makeRequest(id, false);
+        const { getListItems } = _.get(data, "[0].data.xAaro2Swf.referenceList");
+        setSearchValue(getListItems[0].value);
     }
 
     const onChange = (event) => {
@@ -83,7 +89,13 @@ const LookupTable = (props) => {
         return () => {
             document.removeEventListener("click", handler)
         }
-    }, [internalRef])
+    }, [internalRef]);
+
+    useEffect(() => {
+        if(manageValue && value) {
+            getReferenceItem(value)
+        }
+    }, [value, manageValue]);
 
     return (
         <div
@@ -162,29 +174,33 @@ LookupTable.defaultProps = {
     label: "",
     invalid: false,
     required: false,
+    value: "",
+    manageValue: false,
 }
 
-LookupTable.propTypes = {
-    onValueChange: propTypes.func,
-    name: propTypes.string,
+LookupTable.PropTypes = {
+    value: PropTypes.string,
+    manageValue: PropTypes.bool,
+    onValueChange: PropTypes.func,
+    name: PropTypes.string,
     searchFields: PropTypes.arrayOf(PropTypes.string),
-    readonly: propTypes.bool,
-    table: propTypes.string,
+    readonly: PropTypes.bool,
+    table: PropTypes.string,
     internalRef: PropTypes.oneOfType([
-        propTypes.func,
-        propTypes.shape({ current: propTypes.any })
+        PropTypes.func,
+        PropTypes.shape({ current: PropTypes.any })
     ]),
-    onInvalid: propTypes.func,
+    onInvalid: PropTypes.func,
     message: PropTypes.arrayOf(PropTypes.shape({
         status: PropTypes.oneOf(["critical", "warning", "positive", "info", "suggestion"]),
         content: PropTypes.string,
         icon: PropTypes.string,
-        className: propTypes.object,
+        className: PropTypes.object,
         iconSize: PropTypes.number
     })),
-    label: propTypes.string,
-    invalid: propTypes.bool,
-    required: propTypes.bool,
+    label: PropTypes.string,
+    invalid: PropTypes.bool,
+    required: PropTypes.bool,
 }
 
 
