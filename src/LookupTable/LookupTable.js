@@ -178,7 +178,7 @@ LookupTable.defaultProps = {
     manageValue: false,
 }
 
-LookupTable.PropTypes = {
+LookupTable.propTypes = {
     value: PropTypes.string,
     manageValue: PropTypes.bool,
     onValueChange: PropTypes.func,
