@@ -1,8 +1,8 @@
 import * as React from "react";
 import {shallow, mount} from "enzyme";
 import {default as LabelValue} from "./LabelValue";
-import {Icon} from "../index";
 import {TEST_TEMPLATES} from "../../.storybook/testTemplates";
+import Toggle from "../Toggle/Toggle";
 
 describe("LabelValue", () => {
     let component;
@@ -20,7 +20,7 @@ describe("LabelValue", () => {
     })
 
     it("Should render value as element", () => {
-        const value =  <Icon icon={"x"}/>
+        const value =  <Toggle/>
         component = shallow(<LabelValue>
             <LabelValue.Value>
                 {value}

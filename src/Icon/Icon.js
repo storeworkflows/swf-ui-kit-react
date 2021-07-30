@@ -2,56 +2,45 @@ import * as React from "react";
 import propTypes from "prop-types";
 
 import {SIZE} from "./constants";
-import {generateSvg, getAttrs} from "./utils";
+import Icons from "bootstrap-icons/bootstrap-icons.svg";
+
+import classnames from "classnames";
 
 const Icon = (props) => {
-  const { icon, size, customSize, color, className,
-        innerRef, zeroSize, onClick} = props;
+    const {
+        icon, size, customSize, color, className,
+        innerRef, zeroSize, onClick
+    } = props;
 
-  const getStyles = () => {
-    let style = {}
 
-    if (!zeroSize) {
-      const finalSize = (customSize) ? customSize : SIZE[size];
+    const finalSize = customSize ? customSize : SIZE[size];
+    const dimensions = zeroSize ? 0 : finalSize;
 
-      style.height = finalSize;
-      style.width = finalSize;
+    const classes = classnames("bi", className)
+    const styles = {
+        color: color,
+        height: dimensions,
+        width: dimensions
     }
 
-    if (color)
-      style.color = color
+    return <svg
+        onClick={onClick}
+        ref={elm => innerRef.current = elm}
+        className={classes}
+        style={styles}
+        width={dimensions}
+        height={dimensions}
+        fill="currentColor"
+    >
+        <use xlinkHref={`${Icons}#${icon}`}/>
+    </svg>
 
-    return style;
-  }
-
-  let node = generateSvg(icon);
-
-  if (!node) {
-    console.error(`Icon error: unregistered icon ${icon}`)
-    return null
-  }
-
-  return (
-        <svg
-            ref={elm => innerRef.current = elm}
-            {...getAttrs(node.attributes)}
-            style={getStyles()}
-            className={className}
-            onClick={onClick}
-        >
-            <title>{icon}</title>
-          {[...node.children].map((child, id) => {
-            const {tagName: Tag, attributes} = child
-            return <Tag {...getAttrs(attributes)} key={id} style={{fill: "currentColor"}}/>
-          })}
-        </svg>
-    )
 }
 
 Icon.defaultProps = {
     icon: "",
     size: 'md',
-    color: "",
+    color: "black",
     className: "",
     innerRef: React.createRef(),
     onClick: () => void 0
