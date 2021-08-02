@@ -39,7 +39,6 @@ const LookupField = React.forwardRef((props, ref) => {
     const [preloader, setPreloader] = useState(false);
     const [repeat, setRepeat] = useState(0);
 
-
     const makeRequest = async (chars) => {
         const response = await graphqlRequest({
             operationName: "reference",
