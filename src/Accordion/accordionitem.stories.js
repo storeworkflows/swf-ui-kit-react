@@ -1,6 +1,6 @@
 import React from 'react';
 import {default as AccordionItem} from './AccordionItem'
-import {default as Accordion} from '../Accordion/Accordion'
+import {default as Accordion} from './Accordion'
 
 export default {
     title: 'swf-ui-kit/Controls/Accordion/Item',
@@ -18,7 +18,6 @@ export default {
         }
     }
 };
-
 
 //const Template =
 

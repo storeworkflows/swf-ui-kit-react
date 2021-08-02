@@ -1,5 +1,5 @@
 
-export const openLink = (href) => {
+export const openLink = (href: string) => {
     let a = document.createElement("a");
     a.href = href;
     a.target="_blank";

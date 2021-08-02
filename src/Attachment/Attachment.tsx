@@ -10,9 +10,57 @@ import Button from "../Button/Button";
 import {downloadRequest, uploadRequest, deleteRequest} from "./_requests";
 import Preloader from "../Preloader/Preloader";
 import Loader from "./InnerComponents/Loader/Loader";
-import {useEffect, useRef, useState} from "react";
+import {DragEventHandler, FC, MouseEventHandler, useEffect, useRef, useState} from "react";
 
-const Attachment = React.forwardRef((props, ref) => {
+interface IAttachmentProps {
+    //status
+    disabled: boolean,
+    invalid: boolean,
+    readonly: boolean,
+    required: boolean,
+    visible: boolean,
+    //events
+    onInvalid: Function,
+    onValueChange: Function,
+    manageInvalid: boolean,
+
+    //description
+    contentType: string[],
+    extensions: string[],
+    displayValue: string[],
+    placeholder: string[],
+    label: string[],
+    name: string[],
+    maxAttachmentSize: number[],
+    message: {
+        status: "yellow" | "red" | "green" | "blue" | "grey" | "grey-blue",
+        content: string,
+        icon: string,
+        className: object,
+        iconSize: number,
+        delay: number
+    }[],
+    errorMessagesDelay: number,
+
+    //input data
+    value: any,
+    tableSysId: string,
+    tableName: string,
+    attachmentSysId: string,
+
+    //classes
+    className: any
+    labelClassName: any
+}
+
+type AttachFile = {
+    name: string,
+    size: number,
+    type: string,
+    link: string
+}
+
+const Attachment: FC<IAttachmentProps> = React.forwardRef((props, ref: HTMLInputElement | null ) => {
     const {
         invalid, tableName, tableSysId, attachmentSysId, value,
         contentType, errorMessagesDelay, readonly, disabled,
@@ -23,19 +71,19 @@ const Attachment = React.forwardRef((props, ref) => {
     } = props;
 
     const [isInvalid, setIsInvalid] = useState(invalid);
-    const [file, setFile] = useState(value);
+    const [file, setFile] = useState<AttachFile | null>(value);
     const [focus, setFocusSate] = useState(false);
-    const [systemMessages, setSystemMessages] = useState([]);
+    const [systemMessages, setSystemMessages] = useState<any[]>([]);
     const [tableNameState, setTableNameState] = useState(tableName);
     const [tableSysIdSate, setTableSysIdState] = useState(tableSysId);
-    const [attachmentSysIdSate, setAttachSysIdState] = useState(attachmentSysId);
+    const [attachmentSysIdSate, setAttachSysIdState] = useState<string>(attachmentSysId);
     const [activePreloader, setActivePreloader] = useState(true);
     const [activeDeleting, setActiveDeleting] = useState(false);
 
-    const input = useRef(null)
+    const input = useRef<HTMLInputElement>(null)
     const invalidValue = manageInvalid ? invalid : isInvalid;
 
-    const uploadNewFile = async (fileToUpload) => {
+    const uploadNewFile = async (fileToUpload: AttachFile) => {
         if (!file && !readonly && !disabled) {
             setBlur();
             let errorMessages = checkFileToUpload(fileToUpload, props);
@@ -51,7 +99,7 @@ const Attachment = React.forwardRef((props, ref) => {
         }
     }
 
-    const uploadFile = async (file) => {
+    const uploadFile = async (file: AttachFile) => {
         let result = await uploadRequest(file, tableSysIdSate, tableNameState, errorMessagesDelay);
 
         if(result.systemMessages)
@@ -62,10 +110,10 @@ const Attachment = React.forwardRef((props, ref) => {
             setAttachSysIdState(result.sys_id);
         }
         setActivePreloader(false);
-        onValueChange(name, result.attachmentSysId, result.displayValue)
+        onValueChange(name, result.sys_id, result.file_name);
     }
 
-    const deleteFile = async (e) => {
+    const deleteFile = async (e: Event) => {
         stopEvent(e);
         setActiveDeleting(true)
         let result = await deleteRequest(attachmentSysIdSate, errorMessagesDelay)
@@ -74,22 +122,23 @@ const Attachment = React.forwardRef((props, ref) => {
             setSystemMessages(result.systemMessages)
         else {
             setSystemMessages([]);
-            setFile(undefined);
-            setAttachSysIdState(undefined);
+            setFile(_ => null);
+            setAttachSysIdState("");
             if(input?.current) input.current.value = "";
         }
         setActiveDeleting(false)
     }
 
-    const downloadFile = (e) => {
+    const downloadFile = (e: Event) => {
         stopEvent(e)
         if (window.navigator.msSaveOrOpenBlob)
-            window.navigator.msSaveOrOpenBlob(file, file.name);
+            window.navigator.msSaveOrOpenBlob(file, file?.name);
         else {
             let a = document.createElement("a"),
-                url = (file.link) ? file.link : URL.createObjectURL(file);
+                // @ts-ignore
+                url = (file?.link) ? file?.link : URL.createObjectURL(file);
             a.href = url;
-            a.download = file.name;
+            a.download = file?.name ?? "";
             document.body.appendChild(a);
             a.click();
             setTimeout(function () {
@@ -99,54 +148,56 @@ const Attachment = React.forwardRef((props, ref) => {
         }
     }
 
-    const stopEvent = (e) => {
+    const stopEvent = (e: any) => {
         e?.preventDefault();
         e?.stopPropagation();
     }
 
-    const setFocus = (e) => {
+    const setFocus = (e: React.DragEvent<HTMLDivElement>) => {
         stopEvent(e);
 
         if (!activePreloader && !activeDeleting && !disabled && !readonly)
             setFocusSate(true)
     }
 
-    const setBlur = (e) => {
-        stopEvent(e);
+    const setBlur = (e?: React.DragEvent<HTMLDivElement>) => {
+        e && stopEvent(e);
         setFocusSate(false)
     }
 
-    const onInvalidEvent = (event) => {
+    const onInvalidEvent = (event: Event) => {
         stopEvent(event);
 
        !manageInvalid && setIsInvalid(true);
        onInvalid({event});
     }
 
-    const onChangeEvent = (e) => {
+    const onChangeEvent = (e: Event) => {
         stopEvent(e);
-        setActivePreloader(true)
-        uploadNewFile(input?.current?.files[0])
+        setActivePreloader(true);
+        //@ts-ignore
+        uploadNewFile(input?.current?.files ? input?.current?.files[0] : undefined)
     }
 
-    const onDropEvent = (e) => {
-        stopEvent(e);
+    const onDropEvent = (event: React.DragEvent<HTMLDivElement>) => {
+        stopEvent(event);
 
         if (!activePreloader && !activeDeleting && !disabled && !readonly) {
-            setActivePreloader(true)
-            uploadNewFile(e.dataTransfer.files[0])
+            setActivePreloader(true);
+            //@ts-ignore
+            e.dataTransfer && uploadNewFile(e.dataTransfer.files[0])
         }
     }
 
-    const containerClickedEvent = (e) => {
+    const containerClickedEvent = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if (!file && !activePreloader && !activeDeleting && !disabled && !readonly) {
-            setFocus(e);
+            setFocus(e as any);
             if (input?.current)
                 input?.current?.click();
         }
     }
 
-    useEffect(async () => {
+    const componentDidMount = async () => {
         if(attachmentSysIdSate) {
             let result = await downloadRequest(attachmentSysIdSate, errorMessagesDelay);
 
@@ -170,7 +221,9 @@ const Attachment = React.forwardRef((props, ref) => {
             }
         }
         setActivePreloader(false)
-    }, [])
+    }
+
+    useEffect(() => { componentDidMount() }, []);
 
     const renderLabel = () => {
         let labelClasses = classnames(labelClassName, "inp-label", {"--readonly": readonly});
@@ -208,7 +261,7 @@ const Attachment = React.forwardRef((props, ref) => {
         )
     };
 
-    const renderFileButton = (icon, action, className="", style={}) => {
+    const renderFileButton = (icon: string, action: Function, className="", style={}) => {
         return <Button icon={icon}
                 variant={"inherit"}
                 size={"sm"}
@@ -237,6 +290,7 @@ const Attachment = React.forwardRef((props, ref) => {
             <>
                 <input
                     ref={el => {
+                        //@ts-ignore
                         input.current = el;
                         ref = el;
                     }}
@@ -300,49 +354,6 @@ Attachment.defaultProps = {
     message: [],
     errorMessagesDelay: 4000,
 };
-
-Attachment.propTypes = {
-    //status
-    disabled: propTypes.bool,
-    invalid: propTypes.bool,
-    readonly: propTypes.bool,
-    required: propTypes.bool,
-    visible: propTypes.bool,
-
-    //events
-    onInvalid: propTypes.func,
-    onValueChange: propTypes.func,
-    manageInvalid: propTypes.bool,
-
-    //description
-    contentType: propTypes.arrayOf(propTypes.string),
-    extensions: propTypes.arrayOf(propTypes.string),
-    displayValue: propTypes.string,
-    placeholder: propTypes.string,
-    label: propTypes.string,
-    name: propTypes.string,
-    maxAttachmentSize: propTypes.number,
-    message: PropTypes.arrayOf(PropTypes.shape({
-        status: PropTypes.oneOf(["yellow" , "red" , "green" , "blue" , "grey" , "grey-blue"]),
-        content: PropTypes.string,
-        icon: PropTypes.string,
-        className: propTypes.object,
-        iconSize: PropTypes.number,
-        delay: propTypes.number
-    })),
-    errorMessagesDelay: propTypes.number,
-
-    //input data
-    value: propTypes.object,
-    tableSysId: propTypes.string,
-    tableName: propTypes.string,
-    attachmentSysId: propTypes.string,
-
-    //classes
-    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-    labelClassName: propTypes.oneOfType([propTypes.object, propTypes.string]),
-
-}
 
 
 export default Attachment

@@ -30,7 +30,7 @@ const dataSource = Array(8).fill(null).map((_, index) => ({
     end: "01-01-1970",
     duration: 1,
     type: "Test",
-    status: index % 3 === 0 ? "Approved" : index % 4 ? "Rejected" :"Requested"
+    status: index % 3 === 0 ? "Approved" : index % 4 ? "Rejected" : "Requested"
 }))
 
 export default {

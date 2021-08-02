@@ -30,7 +30,8 @@ const LookupField = React.forwardRef((props, ref) => {
     const [listRecords, setListRecords] = useState({
         value: value?.split(",").filter(Boolean) || [],
         displayValue: displayValue?.split(",").filter(Boolean) || []
-    })
+    });
+
     const [searchValue, setSearchValue] = useState("");
     const [matchesCount, setMatchesCount] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -114,11 +115,11 @@ const LookupField = React.forwardRef((props, ref) => {
     const listHandleClick = (record) => {
         const {sysId, referenceData} = record;
 
-        const listRecords = {
+        const records = {
             value: Array.from(new Set([...listRecords.value, sysId])),
             displayValue: Array.from(new Set([...listRecords.displayValue, referenceData[0].value]))
         }
-        setListRecords(listRecords);
+        setListRecords(_ => records);
         setReferenceRecord({
             sysId: null,
             displayValue: ""
@@ -136,12 +137,12 @@ const LookupField = React.forwardRef((props, ref) => {
         value["delete"](id);
         displayValue["delete"](label);
 
-        const listRecords = {
+        const records = {
             value: Array.from(value.values()).filter(Boolean),
             displayValue: Array.from(displayValue.keys()).filter(Boolean)
         }
 
-        setListRecords(listRecords)
+        setListRecords(_ => records);
         onValueChange(name, listRecords.value.toString(), listRecords.displayValue);
     }
 
@@ -178,7 +179,7 @@ const LookupField = React.forwardRef((props, ref) => {
     }
 
     const onBlur = (event) => {
-        setFocused(false)
+        setFocused(false);
     }
 
     const onPaste = async (event) => {

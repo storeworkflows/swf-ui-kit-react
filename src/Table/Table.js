@@ -11,20 +11,18 @@ import {Thead} from "./Thead";
 import Loader from "../Loader/Loader";
 import {Pagination} from "./Pagination";
 
-const tableRow = ({data: record, key, render}) => {
+const tableRow = ({data: row, key, render}) => {
     if (!key) {
         return console.error("Key is empty in headers props");
     }
 
-    const value = record[key];
+    const record = row[key];
 
-    return <Td key={`${key}`}>{render ? render({record, value}) : <span title={value}>{value}</span>}</Td>
+    return <Td key={`${key}`}>{render ? render({row, record}) : <span title={value}>{value}</span>}</Td>
 }
 
 export const Table = (props) => {
     const {name = "", headers = [], dataSource = [], paginationBottom, paginationTop, total, loading, stickyHeader, headerPosition} = props;
-
-    console.log({props});
 
     const {
         setCurrentPage,
@@ -36,7 +34,7 @@ export const Table = (props) => {
     useEffect(() => {
         setCurrentPage(1);
         setOffset(0);
-    }, [name])
+    }, [name]);
 
     return <div className="swfTableResponsive">
         {loading && <div className="swfTableLoader"><Loader/></div>}

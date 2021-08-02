@@ -1,13 +1,12 @@
 
 import React from 'react';
 
-import { default as Accordion} from './Accordion';
+import { Accordion} from './Accordion';
 
 export default {
     title: 'swf-ui-kit/Controls/Accordion/Accordion',
     component: Accordion,
 };
-
 
 const Template = (args) => <Accordion {...args}>
         <Accordion.Item label={"label 1"}/>

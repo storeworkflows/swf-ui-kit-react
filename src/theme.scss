@@ -1,0 +1,31 @@
+// Colors
+@mixin swf-theme-colors {
+  --black-0: rgb(0,0,0);
+  --black-1: rgb(22, 27, 28);
+
+  --gray-0: rgb(232, 232, 232);
+  --gray-1: rgb(158,158,158);
+
+  --white: rgb(255,255,255);
+  --transparent: rgba(255,255,255,0);
+
+  --green-0: rgb(201, 224, 202);
+  --green-1: rgb(171, 214, 173);
+  --green-2: rgb(30, 133, 109);
+  --green-3: rgb(22, 79, 26);
+
+  --red-0: rgb(241, 206, 205);
+  --red-1: rgb(240, 167, 165);
+  --red-2: rgb(200, 60, 54);
+  --red-3: rgb(120, 36, 32);
+
+  --yelow-0: rgb(255,251,201);
+  --yelow-1: rgb(255, 251, 0);
+  --yelow-2: rgb(255,210,0);
+
+  --blue-0: rgb(220,238,252);
+  --blue-1: rgb(73,80,87);
+  --blue-1: rgb(96,125,139);
+  --blue-1: rgb(33,150,243);
+
+}

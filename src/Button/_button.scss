@@ -69,7 +69,7 @@
     --text-color: white;
   }
 
-  &.primary-negative{
+  &.primary-negative {
     --base-color: rgb(200, 60, 54);
     --hover-base-color: rgb(120, 36, 32);
 
@@ -116,7 +116,7 @@
   }
 }
 
-.swf-button{
+.swf-button {
   min-width: 10px;
   min-height: 10px;
   background: var(--base-color);

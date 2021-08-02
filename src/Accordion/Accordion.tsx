@@ -1,12 +1,21 @@
-import * as React from "react";
-import propTypes from "prop-types";
+import {FC, memo, LegacyRef, useCallback, useState, forwardRef} from "react";
 import classnames from "classnames";
-import findByType, {createSubComponent} from "../utils/findByType";
-import AccordionItem from "./AccordionItem";
-import {useCallback, useState} from "react";
-import isEqual from "react-fast-compare";
 
-const Accordion = React.memo(React.forwardRef((props, ref) => {
+import findByType, {createSubComponent} from "../utils/findByType";
+import {AccordionItem} from "./AccordionItem";
+
+interface IAccordion {
+    Item?: FC<any>,
+    Header?: FC<any>
+}
+
+interface IAccordionProps {
+    selectMany: boolean,
+    onItemClicked: Function,
+    className: any
+}
+
+const Accordion: IAccordion & FC<IAccordionProps> = memo(forwardRef((props, ref: LegacyRef<HTMLDivElement> | undefined) => {
 
     const {children, selectMany, onItemClicked, className} = props;
     const [selectedItemKey, setSelectedItemKey] = useState("-1")
@@ -24,16 +33,16 @@ const Accordion = React.memo(React.forwardRef((props, ref) => {
         if (!items || !items.length)
             return null;
 
-        return items.map((el, i) => <AccordionItem
-                    key={el.key}
-                    opened={el.key === selectedItemKey}
-                    manageOpened={!selectMany}
-                    onSelected={itemSelected}
-                    isLastItem={i === (items.length - 1)}
-                    isFirstItem={i === 0}
-                    id={el.key}
-                    {...el.props}
-                />
+        return items.map((el: any, i: number) => <AccordionItem
+                key={el.key}
+                opened={el.key === selectedItemKey}
+                manageOpened={!selectMany}
+                onSelected={itemSelected}
+                isLastItem={i === (items.length - 1)}
+                isFirstItem={i === 0}
+                id={el.key}
+                {...el.props}
+            />
         );
     }
 
@@ -43,8 +52,8 @@ const Accordion = React.memo(React.forwardRef((props, ref) => {
     )
 
     return <div className={classes} ref={ref}>
-                {renderItems()}
-            </div>
+        {renderItems()}
+    </div>
 }));
 
 Accordion.Item = createSubComponent("Item");
@@ -54,12 +63,6 @@ Accordion.defaultProps = {
     selectMany: true,
     onItemClicked: () => void 0,
     className: ""
-}
+};
 
-Accordion.propTypes = {
-    selectMany: propTypes.bool,
-    onItemClicked: propTypes.func,
-    className: propTypes.oneOfType([propTypes.object, propTypes.string]),
-}
-
-export default Accordion;
+export {Accordion};
