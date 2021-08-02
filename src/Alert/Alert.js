@@ -36,8 +36,8 @@ const Alert = React.forwardRef((props, ref) => {
     const setDelay = () => {
         if (delay) {
             timer = setTimeout(() => {
+                visibleFinal && onCloseAction();
                 !manageVisibility && setIsVisible(false)
-                onCloseAction();
             }, delay);
         }
     }
@@ -88,7 +88,7 @@ const Alert = React.forwardRef((props, ref) => {
     useEffect(() => manageExpanded && setIsOverflowed(!expanded), [expanded, manageExpanded])
 
     useEffect(() => {
-        if(manageVisibility){
+        if(manageVisibility && visible){
             setDelay();
             defineSizes();
         }
@@ -96,7 +96,7 @@ const Alert = React.forwardRef((props, ref) => {
 
     useEffect(() => {
         defineSizes();
-        setDelay();
+        !manageVisibility && visible && setDelay();
 
         return () => clearTimeout(timer);
     }, []);

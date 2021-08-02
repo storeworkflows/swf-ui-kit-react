@@ -23,7 +23,7 @@ const Dropdown = React.forwardRef((props, ref) => {
 
     const [isOpened, setIsOpened] = useState(opened);
     const [isInvalid, setIsInvalid] = useState(invalid);
-    const [dropdownWidth, setDropdownWidth] = useState(2)
+    const [dropdownWidth, setDropdownWidth] = useState(208)
     const [selectedItemsState, setSelectedItemState] = useState(getCorrectSelected(items, selectedItems))
 
     const dropdownRef = useRef(null);
@@ -41,8 +41,9 @@ const Dropdown = React.forwardRef((props, ref) => {
 
     const dropdownClicked = (e) => {
         onClick(e);
-        onOpened({opened: manageOpened ? opened : !isOpened})
-        !manageOpened && setIsOpened(!isOpened);
+        const makeOpened = items && items.length && !isOpened
+        onOpened({opened: manageOpened ? opened : makeOpened})
+        !manageOpened && setIsOpened(makeOpened);
     }
 
     const itemSelected = useCallback(({id}) => {

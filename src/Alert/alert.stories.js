@@ -41,7 +41,7 @@ const Template = (args) => <Alert {...args} />;
 
 export const Dismiss = Template.bind({});
 Dismiss.args = {
-    content: lorem
+    content: lorem,
 };
 
 export const Acknowledge = Template.bind({});
@@ -66,7 +66,9 @@ Open.args = {
     icon: "alarm",
     color: "green",
     verticalPositions: "bottom",
-    delay: 2000
+    visible: false,
+    delay: 2000,
+    manageVisibility: true
 };
 
 
