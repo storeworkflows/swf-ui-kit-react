@@ -46,23 +46,19 @@ const HighlightedValue = React.forwardRef((props, ref) => {
 
     let iconSize = getIconSize(size, icon);
 
-    return (
-        <>
-            <div className={classes} ref={ref}>
-                <div
-                    className={containerClasses}
-                    onClick={onClick}
-                >
-                    {showIcon && <Icon
-                        className="highlighted-icon"
-                        icon={icon || "circle-fill"}
-                        customSize={iconSize}
-                    />}
-                    {label && <span>{label}</span>}
-                </div>
-            </div>
-        </>
-    )
+    return <div className={classes} ref={ref}>
+        <div
+            className={containerClasses}
+            onClick={onClick}
+        >
+            {showIcon && <Icon
+                className="highlighted-icon"
+                icon={icon || "circle-fill"}
+                customSize={iconSize}
+            />}
+            {label && <span>{label}</span>}
+        </div>
+    </div>
 });
 
 HighlightedValue.defaultProps = {
