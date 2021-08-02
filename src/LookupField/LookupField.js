@@ -1,7 +1,7 @@
 import * as React from "react";
 import propTypes from "prop-types";
 import graphqlRequest from "../utils/graphqlRequest/graphqlRequest";
-import {query} from "./datasource";
+import {query} from "./requests/graphql/template";
 import _ from "lodash";
 import {Button, Input, Preloader} from "../index";
 import Result from "./Result";
@@ -114,35 +114,32 @@ const LookupField = React.forwardRef((props, ref) => {
     const listHandleClick = (record) => {
         const {sysId, referenceData} = record;
 
-        const listRecords = {
-            value: Array.from(new Set([...listRecords.value, sysId])),
-            displayValue: Array.from(new Set([...listRecords.displayValue, referenceData[0].value]))
-        }
-        setListRecords(listRecords);
+        var records = {
+            value: Array.from(new Set([].concat(listRecords.value, [sysId]))).filter(Boolean),
+            displayValue: Array.from(new Set([].concat(listRecords.displayValue, [referenceData[0].value]))).filter(Boolean)
+        };
+
+        setListRecords(_ => records);
         setReferenceRecord({
             sysId: null,
             displayValue: ""
         });
-        setLoaded(false)
-
-        onValueChange(name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean).join(","));
+        setLoaded(false);
+        onValueChange(name, records.value.filter(Boolean).join(","), records.displayValue.filter(Boolean).join(","));
     }
 
     const deleteValue = ({label}) => {
-        const value = new Map(listRecords.value.map((v, i) => [i, v]));
-        const displayValue = new Map(listRecords.displayValue.map((v, i) => [v, i]));
+        var records = listRecords.displayValue.reduce(function (prev,curr, indx) {
+            if (curr !== label) return prev;
 
-        const id = displayValue.get(label);
-        value["delete"](id);
-        displayValue["delete"](label);
+            prev.value = listRecords.value.filter((_, i) => i != indx);
+            prev.displayValue = listRecords.displayValue.filter((_, i) => i != indx);
 
-        const listRecords = {
-            value: Array.from(value.values()).filter(Boolean),
-            displayValue: Array.from(displayValue.keys()).filter(Boolean)
-        }
+            return prev;
+        }, {value: [], displayValue: []});
 
-        setListRecords(listRecords)
-        onValueChange(name, listRecords.value.toString(), listRecords.displayValue);
+        setListRecords(_ => records);
+        onValueChange(name, records.value.toString(), records.displayValue);
     }
 
     const onClick = (record) => {
@@ -219,31 +216,41 @@ const LookupField = React.forwardRef((props, ref) => {
         setFocused(false);
         setPreloader(false);
 
-        const listRecords = {
-            value: Array.from(new Set([...listRecords.value, ...data.map(({sysId}) => sysId)])),
-            displayValue: Array.from(new Set([...listRecords.displayValue, ... data.map(({referenceData}) => referenceData[0].value)]))
+        const records = {
+            value: Array.from(new Set([...records.value, ...data.map(({sysId}) => sysId)])),
+            displayValue: Array.from(new Set([...records.displayValue, ... data.map(({referenceData}) => referenceData[0].value)]))
         }
 
-        setListRecords(listRecords);
+        setListRecords(records);
         setReferenceRecord({
             sysId: null,
             displayValue: ""
         });
         setLoaded(false)
 
-        onValueChange(name, listRecords.value.filter(Boolean).join(","), listRecords.displayValue.filter(Boolean));
+        onValueChange(name, records.value.filter(Boolean).join(","), records.displayValue.filter(Boolean));
     }
 
     useEffect(() => {
         const isList = type === "glide_list";
 
         if (isList) {
-            setListRecords({
-                value: value?.split(",") ?? [],
-                displayValue: displayValue?.split(",") ?? [],
+            var _value$split, _displayValue$split;
+
+            const needUseLocalRecords = listRecords.value.toString().length > value.length;
+
+            if (needUseLocalRecords) return setListRecords({
+                ...listRecords,
                 loading: false,
                 focused: false
-            })
+            });
+
+            setListRecords({
+                value: (value || "").split(","),
+                displayValue: (displayValue || "").split(","),
+                loading: false,
+                focused: false
+            });
         }
     }, [type, value, displayValue])
 

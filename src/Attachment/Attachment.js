@@ -62,7 +62,7 @@ const Attachment = React.forwardRef((props, ref) => {
             setAttachSysIdState(result.sys_id);
         }
         setActivePreloader(false);
-        onValueChange(name, result.attachmentSysId, result.displayValue)
+        onValueChange(name, result.sys_id, result.file_name);
     }
 
     const deleteFile = async (e) => {
