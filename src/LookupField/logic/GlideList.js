@@ -4,7 +4,7 @@ import {request} from "../../utils/http";
 import {List} from "../templates/List";
 import {SearchResult} from "../templates/SearchResult";
 
-const GlideList = (props) => {
+export const GlideList = (props) => {
     const {
         name,
         readonly,

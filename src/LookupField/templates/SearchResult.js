@@ -4,7 +4,7 @@ import {SearchContent} from "./SearchContent";
 
 export const SearchResult = (props) => {
     const {
-        show, target, loading, records, onClick, noResults
+        show, target, loading, results, onClick, noResults
     } = props;
 
     const listWidth = () => target?.current?.offsetWidth - 16;
@@ -27,8 +27,8 @@ export const SearchResult = (props) => {
                 <SearchContent
                     loading={loading}
                     noResults={noResults}
-                    records={records}
-                    onClick={onClick}a
+                    records={results}
+                    onClick={onClick}
                 />
             </ul>
         </Popover.Content>

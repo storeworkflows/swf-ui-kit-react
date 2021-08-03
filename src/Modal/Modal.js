@@ -132,7 +132,7 @@ const Modal = (props) => {
                         "--desktop": !isMobile && headerElements === 3
                     })}>
                         <div className="additional-buttons">
-                            {findByType(children, "Buttons")}
+                            {findByType(children, " ")}
                         </div>
                         <div className="main-buttons">
                             {isMobile ? mobileButtons() : desktopButtons()}
