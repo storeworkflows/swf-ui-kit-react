@@ -1,6 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import {noop} from "../utils";
+import {noop} from "../../utils";
 
 const Result = (props) => {
     const {records, onClick} = props;

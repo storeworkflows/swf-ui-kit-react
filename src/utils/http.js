@@ -7,9 +7,7 @@ const snHttp = snHttpFactory({
 
 export const cancelToken = () => snHttp.client.getSource();
 
-export const request = ({method, url, data, source}) => snHttp.request({
-    method,
-    url,
+export const request = ({method, url, data, source}) => snHttp.request(url, method, {
     data,
     source
 });

@@ -1,6 +1,6 @@
  import React from 'react';
 
-import { default as LookupField} from './LookupField';
+import { LookupField} from '../index';
 import withMock from "storybook-addon-mock";
 
 export default {

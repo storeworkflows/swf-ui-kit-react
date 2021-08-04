@@ -2,7 +2,7 @@ import Pill from "../../Pill/Pill";
 import {Input} from "../../index";
 import * as React from "react";
 
-const Record = (props) => {
+export const Record = (props) => {
     const {label, onDelete} = props;
 
     if (!label) return null;
@@ -19,7 +19,7 @@ export const PillRecords = (props) => {
         records, onDelete
     } = props;
 
-    <Input.Start>
+    return <Input.Start>
         {records.map((label) => <Record label={label} onDelete={onDelete}/>)}
     </Input.Start>
 }

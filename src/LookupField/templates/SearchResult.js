@@ -1,21 +1,28 @@
 import Popover from "../../Popover/Popover";
 import * as React from "react";
 import {SearchContent} from "./SearchContent";
+import {useContext} from "react";
+import {LookUpContext} from "../context/LookUpContext";
 
 export const SearchResult = (props) => {
+    const {focused, searchResults, loading, subscribers} = useContext(LookUpContext);
     const {
-        show, target, loading, results, onClick, noResults
+        target, noResults
     } = props;
 
     const listWidth = () => target?.current?.offsetWidth - 16;
 
     const hasTarget = _ => !!target?.current ?? false;
 
+    const handleResultClick = (record) => {
+        subscribers.forEach(subscriber => subscriber(record));
+    }
+
     return <>{hasTarget() &&
     <Popover
         hideTail
         manageOpened
-        opened={show}
+        opened={focused}
         positionTarget={target}
         positions={[
             {target: "bottom-center", content: "top-center"},
@@ -24,12 +31,12 @@ export const SearchResult = (props) => {
     >
         <Popover.Content>
             <ul className="result" style={{width: `${listWidth()}px`}}>
-                <SearchContent
+                {focused && <SearchContent
                     loading={loading}
                     noResults={noResults}
-                    records={results}
-                    onClick={onClick}
-                />
+                    records={searchResults}
+                    onClick={handleResultClick}
+                />}
             </ul>
         </Popover.Content>
     </Popover>}
