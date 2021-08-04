@@ -1,3 +1,1 @@
-export const Th = ({children}) => {
-    return <th className="swfTh">{children}</th>
-}
+export const Th = ({ children }) => <th className="swfTh">{children}</th>;

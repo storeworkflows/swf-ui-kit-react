@@ -1,1 +1,1 @@
-export { BUTTONS_EFFECTS } from "./_buttonsEffects";
+export { BUTTONS_EFFECTS } from './_buttonsEffects';

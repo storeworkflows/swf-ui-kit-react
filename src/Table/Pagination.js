@@ -1,7 +1,9 @@
-import { memo, useContext, useEffect, useRef, useState } from "react";
-import { Button, Icon, Dropdown } from "../index";
-import classNames from "classnames";
-import { TableContext } from "./context/table";
+import {
+  memo, useContext, useEffect, useRef, useState,
+} from 'react';
+import classNames from 'classnames';
+import { Button, Icon, Dropdown } from '../index';
+import { TableContext } from './context/table';
 
 /*
 interface IPagination {
@@ -15,17 +17,15 @@ interface IPagination {
     onChange?: (page: number) => void
 } */
 
-const PaginationItem = ({ label, active, onClick }) => {
-  return (
-    <Button
-      className="swfRoundedButton"
-      variant={active ? "primary" : "secondary"}
-      onClick={onClick}
-    >
-      {label}
-    </Button>
-  );
-};
+const PaginationItem = ({ label, active, onClick }) => (
+  <Button
+    className="swfRoundedButton"
+    variant={active ? 'primary' : 'secondary'}
+    onClick={onClick}
+  >
+    {label}
+  </Button>
+);
 
 const More = memo(
   ({ icon, show, onClick }) => {
@@ -34,7 +34,7 @@ const More = memo(
       <Button icon={icon} className="swfMoreButton" size="sm" onClick={onClick} />
     );
   },
-  (p, n) => p.show === n.show
+  (p, n) => p.show === n.show,
 );
 
 export const Pagination = (props) => {
@@ -45,17 +45,17 @@ export const Pagination = (props) => {
     pageSize = 10,
     pageSizeOptions = [10, 20, 50, 100],
     showQuickJumper = true,
-    alignment = "end",
+    alignment = 'end',
     sticky,
     position,
-    property = "--positionTop"
+    property = '--positionTop',
   } = props;
 
   const paginationRef = useRef(null);
 
   useEffect(() => {
     paginationRef.current.style.setProperty(property, `${position}px`);
-  }, [position])
+  }, [position]);
 
   const [peerPageOpened, setPeerPageOpened] = useState(false);
   const {
@@ -69,8 +69,7 @@ export const Pagination = (props) => {
 
   const showAll = pages <= maxPagination + 1;
   const isFirstNElements = showAll || page < maxPagination;
-  const isLastNElements =
-    showAll || (!isFirstNElements && page + maxPagination > pages);
+  const isLastNElements = showAll || (!isFirstNElements && page + maxPagination > pages);
 
   const isFirstPage = page === 1;
   const isLastPage = page === pages;
@@ -106,7 +105,7 @@ export const Pagination = (props) => {
   };
 
   const generatePaginationItems = (start, end) => {
-    let items = [];
+    const items = [];
 
     for (let i = start; i <= end; i++) {
       items.push(
@@ -115,7 +114,7 @@ export const Pagination = (props) => {
           label={i}
           active={page === i}
           onClick={handleClick(i)}
-        />
+        />,
       );
     }
 
@@ -178,8 +177,8 @@ export const Pagination = (props) => {
   };
 
   return (
-    <div ref={paginationRef} className={classNames("swfPaginationContainer", alignment, sticky && "--sticky")}>
-      <div className={classNames("swfPagination", alignment)}>
+    <div ref={paginationRef} className={classNames('swfPaginationContainer', alignment, sticky && '--sticky')}>
+      <div className={classNames('swfPagination', alignment)}>
         <Button
           icon="arrow-left-short"
           disabled={isFirstPage}

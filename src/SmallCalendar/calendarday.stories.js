@@ -1,17 +1,18 @@
 import React from 'react';
 
-
-import { default as CalendarDay} from './InnerComponents/CalendarDay';
-import {LabelValue} from "../index";
+import { default as CalendarDay } from './InnerComponents/CalendarDay';
+import { LabelValue } from '../index';
 
 export default {
-    title: 'swf-ui-kit/DataVisualisation/CalendarDay',
-    component: CalendarDay,
+  title: 'swf-ui-kit/DataVisualisation/CalendarDay',
+  component: CalendarDay,
 };
 
-export const Try = (args) => <div style={{width: `2rem`, height: `1rem`}}>
-    <CalendarDay {...args}/>
-</div>
+export const Try = (args) => (
+  <div style={{ width: '2rem', height: '1rem' }}>
+    <CalendarDay {...args} />
+  </div>
+);
 
 // export const Standard  = (args) => <div>
 //     <LabelValue inline={true} label={"default"}>
@@ -35,6 +36,3 @@ export const Try = (args) => <div style={{width: `2rem`, height: `1rem`}}>
 //         </LabelValue.Value>
 //     </LabelValue>
 // </div>;
-
-
-

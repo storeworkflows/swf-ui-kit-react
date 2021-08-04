@@ -1,246 +1,255 @@
-import * as React from "react";
-import {useState, useEffect, useRef, useCallback} from 'react';
-import propTypes from "prop-types";
-import classnames from "classnames";
+import * as React from 'react';
+import {
+  useState, useEffect, useRef, useCallback,
+} from 'react';
+import propTypes from 'prop-types';
+import classnames from 'classnames';
 
-import Icon from "../Icon/Icon";
-import Button from "../Button/Button";
-import TextLink from "../TextLink/TextLink";
-import {openLink} from "./utils";
-import {noop} from "../utils";
-import isEqual from "react-fast-compare";
+import isEqual from 'react-fast-compare';
+import Icon from '../Icon/Icon';
+import Button from '../Button/Button';
+import TextLink from '../TextLink/TextLink';
+import { openLink } from './utils';
+import { noop } from '../utils';
 
 const Alert = React.forwardRef((props, ref) => {
+  const {
+    action, content, header, icon, color, visible, textLinkProps,
+    manageExpanded, manageVisibility, manageButtonClick,
+    onTextLinkClicked, onButtonClick, onExpandAction,
+    expanded, onCloseAction, delay, className,
+    defaultPosition, verticalPositions, horizontalPositions,
+    onVisibilityChange, textAlignCenter,
+  } = props;
 
-    const {
-        action, content, header, icon, color, visible, textLinkProps,
-        manageExpanded, manageVisibility, manageButtonClick,
-        onTextLinkClicked, onButtonClick, onExpandAction,
-        expanded, onCloseAction, delay, className,
-        defaultPosition, verticalPositions, horizontalPositions,
-        onVisibilityChange, textAlignCenter
-    } = props;
+  const [oneLineText, setOneLineText] = useState(false);
+  const [isOverflowed, setIsOverflowed] = useState(!expanded);
+  const [isExpanded, setIsExpanded] = useState(expanded);
+  const [isVisible, setIsVisible] = useState(visible);
 
-    const [oneLineText, setOneLineText] = useState(false);
-    const [isOverflowed, setIsOverflowed] = useState(!expanded);
-    const [isExpanded, setIsExpanded] = useState(expanded);
-    const [isVisible, setIsVisible] =  useState(visible);
+  const contentRef = useRef(null);
+  const textRef = useRef(null);
+  let timer = null;
 
-    const contentRef = useRef(null);
-    const textRef = useRef(null);
-    let timer = null;
+  const expandedFinal = manageExpanded ? expanded : isExpanded;
+  const visibleFinal = manageVisibility ? visible : isVisible;
 
-    const expandedFinal = manageExpanded ? expanded : isExpanded;
-    const visibleFinal = manageVisibility ? visible : isVisible;
+  const setDelay = () => {
+    if (delay) {
+      timer = setTimeout(() => {
+        visibleFinal && onCloseAction();
+        !manageVisibility && setIsVisible(false);
+      }, delay);
+    }
+  };
 
-    const setDelay = () => {
-        if (delay) {
-            timer = setTimeout(() => {
-                visibleFinal && onCloseAction();
-                !manageVisibility && setIsVisible(false)
-            }, delay);
-        }
+  const buttonClicked = (e) => {
+    e.preventDefault();
+
+    if (!manageButtonClick) {
+      !manageVisibility && setIsVisible(false);
+      if (action.href) openLink(action.href);
     }
 
-    const buttonClicked = (e) => {
-        e.preventDefault();
+    onButtonClick(e, action);
+  };
 
-        if (!manageButtonClick) {
-            !manageVisibility && setIsVisible(false)
-            if (action.href)
-                openLink(action.href);
-        }
+  const expandAction = (e) => {
+    e.preventDefault();
 
-        onButtonClick(e, action);
+    let curValue = expandedFinal;
+    if (!manageExpanded) {
+      curValue = !isExpanded;
+      setIsOverflowed(!curValue);
+      setIsExpanded(curValue);
     }
 
-    const expandAction = (e) => {
-        e.preventDefault();
+    onExpandAction({ isExpanded: curValue });
+  };
 
-        let curValue = expandedFinal;
-        if (!manageExpanded) {
-            curValue = !isExpanded;
-            setIsOverflowed(!curValue);
-            setIsExpanded(curValue)
-        }
+  const defineSizes = useCallback(() => {
+    const contentEl = contentRef?.current;
+    const text = textRef?.current;
 
-        onExpandAction({isExpanded: curValue})
+    if (contentEl && text) {
+      const onlyHeader = header && !content;
+      const oneLineText = !header && text.getBoundingClientRect().height < 32;
+
+      setIsOverflowed(contentEl.scrollHeight < text.scrollHeight);
+      setOneLineText(onlyHeader || oneLineText);
     }
+  }, [header, content, contentRef, textRef]);
 
-    const defineSizes = useCallback(() => {
-        let contentEl = contentRef?.current;
-        let text = textRef?.current;
+  useEffect(defineSizes, [content, header]);
 
-        if (contentEl && text) {
-            let onlyHeader = header && !content;
-            let oneLineText = !header && text.getBoundingClientRect().height < 32;
+  useEffect(() => onVisibilityChange(visibleFinal), [visibleFinal]);
 
-            setIsOverflowed(contentEl.scrollHeight < text.scrollHeight);
-            setOneLineText(onlyHeader || oneLineText)
-        }
-    }, [header, content, contentRef, textRef])
+  useEffect(() => manageExpanded && setIsOverflowed(!expanded), [expanded, manageExpanded]);
 
+  useEffect(() => {
+    if (manageVisibility && visible) {
+      setDelay();
+      defineSizes();
+    }
+  }, [visible, manageVisibility]);
 
-    useEffect( defineSizes, [content, header])
+  useEffect(() => {
+    defineSizes();
+    !manageVisibility && visible && setDelay();
 
-    useEffect(() => onVisibilityChange(visibleFinal), [visibleFinal])
+    return () => clearTimeout(timer);
+  }, []);
 
-    useEffect(() => manageExpanded && setIsOverflowed(!expanded), [expanded, manageExpanded])
+  const mainContainerClasses = classnames(
+    color,
+    className,
+    'swf-alert-container',
+    {
+      '--fixed': !defaultPosition,
+      '--alignCenter': !isOverflowed && !expandedFinal,
+      '--oneLineContent': oneLineText,
+      '--expanded': expandedFinal,
+      '--no-icon': !icon,
+      [`--vertical-${verticalPositions}`]: verticalPositions,
+      [`--horizontal-${horizontalPositions}`]: horizontalPositions,
+    },
+  );
 
-    useEffect(() => {
-        if(manageVisibility && visible){
-            setDelay();
-            defineSizes();
-        }
-    }, [visible, manageVisibility])
+  const alertContentClasses = classnames('alert-content',
+    { 'text-align-center': textAlignCenter });
 
-    useEffect(() => {
-        defineSizes();
-        !manageVisibility && visible && setDelay();
+  const textStyles = classnames({
+    'text-container': true,
+    '--overflowed': isOverflowed,
+    '--setToOneLine': header && isOverflowed,
+    '--expanded': expandedFinal,
+  });
 
-        return () => clearTimeout(timer);
-    }, []);
+  const showLabel = expandedFinal ? 'less' : 'more';
+  const isButtonWithText = action.type === 'acknowledge' || action.type === 'open';
 
-
-    const mainContainerClasses = classnames(
-        color,
-        className,
-        "swf-alert-container",
-        {
-            "--fixed": !defaultPosition,
-            "--alignCenter": !isOverflowed && !expandedFinal,
-            "--oneLineContent": oneLineText,
-            "--expanded": expandedFinal,
-            "--no-icon": !icon,
-            [`--vertical-${verticalPositions}`]: verticalPositions,
-            [`--horizontal-${horizontalPositions}`]: horizontalPositions,
-        }
-    )
-
-    const alertContentClasses = classnames("alert-content",
-        { "text-align-center": textAlignCenter }
-    )
-
-    const textStyles = classnames({
-        "text-container": true,
-        "--overflowed": isOverflowed,
-        "--setToOneLine": header && isOverflowed,
-        "--expanded": expandedFinal
-    })
-
-    let showLabel = expandedFinal ? "less" : "more";
-    let isButtonWithText = action.type === "acknowledge" || action.type === "open"
-
-    return (
-         visibleFinal &&
+  return (
+    visibleFinal
+            && (
             <>
-                <div className={mainContainerClasses} ref={ref}>
-                    {icon && <Icon className={"alert-icon"} icon={icon}/>}
+              <div className={mainContainerClasses} ref={ref}>
+                {icon && <Icon className="alert-icon" icon={icon} />}
 
-                    <div className={alertContentClasses}
-                         ref={el => contentRef.current = el}
-                    >
-                        {header && <div className={"alert-header"}>{header}</div>}
-                        {content &&
-                        <div ref={el => textRef.current = el}
-                             className={textStyles}>
-                            <p className={"alert-text"}>{content} {
-                                textLinkProps &&
-                                <TextLink
-                                    label={textLinkProps.label}
-                                    href={textLinkProps.href}
-                                    openWindows={textLinkProps.openWindows || false}
-                                    download={textLinkProps.download || false}
-                                    onClick={onTextLinkClicked}
-                                />
-                            }</p>
-                        </div>
-                        }
-                        {(isOverflowed || expandedFinal) &&
-                        <Button
-                            className={"show-more-button"}
-                            variant={"tertiary"}
-                            onClick={expandAction}
+                <div
+                  className={alertContentClasses}
+                  ref={(el) => contentRef.current = el}
+                >
+                  {header && <div className="alert-header">{header}</div>}
+                  {content
+                        && (
+                        <div
+                          ref={(el) => textRef.current = el}
+                          className={textStyles}
                         >
-                            {`Show ${showLabel}`}
-                        </Button>}
-                    </div>
-                    <Button className={classnames("alert-button", {"dismiss": !isButtonWithText})}
-                            label={isButtonWithText ?
-                                (action.label || (action.type === "acknowledge" ? "Ok" : "Open"))
-                                : undefined
+                          <p className="alert-text">
+                            {content}
+                            {' '}
+                            {
+                                textLinkProps
+                                && (
+                                <TextLink
+                                  label={textLinkProps.label}
+                                  href={textLinkProps.href}
+                                  openWindows={textLinkProps.openWindows || false}
+                                  download={textLinkProps.download || false}
+                                  onClick={onTextLinkClicked}
+                                />
+                                )
                             }
-                            icon={!isButtonWithText ? "x" : undefined}
-                            size={isButtonWithText ? "md" : "lg"}
-                            onClick={buttonClicked}
-                            variant={"inherit"}
-                    />
+                          </p>
+                        </div>
+                        )}
+                  {(isOverflowed || expandedFinal)
+                        && (
+                        <Button
+                          className="show-more-button"
+                          variant="tertiary"
+                          onClick={expandAction}
+                        >
+                          {`Show ${showLabel}`}
+                        </Button>
+                        )}
                 </div>
+                <Button
+                  className={classnames('alert-button', { dismiss: !isButtonWithText })}
+                  label={isButtonWithText
+                    ? (action.label || (action.type === 'acknowledge' ? 'Ok' : 'Open'))
+                    : undefined}
+                  icon={!isButtonWithText ? 'x' : undefined}
+                  size={isButtonWithText ? 'md' : 'lg'}
+                  onClick={buttonClicked}
+                  variant="inherit"
+                />
+              </div>
             </>
-    );
+            )
+  );
 });
 
 Alert.defaultProps = {
-    color: "blue",
-    action: {type: "dismiss"},
+  color: 'blue',
+  action: { type: 'dismiss' },
 
-    visible: true,
-    className: "",
+  visible: true,
+  className: '',
 
-    onVisibilityChange: noop,
-    onTextLinkClicked: noop,
-    onExpandAction: noop,
-    onButtonClick: noop,
-    onCloseAction: noop,
+  onVisibilityChange: noop,
+  onTextLinkClicked: noop,
+  onExpandAction: noop,
+  onButtonClick: noop,
+  onCloseAction: noop,
 
-    verticalPositions: "top",
-    horizontalPositions: "center"
-}
+  verticalPositions: 'top',
+  horizontalPositions: 'center',
+};
 
 Alert.propTypes = {
-    action: propTypes.shape({
-        type: propTypes.oneOf(["dismiss", "acknowledge", "open"]).isRequired,
-        href: propTypes.string,
-        label: propTypes.string
-    }),
-    content: propTypes.oneOfType([propTypes.string, propTypes.object]),
-    /**
+  action: propTypes.shape({
+    type: propTypes.oneOf(['dismiss', 'acknowledge', 'open']).isRequired,
+    href: propTypes.string,
+    label: propTypes.string,
+  }),
+  content: propTypes.oneOfType([propTypes.string, propTypes.object]),
+  /**
      * Can control only if manageExpanded = true
      */
-    expanded: propTypes.bool,
-    header: propTypes.string,
-    icon: propTypes.string,
-    textAlignCenter: propTypes.bool,
+  expanded: propTypes.bool,
+  header: propTypes.string,
+  icon: propTypes.string,
+  textAlignCenter: propTypes.bool,
 
-    manageExpanded: propTypes.bool,
-    color: propTypes.oneOf(["yellow", "red", "green", "blue", "grey", "grey-blue"]),
-    textLinkProps: propTypes.shape({
-        label: propTypes.string,
-        href: propTypes.string,
-        openWindows: propTypes.bool,
-        download: propTypes.oneOfType([propTypes.string, propTypes.object])
-    }),
-    onVisibilityChange: propTypes.func,
-    onExpandAction: propTypes.func,
-    onTextLinkClicked: propTypes.func,
-    onButtonClick: propTypes.func,
-    /**
+  manageExpanded: propTypes.bool,
+  color: propTypes.oneOf(['yellow', 'red', 'green', 'blue', 'grey', 'grey-blue']),
+  textLinkProps: propTypes.shape({
+    label: propTypes.string,
+    href: propTypes.string,
+    openWindows: propTypes.bool,
+    download: propTypes.oneOfType([propTypes.string, propTypes.object]),
+  }),
+  onVisibilityChange: propTypes.func,
+  onExpandAction: propTypes.func,
+  onTextLinkClicked: propTypes.func,
+  onButtonClick: propTypes.func,
+  /**
      *  Can control only if manageVisibility = true
      */
-    visible: propTypes.bool,
-    manageVisibility: propTypes.bool,
-    /**
+  visible: propTypes.bool,
+  manageVisibility: propTypes.bool,
+  /**
      * Time before remove (in milliseconds)
      */
-    delay: propTypes.number,
-    onCloseAction: propTypes.func,
-    manageButtonClick: propTypes.bool,
-    className: propTypes.oneOfType([propTypes.string, propTypes.object]),
-    defaultPosition: propTypes.bool,
-    verticalPositions: propTypes.oneOf(["top", "center", "bottom"]),
-    horizontalPositions: propTypes.oneOf(["start", "center", "end"])
-}
+  delay: propTypes.number,
+  onCloseAction: propTypes.func,
+  manageButtonClick: propTypes.bool,
+  className: propTypes.oneOfType([propTypes.string, propTypes.object]),
+  defaultPosition: propTypes.bool,
+  verticalPositions: propTypes.oneOf(['top', 'center', 'bottom']),
+  horizontalPositions: propTypes.oneOf(['start', 'center', 'end']),
+};
 
-export default React.memo(Alert, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default React.memo(Alert, (prev, next) => isEqual(prev, next));

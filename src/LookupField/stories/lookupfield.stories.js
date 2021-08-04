@@ -1,32 +1,31 @@
- import React from 'react';
+import React from 'react';
 
-import { LookupField} from '../index';
-import withMock from "storybook-addon-mock";
+import withMock from 'storybook-addon-mock';
+import { LookupField } from '../index';
 
 export default {
-    title: 'swf-ui-kit/Input/LookupField',
-    component: LookupField
+  title: 'swf-ui-kit/Input/LookupField',
+  component: LookupField,
 };
 
+const Template = (args) => <LookupField {...args} />;
 
-const Template = (args) => <LookupField {...args}/>;
+const mockData = [
+  {
+    sysId: -1,
+    referenceData: [{ value: 'Test value' }],
+  },
+  {
+    sysId: -2,
+    referenceData: [{ value: 'Test value 2' }],
+  },
+  {
+    sysId: -3,
+    referenceData: [{ value: 'Test value 3' }],
+  },
+];
 
- const mockData = [
-     {
-         sysId: -1,
-         referenceData: [{ value: "Test value" }]
-     },
-     {
-         sysId: -2,
-         referenceData: [{ value: "Test value 2"}]
-     },
-     {
-         sysId: -3,
-         referenceData: [{ value: "Test value 3" }]
-     }
- ]
-
-export const MockRequest = (args) => <LookupField {...args}/>;
+export const MockRequest = (args) => <LookupField {...args} />;
 //    MockRequest.decorators = [withMock],
 //  MockRequest.parameters = {
 //     mockData: [{
@@ -49,21 +48,16 @@ export const MockRequest = (args) => <LookupField {...args}/>;
 //     ],
 // }
 
-
- export const ExampleData = (args) => <LookupField {...args}/>;
- ExampleData.args = {
- //label: "LookupField",
- // content: "d5640bdadbfb2300f0ee760a689619e6",
- // declarativeUiActions: Proxy {0: Proxy, 1: Proxy, Symbol(mobx administration): e},
-  displayValue: "Viktor Bardakov - Admin",
-  label: "Creator",
-  name: "opened_by",
-  table: "x_aaro2_teamwork_container",
-  tableRecordSysId: "e40fcb88db5be8505884eb184b96191b",
-  type: "reference",
-  value: "d5640bdadbfb2300f0ee760a689619e6",
- }
-
-
-
-
+export const ExampleData = (args) => <LookupField {...args} />;
+ExampleData.args = {
+  // label: "LookupField",
+  // content: "d5640bdadbfb2300f0ee760a689619e6",
+  // declarativeUiActions: Proxy {0: Proxy, 1: Proxy, Symbol(mobx administration): e},
+  displayValue: 'Viktor Bardakov - Admin',
+  label: 'Creator',
+  name: 'opened_by',
+  table: 'x_aaro2_teamwork_container',
+  tableRecordSysId: 'e40fcb88db5be8505884eb184b96191b',
+  type: 'reference',
+  value: 'd5640bdadbfb2300f0ee760a689619e6',
+};

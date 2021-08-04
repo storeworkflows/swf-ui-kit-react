@@ -1,48 +1,56 @@
-import { useEffect, useState, useRef } from "react";
-import graphQl from "./graphqlRequest/graphqlRequest";
+import { useEffect, useState, useRef } from 'react';
+import graphQl from './graphqlRequest/graphqlRequest';
 
-export default function useGraphQL ({
+const getGraphQLData = async ({
+  controller, setter, operationName, query, variables,
+}) => {
+  const response = await graphQl({
     operationName,
     query,
-    variables
+    variables,
+    params: {
+      signal: controller.current.signal,
+    },
+  });
+
+  const data = await response.json();
+
+  setter(() => ({
+    loading: false,
+    data,
+  }));
+};
+
+export default function useGraphQL({
+  operationName,
+  query,
+  variables,
 }, deps = []) {
-    const [graphqlState, setGraphqlState] = useState({
-        loading: true,
-        data: null
-    });
+  const [graphqlState, setGraphqlState] = useState({
+    loading: true,
+    data: null,
+  });
 
-    const controllerRef = useRef(null);
+  const controllerRef = useRef(null);
 
-    const getQraphQLData = async () => {
-        const response = await graphQl({
-            operationName,
-            query,
-            variables,
-            params: {
-                signal: controllerRef.current.signal
-            }
-        });
-
-        const data = await response.json();
-
-        setGraphqlState(() => ({
-            loading: false,
-            data
-        }))
+  useEffect(() => {
+    if (controllerRef?.current) {
+      controllerRef.current.abort();
     }
+    controllerRef.current = new AbortController();
 
-    useEffect(() => {
-        if (controllerRef?.current) {
-            controllerRef.current.abort();
-        }
-        controllerRef.current = new AbortController();
+    setGraphqlState(() => ({
+      loading: true,
+      data: null,
+    }));
+    getGraphQLData({
+      controller: controllerRef,
+      setter: setGraphqlState,
+      operationName,
+      variables,
+      query,
+    });
+  }, [...deps, getGraphQLData]);
 
-        setGraphqlState(() => ({
-            loading: true,
-            data: null
-        }));
-        getQraphQLData();
-    }, deps)
-
-    return graphqlState;
+  return graphqlState;
 }
