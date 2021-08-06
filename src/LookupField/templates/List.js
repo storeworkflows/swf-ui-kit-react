@@ -15,7 +15,7 @@ export const List = (props) => {
   } = props;
 
   const {
-    name, invalid, required, message, readonly, label, chars, setChars,
+    props: {name, invalid, required, message, readonly, label}, chars, setChars,
   } = useContext(LookUpContext);
 
   const handleInput = (event) => {
@@ -28,7 +28,7 @@ export const List = (props) => {
       className="swf-reference--input"
       value={chars}
       containerClass="list-field-group"
-      label={`${label} ${records.length} selected`}
+      label={`${label} ${records.value.length} selected`}
       manageValue
       name={name}
       onInput={handleInput}
