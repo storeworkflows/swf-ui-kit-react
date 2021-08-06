@@ -1,38 +1,60 @@
-import {Button, Input} from "../../index";
-import * as React from "react";
+import * as React from 'react';
+import { useContext } from 'react';
+import { Button, Input } from '../../index';
+import { LookUpContext } from '../context/LookUpContext';
 
-const Reference = (props) => {
-    const {
-        inputRef,
-        value,
-        label,
-        name,
-        onChange,
-        readonly,
-        onInvalid,
-        invalid,
-        required,
-        message
-    } = props;
+export const Reference = (props) => {
+  const {
+    intRef,
+    onClear,
+    referenceValue,
+  } = props;
 
-    const showDeleteButton = !!value;
+  const {
+    props: {
+      name, invalid, required, message, readonly, label,
+    }, chars, setChars,
+  } = useContext(LookUpContext);
 
-    return <Input
-        internalRef={inputRef}
-        className="swf-reference--input"
-        value={value}
-        label={label}
-        manageValue={true}
-        name={name}
-        onInput={onChange}
-        readonly={readonly}
-        onInvalid={onInvalid}
-        invalid={invalid}
-        required={required}
-        message={message}
+  const handleInput = (event) => {
+    setChars(event.target.value);
+    onClear();
+  };
+
+  const showDeleteButton = !!referenceValue.value;
+
+  const showedValue = referenceValue.value ? referenceValue.displayValue : chars;
+
+  return (
+    <Input
+      internalRef={intRef}
+      className="swf-reference--input"
+      value={showedValue}
+      label={label}
+      manageValue
+      name={name}
+      onInput={handleInput}
+      readonly={readonly}
+      onInvalid={() => void 0}
+      invalid={invalid}
+      required={required}
+      message={message}
     >
-        {!readonly && <Input.End>{showDeleteButton &&
-        <Button bare variant="tertiary" icon="x" size="md" tooltipContent="Clear"
-                onClick={clearValue}/>}</Input.End>}
+      {!readonly && (
+      <Input.End>
+        {showDeleteButton
+        && (
+        <Button
+          bare
+          variant="tertiary"
+          icon="x"
+          size="md"
+          tooltipContent="Clear"
+          onClick={onClear}
+        />
+        )}
+      </Input.End>
+      )}
     </Input>
-}
+  );
+};

@@ -1,1 +1,0 @@
-import graphqlRequest from "./graphqlRequest";

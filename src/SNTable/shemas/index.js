@@ -7,8 +7,8 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
       }
     }
   }`;
-  
-  const fragments = ({includeHighlightedData}) => `
+
+const fragments = ({ includeHighlightedData }) => `
     fragment rowQuery on GlideListLayout_QueryRowType {
       className
       uniqueId
@@ -22,23 +22,23 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
         }
       }
       ${
-              includeHighlightedData
-                  ? `highlightedData @include(if: $runHighlightedValuesQuery){
+  includeHighlightedData
+    ? `highlightedData @include(if: $runHighlightedValuesQuery){
           field
           value
           status
           showIcon
         }`
-                  : ''
-          }
+    : ''
+}
       dbViewData {
         tableKey
         uniqueId
       }
     }
     `;
-  
-  const groupedRow = `
+
+const groupedRow = `
     ... on GlideListLayout_GroupedQueryRowType {
       displayValue
       value
@@ -51,13 +51,13 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
       }
     }
   `;
-  
-  const singleRow = `
+
+const singleRow = `
     ... on GlideListLayout_QueryRowType {
       ...rowQuery
     }`;
-  
-  const daData = `
+
+const daData = `
       toolTip
       buttonType
       recordSelectionRequired
@@ -92,13 +92,13 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
         value
       }
   `;
-  
-  const singleButton = `
+
+const singleButton = `
     ... on GlideListLayout_DeclarativeActionModelType {
       ${daData}
   }`;
-  
-  const groupedButton = `
+
+const groupedButton = `
     ... on GlideListLayout_DeclarativeActionGroupType {
       group
       groupId
@@ -107,8 +107,8 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
         ${daData}
       }
   }`;
-  
-  const listLayoutQueryFragment = `
+
+const listLayoutQueryFragment = `
   fragment listLayoutQuery on GlideListLayout_ListLayoutQueryType {
     encodedQuery
     table
@@ -131,8 +131,8 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
     }
   }
   `;
-  
-  const referenceListLayoutQueryFragment = `
+
+const referenceListLayoutQueryFragment = `
   fragment referenceListLayoutQuery on GlideListLayout_ReferenceListLayoutQueryType {
     encodedQuery
     table
@@ -146,8 +146,8 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
     }
   }
   `;
-  
-  const commonQuery = (layoutQuery = 'listLayoutQuery') => `
+
+const commonQuery = (layoutQuery = 'listLayoutQuery') => `
   metadata @include(if: $runQuery) {
     isDBView
     isScriptableTable
@@ -188,8 +188,8 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
     ...${layoutQuery}
   }
     `;
-  
-  export const tinyListModel = `
+
+export const tinyListModel = `
     query($tiny: String!, $runQuery: Boolean!, $isDeclarativeActionsRequired:Boolean!, $runHighlightedValuesQuery:Boolean!, $limit: Int, $offset: Int, $disableLiveList: Boolean!) {
       GlideListLayout_Query {
         getTinyListLayout(tiny: $tiny, runQuery: $runQuery, isDeclarativeActionsRequired: $isDeclarativeActionsRequired, runHighlightedValuesQuery:$runHighlightedValuesQuery, limit:$limit, offset:$offset) {
@@ -197,11 +197,11 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
         }
       }
     }
-    ${fragments({includeHighlightedData: true})}
+    ${fragments({ includeHighlightedData: true })}
     ${listLayoutQueryFragment}
   `;
-  
-  export const listQueryModel = `
+
+export const listQueryModel = `
   query ($columns: String, $listId: String, $maxColumns: Int, $limit: Int, $offset: Int, $groupedOffset: Int, $parentRecordSysId: String, $parentTable: String, $query: String, $workspaceConfigId: String, $relatedListName: String, $source: String, $runQuery: Boolean!,$table: String!, $view: String, $runHighlightedValuesQuery: Boolean!, $isDeclarativeActionsRequired: Boolean!, $tiny: String, $queryCategory: String, $listTitle: String, $disableLiveList: Boolean!) {
     GlideListLayout_Query {
       getListLayout(columns: $columns  listId: $listId, maxColumns: $maxColumns, limit: $limit, offset: $offset, groupedOffset: $groupedOffset, parentRecordSysId: $parentRecordSysId, parentTable: $parentTable,workspaceConfigId: $workspaceConfigId, query: $query, relatedListName: $relatedListName, source: $source, runQuery: $runQuery,table: $table, view: $view, runHighlightedValuesQuery: $runHighlightedValuesQuery, isDeclarativeActionsRequired: $isDeclarativeActionsRequired, tiny: $tiny, queryCategory: $queryCategory, listTitle: $listTitle) {
@@ -209,11 +209,11 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
         }
       }
     }
-    ${fragments({includeHighlightedData: true})}
+    ${fragments({ includeHighlightedData: true })}
     ${listLayoutQueryFragment}
     `;
-  
-  export const referenceListModel = `
+
+export const referenceListModel = `
   query ($table: String!, $field: String! , $sysId: String, $encodedRecord: String, $serializedChanges: String, $chars:String!, $limit: Int!, $offset:Int!, $sortBy: String, $sortDescending: Boolean, $searchOperator: String, $query: String$skipRecent: Boolean,$sysparm_ref_override:String,$sysparm_additional_qual: String,$sysparm_exact_match: Boolean, $runQuery: Boolean!, $isDeclarativeActionsRequired: Boolean!, $tiny: String, $queryCategory: String, $ignoreRefQual: Boolean) {
     GlideListLayout_Query {
       getReferenceListLayout(table: $table,field: $field,sysId: $sysId,encodedRecord: $encodedRecord,serializedChanges: $serializedChanges,chars:$chars,limit: $limit,offset:$offset,sortBy: $sortBy,sortDescending: $sortDescending,searchOperator: $searchOperator,query: $query,skipRecent: $skipRecent,sysparm_ref_override:$sysparm_ref_override,sysparm_additional_qual: $sysparm_additional_qual,sysparm_exact_match: $sysparm_exact_match, runQuery: $runQuery, tiny: $tiny, queryCategory: $queryCategory, ignoreRefQual: $ignoreRefQual) {
@@ -221,6 +221,6 @@ export const choiceColumnQuery = `query($table: String!, $column: String!) {
       }
     }
   }
-  ${fragments({includeHighlightedData: false})}
+  ${fragments({ includeHighlightedData: false })}
   ${referenceListLayoutQueryFragment}
   `;

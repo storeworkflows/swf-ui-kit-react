@@ -1,5 +1,7 @@
-export const stringToArray = (string, divider) => {
-    if (!string) return [];
+const trimString = (string) => string.trimStart();
 
-    return string.split(divider).filter(Boolean);
-}
+export const stringToArray = (string, { divider }) => {
+  if (!string) return [];
+
+  return string.split(divider).map(trimString).filter(Boolean);
+};

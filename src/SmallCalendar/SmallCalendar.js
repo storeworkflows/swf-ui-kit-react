@@ -1,81 +1,80 @@
 import moment from 'moment';
 import * as React from 'react';
-import propTypes from "prop-types";
+import propTypes from 'prop-types';
 
-import {useCallback, useEffect, useState} from "react";
-import CalendarMonth from "./InnerComponents/CalendarMonth";
-import ArrowButton from "./InnerComponents/ArrowButton";
-import {checkDate, getDefinedDate, useWrappedState} from "./utils";
-import isEqual from "react-fast-compare";
-import {noop} from "../utils";
+import { useCallback, useEffect, useState } from 'react';
+import isEqual from 'react-fast-compare';
+import CalendarMonth from './InnerComponents/CalendarMonth';
+import ArrowButton from './InnerComponents/ArrowButton';
+import { checkDate, getDefinedDate, useWrappedState } from './utils';
+import { noop } from '../utils';
 
 const SmallCalendar = React.forwardRef((props, ref) => {
+  const { selectedDate, onSelected, manageValue } = props;
 
-    const {selectedDate, onSelected, manageValue} = props;
+  const [selected, setSelectedDate] = useWrappedState(selectedDate, checkDate);
+  const [openedDateValue, setOpenedDateValue] = useWrappedState(selectedDate, getDefinedDate);
 
-    const [selected, setSelectedDate] = useWrappedState(selectedDate, checkDate);
-    const [openedDateValue, setOpenedDateValue] = useWrappedState(selectedDate, getDefinedDate);
+  useEffect(() => {
+    if (manageValue) {
+      setSelectedDate(selectedDate);
+      setOpenedDateValue(selectedDate);
+    }
+  }, [selectedDate, manageValue]);
 
-    useEffect(() => {
-        if (manageValue) {
-            setSelectedDate(selectedDate);
-            setOpenedDateValue(selectedDate)
-        }
-    }, [selectedDate, manageValue])
+  const selectAction = useCallback((date) => {
+    if (!manageValue) {
+      setSelectedDate(date);
+      setOpenedDateValue(date);
+    }
+    onSelected(date);
+  }, [manageValue, onSelected]);
 
-    const selectAction = useCallback((date) => {
-        if (!manageValue) {
-            setSelectedDate(date);
-            setOpenedDateValue(date)
-        }
-        onSelected(date)
-    }, [manageValue, onSelected])
+  const changeMonth = useCallback((e, isNext, selectedDate) => {
+    e?.stopPropagation();
 
-    const changeMonth = useCallback((e, isNext, selectedDate) =>{
-        e?.stopPropagation();
+    const additionValue = isNext ? 1 : -1;
+    const changedTo = moment(openedDateValue).add(additionValue, 'month');
 
-        let additionValue = isNext ? 1 : -1;
-        let changedTo = moment(openedDateValue).add(additionValue, "month");
+    if (selectedDate) {
+      !manageValue && setSelectedDate(selectedDate);
+      onSelected(selectedDate);
+    }
 
-        if(selectedDate) {
-            !manageValue && setSelectedDate(selectedDate)
-            onSelected(selectedDate)
-        }
+    setOpenedDateValue(changedTo.toDate());
+  }, [openedDateValue]);
 
-        setOpenedDateValue(changedTo.toDate())
-    }, [openedDateValue])
+  return (
+    <div ref={ref}>
+      <CalendarMonth
+        openedDate={openedDateValue}
+        selectedDate={selected}
+        onSelected={selectAction}
+        manageSelected
+      >
 
-    return <div ref={ref}>
-            <CalendarMonth
-                openedDate={openedDateValue}
-                selectedDate={selected}
-                onSelected={selectAction}
-                manageSelected
-            >
+        <CalendarMonth.HeaderStart>
+          <ArrowButton onClick={changeMonth} />
+        </CalendarMonth.HeaderStart>
 
-                <CalendarMonth.HeaderStart>
-                    <ArrowButton onClick={changeMonth}/>
-                </CalendarMonth.HeaderStart>
+        <CalendarMonth.HeaderEnd>
+          <ArrowButton isNext onClick={changeMonth} />
+        </CalendarMonth.HeaderEnd>
 
-                <CalendarMonth.HeaderEnd>
-                    <ArrowButton isNext={true} onClick={changeMonth}/>
-                </CalendarMonth.HeaderEnd>
-
-            </CalendarMonth>
+      </CalendarMonth>
     </div>
+  );
 });
 
 SmallCalendar.defaultProps = {
-    openedDate: null,
-    onSelected: noop
-}
+  openedDate: null,
+  onSelected: noop,
+};
 
 SmallCalendar.propTypes = {
-    selectedDate: propTypes.oneOfType([propTypes.number, propTypes.string, propTypes.object]),
-    onSelected: propTypes.func,
-    manageValue: propTypes.bool
-}
+  selectedDate: propTypes.oneOfType([propTypes.number, propTypes.string, propTypes.object]),
+  onSelected: propTypes.func,
+  manageValue: propTypes.bool,
+};
 
-export default React.memo(SmallCalendar, (prev, next) => {
-    return isEqual(prev, next);
-});
+export default React.memo(SmallCalendar, (prev, next) => isEqual(prev, next));

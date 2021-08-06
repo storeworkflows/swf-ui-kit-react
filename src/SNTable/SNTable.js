@@ -1,20 +1,20 @@
-import { useEffect, useState, useCallback } from "react";
-import propTypes from "prop-types";
-import TableContainer from "../Table";
-import { listQueryModel } from "./shemas";
-import useGraphQL from "../utils/useGraphQL";
-import { noop } from "../utils";
+import { useEffect, useState, useCallback } from 'react';
+import propTypes from 'prop-types';
+import TableContainer from '../Table';
+import { listQueryModel } from './shemas';
+import useGraphQL from '../utils/useGraphQL';
+import { noop } from '../utils';
 
 const SNTable = (props) => {
   const {
-    table = "incident",
-    view = "default",
-    query = "",
+    table = 'incident',
+    view = 'default',
+    query = '',
     paginationTop,
     paginationBottom,
     onClick,
     stickyHeader,
-    headerPosition
+    headerPosition,
   } = props;
 
   const [headers, setHeaders] = useState([]);
@@ -25,39 +25,39 @@ const SNTable = (props) => {
 
   const { loading, data } = useGraphQL(
     {
-      operationName: "nowRecordListConnected",
+      operationName: 'nowRecordListConnected',
       query: listQueryModel,
       variables: {
-        table: table,
-        view: view,
-        columns: "",
-        query: query,
-        limit: limit,
-        offset: offset,
-        queryCategory: "list",
-        workspaceConfigId: "",
+        table,
+        view,
+        columns: '',
+        query,
+        limit,
+        offset,
+        queryCategory: 'list',
+        workspaceConfigId: '',
         runHighlightedValuesQuery: true,
         runQuery: true,
         isDeclarativeActionsRequired: false,
-        source: "list",
+        source: 'list',
         disableLiveList: true,
       },
     },
-    [table, view, query, offset, limit]
+    [table, view, query, offset, limit],
   );
 
   const handleLimit = useCallback(
     (value) => {
       setLimit(value);
     },
-    [setLimit]
+    [setLimit],
   );
 
   const handleOffset = useCallback(
     (value) => {
       setOffset(value);
     },
-    [setOffset]
+    [setOffset],
   );
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const SNTable = (props) => {
 
     const { allColumns, layoutQuery } = _.get(
       data,
-      "[0].data.GlideListLayout_Query.getListLayout"
+      '[0].data.GlideListLayout_Query.getListLayout',
     );
 
     const headers = allColumns.map(({ columnData, columnName }) => {
@@ -81,7 +81,7 @@ const SNTable = (props) => {
         acc[columnName] = columnData.displayValue;
         return acc;
       }, {});
-      dataSource["onClick"] = () => {
+      dataSource.onClick = () => {
         onClick({ table: className, sys_id: uniqueId });
         return { table: className, sys_id: uniqueId };
       };
@@ -114,23 +114,23 @@ SNTable.defaultProps = {
   stickyHeader: false,
   headerPosition: 0,
   paginationTop: {
-    alignment: "end",
+    alignment: 'end',
     sticky: false,
-    position: 0
+    position: 0,
   },
   paginationBottom: {
-    alignment: "end",
+    alignment: 'end',
     sticky: false,
-    position: 0
+    position: 0,
   },
-  onClick: noop
-}
+  onClick: noop,
+};
 
 const paginationPropTypes = {
-  alignment: propTypes.oneOf(["start", "center", "end", "none"]),
+  alignment: propTypes.oneOf(['start', 'center', 'end', 'none']),
   sticky: propTypes.bool,
-  position: propTypes.number
-}
+  position: propTypes.number,
+};
 
 SNTable.propTypes = {
   table: propTypes.string,

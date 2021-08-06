@@ -1,6 +1,6 @@
-import { createContext, useState } from "react";
-import propTypes from "prop-types";
-import { noop } from "../../utils";
+import { createContext, useState } from 'react';
+import propTypes from 'prop-types';
+import { noop } from '../../utils';
 
 export const TableContext = createContext({
   currentPage: 1,
@@ -61,4 +61,4 @@ TableProvider.propTypes = {
   peerPageChanged: propTypes.func,
 };
 
-export {TableProvider};
+export { TableProvider };

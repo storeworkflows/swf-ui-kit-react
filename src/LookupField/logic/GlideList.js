@@ -1,94 +1,120 @@
-import {useState} from "react";
-import {stringToArray} from "../utils";
-import {request} from "../../utils/http";
-import {List} from "../templates/List";
-import {SearchResult} from "../templates/SearchResult";
+import { useContext, useEffect, useState } from 'react';
+import { stringToArray } from '../utils';
+import { request } from '../../utils/http';
+import { List } from '../templates/List';
+import { LookUpContext } from '../context/LookUpContext';
 
-const GlideList = (props) => {
-    const {
-        name,
-        readonly,
-        invalid,
-        required,
-        message,
-        intRef,
-        onValueChange
-    } = props;
+export const GlideList = (props) => {
+  const context = useContext(LookUpContext);
 
-    const [searchValue, setSearchValue] = useState("");
+  const { intRef } = props;
 
-    const [records, setRecords] = useState({
-        value: stringToArray(props.value),
-        displayValue: stringToArray(props.displayValue)
+  const {
+    props: {
+      name,
+      readonly,
+      invalid,
+      required,
+      message,
+      label,
+      reference,
+      onValueChange,
+      value,
+      displayValue,
+    },
+    setFocused,
+    setSubscriber,
+  } = context;
+
+  const [records, setRecords] = useState({
+    value: stringToArray(value, { divider: ',' }),
+    displayValue: stringToArray(displayValue, { divider: ',' }),
+  });
+
+  const deleteHandler = (label) => (prev, curr, indx) => {
+    if (curr !== label) return prev;
+
+    prev.value = records.value.filter((_, i) => i != indx);
+    prev.displayValue = records.displayValue.filter((_, i) => i != indx);
+
+    return prev;
+  };
+
+  const getValuesArray = (records, record) => {
+    if (!records) return { value: [], displayValue: [] };
+
+    console.log('getValuesArray', { records });
+
+    if (records.value.includes(record.sysId)) return records;
+
+    records.value.push(record.sysId);
+    records.displayValue.push(record.displayValue);
+
+    return { ...records };
+  };
+
+  const handleClick = (record) => {
+    const { sysId, referenceData } = record;
+    const [data] = referenceData;
+
+    setRecords((_) => getValuesArray(_, { sysId, displayValue: data?.value }));
+  };
+
+  const handleDeleteClick = ({ label }) => {
+    setRecords((_) => records.displayValue.reduce(deleteHandler(label), { value: [], displayValue: [] }));
+  };
+
+  const onPaste = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const value = event.clipboardData.getData('Text');
+
+    if (!value) return;
+
+    setFocused(false);
+
+    const charsArray = value.split(/,|\\n/).map((chars) => chars.trim());
+
+    const { data } = await request({
+      method: 'POST',
+      url: 'api/x_aaro2_teamwork/swf_api/list',
+      data: {
+        table: reference,
+        search_string: charsArray,
+      },
     });
-    const [mockDataCount, setMockDataCount] = useState(0);
-    const [showPreloader, setShowPreloader] = useState(false);
 
-    const deleteHandler = (prev, curr, indx) => {
-        if (curr !== label) return prev;
+    setRecords((_) => data.reduce((prev, curr) => {
+      const { sysId, referenceData } = curr;
+      const displayValue = referenceData[0].value;
 
-        prev.value = records.value.filter((_, i) => i != indx);
-        prev.displayValue = records.displayValue.filter((_, i) => i != indx);
+      return getValuesArray(_, { sysId, displayValue });
+    }, {}));
 
-        return prev;
-    }
+    setFocused(true);
+  };
 
-    const handleClick = (record) => {
-        const {sysId, referenceData} = record;
+  useEffect(() => {
+    onValueChange && onValueChange(name, records.value.toString(), records.displayValue);
+  }, [records.value]);
 
-        const records = {
-            value: Array.from(new Set([...records.value, sysId]).filter(Boolean)),
-            displayValue: Array.from([...records.displayValue, referenceData[0].value]).filter(Boolean)
-        };
+  useEffect(() => {
+    setSubscriber(handleClick);
+  }, [setSubscriber]);
 
-        setRecords(_ => records);
-    };
-
-    const handleDeleteClick = ({label}) => {
-        setRecords(_ => records.displayValue.reduce(deleteHandler, {value: [], displayValue: []}));
-        onValueChange(name, records.value.toString(), records.displayValue);
-    };
-
-    const onPaste = async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        const value = event.clipboardData.getData("Text");
-
-        if (!value) return;
-
-        const charsArray = value.split(/,|\\n/).map(chars => chars.trim());
-
-        const fetchedRecords = await request({
-            method: "post",
-            url: `api/x_aaro2_teamwork/swf_api/list`,
-            data: {
-                able: reference,
-                search_string: charsArray
-            }
-        });
-
-        setRecords(_ => ({
-            value: Array.from(new Set([...records.value, ...fetchedRecords.map(({sysId}) => sysId)])),
-            displayValue: Array.from(new Set([...records.displayValue, ...fetchedRecords.map(({referenceData}) => referenceData[0].value)]))
-        }));
-
-        onValueChange(name, records.value.filter(Boolean).join(","), records.displayValue.filter(Boolean));
-    };
-
-    return <>
-        <List
-            name={name}
-            intRef={intRef}
-            value={searchValue}
-            label=""
-            readonly={readonly}
-            onPaste={onPaste}
-            invalid={invalid}
-            required={required}
-            message={message}
-            onDelete={handleDeleteClick}
-            records={records}
-        />
-    </>
-}
+  return (
+    <List
+      name={name}
+      intRef={intRef}
+      label={label}
+      readonly={readonly}
+      onPaste={onPaste}
+      invalid={invalid}
+      required={required}
+      message={message}
+      onDelete={handleDeleteClick}
+      records={records}
+    />
+  );
+};

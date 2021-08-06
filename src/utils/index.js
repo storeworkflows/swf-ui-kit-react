@@ -1,7 +1,7 @@
-export const noop = () => void 0;
+export const noop = () => undefined;
 
 export const normalizeURL = (url) => {
-    const isLocal = location.hostname === "localhost"
+  const isLocal = globalThis.location.hostname === 'localhost';
 
-    return isLocal ?`https://ven04075.service-now.com${url}` : url
-}
+  return isLocal ? `https://ven04075.service-now.com${url}` : url;
+};

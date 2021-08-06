@@ -1,123 +1,108 @@
-import moment from "moment";
+import moment from 'moment';
 
-const isLetter = (char) => {
-    return char.match(/[a-zA-Z]/i);
-}
+const isLetter = (char) => char.match(/[a-zA-Z]/i);
 
-const isNumber = (char) => {
-    return  char >= '0' && char <= '9';
-}
+const isNumber = (char) => char >= '0' && char <= '9';
 
 const isExpectedTypeOfChar = (char, expectedChar) => {
-    switch (true){
-        case isLetter(expectedChar) :
-            return  isLetter(char);
-        case isNumber(expectedChar) :
-            return isNumber(char);
-        default:
-            return char === expectedChar;
-    }
+  switch (true) {
+    case isLetter(expectedChar):
+      return isLetter(char);
+    case isNumber(expectedChar):
+      return isNumber(char);
+    default:
+      return char === expectedChar;
+  }
+};
 
-}
-
-const isZeroAvailable = (format, position) => {
-    return position === 0 || !isLetter(format.charAt(position-1));
-}
+const isZeroAvailable = (format, position) => position === 0 || !isLetter(format.charAt(position - 1));
 
 const nextChar = (format, position) => {
-    let result = '';
-    let nextPosition = position + 1;
-    if(format.length > nextPosition
-        && !isLetter(format.charAt(nextPosition)))
-        result+=format.charAt(nextPosition);
+  let result = '';
+  const nextPosition = position + 1;
+  if (format.length > nextPosition
+        && !isLetter(format.charAt(nextPosition))) result += format.charAt(nextPosition);
 
-    return result;
-}
+  return result;
+};
 
 export const addCharToDate = (format, curStr, char) => {
-    let dateStr = moment().format(format);
-    if(!curStr)
-        curStr = ''
+  const dateStr = moment().format(format);
+  if (!curStr) curStr = '';
 
-    let possibleResult = curStr + char ;
+  const possibleResult = curStr + char;
 
-    let result = "";
-    let isValidDate = false;
-    if(char==null){
-        result = (curStr.length>0) ? curStr.slice(0, -1) : '';
-    } else {
-        isValidDate = moment(possibleResult, format, false).isValid();
+  let result = '';
+  let isValidDate = false;
+  if (char == null) {
+    result = (curStr.length > 0) ? curStr.slice(0, -1) : '';
+  } else {
+    isValidDate = moment(possibleResult, format, false).isValid();
 
-        let expectedChar = dateStr.charAt(curStr.length);
-        let isZero = char==='0' && isZeroAvailable(format, curStr.length);
+    const expectedChar = dateStr.charAt(curStr.length);
+    const isZero = char === '0' && isZeroAvailable(format, curStr.length);
 
-        let isNeededChar = isZero || (isValidDate && isExpectedTypeOfChar(char.charAt(0), expectedChar));
+    const isNeededChar = isZero || (isValidDate && isExpectedTypeOfChar(char.charAt(0), expectedChar));
 
-        result = (isNeededChar)
-            ? curStr + char.charAt(0) + nextChar(format, curStr.length)
-            : curStr;
-    }
+    result = (isNeededChar)
+      ? curStr + char.charAt(0) + nextChar(format, curStr.length)
+      : curStr;
+  }
 
-    return result;
-}
-
+  return result;
+};
 
 export const isPointInsideTheElement = (element, pointX, pointY) => {
-    let elementDimensions = element.getBoundingClientRect();
+  const elementDimensions = element.getBoundingClientRect();
 
-    let elementPoints = {
-        startY: elementDimensions.y,
-        startX: elementDimensions.x,
-        endY: elementDimensions.y + elementDimensions.height,
-        endX: elementDimensions.x + elementDimensions.width
-    }
+  const elementPoints = {
+    startY: elementDimensions.y,
+    startX: elementDimensions.x,
+    endY: elementDimensions.y + elementDimensions.height,
+    endX: elementDimensions.x + elementDimensions.width,
+  };
 
-    let insideX = pointX<elementPoints.endX && pointX>elementPoints.startX;
-    let insideY = pointY<elementPoints.endY && pointY>elementPoints.startY;
+  const insideX = pointX < elementPoints.endX && pointX > elementPoints.startX;
+  const insideY = pointY < elementPoints.endY && pointY > elementPoints.startY;
 
-    return insideY && insideX
-}
-
+  return insideY && insideX;
+};
 
 export const getErrorOnBoundaryValue = (current, boundary, format, isMin = true) => {
-    if(current && boundary) {
-        let currentDate = new Date(current);
-        let boundaryDate = new Date(boundary);
+  if (current && boundary) {
+    const currentDate = new Date(current);
+    const boundaryDate = new Date(boundary);
 
-        let invalidCheck = (isMin && (currentDate < boundaryDate)) || (!isMin && (currentDate > boundaryDate));
+    const invalidCheck = (isMin && (currentDate < boundaryDate)) || (!isMin && (currentDate > boundaryDate));
 
-        if (invalidCheck)
-            return {
-                content: `Date should be ${isMin ? "bigger" : "smaller"} than ${moment(boundaryDate).format(format)}`,
-                icon: "exclamation-circle"
-            };
+    if (invalidCheck) {
+      return {
+        content: `Date should be ${isMin ? 'bigger' : 'smaller'} than ${moment(boundaryDate).format(format)}`,
+        icon: 'exclamation-circle',
+      };
     }
-    return undefined;
-}
+  }
+  return undefined;
+};
 
-const invalidFormatMess = {content: `Invalid date format`, icon: "exclamation-circle"}
+const invalidFormatMess = { content: 'Invalid date format', icon: 'exclamation-circle' };
 
 export const getErrorMessages = (stringDate, format, min, max) => {
-    let isEmptyStr = !stringDate || stringDate.length < 1;
-    let isValidValue = isEmptyStr || moment(stringDate, format, true).isValid();
+  const isEmptyStr = !stringDate || stringDate.length < 1;
+  const isValidValue = isEmptyStr || moment(stringDate, format, true).isValid();
 
-    if(!isValidValue)
-        return [invalidFormatMess]
-    else{
-        let minError =  getErrorOnBoundaryValue(stringDate, min, format);
-        let maxError = getErrorOnBoundaryValue(stringDate, max, format, false);
+  if (!isValidValue) return [invalidFormatMess];
 
-        let hasError = minError || maxError;
-        if(hasError)
-            return [hasError];
-    }
+  const minError = getErrorOnBoundaryValue(stringDate, min, format);
+  const maxError = getErrorOnBoundaryValue(stringDate, max, format, false);
 
-    return [];
-}
+  const hasError = minError || maxError;
+  if (hasError) return [hasError];
 
-export const hasChanges = (a, b) => {
-    return  !_.isEqual(
-        _.sortBy( a, 'content' ),
-        _.sortBy( b, 'content' )
-    )
-}
+  return [];
+};
+
+export const hasChanges = (a, b) => !_.isEqual(
+  _.sortBy(a, 'content'),
+  _.sortBy(b, 'content'),
+);
