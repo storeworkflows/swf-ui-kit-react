@@ -18,6 +18,7 @@
     "plugins": [
         "react"
     ],
+    "ignorePatterns": ["*.stories.js", "*.test.js"],
     "rules": {
     }
 }
