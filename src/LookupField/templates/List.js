@@ -75,8 +75,8 @@ export const List = (props) => {
     >
       <Input.Start>
         {records.displayValue.map((label) => (
-            <LazyLoad key={label} placeholder={<Spinner />}>
-              <Record key={label} label={label} onDelete={onDelete} />)
+            <LazyLoad key={label} placeholder={<Spinner />} offset={100} overflow once>
+              <Record key={label} label={label} onDelete={onDelete} />
             </LazyLoad>
         ))}
       </Input.Start>
