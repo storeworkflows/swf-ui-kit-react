@@ -50,11 +50,23 @@ export const GlideList = (props) => {
         const {sysId, referenceData} = record;
         const [data] = referenceData;
 
-        setRecords((_) => getValuesArray(_, {sysId, displayValue: data?.value}));
+        setRecords((_) => {
+            const newRecords = getValuesArray(_, {sysId, displayValue: data?.value});
+
+            onValueChange && onValueChange(name, newRecords.value.toString(), newRecords.displayValue);
+
+            return newRecords;
+        });
     };
 
     const handleDeleteClick = ({label}) => {
-        setRecords((_) => records.displayValue.reduce(deleteHandler(label), {value: [], displayValue: []}));
+        setRecords((_) => {
+            const newRecords = records.displayValue.reduce(deleteHandler(label), {value: [], displayValue: []});
+
+            onValueChange && onValueChange(name, newRecords.value.toString(), newRecords.displayValue);
+
+            return newRecords;
+        });
     };
 
     const onPaste = async (event) => {
@@ -78,27 +90,29 @@ export const GlideList = (props) => {
             },
         });
 
-        setRecords(_ => data.reduce((prev, curr) => {
+        const records = data.reduce((prev, curr) => {
             const {sysId, referenceData} = curr;
             const displayValue = referenceData[0].value;
 
             return getValuesArray(_, {sysId, displayValue});
-        }, {value: [], displayValue: []}));
+        }, {value: [], displayValue: []});
+
+        setRecords(_ => records);
+
+        onValueChange && onValueChange(name, records.value.toString(), records.displayValue);
 
         setFocused(true);
     };
 
     useEffect(() => {
-        if (records.value.length === 0) return;
+        if (value === records.value.toString()) return;
 
-        console.log("Set New Props", {
-            onValueChange,
-            name,
-            value: records.value.toString(),
-            displayValue: records.displayValue
-        });
-        onValueChange && onValueChange(name, records.value.toString(), records.displayValue);
-    }, [records.value.toString()]);
+        setRecords(_ => ({
+            value: stringToArray(value, {divider: ','}),
+            displayValue: stringToArray(displayValue, {divider: ','}),
+        }))
+
+    }, [value, displayValue]);
 
     useEffect(() => {
         setSubscriber(handleClick);
