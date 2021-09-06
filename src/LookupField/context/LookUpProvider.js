@@ -84,8 +84,8 @@ export const LookUpProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    setContext(current => ({
-      ...context,
+    setContext(_ => ({
+      ..._,
       props
     }))
   }, [props.value])
