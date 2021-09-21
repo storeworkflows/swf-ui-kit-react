@@ -25,10 +25,9 @@ export default class HtmlEditor extends React.Component {
         this.props?.onValueChange(content);
     }
 
-    ascii_to_hexa(str)
-  {
+    ascii_to_hexa(str) {
 	var arr1 = [];
-	for (var n = 0, l = str.length; n < l; n ++) 
+	for (var n = 0, l = str.length; n < l; n ++)
      {
 		var hex = Number(str.charCodeAt(n)).toString(16);
 		arr1.push(hex);
@@ -72,7 +71,7 @@ export default class HtmlEditor extends React.Component {
         const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)";
 
         return(
-            <>
+            <div className='swf-html-editor'>
                 {!!label || required ? <div className="editor-label-area">
                     <label style={{color: labelColor}} onClick={() => this.state.TinyMcEditor.focus()}>{label}</label>
                     {required ? <Icon color={labelColor} icon="asterisk" size="xs" /> : null}
@@ -135,7 +134,7 @@ export default class HtmlEditor extends React.Component {
                         }
                     }}
                 />
-            </>
+            </div>
         );
     }
 }
