@@ -10,7 +10,7 @@
     "@storybook/addon-info": "^5.3.21",
     "@storybook/addon-jest": "^6.3.6",
     "@swf/form-logic-generator": "git+https://github.com/storeworkflows/form-logic-generator.git",
-    "@tinymce/tinymce-react": "^3.12.6",
+    "@tinymce/tinymce-react": "^2.1.0",
     "autoprefixer": "^10.2.6",
     "autosize": "^4.0.2",
     "axios": "^0.21.1",
