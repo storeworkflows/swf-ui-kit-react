@@ -29,8 +29,8 @@ export const GlideList = (props) => {
     const deleteHandler = (label) => (prev, curr, indx) => {
         if (curr !== label) return prev;
 
-        prev.value = records.value.filter((_, i) => i != indx);
-        prev.displayValue = records.displayValue.filter((_, i) => i != indx);
+        prev.value = records.value.filter((_, i) => i !== indx);
+        prev.displayValue = records.displayValue.filter((_, i) => i !== indx);
 
         return prev;
     };
@@ -94,7 +94,7 @@ export const GlideList = (props) => {
             const {sysId, referenceData} = curr;
             const displayValue = referenceData[0].value;
 
-            return getValuesArray(_, {sysId, displayValue});
+            return getValuesArray(prev, {sysId, displayValue});
         }, {value: [], displayValue: []});
 
         setRecords(_ => records);
