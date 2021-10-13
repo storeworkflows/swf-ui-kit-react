@@ -67,11 +67,11 @@ export const LookUpProvider = (props) => {
       totalCount,
     } = _.get(result, '[0].data.GlideLayout_Query.referenceDataRetriever');
 
-    setContext({
-      ...context,
+    setContext((_) => ({
+      ..._,
       searchResults: [...referenceDataList, ...referenceRecentDataList],
       loading: false,
-    });
+    }));
   };
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export const LookUpProvider = (props) => {
       ..._,
       props
     }))
-  }, [props.value])
+  }, [props.value, props.displayValue])
 
   useEffect(() => {
     context.focused && searchRecords();

@@ -5,7 +5,7 @@ import propTypes from 'prop-types';
 import Icon from '../Icon/Icon';
 import findByType, { createSubComponent } from '../utils/findByType';
 
-const Wrapper = React.memo(React.forwardRef((props, ref) => {
+const ç = React.memo(React.forwardRef((props, ref) => {
   const {
     children, open, title, showWrapper, showButton,
     manageOpened, onOpen, className, iconSize,
