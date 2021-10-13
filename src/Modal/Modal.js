@@ -141,7 +141,7 @@ const Modal = (props) => {
             })}
             >
               <div className="additional-buttons">
-                {findByType(children, ' ')}
+                {findByType(children, 'Buttons')}
               </div>
               <div className="main-buttons">
                 {isMobile ? mobileButtons() : desktopButtons()}

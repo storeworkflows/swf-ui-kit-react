@@ -105,7 +105,7 @@ export const GlideList = (props) => {
     };
 
     useEffect(() => {
-        if (value === records.value.toString()) return;
+        if (value === records.value.toString() && displayValue === records.displayValue.toString()) return;
 
         setRecords(_ => ({
             value: stringToArray(value, {divider: ','}),

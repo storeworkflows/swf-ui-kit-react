@@ -88,7 +88,7 @@ export const LookUpProvider = (props) => {
       ..._,
       props
     }))
-  }, [props.value])
+  }, [props.value, props.displayValue])
 
   useEffect(() => {
     context.focused && searchRecords();

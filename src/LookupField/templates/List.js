@@ -61,7 +61,7 @@ export const List = (props) => {
   useEffect(() => {
     observerRef.current = new IntersectionObserver(intersectionCallback);
     startObserver();
-  }, [renderedRecords.displayValue.toString()])
+  }, [renderedRecords.displayValue.toString()]);
 
   return (
     <Input
