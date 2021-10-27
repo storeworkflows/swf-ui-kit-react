@@ -40,3 +40,4 @@ export { default as Table } from './Table/index';
 export { default as SNTable } from './SNTable/SNTable';
 export { default as InfoMessage } from './InfoMessage/InfoMessage';
 export { default as Progress } from './Progress/Progress';
+export { default as RequiredLabel } from "./RequiredLabel/RequiredLabel";
