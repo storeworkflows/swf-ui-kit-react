@@ -4,6 +4,7 @@ import TableContainer from '../Table';
 import { listQueryModel } from './shemas';
 import useGraphQL from '../utils/useGraphQL';
 import { noop } from '../utils';
+import {InfoMessage} from "../index";
 
 const SNTable = (props) => {
   const {
@@ -22,6 +23,7 @@ const SNTable = (props) => {
   const [limit, setLimit] = useState(50);
   const [offset, setOffset] = useState(0);
   const [total, setTotal] = useState(0);
+  const [error, setError] = useState(null);
 
   const { loading, data } = useGraphQL(
     {
@@ -63,6 +65,12 @@ const SNTable = (props) => {
   useEffect(() => {
     if (!data) return;
 
+    const error = _.get(data, '[0].errors', []);
+
+    if (error.length > 0) {
+      return setError('You do not have access to this table');
+    }
+
     const { allColumns, layoutQuery } = _.get(
       data,
       '[0].data.GlideListLayout_Query.getListLayout',
@@ -91,7 +99,12 @@ const SNTable = (props) => {
     setTotal(layoutQuery.count);
     setHeaders(headers);
     setDataSource(dataSource);
+    setError(null);
   }, [data]);
+
+  if (error) {
+    return <InfoMessage content={error} status='red' />
+  }
 
   return (
     <TableContainer

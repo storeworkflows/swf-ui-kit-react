@@ -26,8 +26,6 @@ export const Table = (props) => {
     name = '', headers = [], dataSource = [], paginationBottom, paginationTop, total, loading, stickyHeader, headerPosition,
   } = props;
 
-  console.log({ props });
-
   const {
     setCurrentPage,
     setOffset,
@@ -50,14 +48,14 @@ export const Table = (props) => {
         </Thead>
         <Tbody>
           {
-                    rowsCount.map((_, index) => (
-                      <Tr key={`tr:${index}`} onClick={dataSource[index].onClick ?? noop}>
-                        {
-                        headers.map(({ key, render }) => tableRow({ data: dataSource[index], key, render }))
-                    }
-                      </Tr>
-                    ))
-                }
+            rowsCount.map((_, index) => (
+              <Tr key={`tr:${index}`} onClick={dataSource[index].onClick ?? noop}>
+                {
+                headers.map(({ key, render }) => tableRow({ data: dataSource[index], key, render }))
+            }
+              </Tr>
+            ))
+          }
         </Tbody>
       </table>
       <Pagination total={total || rowsCount.length} property="--positionBottom" {...paginationBottom} />
