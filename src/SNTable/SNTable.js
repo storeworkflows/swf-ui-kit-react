@@ -68,7 +68,7 @@ const SNTable = (props) => {
     const error = _.get(data, '[0].errors', []);
 
     if (error.length > 0) {
-      return setError('You do not have access to this table');
+      return setError('No records for display');
     }
 
     const { allColumns, layoutQuery } = _.get(
@@ -96,6 +96,10 @@ const SNTable = (props) => {
       return dataSource;
     });
 
+    if (dataSource.length === 0) {
+      return setError('No records for display');
+    }
+
     setTotal(layoutQuery.count);
     setHeaders(headers);
     setDataSource(dataSource);
@@ -103,7 +107,7 @@ const SNTable = (props) => {
   }, [data]);
 
   if (error) {
-    return <InfoMessage content={error} status='red' />
+    return <InfoMessage content={error} status='blue' />
   }
 
   return (
