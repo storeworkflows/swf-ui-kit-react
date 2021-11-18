@@ -83,8 +83,8 @@ const RangePicker = React.forwardRef((props, ref) => {
 
     if (moment(startValue, format, true).isValid() && moment(endValue, format, true).isValid()) {
       setSelectedDate({
-        start: moment.utc(startValue).format(format),
-        end: moment.utc(endValue).format(format),
+        start: moment(startValue).format(format),
+        end: moment(endValue).format(format),
       });
     } else {
       const valueToSet = { start: startValue, end: endValue };
@@ -140,9 +140,9 @@ const RangePicker = React.forwardRef((props, ref) => {
   };
 
   const onSelected = useCallback(({ updated }) => {
-    const endValue = isOpenedInFirst ? '' : (updated.end && moment.utc(updated.end).format(format));
+    const endValue = isOpenedInFirst ? '' : (updated.end && moment(updated.end).format(format));
     const updatedDates = {
-      start: updated.start && moment.utc(updated.start).format(format),
+      start: updated.start && moment(updated.start).format(format),
       end: endValue,
     };
 
