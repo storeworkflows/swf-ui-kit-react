@@ -133,8 +133,17 @@ export const updateExtremeDates = (oldExtreme, selectedDate, isFirstSelecting) =
   };
 };
 
+const getDateInstance = (input) => {
+  const [year, month, day] = input.split('-');
+  return new Date(year, month - 1, day);
+}
+
 export const checkDate = (input) => {
-  if (input && moment(input).isValid()) return new Date(input).setHours(0, 0, 0, 0);
+  if (input && moment(input).isValid()) {
+    if (typeof input === "string") input = getDateInstance(input);
+
+    return new Date(input).setHours(0, 0, 0, 0);
+  }
 };
 
 export const getExtremeDates = ({ start, end }) => ({
