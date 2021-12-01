@@ -69,6 +69,9 @@ export default class HtmlEditor extends React.Component {
         } = this.props;
 
         const labelColor = !!this.state.inputVal && required ? "rgb(99,114,116)" : "rgb(200,60,54)";
+        const height = !!this.props.height ? this.props.height : `${Math.round(document.body.offsetHeight * 0.6) - 36}px`;
+
+        this.state.TinyMcEditor && this.state.TinyMcEditor.theme.resizeTo('99%', height)
 
         return(
             <div className='swf-html-editor'>
@@ -89,7 +92,6 @@ export default class HtmlEditor extends React.Component {
                         relative_urls: true,
                         convert_urls: false,
                         init_instance_callback: (editor) => {
-                            const height = !!this.props.height ? this.props.height : `${Math.round(document.body.offsetHeight * 0.6) - 36}px`;
                             !!content ? editor.selection.setContent(content) : noop;
                             readonly ? editor.setMode("readonly") : noop;
                             this.setState({TinyMcEditor: editor})
