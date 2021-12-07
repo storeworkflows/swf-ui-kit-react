@@ -6,7 +6,7 @@ export default {
   title: 'swf-ui-kit/Input/DatePicker',
   component: DatePicker,
   args: {
-    min: new Date('2021-05-11'),
+    min: new Date('2021-12-05'),
   },
 };
 

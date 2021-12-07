@@ -199,6 +199,9 @@ const DatePicker = React.forwardRef((props, ref) => {
                           onSelected={dateSelected}
                           selectedDate={dateValue}
                           manageValue
+                          addDisabled
+                          min={min}
+                          max={max}
                         />
                       </Popover.Content>
                     </Popover>

@@ -10,7 +10,7 @@ import { checkDate, getDefinedDate, useWrappedState } from './utils';
 import { noop } from '../utils';
 
 const SmallCalendar = React.forwardRef((props, ref) => {
-  const { selectedDate, onSelected, manageValue } = props;
+  const { selectedDate, onSelected, manageValue, addDisabled, min, max } = props;
 
   const [selected, setSelectedDate] = useWrappedState(selectedDate, checkDate);
   const [openedDateValue, setOpenedDateValue] = useWrappedState(selectedDate, getDefinedDate);
@@ -51,6 +51,9 @@ const SmallCalendar = React.forwardRef((props, ref) => {
         selectedDate={selected}
         onSelected={selectAction}
         manageSelected
+        addDisabled={addDisabled}
+        min={min}
+        max={max}
       >
 
         <CalendarMonth.HeaderStart>
@@ -75,6 +78,9 @@ SmallCalendar.propTypes = {
   selectedDate: propTypes.oneOfType([propTypes.number, propTypes.string, propTypes.object]),
   onSelected: propTypes.func,
   manageValue: propTypes.bool,
+  addDisabled: propTypes.bool,
+  min: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number]),
+  max: propTypes.oneOfType([propTypes.object, propTypes.string, propTypes.number])
 };
 
 export default React.memo(SmallCalendar, (prev, next) => isEqual(prev, next));
