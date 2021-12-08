@@ -12,7 +12,7 @@ const Modal = (props) => {
 
   const [currentStatus, setCurrentStatus] = useState(SWF_MODAL.MODAL_SIZE.DEFAULT);
   const [openModal, setOpenModal] = useState(true);
-  const [mobileFooterOpened, setMobileFooterOpened] = useState(true);
+  const [mobileFooterOpened, setMobileFooterOpened] = useState(false);
 
   const {
     showPrint, closeRef, manageOpened, onClose, display,
